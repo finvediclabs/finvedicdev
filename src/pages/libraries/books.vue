@@ -20,15 +20,15 @@ import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
-import { Swiper, SwiperSlide } from 'swiper/vue';
-import 'swiper/css';
-import 'swiper/css/effect-cards';
-import { EffectCards } from 'swiper/modules';
-import BookImage from "src/"
+// import { Swiper, SwiperSlide } from 'swiper/vue';
+// import 'swiper/css';
+// import 'swiper/css/effect-cards';
+// import { EffectCards } from 'swiper/modules';
+// import BookImage from "src/"
 export default {
   components: {
-    Swiper,
-    SwiperSlide,
+    // Swiper,
+    // SwiperSlide,
     FinPortlet,
     FinPortletHeader,
     FinPortletHeading,
