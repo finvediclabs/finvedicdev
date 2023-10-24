@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hhh lpr lFr">
+  <q-layout view="hHh Lpr fFf">
     <q-header>
       <q-toolbar class="bg-finvedic shadow-1 q-pa-sm">
         <q-item>
@@ -234,7 +234,7 @@ export default {
 
 .left-drawer {
   min-height: 300px;
-  height: calc(100vh - 225px);
+  height: calc(100vh - 295px);
 
 }
 
