@@ -32,19 +32,18 @@
   </div>
 </template>
 <script>
-import { defineComponent, ref } from 'vue';
 import AccountLogIn from "./AccountLogIn.vue";
-export default defineComponent({
+export default {
   name: 'login-page',
   components: {
     AccountLogIn
   },
   data() {
     return {
-      isPwd: ref(true),
+      isPwd: true,
       rememberMe: false,
-      name: ref(""),
-      password: ref(""),
+      name: "",
+      password: "",
     }
   },
   methods: {
@@ -52,8 +51,8 @@ export default defineComponent({
       this.$emit('changePage', page);
     },
     onSubmit() {
-
+      this.$router.push({ path: '/admin' });
     }
   }
-})
+}
 </script>

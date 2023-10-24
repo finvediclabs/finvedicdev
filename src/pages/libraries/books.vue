@@ -3,32 +3,46 @@
     <fin-portlet-header>
       <fin-portlet-heading>Books</fin-portlet-heading>
     </fin-portlet-header>
-    <fin-portlet-item>
-
+    <fin-portlet-item class="q-pb-xl">
+      <carousel-3d :totalSlides="booksData.length" :count="booksData.length" @beforeSlideChange="getCurrentSlide">
+        <slide v-for="(slide, i) in booksData" :key="i" :index="i">
+          <q-img :src="slide.image" class="fit"></q-img>
+        </slide>
+      </carousel-3d>
     </fin-portlet-item>
+    <fin-portlte>
+      <div class="row">
+        <div class="col-12 col-md-6 flex">
+          <q-avatar style="width:250px; height: 300px" square>
+            <q-img :src="selectedSlide.image" class="fin-br-8 fit"></q-img>
+          </q-avatar>
+          <fin-portlet-heading class="q-pa-md">
+            {{ selectedSlide.title }}
+          </fin-portlet-heading>
+        </div>
+        <div class="col-12 col-md-6 self-end justify-center">
+          <p>More Chapters</p>
+          <div class="flex  q-gutter-md">
+            <q-skeleton height="120px" width="100px" />
+            <q-skeleton height="120px" width="100px" />
+            <q-skeleton height="120px" width="100px" />
+          </div>
+
+        </div>
+      </div>
+    </fin-portlte>
   </fin-portlet>
-  <swiper :effect="'cards'" :grabCursor="true" :modules="modules" class="mySwiper" @swiper="onSwiper" @slideChange="onSlideChange">
-    <swiper-slide>Slide 1</swiper-slide>
-    <swiper-slide>Slide 2</swiper-slide><swiper-slide>Slide 3</swiper-slide>
-    <swiper-slide>Slide 4</swiper-slide><swiper-slide>Slide 5</swiper-slide>
-    <swiper-slide>Slide 6</swiper-slide><swiper-slide>Slide 7</swiper-slide>
-    <swiper-slide>Slide 8</swiper-slide><swiper-slide>Slide 9</swiper-slide>
-  </swiper>
 </template>
-<script>
+<script lang="ts">
 import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
-// import { Swiper, SwiperSlide } from 'swiper/vue';
-// import 'swiper/css';
-// import 'swiper/css/effect-cards';
-// import { EffectCards } from 'swiper/modules';
-// import BookImage from "src/"
+import { Carousel3d, Slide } from "src/components/carousel-3d";
 export default {
   components: {
-    // Swiper,
-    // SwiperSlide,
+    Carousel3d,
+    Slide,
     FinPortlet,
     FinPortletHeader,
     FinPortletHeading,
@@ -36,80 +50,30 @@ export default {
   },
   setup() {
     return {
-      modules: [EffectCards],
     };
   },
   data() {
     return {
       booksData: [
-        { id: 1, image: 'https://m.media-amazon.com/images/I/71TWHAhREXL._AC_UF1000,1000_QL80_.jpg',title: 'Books 1'   }
-      ]
+        { id: 1, image: 'https://m.media-amazon.com/images/I/71TWHAhREXL._AC_UF1000,1000_QL80_.jpg', title: 'Famous Book Titles Taken from The Bible' },
+        { id: 2, image: 'https://i.insider.com/5b5ed53cbda1c7e8018b4567?width=700', title: 'Famous Book Titles Taken from The Bible' },
+        { id: 3, image: 'https://previews.123rf.com/images/zinkevych/zinkevych1902/zinkevych190202268/117413128-getting-liked-book-interested-appealing-reader-actively-collecting-new-books-while-visiting-public.jpg', title: 'Famous Book Titles Taken from The Bible' },
+        { id: 4, image: 'https://blog-cdn.reedsy.com/directories/admin/featured_image/326/how-to-get-a-book-published-abe53b.jpg', title: 'Famous Book Titles Taken from The Bible' },
+        { id: 5, image: 'https://m.media-amazon.com/images/I/71TWHAhREXL._AC_UF1000,1000_QL84_.jpg', title: 'Famous Book Titles Taken from The Bible' },
+        { id: 6, image: 'https://writingtipsoasis.com/wp-content/uploads/2018/10/beginners-guide-to-publishing-a-book.png', title: 'Famous Book Titles Taken from The Bible' },
+        { id: 7, image: 'https://m.media-amazon.com/images/I/71TWHAhREXL._AC_UF1000,1000_QL86_.jpg', title: 'Famous Book Titles Taken from The Bible' },
+        { id: 8, image: 'https://i0.wp.com/www.thebookishmom.net/wp-content/uploads/2023/01/how-to-get-arcs-of-books.jpg?fit=1024%2C576&ssl=1', title: 'Famous Book Titles Taken from The Bible' },
+        { id: 9, image: 'https://m.media-amazon.com/images/I/71TWHAhREXL._AC_UF1000,1000_QL88_.jpg', title: 'Famous Book Titles Taken from The Bible' },
+        { id: 10, image: 'https://compote.slate.com/images/f6cdae8e-8c65-4e96-9f1b-737de66e794f.jpeg?crop=1560%2C1040%2Cx0%2Cy0', title: 'Famous Book Titles Taken from The Bible' },
+      ],
+      slides: 10,
+      selectedSlide: { id: 1, image: 'https://m.media-amazon.com/images/I/71TWHAhREXL._AC_UF1000,1000_QL80_.jpg', title: 'Famous Book Titles Taken from The Bible' },
     }
   },
   methods: {
-    onSwiper (swipper) {
-      console.log(swipper, 'swipperr');
+    getCurrentSlide(index) {
+      this.selectedSlide = this.booksData[index];
     },
-    onSlideChange(swipperrr, active) {
-
-      console.log(swipperrr, 'changess' ,active, 'active');
-    }
   }
 };
 </script>
-<style>
-.swiper {
-  width: 300px;
-  height: 400px;
-}
-
-.swiper-slide {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 18px;
-  font-size: 22px;
-  font-weight: bold;
-  color: #fff;
-}
-
-.swiper-slide:nth-child(1n) {
-  background-color: rgb(206, 17, 17);
-}
-
-.swiper-slide:nth-child(2n) {
-  background-color: rgb(0, 140, 255);
-}
-
-.swiper-slide:nth-child(3n) {
-  background-color: rgb(10, 184, 111);
-}
-
-.swiper-slide:nth-child(4n) {
-  background-color: rgb(211, 122, 7);
-}
-
-.swiper-slide:nth-child(5n) {
-  background-color: rgb(118, 163, 12);
-}
-
-.swiper-slide:nth-child(6n) {
-  background-color: rgb(180, 10, 47);
-}
-
-.swiper-slide:nth-child(7n) {
-  background-color: rgb(35, 99, 19);
-}
-
-.swiper-slide:nth-child(8n) {
-  background-color: rgb(0, 68, 255);
-}
-
-.swiper-slide:nth-child(9n) {
-  background-color: rgb(218, 12, 218);
-}
-
-.swiper-slide:nth-child(10n) {
-  background-color: rgb(54, 94, 77);
-}
-</style>

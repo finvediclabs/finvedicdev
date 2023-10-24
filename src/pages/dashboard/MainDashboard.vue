@@ -104,7 +104,8 @@ export default {
 .card-img {
   margin-top: -40px;
   margin-left: -10px;
-  height: 213px;
+  /* height: 213px; */
+  max-width: 35%;
 }
 
 @media SCREEN and (max-width: 576px) {

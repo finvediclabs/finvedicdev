@@ -1,12 +1,12 @@
 <template>
   <div class="row justify-center">
     <div class="col-12">
-      <div class="row q-pa-xl">
-        <div class="col flex flex-center">
+      <div class="row q-pa-lg">
+        <div class="col-12 col-lg-7 flex flex-center">
           <q-img :ratio="16 / 9" src="" />
         </div>
-        <div class="col flex flex-center">
-          <div style="width: 500px">
+        <div class="col-12 col-lg-4 items-center">
+          <div>
             <create-account-page v-if="currentPage == 'createPage'" @changePage="changePage" />
             <log-in-page v-if="currentPage == 'loginPage'" @changePage="changePage" />
             <reset-password-page v-if="currentPage == 'resetPasswordPage'" />
