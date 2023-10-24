@@ -4,7 +4,7 @@
       <fin-portlet-heading>Books</fin-portlet-heading>
     </fin-portlet-header>
     <fin-portlet-item class="q-pb-xl">
-      <carousel-3d :totalSlides="booksData.length" :count="booksData.length" @beforeSlideChange="getCurrentSlide">
+      <carousel-3d :totalSlides="booksData.length" :count="booksData.length" @beforeSlideChange="getCurrentSlide"  :controls-visible="true">
         <slide v-for="(slide, i) in booksData" :key="i" :index="i">
           <q-img :src="slide.image" class="fit"></q-img>
         </slide>

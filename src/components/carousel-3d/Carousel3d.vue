@@ -436,7 +436,6 @@ export default {
   },
 
   mounted () {
-    if (!process.server) {
       this.computeData(true)
       this.attachMutationObserver()
       window.addEventListener('resize', this.setSize)
@@ -450,11 +449,9 @@ export default {
         this.$el.addEventListener('mouseup', this.handleMouseup)
         this.$el.addEventListener('mousemove', this.handleMousemove)
       }
-    }
   },
 
   beforeDestroy () {
-    if (!process.server) {
       this.detachMutationObserver()
 
       if ('ontouchstart' in window) {
@@ -464,7 +461,6 @@ export default {
       }
 
       window.removeEventListener('resize', this.setSize)
-    }
   }
 }
 </script>
