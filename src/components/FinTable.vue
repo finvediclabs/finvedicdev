@@ -1,7 +1,7 @@
 <template>
   <div class="full-width fin-table" :class="{ singleData: data.length == 1 }">
-    <table class="table full-width rounded-borders" borders="0">
-      <thead class="shadow-4">
+    <table class="table full-width rounded-borders shadow-6" borders="0">
+      <thead >
         <tr>
           <th style="width: 50px"><q-checkbox v-model="allSelect" :val="data" dark /></th>
           <th v-for="column in columns" :key="column" :style="{ 'text-align': column.align }" class="vertical-middle">
@@ -9,10 +9,7 @@
           </th>
         </tr>
       </thead>
-      <tr>
-        <td style="padding: 10px"></td>
-      </tr>
-      <tbody v-if="data.length" class="shadow-5">
+      <tbody v-if="data.length">
         <tr v-for="(item, index) in data">
           <td><q-checkbox color="cyan" v-model="selectedItemsData" :val="item" /></td>
           <td v-for="column in columns" :key="column" :style="{ 'text-align': column.align }" class="vertical-middle">
@@ -166,31 +163,22 @@ tbody {
 }
 
 .table thead tr th:first-child {
-  border-radius: 10px 0px 0px 10px;
+  border-radius: 10px 0px 0px 0px;
+  overflow: hidden;
 }
 
 .table thead tr th:last-child {
-  border-radius: 0px 10px 10px 0px;
+  border-radius: 0px 10px 0px 0px;
+  overflow: hidden;
 }
 
 .singleData .table tbody tr:first-child td:first-child {
-  border-radius: 10px 0px 0px 10px;
+  border-radius: 0px 0px 0px 10px;
   overflow: hidden;
 }
 
 .singleData .table tbody tr:first-child td:last-child {
   border-radius: 0px 10px 10px 0px;
-  overflow: hidden;
-}
-
-
-.table tbody tr:first-child td:first-child {
-  border-radius: 10px 0px 0px 0px;
-  overflow: hidden;
-}
-
-.table tbody tr:first-child td:last-child {
-  border-radius: 0px 10px 0px 0px;
   overflow: hidden;
 }
 

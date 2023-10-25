@@ -2,15 +2,13 @@
   <div class="row justify-center">
     <div class="col-12">
       <div class="row q-pa-lg">
-        <div class="col-12 col-lg-7 flex flex-center">
-          <q-img :ratio="16 / 9" src="" />
+        <div class="col-12 col-sm-6 col-lg-7 flex flex-center ">
+          <img src="src/assets/landing.png" style="max-width:60%">
         </div>
-        <div class="col-12 col-lg-4 items-center">
-          <div>
-            <create-account-page v-if="currentPage == 'createPage'" @changePage="changePage" />
-            <log-in-page v-if="currentPage == 'loginPage'" @changePage="changePage" />
-            <reset-password-page v-if="currentPage == 'resetPasswordPage'" />
-          </div>
+        <div class="col-12 col-sm-6 col-lg-4 self-center">
+          <create-account-page v-if="currentPage == 'createPage'" @changePage="changePage" />
+          <log-in-page v-if="currentPage == 'loginPage'" @changePage="changePage" />
+          <reset-password-page v-if="currentPage == 'resetPasswordPage'" />
         </div>
       </div>
     </div>

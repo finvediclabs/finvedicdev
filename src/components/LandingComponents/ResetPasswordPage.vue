@@ -10,13 +10,13 @@
   </div>
 </template>
 <script>
-import { defineComponent, ref } from 'vue';
-export default defineComponent({
+export default{
   name: 'create-account-page',
   data() {
     return {
-      isPwd: ref(true)
+      isPwd: true,
+      email: '',
     }
   },
-})
+}
 </script>

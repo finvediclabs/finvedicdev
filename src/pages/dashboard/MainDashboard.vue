@@ -1,9 +1,9 @@
 <template>
-  <q-page class=" flex flex-center">
+  <q-page class=" flex justify-center">
     <fin-portlet>
       <fin-portlet-item>
         <div class="row" style="max-width: 1200px">
-          <div class="col-12 col-md-6 q-py-lg q-my-md bg-white q-px-lg" v-for="tab in tabsList">
+          <div class="col-12 col-md-6 q-py-lg q-my-sm bg-white q-px-md" v-for="tab in tabsList">
             <q-card class="my-card fin-card shadow-5" :style="{ background: tab.background }">
               <q-card-section horizontal class="full-height">
                 <img class="card-img" :src="tab.image" />
@@ -15,7 +15,7 @@
                     </div>
                     <div class="col no-padding" style="flex: none">
                       <router-link class="btn" :to="`admin/${tab.path}`">
-                        <q-btn label="Visit" flat dense class="q-px-md rounded-borders shadow-5 bg-white text-dark" />
+                        <q-btn label="Create" no-caps flat dense class="q-px-md rounded-borders shadow-5 bg-white text-dark" />
                       </router-link>
                     </div>
                   </div>
@@ -105,7 +105,7 @@ export default {
   margin-top: -40px;
   margin-left: -10px;
   /* height: 213px; */
-  max-width: 35%;
+  max-width: 40%!important;
 }
 
 @media SCREEN and (max-width: 576px) {

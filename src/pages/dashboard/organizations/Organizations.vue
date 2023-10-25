@@ -83,8 +83,6 @@ import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
-import allOrganizations from "./allOrganizations.vue";
-import Client from "./Client.vue";
 export default {
   components: {
     FinTable,
@@ -92,8 +90,6 @@ export default {
     FinPortletHeader,
     FinPortletHeading,
     FinPortletItem,
-    allOrganizations,
-    Client
   },
   data() {
     return {
@@ -116,14 +112,14 @@ export default {
         { label: 'Phone', key: 'phone', align: 'center' },
       ],
       usersList: [
-        { name: 'Sandeep0', city: 'New York', phone: '1234567890' },
-        { name: 'Sandeep1', city: 'New York', phone: '1234567890' },
-        { name: 'Sandeep2', city: 'New York', phone: '1234567890' },
-        { name: 'Sandeep3', city: 'New York', phone: '1234567890' },
-        { name: 'Sandeep4', city: 'New York', phone: '1234567890' },
-        { name: 'Sandeep5', city: 'New York', phone: '1234567890' },
-        { name: 'Sandeep6', city: 'New York', phone: '1234567890' },
-        { name: 'Sandeep7', city: 'New York', phone: '1234567890' },
+        { name: (Math.random() + 1).toString(36).substring(2), city: (Math.random() + 1).toString(36).substring(2), phone: '1234567890' },
+        { name: (Math.random() + 1).toString(36).substring(2), city: (Math.random() + 1).toString(36).substring(2), phone: '1234567890' },
+        { name: (Math.random() + 1).toString(36).substring(2), city: (Math.random() + 1).toString(36).substring(2), phone: '1234567890' },
+        { name: (Math.random() + 1).toString(36).substring(2), city: (Math.random() + 1).toString(36).substring(2), phone: '1234567890' },
+        { name: (Math.random() + 1).toString(36).substring(2), city: (Math.random() + 1).toString(36).substring(2), phone: '1234567890' },
+        { name: (Math.random() + 1).toString(36).substring(2), city: (Math.random() + 1).toString(36).substring(2), phone: '1234567890' },
+        { name: (Math.random() + 1).toString(36).substring(2), city: (Math.random() + 1).toString(36).substring(2), phone: '1234567890' },
+        { name: (Math.random() + 1).toString(36).substring(2), city: (Math.random() + 1).toString(36).substring(2), phone: '1234567890' },
       ]
     }
   },

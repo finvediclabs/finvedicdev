@@ -33,19 +33,18 @@
   </div>
 </template>
 <script>
-import { defineComponent, ref } from 'vue';
 import AccountLogIn from "./AccountLogIn.vue";
-export default defineComponent({
+export default {
   name: 'create-account-page',
   components: {
     AccountLogIn
   },
   data() {
     return {
-      isPwd: ref(true),
+      isPwd: true,
       name: '',
-      email: ref(),
-      password: ref(),
+      email: "",
+      password: "",
     }
   },
   methods: {
@@ -56,5 +55,5 @@ export default defineComponent({
 
     }
   }
-})
+}
 </script>

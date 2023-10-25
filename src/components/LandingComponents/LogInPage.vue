@@ -20,7 +20,7 @@
             <q-checkbox v-model="rememberMe" label="Remember me" />
             <a @click="changePage('resetPasswordPage')" class="cursor-pointer fin-text-blue">Forget password</a>
           </div>
-          <q-btn color="primary" class="full-width sub-btn" padding="md" label="Create Account" type="submit" />
+          <q-btn color="primary" class="full-width sub-btn" padding="md" label="Log in" type="submit" />
         </q-form>
       </div>
 
@@ -42,7 +42,7 @@ export default {
     return {
       isPwd: true,
       rememberMe: false,
-      name: "",
+      email: "",
       password: "",
     }
   },

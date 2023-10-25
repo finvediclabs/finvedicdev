@@ -1,6 +1,6 @@
 <template>
   <fin-portlet>
-    <fin-portlet-header >
+    <fin-portlet-header>
       <fin-portlet-heading :loading="loading">
         <q-icon name="arrow_back" class="text-grey-8 cursor-pointer" @click="$router.go(-1)" />
         Users
@@ -78,19 +78,13 @@ import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
-import AllUsers from "./AllUsers.vue";
-import Trinees from "./Trinees.vue";
-import Client from "./Client.vue";
 export default {
   components: {
     FinTable,
     FinPortlet,
     FinPortletHeader,
     FinPortletHeading,
-    FinPortletItem,
-    AllUsers,
-    Trinees,
-    Client
+    FinPortletItem
   },
   data() {
     return {
@@ -115,14 +109,14 @@ export default {
         { label: 'Date Added', key: 'date', align: 'center' },
       ],
       usersList: [
-        { name: 'Sandeep0', email: 'sandeepperikala212@gmail.com', role: 'developer', date: new Date().toDateString() },
-        { name: 'Sandeep1', email: 'sandeepperikala212@gmail.com', role: 'developer', date: new Date().toDateString() },
-        { name: 'Sandeep2', email: 'sandeepperikala212@gmail.com', role: 'developer', date: new Date().toDateString() },
-        { name: 'Sandeep3', email: 'sandeepperikala212@gmail.com', role: 'developer', date: new Date().toDateString() },
-        { name: 'Sandeep4', email: 'sandeepperikala212@gmail.com', role: 'developer', date: new Date().toDateString() },
-        { name: 'Sandeep5', email: 'sandeepperikala212@gmail.com', role: 'developer', date: new Date().toDateString() },
-        { name: 'Sandeep6', email: 'sandeepperikala212@gmail.com', role: 'developer', date: new Date().toDateString() },
-        { name: 'Sandeep7', email: 'sandeepperikala212@gmail.com', role: 'developer', date: new Date().toDateString() },
+        { name: (Math.random() + 1).toString(36).substring(2), email: (Math.random() + 1).toString(36).substring(2) + '@gmail.com', role: (Math.random() + 1).toString(36).substring(2), date: new Date().toDateString() },
+        { name: (Math.random() + 1).toString(36).substring(2), email: (Math.random() + 1).toString(36).substring(2) + '@gmail.com', role: (Math.random() + 1).toString(36).substring(2), date: new Date().toDateString() },
+        { name: (Math.random() + 1).toString(36).substring(2), email: (Math.random() + 1).toString(36).substring(2) + '@gmail.com', role: (Math.random() + 1).toString(36).substring(2), date: new Date().toDateString() },
+        { name: (Math.random() + 1).toString(36).substring(2), email: (Math.random() + 1).toString(36).substring(2) + '@gmail.com', role: (Math.random() + 1).toString(36).substring(2), date: new Date().toDateString() },
+        { name: (Math.random() + 1).toString(36).substring(2), email: (Math.random() + 1).toString(36).substring(2) + '@gmail.com', role: (Math.random() + 1).toString(36).substring(2), date: new Date().toDateString() },
+        { name: (Math.random() + 1).toString(36).substring(2), email: (Math.random() + 1).toString(36).substring(2) + '@gmail.com', role: (Math.random() + 1).toString(36).substring(2), date: new Date().toDateString() },
+        { name: (Math.random() + 1).toString(36).substring(2), email: (Math.random() + 1).toString(36).substring(2) + '@gmail.com', role: (Math.random() + 1).toString(36).substring(2), date: new Date().toDateString() },
+        { name: (Math.random() + 1).toString(36).substring(2), email: (Math.random() + 1).toString(36).substring(2) + '@gmail.com', role: (Math.random() + 1).toString(36).substring(2), date: new Date().toDateString() },
       ]
     }
   },
