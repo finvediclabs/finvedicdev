@@ -227,7 +227,6 @@ export default {
     }
   },
   mounted() {
-    console.log(this.$route, 'router');
     this.selectedModule = {
       module: this.$route.meta.module,
       item: this.$route.meta.item

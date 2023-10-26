@@ -71,6 +71,7 @@
       </fin-portlet-item>
     </fin-portlet>
   </q-dialog>
+  {{ appUrl }}
 </template>
 <script>
 import FinTable from "src/components/FinTable.vue"
@@ -78,7 +79,10 @@ import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
+import { urls } from "src/pages/dashboard/urls";
+import moment from "moment"
 export default {
+
   components: {
     FinTable,
     FinPortlet,
@@ -88,6 +92,8 @@ export default {
   },
   data() {
     return {
+      appUrl: import.meta.env.VUE_APP_CORE_URL,
+      urls: urls,
       tab: 'allUsers',
       roleSearch: '',
       roleOptions: ['trinee', 'client'],
@@ -103,27 +109,59 @@ export default {
       owner: '',
       ownerOptions: ['position-1', 'position-2', 'position-3', 'position-4'],
       header: [
-        { label: 'Name', key: 'name', align: 'start' },
+        { label: 'Name', key: 'firstName', align: 'start' },
         { label: 'Email Address', key: 'email', align: 'center' },
-        { label: 'Role', key: 'role', align: 'center' },
-        { label: 'Date Added', key: 'date', align: 'center' },
+        { label: 'Role', key: 'owner', align: 'center' },
+        { label: 'Date Added', key: 'createdAt', align: 'center' },
       ],
-      usersList: [
-        { name: (Math.random() + 1).toString(36).substring(2), email: (Math.random() + 1).toString(36).substring(2) + '@gmail.com', role: (Math.random() + 1).toString(36).substring(2), date: new Date().toDateString() },
-        { name: (Math.random() + 1).toString(36).substring(2), email: (Math.random() + 1).toString(36).substring(2) + '@gmail.com', role: (Math.random() + 1).toString(36).substring(2), date: new Date().toDateString() },
-        { name: (Math.random() + 1).toString(36).substring(2), email: (Math.random() + 1).toString(36).substring(2) + '@gmail.com', role: (Math.random() + 1).toString(36).substring(2), date: new Date().toDateString() },
-        { name: (Math.random() + 1).toString(36).substring(2), email: (Math.random() + 1).toString(36).substring(2) + '@gmail.com', role: (Math.random() + 1).toString(36).substring(2), date: new Date().toDateString() },
-        { name: (Math.random() + 1).toString(36).substring(2), email: (Math.random() + 1).toString(36).substring(2) + '@gmail.com', role: (Math.random() + 1).toString(36).substring(2), date: new Date().toDateString() },
-        { name: (Math.random() + 1).toString(36).substring(2), email: (Math.random() + 1).toString(36).substring(2) + '@gmail.com', role: (Math.random() + 1).toString(36).substring(2), date: new Date().toDateString() },
-        { name: (Math.random() + 1).toString(36).substring(2), email: (Math.random() + 1).toString(36).substring(2) + '@gmail.com', role: (Math.random() + 1).toString(36).substring(2), date: new Date().toDateString() },
-        { name: (Math.random() + 1).toString(36).substring(2), email: (Math.random() + 1).toString(36).substring(2) + '@gmail.com', role: (Math.random() + 1).toString(36).substring(2), date: new Date().toDateString() },
-      ]
+      usersList: [],
     }
+  },
+  mounted() {
+    this.getUsersData();
   },
   methods: {
     createUser() {
       this.createUserDialog = true;
-    }
+    },
+    showMsg(message, type) {
+      this.$q.notify({
+        message: message || "Something Went Wrong!",
+        type: type,
+        position: 'top-right',
+        actions: [
+          { icon: 'close', color: 'white', handler: () => { } }
+        ]
+      });
+    },
+    getUsersData() {
+
+      this.loading = true;
+      this.$api.get(urls.getUsersUrl).then(response => {
+        this.loading = false;
+        if (response.data.success) {
+          this.usersList = response.data.data.map(user => {
+            return {
+              "id": user.id,
+              "accountId": user.accountId,
+              "firstName": user.firstName,
+              "lastName": user.lastName,
+              "name": `$[user.firstName} ${user.lastName}`,
+              "email": user.email,
+              "owner": user.owner,
+              "photoPath": user.photoPath,
+              "createdAt": moment(user.createdAt).format('YYYY-MM-DD HH:mm:ss'),
+              "phoneNumber": user.phoneNumber
+            }
+          });
+        } else {
+          this.showMsg(response.data?.message, 'negative');
+        }
+      }).catch(error => {
+        this.loading = false;
+        this.showMsg(error.message, 'negative');
+      });
+    },
   }
 }
 </script>
