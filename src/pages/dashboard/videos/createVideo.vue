@@ -22,14 +22,14 @@
             </fin-portlet-item>
           </div>
           <div class="col-12 col-md-5 q-pa-md text-center">
-            <div class="flex flex-center q-pa-md">
+            <div class="flex justify-center q-pa-md">
               <div>
-                <q-file v-model="cover" label="Label" outlined id="filePick">
+                <q-file v-model="cover" label="Label" filled id="filePick" class="videoSelecter">
                   <template v-slot:prepend>
                     <q-icon name="attach_file" />
                   </template>
                 </q-file>
-                <input type="file" id="filePick" @change="ChangeCover" ref="file" class="q-py-md">
+                <!-- <input type="file" id="filePick" @change="ChangeCover" ref="file" class="q-pa-md" > -->
                 <div class="q-py-sm">
                   <strong class="q-py-sm">Or</strong>
                 </div>
@@ -77,3 +77,9 @@ export default {
   }
 }
 </script>
+<style>
+.videoSelecter .q-field__control {
+  min-height: 200px;
+  width: 240px
+}
+</style>

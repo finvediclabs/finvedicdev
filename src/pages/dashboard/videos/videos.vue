@@ -1,13 +1,12 @@
 <template>
   <fin-portlet>
     <fin-portlet-header>
-      <fin-portlet-heading :loading="loading">
-        <q-icon name="arrow_back" class="text-grey-8 cursor-pointer" @click="$router.go(-1)" />
+      <fin-portlet-heading :loading="loading" backArrow>
         Videos
       </fin-portlet-heading>
       <fin-portlet-item>
         <router-link :to="'videos/create'">
-          <q-btn label="Create Book" icon="add" color="blue-15" class="fin-br-8 text-subtitle1 text-weight-bolder q-px-md"
+          <q-btn label="Create Video" icon="add" color="blue-15" class="fin-br-8 text-subtitle1 text-weight-bolder q-px-md"
             dense no-caps />
         </router-link>
 

@@ -1,8 +1,7 @@
 <template>
   <fin-portlet>
     <fin-portlet-header>
-      <fin-portlet-heading :loading="loading">
-        <q-icon name="arrow_back" class="text-grey-8 cursor-pointer" @click="$router.go(-1)" />
+      <fin-portlet-heading :loading="loading" backArrow>
         Books
       </fin-portlet-heading>
       <fin-portlet-item>

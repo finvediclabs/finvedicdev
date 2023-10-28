@@ -1,6 +1,7 @@
 <template>
   <div class="col">
     <p :class="headingType" class="page-heading text-weight-bolder">
+      <q-icon name="arrow_back" style="font-weight: bold;" class="cursor-pointer" @click="$router.go(-1)" v-if="backArrow"/>
       <slot></slot>
 
       <q-spinner-hourglass v-if="loading" color="blue-10" size="1em" />
@@ -19,6 +20,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    backArrow: {
+      type: Boolean,
+      default: false
+    }
   },
   computed: {
     headingType() {

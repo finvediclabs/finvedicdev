@@ -1,8 +1,7 @@
 <template>
   <fin-portlet>
     <fin-portlet-header>
-      <fin-portlet-heading :loading="loading">
-        <q-icon name="arrow_back" class="text-grey-8 cursor-pointer" @click="$router.go(-1)" />
+      <fin-portlet-heading :loading="loading" backArrow>
         Users
       </fin-portlet-heading>
       <fin-portlet-item>
@@ -21,8 +20,6 @@
       <fin-table :columns="header" :data="usersList" select />
     </fin-portlet-item>
   </fin-portlet>
-
-
 
   <q-dialog v-model="createUserDialog">
     <fin-portlet style="min-width: 400px;max-width: 80vw">
@@ -71,7 +68,6 @@
       </fin-portlet-item>
     </fin-portlet>
   </q-dialog>
-  {{ appUrl }}
 </template>
 <script>
 import FinTable from "src/components/FinTable.vue"
