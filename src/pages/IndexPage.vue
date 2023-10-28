@@ -8,10 +8,8 @@ export default {
   setup() {
     const session = useSessionStore();
     const { token, userType } = storeToRefs(session);
-    const { setToken } = session;
     return {
       token,
-      setToken,
       userType,
     }
   },

@@ -79,7 +79,7 @@
                 <q-item-section class="text-weight-bolder text-subtitle1">Name Name Name Name</q-item-section>
               </q-item>
               <q-separator />
-              <q-item clickable>
+              <q-item clickable v-ripple @click="$router.push('/profile')">
                 <q-item-section>Profile Settings</q-item-section>
                 <q-item-section avatar>
                   <q-icon name="settings" />
@@ -209,7 +209,7 @@ export default {
   },
   mounted() {
     if (this.token) {
-      setToken(this.token);
+      // setToken(this.token);
     } else {
       this.$router.push('/');
     }
@@ -222,7 +222,7 @@ export default {
   watch: {
     token() {
       if (this.token) {
-        setToken(this.token);
+        // setToken(this.token);
       } else {
         this.$router.push('/');
       }

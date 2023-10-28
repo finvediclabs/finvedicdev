@@ -94,7 +94,19 @@ const routes = [
       },
     ]
   },
+  {
+    path: '/profile',
+    meta: { title: 'profile', module: 'profile' },
+    component: () => import('layouts/DashboardLayout.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('pages/Profile.vue'),
+        meta: { item: '' }
+      },
 
+    ]
+  },
   {
     path: '/Home',
     component: () => import('layouts/MainLayout.vue'),

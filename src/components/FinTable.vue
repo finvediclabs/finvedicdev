@@ -3,16 +3,16 @@
     <table class="table full-width rounded-borders shadow-6" borders="0">
       <thead >
         <tr>
-          <th style="width: 50px"><q-checkbox v-model="allSelect" :val="data" dark /></th>
-          <th v-for="column in columns" :key="column" :style="{ 'text-align': column.align }" class="vertical-middle">
+          <th style="width: 50px" v-if="allowSelect"><q-checkbox v-model="allSelect" :val="data" dark /></th>
+          <th v-for="(column, j) in columns" :key="column" :style="{ 'text-align': column.align }" class="vertical-middle">
             {{ column.label }}
           </th>
         </tr>
       </thead>
       <tbody v-if="data.length">
-        <tr v-for="(item, index) in data">
-          <td><q-checkbox color="cyan" v-model="selectedItemsData" :val="item" /></td>
-          <td v-for="column in columns" :key="column" :style="{ 'text-align': column.align }" class="vertical-middle">
+        <tr v-for="(item, i) in data">
+          <td v-if="allowSelect"><q-checkbox color="cyan" v-model="selectedItemsData" :val="item" /></td>
+          <td v-for="(column , j) in columns" :key="column" :style="{ 'text-align': column.align }" class="vertical-middle">
             <span v-if="column.type === 'image'">
               <q-avatar size="40px">
                 <img :src="item[column.key]" class="fit">
@@ -47,7 +47,7 @@ export default {
       type: Array,
       default: function () { return []; }
     },
-    select: {
+    allowSelect: {
       type: Boolean,
       default: false,
     },

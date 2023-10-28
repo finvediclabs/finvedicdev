@@ -71,7 +71,7 @@
     </fin-portlte>
   </fin-portlet>
 </template>
-<script lang="ts">
+<script>
 import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
