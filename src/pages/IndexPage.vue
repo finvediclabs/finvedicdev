@@ -1,17 +1,35 @@
-<template>
-  <q-page class="flex flex-center">
-    <img
-      alt="Quasar logo"
-      src="~assets/quasar-logo-vertical.svg"
-      style="width: 200px; height: 200px"
-    >
-  </q-page>
-</template>
+<template></template>
 
 <script>
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  name: 'IndexPage'
-})
+import { storeToRefs } from "pinia";
+import { useSessionStore } from "src/stores/session";
+export default {
+  name: 'IndexPage',
+  setup() {
+    const session = useSessionStore();
+    const { token, userType } = storeToRefs(session);
+    const { setToken } = session;
+    return {
+      token,
+      setToken,
+      userType,
+    }
+  },
+  mounted() {
+    this.verifyToken();
+  },
+  methods: {
+    verifyToken() {
+      if (this.token) {
+        if (this.userType == 1) {
+          this.$router.push({ path: '/admin' });
+        } else {
+          this.$router.push({ path: '/labs' });
+        }
+      } else {
+        this.$router.push('/login')
+      }
+    }
+  }
+}
 </script>

@@ -73,8 +73,7 @@
         <q-avatar size="50px" class="shadow-4">
           <q-img src="../assets/profile.png"
             class="profileImg cursor-pointer rounded full-width full-height bg-blue-grey-4" />
-          <q-menu :offset="[-5, 5]" max-width="300px"  transition-show="flip-right"
-          transition-hide="rotate">
+          <q-menu :offset="[-5, 5]" max-width="300px" transition-show="flip-right" transition-hide="rotate">
             <q-list style="min-width: 200px">
               <q-item clickable>
                 <q-item-section class="text-weight-bolder text-subtitle1">Name Name Name Name</q-item-section>
@@ -94,53 +93,6 @@
                 </q-item-section>
               </q-item>
             </q-list>
-            <!-- <q-item class="q-pa-none right-drawer fin-profile-bg">
-              <div class="full-height full-width">
-                <div class="text-center">
-                  <q-img src="../assets/profile.png" class="profileImg-drawer q-mt-lg cursor-pointer" />
-                  <div class="text-h6 text-weight-bolder">{{ userName }}</div>
-                </div>
-
-                <div class="full-width q-my-xl">
-                  <q-list>
-                    <q-item class="full-width">
-                      <q-item-section style="width:25%" avatar> B1</q-item-section>
-                      <q-item-section style="width:25%" avatar>Booking</q-item-section>
-                      <q-item-section>
-                        <div class=" bg-dark full-width " style="border: 1px solid purple" />
-                      </q-item-section>
-                    </q-item>
-                    <q-item>
-                      <q-item-section style="width:25%" avatar> C1</q-item-section>
-                      <q-item-section style="width:25%" avatar>SMB</q-item-section>
-                      <q-item-section>
-                        <div class=" bg-dark full-width " style="border: 1px solid purple" />
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </div>
-
-                <div class="full-width q-my-xl">
-                  <q-list>
-                    <q-item>
-                      <q-item-section class="text-weight-bolder text-body1">Reminders</q-item-section>
-                      <q-item-section avatar>
-                        <q-icon name="notifications">
-                          <q-badge floating color="red" rounded />
-                        </q-icon>
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </div>
-
-
-
-              </div>
-            </q-item>
-            <div class="row justify-center q-my-lg">
-              <q-btn icon-right="logout" flat
-                label="log out &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" />
-            </div> -->
           </q-menu>
         </q-avatar>
 
@@ -217,12 +169,20 @@
 </template>
 
 <script>
-
+import { storeToRefs } from "pinia";
+import { useSessionStore } from "src/stores/session";
+import { setToken } from "src/boot/axios"
 export default {
   name: 'dashboard-layout',
   setup() {
+    const session = useSessionStore();
+    const { token, userType } = storeToRefs(session);
+    const { setSessionToken, setUserType } = session;
     return {
-
+      token,
+      userType,
+      setSessionToken,
+      setUserType,
     }
   },
   data() {
@@ -248,9 +208,24 @@ export default {
     }
   },
   mounted() {
+    if (this.token) {
+      setToken(this.token);
+    } else {
+      this.$router.push('/');
+    }
+
     this.selectedModule = {
       module: this.$route.meta.module,
       item: this.$route.meta.item
+    }
+  },
+  watch: {
+    token() {
+      if (this.token) {
+        setToken(this.token);
+      } else {
+        this.$router.push('/');
+      }
     }
   },
   methods: {
@@ -290,6 +265,9 @@ export default {
       }
     },
     logout() {
+      sessionStorage.clear();
+      this.setSessionToken();
+      this.setUserType();
       this.$router.push('/');
     }
   }

@@ -18,6 +18,10 @@ const api = axios.create({
   },
  })
 
+ export function setToken(token) {
+  api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+}
+
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
 
