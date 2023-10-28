@@ -1,3 +1,4 @@
 export  const urls = {
-  getBooksData: 'api/books',
+  getBooksDataUrl: 'api/books',
+  getBookChapterUrl: 'api/bookChapters',
 }

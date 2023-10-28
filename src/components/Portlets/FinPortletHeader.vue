@@ -1,5 +1,5 @@
 <template>
-  <div class="portlet-header row q-pb-sm q-mb-xl q-gutter-sm" :class="{'bordered': bordered}" style=" --bs-gutter-x: 0.5rem;!important; ">
+  <div class="portlet-header row q-pb-sm q-mb-lg q-gutter-sm" :class="{'bordered': bordered}" style=" --bs-gutter-x: 0.5rem;!important; ">
     <slot></slot>
   </div>
 </template>

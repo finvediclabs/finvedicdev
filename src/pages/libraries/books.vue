@@ -3,20 +3,38 @@
     <fin-portlet-header>
       <fin-portlet-heading :loading="loading">Books</fin-portlet-heading>
     </fin-portlet-header>
-    <fin-portlet-item class="q-pb-xl">
+
+    <fin-portlet-item class="q-pb-xl" v-if="booksData.length">
       <carousel-3d :totalSlides="booksData.length" :count="booksData.length" @beforeSlideChange="getCurrentSlide"
         :controls-visible="true">
         <slide v-for="(slide, i) in booksData" :key="i" :index="i">
-          <q-img :src="slide.imagePath" class="fit" :alt="slide.heading"></q-img>
+          <q-img :src="slide.imagePath" class="fit" :alt="slide.heading">
+            <template v-slot:error>
+              <q-img
+                src="https://thumbs.dreamstime.com/b/wooden-man-trying-to-open-book-dummy-looking-something-books-literature-research-concept-information-search-195345616.jpg"
+                class="full-height full-width" />
+            </template>
+          </q-img>
         </slide>
       </carousel-3d>
+    </fin-portlet-item>
+    <fin-portlet-item v-else style="height: 272px" class="q-pb-xl">
+      <div class="full-width full-height flex flex-center">
+        <q-spinner-facebook color="blue-9" size="3.5em" />
+      </div>
     </fin-portlet-item>
     <fin-portlte>
       <div class="row">
         <div class="col-12 col-md-6 flex q-pr-md">
           <q-avatar style="width:250px; height: 300px" square>
             <q-img :src="selectedSlide?.imagePath" class="fin-br-8 fit" style="border:1px solid #00000030"
-              :alt="selectedSlide?.heading"></q-img>
+              :alt="selectedSlide?.heading">
+              <template v-slot:error>
+                <q-img
+                  src="https://thumbs.dreamstime.com/b/wooden-man-trying-to-open-book-dummy-looking-something-books-literature-research-concept-information-search-195345616.jpg"
+                  class="fit" />
+              </template>
+            </q-img>
           </q-avatar>
           <fin-portlet-heading class="q-pa-md" small>
             {{ selectedSlide?.heading }}
@@ -31,7 +49,19 @@
         <div class="col-12 col-md-6  justify-center">
           <p>More Chapters</p>
           <div class="row ">
-            <div class="col-2 col-md-4 col-lg-2 q-pa-sm" v-for="item in 12">
+
+            <div class="col-2 col-md-4 col-lg-2 q-pa-sm" v-for="(item, index) in chaptersData" v-if="chaptersData.length">
+              <q-img :src="item.chapterImagePath" style="height: 120px; border: 1px solid #00000020;"
+                class="rounded-borders full-width bg-red full-width" v-if="index < 11">
+                <template v-slot:error>
+                  <q-img src="https://cakedummies.com/wp-content/uploads/book-cake-dummies-247x296.jpg"
+                    class="full-height full-width" />
+                </template>
+              </q-img>
+              <q-icon name="arrow_forward_ios" v-if="index == 11" style="height: 120px; border: 1px solid #00000020;"
+                class="rounded-borders full-width" />
+            </div>
+            <div class="col-2 col-md-4 col-lg-2 q-pa-sm" v-for="item in 12" v-else>
               <q-skeleton height="120px" />
             </div>
           </div>
@@ -62,6 +92,12 @@ export default {
       booksData: [],
       selectedSlide: {},
       loading: false,
+      chaptersData: [],
+    }
+  },
+  watch: {
+    selectedSlide() {
+      this.getChapthersData();
     }
   },
   mounted() {
@@ -83,7 +119,7 @@ export default {
     },
     getBooksData() {
       this.loading = true;
-      this.$api.get(urls.getBooksData).then(response => {
+      this.$api.get(urls.getBooksDataUrl).then(response => {
         this.loading = false;
         if (response.data.success) {
           this.booksData = response.data.data.map(books => {
@@ -102,6 +138,18 @@ export default {
         }
       }).catch(error => {
         this.loading = false;
+        this.showMsg(error.message, 'negative');
+      });
+    },
+    getChapthersData() {
+      this.chaptersLoader = true;
+      this.$api.get(urls.getBookChapterUrl).then(response => {
+        if (response.data.success) {
+          this.chaptersData = response.data.data;
+        } else {
+          this.showMsg(response.data?.message, 'negative');
+        }
+      }).catch(error => {
         this.showMsg(error.message, 'negative');
       });
     }
