@@ -71,9 +71,30 @@
         <q-space />
 
         <q-avatar size="50px" class="shadow-4">
-          <q-img src="../assets/profile.png" class="profileImg cursor-pointer rounded full-width full-height bg-blue-grey-4" />
-          <q-menu :offset="[-50, 0]">
-            <q-item class="q-pa-none right-drawer fin-profile-bg">
+          <q-img src="../assets/profile.png"
+            class="profileImg cursor-pointer rounded full-width full-height bg-blue-grey-4" />
+          <q-menu :offset="[-5, 5]" max-width="300px"  transition-show="flip-right"
+          transition-hide="rotate">
+            <q-list style="min-width: 200px">
+              <q-item clickable>
+                <q-item-section class="text-weight-bolder text-subtitle1">Name Name Name Name</q-item-section>
+              </q-item>
+              <q-separator />
+              <q-item clickable>
+                <q-item-section>Profile Settings</q-item-section>
+                <q-item-section avatar>
+                  <q-icon name="settings" />
+                </q-item-section>
+              </q-item>
+              <q-separator />
+              <q-item clickable v-ripple @click="logout">
+                <q-item-section>Log Out</q-item-section>
+                <q-item-section avatar>
+                  <q-icon name="bluetooth" />
+                </q-item-section>
+              </q-item>
+            </q-list>
+            <!-- <q-item class="q-pa-none right-drawer fin-profile-bg">
               <div class="full-height full-width">
                 <div class="text-center">
                   <q-img src="../assets/profile.png" class="profileImg-drawer q-mt-lg cursor-pointer" />
@@ -119,7 +140,7 @@
             <div class="row justify-center q-my-lg">
               <q-btn icon-right="logout" flat
                 label="log out &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" />
-            </div>
+            </div> -->
           </q-menu>
         </q-avatar>
 
@@ -267,8 +288,10 @@ export default {
         url = `/${module.value}`;
         this.$router.push({ path: url })
       }
+    },
+    logout() {
+      this.$router.push('/');
     }
-
   }
 }
 </script>
