@@ -72,7 +72,7 @@
 
         <q-avatar size="50px" class="shadow-4">
           <q-img src="../assets/profile.png"
-            class="profileImg cursor-pointer rounded full-width full-height bg-blue-grey-4" />
+            class="profileImg cursor-pointer rounded full-width full-height" />
           <q-menu :offset="[-5, 5]" max-width="300px" transition-show="flip-right" transition-hide="rotate">
             <q-list style="min-width: 200px">
               <q-item clickable>
@@ -292,13 +292,14 @@ export default {
 }
 
 .profileImg {
-  width: 100px;
-  height: 100px;
+  /* width: 100px;
+  height: 100px; */
+  background: #FF7F50;
 }
 
 .profileImg-drawer {
-  width: 120px;
-  height: 120px;
+  /* width: 120px;
+  height: 120px; */
 }
 
 .left-drawer {

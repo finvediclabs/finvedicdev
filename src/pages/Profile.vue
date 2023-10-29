@@ -9,12 +9,12 @@
     </fin-portlet-header>
     <fin-portlet-item>
       <div class="row justify-center ">
-        <div class="col-12 col-md-3">
+        <div class="col-12 col-md-3 text-center q-pb-lg">
           <q-avatar size="200px" style="background: #FF7F50"
             :class="{ 'rounded-borders': editProfile.profileBg == 'square' }" :square="editProfile.profileBg == 'square'">
             <q-img :src="imageUrl" class="fit"></q-img>
           </q-avatar>
-          <div class="q-mt-md q-ml-lg" v-if="!disableEdit">
+          <div class="q-mt-md" v-if="!disableEdit">
             <label for="fileInput" class="profile-label">
               Change Profile
             </label>
@@ -22,14 +22,14 @@
             <input id="fileInput" name="file" type="file" class="hidden-input" ref="file" @change="onChange"
               accept=".pdf,.jpg,.jpeg,.png">
             <p>Layout</p>
-            <div class="flex">
+            <div class="flex flex-center">
               <q-avatar size="50px" class="bg-grey cursor-pointer" @click="editProfile.profileBg = ''"></q-avatar>
               <q-avatar square size="50px" class="bg-grey q-mx-sm cursor-pointer"
                 @click="editProfile.profileBg = 'square'"></q-avatar>
             </div>
           </div>
-
         </div>
+        <div class="col-md-1"></div>
         <div class="col-12 col-md-5">
           <q-form @submit="updateProfile">
             <div class="row">
