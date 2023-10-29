@@ -37,8 +37,15 @@ import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 
 import usersPng from "src/assets/users.png";
 import rolesPng from "src/assets/roles.png";
-import organizationPng from "src/assets/organizations.png";
+import organizationPng from "src/assets/Saly-15.png";
 import vmSetupPng from "src/assets/vmSetup.png";
+import booksPng from "src/assets/Saly-16.png";
+import videosPng from "src/assets/Saly-24.png";
+import prasentationPng from "src/assets/Rectangle.png";
+import eventPng from "src/assets/Rectangle (1).png";
+
+
+
 export default {
   components: {
     FinPortlet,
@@ -78,18 +85,32 @@ export default {
           background: '#FF83DF',
         },
         {
-          image: rolesPng,
+          image: booksPng,
           title: 'Books',
           discription: 'Lorem Ipsum has been the industrys standard dummy text ever since',
           path: 'books',
-          background: '#FFCE70',
+          background: 'rgba(55, 66, 250, 0.50)',
         },
         {
-          image: usersPng,
+          image: videosPng,
           title: 'Videos',
           discription: 'Lorem Ipsum has been the industrys standard dummy text ever since',
           path: 'videos',
-          background: '#CCB4FF',
+          background: 'rgba(30, 144, 255, 0.50)',
+        },
+        {
+          image: prasentationPng,
+          title: 'Presentations',
+          discription: 'Lorem Ipsum has been the industrys standard dummy text ever since',
+          path: 'videos',
+          background: '#FFBD80',
+        },
+        {
+          image: eventPng,
+          title: 'Calander Events',
+          discription: 'Lorem Ipsum has been the industrys standard dummy text ever since',
+          path: 'videos',
+          background: '#FF9C78',
         }
       ]
     }
