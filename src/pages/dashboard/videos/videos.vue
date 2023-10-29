@@ -6,14 +6,15 @@
       </fin-portlet-heading>
       <fin-portlet-item>
         <router-link :to="'videos/create'">
-          <q-btn label="Create Video" icon="add" color="blue-15" class="fin-br-8 text-subtitle1 text-weight-bolder q-px-md"
-            dense no-caps />
+          <q-btn label="Create Video" icon="add" color="blue-15"
+            class="fin-br-8 text-subtitle1 text-weight-bolder q-px-md" dense no-caps />
         </router-link>
 
       </fin-portlet-item>
     </fin-portlet-header>
     <fin-portlet-item>
-      <fin-table :columns="header" :data="booksList" select />
+      <fin-table :columns="header" :data="booksList" select @reCall="getVideosData()" delete-url="api/video/delete"
+        @editFun="editDataFun" />
     </fin-portlet-item>
   </fin-portlet>
 </template>
@@ -53,6 +54,14 @@ export default {
         { image: dummyImg, title: "Book Title 10", description: 'Lorem Ipsum has been the industrys standard dummy text ever since' },
         { image: dummyImg, title: "Book Title 11", description: 'Lorem Ipsum has been the industrys standard dummy text ever since' },
       ]
+    }
+  },
+  methods: {
+    getVideosData() {
+
+    },
+    editDataFun(val) {
+      console.log(val);
     }
   }
 }

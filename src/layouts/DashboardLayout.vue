@@ -190,8 +190,7 @@ export default {
       profileMenu: false,
       CurrentDate: new Date().toDateString(),
       selectedModule: {},
-      drawerLeft: true,
-      drawerRight: true,
+      drawerLeft: window.innerWidth < 576 ?  false :true,
       miniState: false,
       modulesList: [
         { icon: 'person', label: 'Administration', value: 'admin' },
@@ -292,15 +291,9 @@ export default {
 }
 
 .profileImg {
-  /* width: 100px;
-  height: 100px; */
   background: #FF7F50;
 }
 
-.profileImg-drawer {
-  /* width: 120px;
-  height: 120px; */
-}
 
 .left-drawer {
   min-height: 300px;
@@ -308,8 +301,4 @@ export default {
 
 }
 
-.right-drawer {
-  min-height: 500px;
-  width: 300px;
-}
 </style>

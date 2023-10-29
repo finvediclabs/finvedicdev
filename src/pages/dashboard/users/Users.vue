@@ -17,51 +17,45 @@
       </fin-portlet-item>
     </fin-portlet-header>
     <fin-portlet-item>
-      <fin-table :columns="header" :data="usersList" select />
+      <fin-table :columns="header" :data="usersList" select @reCall="getUsersData()" delete-url="api/user/delete"
+        @editFun="editDataFun" />
     </fin-portlet-item>
   </fin-portlet>
 
   <q-dialog v-model="createUserDialog">
-    <fin-portlet style="min-width: 400px;max-width: 80vw">
+    <fin-portlet style="min-width: 400px;max-width: 600px;">
       <fin-portlet-header bordered>
         <fin-portlet-heading small>Create User</fin-portlet-heading>
       </fin-portlet-header>
-      <fin-portlet-item>
-        <q-form @submit="onSubmit" class="q-gutter-md">
-          <div class="row justify-center q-gutter-y-md">
-            <div class="col-sm-12 col-md-6 q-px-md">
-              <q-input outlined v-model="firstName" label="First Name *" lazy-rules
+      <fin-portlet-item class="w-100 createUserDialog">
+        <q-form @submit="onSubmit" class="formContent" ref="form">
+          <div class="row justify-center">
+            <div class="col-12 col-md-6 q-px-sm q-py-xs">
+              <q-input outlined v-model="user.fName" label="First Name *" lazy-rules
                 :rules="[val => val && val.length > 0 || 'First Name Is required']" />
             </div>
-            <div class="col-sm-12 col-md-6 q-px-md">
-              <q-input outlined v-model="lastName" label="Last Name *" lazy-rules
+            <div class="col-12 col-md-6 q-px-sm q-py-xs">
+              <q-input outlined v-model="user.lName" label="Last Name *" lazy-rules
                 :rules="[val => val && val.length > 0 || 'Last Name Is required']" />
             </div>
-            <div class="col-sm-12 col-md-6 q-px-md">
-              <q-input v-model="password" outlined :type="isPwd ? 'password' : 'text'" label="password" lazy-rules
-                :rules="[val => val && val.length > 0 || 'Password Is required']">
-                <template v-slot:append>
-                  <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer"
-                    @click="isPwd = !isPwd" />
-                </template>
-              </q-input>
-            </div>
-            <div class="col-sm-12 col-md-6 q-px-md">
-              <q-input outlined v-model="email" type="email" label="Email *" lazy-rules
+            <div class="col-12  q-px-sm q-py-xs">
+              <q-input outlined v-model="user.mail" type="email" label="Email *" lazy-rules
                 :rules="[val => val && val.length > 0 || 'Email Is required']" />
             </div>
-            <div class="col-sm-12 col-md-6 q-px-md">
-              <q-input outlined v-model="phoneNumber" type="number" label="Phonbe Nunber *" lazy-rules
+            <div class="col-12 q-px-sm q-py-xs">
+              <q-input outlined v-model="user.Number" type="number" label="Phonbe Nunber *" lazy-rules
                 :rules="[val => val && val.length > 0 || 'Phone Number Is required']" />
             </div>
-            <div class="col-sm-12 col-md-6 q-px-md">
-              <q-select outlined v-model="owner" :options="ownerOptions" label="Owner *" lazy-rules
+            <div class="col-12 q-px-sm q-py-xs">
+              <q-select outlined v-model="user.role" :options="ownerOptions" label="Owner *" lazy-rules
                 :rules="[val => val && val.length > 0 || 'Select option']" />
             </div>
-            <div class="col-sm-12 col-md-6 q-px-md text-center q-pt-lg"></div>
-            <div class="col-sm-12 col-md-6 q-px-md text-right q-pt-lg">
-              <q-btn label="Submit" type="submit" color="primary" />
-              <q-btn label="Close" v-close-popup type="reset" color="primary" flat class="q-ml-sm" />
+            <div class="col-12 col-md-6 q-px-sm q-py-xs text-center q-pt-lg"></div>
+            <div class="col-12 col-md-6 q-px-sm q-py-xs text-right q-pt-lg">
+              <q-btn label="Close" v-close-popup type="reset" color="primary" flat class="q-mr-sm" no-caps />
+              <q-btn label="Submit" type="submit" color="primary" :disable="submitLoading" no-caps>
+                <q-spinner-facebook size="xs" class="q-ml-sm" v-if="submitLoading" />
+              </q-btn>
             </div>
           </div>
         </q-form>
@@ -96,21 +90,25 @@ export default {
       programSearch: '',
       loading: true,
       createUserDialog: false,
-      firstName: '',
-      lastName: '',
       isPwd: true,
-      password: '',
-      email: '',
-      phoneNumber: '',
-      owner: '',
       ownerOptions: ['position-1', 'position-2', 'position-3', 'position-4'],
       header: [
+        { label: 'S.No', key: 'index', align: 'center' },
         { label: 'Name', key: 'firstName', align: 'start' },
         { label: 'Email Address', key: 'email', align: 'center' },
         { label: 'Role', key: 'owner', align: 'center' },
         { label: 'Date Added', key: 'createdAt', align: 'center' },
       ],
       usersList: [],
+      submitLoading: false,
+      user: {
+        fName: '',
+        lName: '',
+        mail: '',
+        Number: '',
+        role: '',
+        id: '',
+      }
     }
   },
   mounted() {
@@ -118,6 +116,7 @@ export default {
   },
   methods: {
     createUser() {
+      this.user = {};
       this.createUserDialog = true;
     },
     showMsg(message, type) {
@@ -131,18 +130,18 @@ export default {
       });
     },
     getUsersData() {
-
       this.loading = true;
       this.$api.get(urls.getUsersUrl).then(response => {
         this.loading = false;
         if (response.data.success) {
-          this.usersList = response.data.data.map(user => {
+          this.usersList = response.data.data.map((user, index) => {
             return {
+              "index": index + 1,
               "id": user.id,
               "accountId": user.accountId,
               "firstName": user.firstName,
               "lastName": user.lastName,
-              "name": `$[user.firstName} ${user.lastName}`,
+              "name": `${user.firstName} ${user.lastName}`,
               "email": user.email,
               "owner": user.owner,
               "photoPath": user.photoPath,
@@ -155,9 +154,63 @@ export default {
         }
       }).catch(error => {
         this.loading = false;
-        this.showMsg(error.message, 'negative');
+        this.showMsg(error.response?.data.message || error.message, 'negative');
       });
     },
+    onSubmit() {
+      if (!this.submitLoading) {
+        this.submitLoading = true;
+        let request = {
+          firstName: this.user.fName,
+          lastName: this.user.lName,
+          email: this.user.mail,
+          phoneNumber: this.user.Number,
+          role: this.user.role,
+          id: this.user.id,
+        };
+        this.$api.post(request).then(response => {
+          this.submitLoading = false;
+          if (response.data.success) {
+            this.showMsg(response.data?.message, 'positive');
+            this.getUsersData();
+          } else {
+            this.showMsg(response.data?.message, 'negative');
+          }
+        }).catch(error => {
+          this.submitLoading = false;
+          this.showMsg(error.response?.data.message || error.message, 'negative');
+        })
+      }
+    },
+    closecreateUserDialog() {
+      this.createUserDialog = false;
+      this.$refs.form.reset();
+    },
+    editDataFun(val) {
+      this.user = {
+        fName: val.firstName,
+        lName: val.lastName,
+        mail: val.email,
+        Number: val.phoneNumber,
+        role: val.owner,
+        id: val.id,
+      };
+      this.createUserDialog = true;
+    }
   }
 }
 </script>
+<style>
+.createUserDialog {
+  background-image: url("../../../assets/users.png");
+  background-repeat: no-repeat;
+  /* background-origin: content-box; */
+  background-position: center;
+  background-size: 100% 100%;
+}
+
+.formContent {
+  background: #ffffff;
+  opacity: 0.9;
+}
+</style>

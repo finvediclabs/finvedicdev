@@ -1,18 +1,21 @@
 <template>
   <div class="full-width fin-table" :class="{ singleData: data.length == 1 }">
     <table class="table full-width rounded-borders shadow-6" borders="0">
-      <thead >
+      <thead>
         <tr>
           <th style="width: 50px" v-if="allowSelect"><q-checkbox v-model="allSelect" :val="data" dark /></th>
-          <th v-for="(column, j) in columns" :key="column" :style="{ 'text-align': column.align }" class="vertical-middle">
+          <th v-for="(column, j) in columns" :key="column" :style="{ 'text-align': column.align }"
+            class="vertical-middle">
             {{ column.label }}
           </th>
+          <th></th>
         </tr>
       </thead>
       <tbody v-if="data.length">
         <tr v-for="(item, i) in data">
           <td v-if="allowSelect"><q-checkbox color="cyan" v-model="selectedItemsData" :val="item" /></td>
-          <td v-for="(column , j) in columns" :key="column" :style="{ 'text-align': column.align }" class="vertical-middle">
+          <td v-for="(column, j) in columns" :key="column" :style="{ 'text-align': column.align }"
+            class="vertical-middle">
             <span v-if="column.type === 'image'">
               <q-avatar size="40px">
                 <img :src="item[column.key]" class="fit">
@@ -21,6 +24,24 @@
             <span v-else>
               {{ item[column.key] }}
             </span>
+          </td>
+          <td class="text-right">
+            <q-icon name="more_horiz" class="bg- q-px-sm cursor-pointer" size="sm">
+              <q-menu anchor="top right" self="top left">
+                <q-list>
+                  <q-item clickable v-close-popup @click="editItem(item)">
+                    <q-item-section>
+                      <q-item-label>Edit</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                  <q-item clickable v-close-popup @click="deleteItem(item)">
+                    <q-item-section>
+                      <q-item-label>Delete</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-menu>
+            </q-icon>
           </td>
         </tr>
       </tbody>
@@ -51,6 +72,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    deleteUrl: {
+      type: String,
+      default: null,
+    }
   },
   data() {
     return {
@@ -65,7 +90,40 @@ export default {
     }
   },
   methods: {
-
+    showMsg(message, type) {
+      this.$q.notify({
+        message: message || "Something Went Wrong!",
+        type: type,
+        position: 'top-right',
+        actions: [
+          { icon: 'close', color: 'white', handler: () => { } }
+        ]
+      });
+    },
+    editItem(item) {
+      this.$emit('editFun', item);
+    },
+    deleteItem(item) {
+      this.$q.dialog({
+        title: 'Confirm',
+        message: `Are You sure want to delete ${item.name}`,
+        cancel: true,
+        persistent: true
+      }).onOk(() => {
+        this.$api.post(this.deleteUrl, {
+          id: item.id
+        }).then(response => {
+          if (response.data.success) {
+            this.showMsg(response.data.message, 'positive');
+            this.$emit('reCall');
+          } else {
+            this.this.showMsg(respinse?.data.message, 'negative');
+          }
+        }).catch(error => {
+          this.showMsg(error.respinse?.data.message || error.message, 'negative');
+        });
+      });
+    }
   }
 }
 </script>

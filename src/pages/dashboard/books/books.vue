@@ -12,7 +12,8 @@
       </fin-portlet-item>
     </fin-portlet-header>
     <fin-portlet-item>
-      <fin-table :columns="header" :data="booksList" select />
+      <fin-table :columns="header" :data="booksList" select @reCall="getBooksData()" delete-url="api/book/delete"
+        @editFun="editDataFun" />
     </fin-portlet-item>
   </fin-portlet>
 </template>
@@ -68,6 +69,7 @@ export default {
               return {
                 index: i + 1,
                 id: book.id,
+                name: book.heading, 
                 accountId: book.accountId,
                 description: book.description,
                 heading: book.heading,
@@ -80,9 +82,12 @@ export default {
           }
         }).catch(error => {
           this.loading = false;
-          this.showMsg( error.response?.data.message || error.message, 'negative');
+          this.showMsg(error.response?.data.message || error.message, 'negative');
         });
       }
+    },
+    editDataFun(val) {
+      console.log(val, 'val');
     }
   },
 }

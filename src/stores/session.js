@@ -11,7 +11,7 @@ export const useSessionStore = defineStore('session', {
   },
   actions: {
     setSessionToken(val) {
-      setToken(val);
+      // setToken(val);
       this.token = val;
     },
     setUserType(val) {

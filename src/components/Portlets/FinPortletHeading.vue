@@ -1,10 +1,10 @@
 <template>
   <div class="col">
-    <p :class="headingType" class="page-heading text-weight-bolder">
-      <q-icon name="arrow_back" style="font-weight: bold;" class="cursor-pointer" @click="$router.go(-1)" v-if="backArrow"/>
+    <p :class="headingType" class="page-heading text-weight-bolder" style="white-space: no-wrap !important;">
+      <q-icon name="arrow_back" style="font-weight: bold;" class="cursor-pointer" @click="$router.go(-1)"
+        v-if="backArrow" />
       <slot></slot>
-
-      <q-spinner-hourglass v-if="loading" color="blue-10" size="1em" />
+      <q-spinner-facebook v-if="loading" color="blue-10" size="1em" />
     </p>
   </div>
 </template>
