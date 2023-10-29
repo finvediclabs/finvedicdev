@@ -65,7 +65,7 @@
             </svg>
           </div>
           <landing-page style="z-index: 1" />
-          <div class="row justify-between">
+          <div class="row justify-between q-pt-lg">
             <div class="text-center gurukul-text">
               <span class="text-subtitle2">A product by</span> <br>
               <span class="text-h6">FINVEDIC</span>
@@ -95,7 +95,7 @@ export default {
     return {
       currentPage: 'loginPage',
       screenWidth:  window.innerWidth,
-      logoColor: this.screenWidth < 600 ? '#303030' : '#fff',
+      logoColor: window.innerWidth < 600 ? '#303030' : '#fff',
     }
   },
   mounted() {
