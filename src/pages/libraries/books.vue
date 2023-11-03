@@ -47,22 +47,22 @@
 
         </div>
         <div class="col-12 col-md-6  justify-center">
-          <p>More Chapters</p>
+          <!-- <p>More Chapters</p> -->
           <div class="row ">
 
-            <div class="col-2 col-md-4 col-lg-2 q-pa-sm" v-for="(item, index) in chaptersData" v-if="chaptersData.length">
-              <q-img :src="item.chapterImagePath" style="height: 120px; border: 1px solid #00000020;"
-                class="rounded-borders full-width bg-red full-width" v-if="index < 11">
+            <div class="col-6 col-md-4 col-lg-3 q-pa-sm" v-for="(item, index) in chaptersData" v-if="chaptersData.length">
+              <q-img :src="item.chapterImagePath" style="height: 150px; border: 1px solid #00000020;"
+                class="rounded-borders full-width bg-red full-width" v-if="index < 7">
                 <template v-slot:error>
                   <q-img src="https://cakedummies.com/wp-content/uploads/book-cake-dummies-247x296.jpg"
                     class="full-height full-width" />
                 </template>
               </q-img>
-              <q-icon name="arrow_forward_ios" v-if="index == 11" style="height: 120px; border: 1px solid #00000020;"
+              <q-icon name="arrow_forward_ios" v-if="index == 7" style="height: 150px; border: 1px solid #00000020;"
                 class="rounded-borders full-width" />
             </div>
-            <div class="col-2 col-md-4 col-lg-2 q-pa-sm" v-for="item in 12" v-else>
-              <q-skeleton height="120px" />
+            <div class="col-6 col-md-4 col-lg-3 q-pa-sm" v-for="item in 8" v-else>
+              <q-skeleton height="150px" />
             </div>
           </div>
 
@@ -98,7 +98,7 @@ export default {
   watch: {
     selectedSlide() {
       this.getChapthersData();
-    }
+    },
   },
   mounted() {
     this.getBooksData();
@@ -143,15 +143,35 @@ export default {
     },
     getChapthersData() {
       this.chaptersLoader = true;
-      this.$api.get(urls.getBookChapterUrl).then(response => {
+      this.$api.get(urls.getBookChapterUrl, {
+        params: {
+          bookId: this.selectedSlide?.id
+        }
+      }).then(response => {
+        this.loading = false;
         if (response.data.success) {
-          this.chaptersData = response.data.data;
+          this.chaptersData = response.data.data.map((chapter, index) => {
+            return {
+              index: index + 1,
+              id: chapter.id,
+              bookId: chapter.bookId,
+              accountId: chapter.accountId,
+              description: chapter.description,
+              chapterTitle: chapter.chapterTitle,
+              chapterImagePath: chapter.firstchapterImagePath,
+              chapterFilePath: chapter.chapterFilePath,
+              createdAt: moment(chapter.createdAt).format('YYYY-MM-DD'),
+              updatedAt: moment(chapter.updatedAt).format('YYYY-MM-DD'),
+              deletedAt: moment(chapter.deletedAt).format('YYYY-MM-DD')
+            }
+          });
         } else {
           this.showMsg(response.data?.message, 'negative');
         }
       }).catch(error => {
-        this.showMsg(error.message, 'negative');
-      });
+        this.chaptersLoader = false;
+        this.showMsg(error.response?.data.message || error.message, 'negative');
+      })
     }
   }
 };

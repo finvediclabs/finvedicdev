@@ -1,4 +1,5 @@
 export const urls = {
-  getUsersUrl: 'api/users',
-  getBooksDataUrl: 'api/books',
+  usersUrl: 'api/users',
+  booksDataUrl: 'api/books',
+  getRolesUrl: 'api/roles',
 }

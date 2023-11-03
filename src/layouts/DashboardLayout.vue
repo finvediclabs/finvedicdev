@@ -63,24 +63,30 @@
         <q-space />
 
         <q-btn icon="notifications_active" round class="bg-finvedic text-white q-mx-lg">
-          <q-menu class="fin-br-8" min-width="120px" style="width:230px;background-color: #EAEAEA;opacity:0.93"
-            :offset="[-0, 10]" transition-show="scale" transition-hide="scale">
-            <div class="q-pa-md">
-              <div class="full-width row items-center">
-                Tomorrow's Class
-                <q-space />
-                <q-icon name="calendar_month" size="20px" />
+          <q-menu class="fin-br-8 q-py-md shadow-0" min-width="120px" style="width:230px;background: transparent!important;"
+            :offset="[-0, 10]" transition-show="flip-right" transition-hide="rotate">
+
+            <div style="background-color: #EAEAEA;opacity:0.99" class="q-py-md shadow-2 fin-br-8">
+              <div class="q-pa-sm absolute-top-right arrow" style="margin-top: -19px">
+                <q-icon name="arrow_drop_up" size="xl" style="color: #EAEAEA"></q-icon>
               </div>
-              <div class="fill-width text-center items-center row justify-center text-body1 text-weight-bolder q-py-lg"
-                style="align-items: center;">
-                <div>Nov</div>
-                <div class="text-h5 q-px-md text-weight-bolder">21</div>
-                <div>2023</div>
-              </div>
-              <div class="full-width bg-finvedic row q-px-sm q-py-xs fin-br-8 text-white cursor-pointer">
-                <div>Banking</div>
-                <q-space />
-                <div>11:00 AM </div>
+              <div class="q-px-md">
+                <div class="full-width row items-center">
+                  Tomorrow's Class
+                  <q-space />
+                  <q-icon name="calendar_month" size="20px" />
+                </div>
+                <div class="fill-width text-center items-center row justify-center text-body1 text-weight-bolder q-py-lg"
+                  style="align-items: center;">
+                  <div>Nov</div>
+                  <div class="text-h5 q-px-md text-weight-bolder">21</div>
+                  <div>2023</div>
+                </div>
+                <div class="full-width bg-finvedic row q-px-sm q-py-xs fin-br-8 text-white cursor-pointer">
+                  <div>Banking</div>
+                  <q-space />
+                  <div>11:00 AM </div>
+                </div>
               </div>
             </div>
           </q-menu>
@@ -88,23 +94,28 @@
 
         <q-avatar size="50px" class="shadow-4">
           <q-img src="../assets/profile.png" class="profileImg cursor-pointer rounded full-width full-height" />
-          <q-menu :offset="[-5, 5]" max-width="300px" style="width:230px;background-color: #EAEAEA;opacity:0.93"
-            class="fin-br-8 q-py-md" transition-show="flip-right" transition-hide="rotate">
-            <q-list style="min-width: 200px" class="text-weight-bold">
-              <q-item @click="$router.push('/profile')" clickable v-close-popup>
-                <q-item-section>Profile</q-item-section>
-              </q-item>
-              <q-item @click="logout" clickable v-close-popup>
-                <q-item-section>Log Out</q-item-section>
-                <q-item-section >
-                  <svg width="27" height="9" viewBox="0 0 27 9" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path id="Arrow 3"
-                      d="M26.3536 4.85355C26.5488 4.65829 26.5488 4.34171 26.3536 4.14644L23.1716 0.964464C22.9763 0.769202 22.6597 0.769202 22.4645 0.964464C22.2692 1.15973 22.2692 1.47631 22.4645 1.67157L25.2929 4.5L22.4645 7.32843C22.2692 7.52369 22.2692 7.84027 22.4645 8.03553C22.6597 8.23079 22.9763 8.23079 23.1716 8.03553L26.3536 4.85355ZM4.37114e-08 5L26 5L26 4L-4.37114e-08 4L4.37114e-08 5Z"
-                      fill="black" />
-                  </svg>
-                </q-item-section>
-              </q-item>
-            </q-list>
+          <q-menu :offset="[-5, 5]" max-width="300px" style="width:230px;background: transparent!important;"
+            class="fin-br-8 q-py-md shadow-0" transition-show="flip-right" transition-hide="rotate">
+            <div style="background-color: #EAEAEA;opacity:0.99" class="q-py-md shadow-2 fin-br-8">
+              <div class="q-pa-sm absolute-top-right arrow" style="margin-top: -19px">
+                <q-icon name="arrow_drop_up" size="xl" style="color: #EAEAEA"></q-icon>
+              </div>
+              <q-list style="min-width: 200px" class="text-weight-bold">
+                <q-item @click="$router.push('/profile')" clickable v-close-popup>
+                  <q-item-section>Profile</q-item-section>
+                </q-item>
+                <q-item @click="logout" clickable v-close-popup>
+                  <q-item-section>Log Out</q-item-section>
+                  <q-item-section>
+                    <svg width="27" height="9" viewBox="0 0 27 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path id="Arrow 3"
+                        d="M26.3536 4.85355C26.5488 4.65829 26.5488 4.34171 26.3536 4.14644L23.1716 0.964464C22.9763 0.769202 22.6597 0.769202 22.4645 0.964464C22.2692 1.15973 22.2692 1.47631 22.4645 1.67157L25.2929 4.5L22.4645 7.32843C22.2692 7.52369 22.2692 7.84027 22.4645 8.03553C22.6597 8.23079 22.9763 8.23079 23.1716 8.03553L26.3536 4.85355ZM4.37114e-08 5L26 5L26 4L-4.37114e-08 4L4.37114e-08 5Z"
+                        fill="black" />
+                    </svg>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </div>
           </q-menu>
         </q-avatar>
 
@@ -131,8 +142,9 @@
                 </q-item-section>
               </span>
 
-              <q-expansion-item v-if="module.menu" class="q-pa-none full-width module-select" expand-icon-class="text-white"
-                :default-opened="getExpansionBoolean(module)" :icon="module.icon" :label="module.label">
+              <q-expansion-item v-if="module.menu" class="q-pa-none full-width module-select"
+                expand-icon-class="text-white" :default-opened="getExpansionBoolean(module)" :icon="module.icon"
+                :label="module.label">
                 <q-item v-for="(item, i) in module.menu" :key="item" clickable v-ripple class="module-select q-my-sm"
                   :class="getActiveMenuItemClass(module, item)" @click="changeLocation(module, item)">
                   <q-item-section avatar>
@@ -177,7 +189,7 @@
     <!-- </div> -->
     <q-page-container>
       <q-page>
-        <router-view />
+        <router-view v-if="token" />
       </q-page>
     </q-page-container>
   </q-layout>
@@ -192,12 +204,12 @@ export default {
   setup() {
     const session = useSessionStore();
     const { token, userType } = storeToRefs(session);
-    const { setSessionToken, setUserType } = session;
+    const { setUserType, setSessionToken } = session;
     return {
       token,
       userType,
-      setSessionToken,
       setUserType,
+      setSessionToken
     }
   },
   data() {
@@ -224,9 +236,7 @@ export default {
     }
   },
   mounted() {
-    if (this.token) {
-      // setToken(this.token);
-    } else {
+    if (!this.token) {
       this.$router.push('/');
     }
 
@@ -237,9 +247,7 @@ export default {
   },
   watch: {
     token() {
-      if (this.token) {
-        // setToken(this.token);
-      } else {
+      if (!this.token) {
         this.$router.push('/');
       }
     }
@@ -282,14 +290,16 @@ export default {
     },
     logout() {
       this.$q.dialog({
-        title: 'Log Out',
+        title: 'Are You Sure Want To Log Out?',
         cancel: {
           label: 'No',
+          color: 'black',
           flat: true
         },
         ok: {
           label: 'Yes',
-          flat: true,
+          color: 'red',
+          // flat: true,
         },
         persistent: true
       }).onOk(() => {

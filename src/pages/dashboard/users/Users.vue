@@ -71,8 +71,16 @@ import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 import { urls } from "src/pages/dashboard/urls";
 import moment from "moment"
+import { useProfileStore } from "src/stores/profile";
+import { storeToRefs } from "pinia";
 export default {
-
+  setup() {
+    const profileStore = useProfileStore();
+    const { profile } = storeToRefs(profileStore);
+    return {
+      profile
+    }
+  },
   components: {
     FinTable,
     FinPortlet,
@@ -82,8 +90,6 @@ export default {
   },
   data() {
     return {
-      appUrl: import.meta.env.VUE_APP_CORE_URL,
-      urls: urls,
       tab: 'allUsers',
       roleSearch: '',
       roleOptions: ['trinee', 'client'],
@@ -114,6 +120,14 @@ export default {
   mounted() {
     this.getUsersData();
   },
+  watch: {
+    roleSearch() {
+      this.getUsersData();
+    },
+    programSearch() {
+      this.getUsersData();
+    }
+  },
   methods: {
     createUser() {
       this.user = {};
@@ -131,7 +145,7 @@ export default {
     },
     getUsersData() {
       this.loading = true;
-      this.$api.get(urls.getUsersUrl).then(response => {
+      this.$api.get(urls.usersUrl).then(response => {
         this.loading = false;
         if (response.data.success) {
           this.usersList = response.data.data.map((user, index) => {
@@ -161,14 +175,16 @@ export default {
       if (!this.submitLoading) {
         this.submitLoading = true;
         let request = {
+          accountId: this.profile?.id,
           firstName: this.user.fName,
           lastName: this.user.lName,
           email: this.user.mail,
           phoneNumber: this.user.Number,
           role: this.user.role,
           id: this.user.id,
+          password: "Welcome@123",
         };
-        this.$api.post(request).then(response => {
+        this.$api.post(urls.usersUrl, request).then(response => {
           this.submitLoading = false;
           if (response.data.success) {
             this.showMsg(response.data?.message, 'positive');

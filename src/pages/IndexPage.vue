@@ -8,6 +8,7 @@ export default {
   setup() {
     const session = useSessionStore();
     const { token, userType } = storeToRefs(session);
+    // session.setSessionToken();
     return {
       token,
       userType,

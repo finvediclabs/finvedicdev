@@ -103,15 +103,14 @@ export default {
           password: this.password,
         }).then(response => {
           this.loading = false;
-          // if (response.data.success) {
-          sessionStorage.setItem('accessToken', response.data.accessToken);
-          sessionStorage.setItem('userType', 1);
-          this.setSessionToken(response.data.accessToken);
-          this.setUserType(response.data.userType || 1);
-
-          // } else {
-          // this.showMsg(response.data.message || "Something Went Wrong!");
-          // }
+          if (response.data.success) {
+            sessionStorage.setItem('accessToken', response.data.accessToken);
+            sessionStorage.setItem('userType', 1);
+            this.setSessionToken(response.data.accessToken);
+            this.setUserType(response.data.userType || 1);
+          } else {
+            this.showMsg(response.data.message || "Something Went Wrong!");
+          }
         }).catch(error => {
           this.loading = false;
           this.showMsg(error.response?.data.message || error.message, 'negative');

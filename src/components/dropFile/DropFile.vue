@@ -61,6 +61,7 @@ export default {
     },
     remove(i) {
       this.files.splice(i, 1);
+      this.$emit('update', this.files);
     },
     generateURL(file) {
       let fileSrc = URL.createObjectURL(file);

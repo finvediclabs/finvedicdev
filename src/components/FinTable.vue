@@ -8,7 +8,7 @@
             class="vertical-middle">
             {{ column.label }}
           </th>
-          <th></th>
+          <th v-if="showActions"></th>
         </tr>
       </thead>
       <tbody v-if="data.length">
@@ -25,21 +25,32 @@
               {{ item[column.key] }}
             </span>
           </td>
-          <td class="text-right">
+          <td class="text-right" v-if="showActions">
             <q-icon name="more_horiz" class="bg- q-px-sm cursor-pointer" size="sm">
-              <q-menu anchor="top right" self="top left">
-                <q-list>
-                  <q-item clickable v-close-popup @click="editItem(item)">
-                    <q-item-section>
-                      <q-item-label>Edit</q-item-label>
-                    </q-item-section>
-                  </q-item>
-                  <q-item clickable v-close-popup @click="deleteItem(item)">
-                    <q-item-section>
-                      <q-item-label>Delete</q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </q-list>
+              <q-menu style="width:150px;background: transparent!important;" class="shadow-0">
+                <div style="background-color: #EAEAEA;opacity:0.99" class="fin-br-8 q-mt-sm">
+                  <div class="absolute-top-right" style="margin-top: -19px">
+                    <q-icon name="arrow_drop_up" size="xl" style="color: #EAEAEA"></q-icon>
+                  </div>
+                  <div class="q-py-sm text-weight-bolder">
+                    <q-list>
+                      <q-item clickable v-close-popup @click="editItem(item)">
+                        <q-item-section>
+                          <q-item-label>Edit</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                      <div class="justify-center flex">
+                        <q-separator style="width: 70%" />
+                      </div>
+                      <q-item clickable v-close-popup @click="deleteItem(item)">
+                        <q-item-section>
+                          <q-item-label>Delete</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </div>
+                </div>
+
               </q-menu>
             </q-icon>
           </td>
@@ -75,6 +86,10 @@ export default {
     deleteUrl: {
       type: String,
       default: null,
+    },
+    showActions: {
+      type: Boolean,
+      default: true,
     }
   },
   data() {
@@ -107,8 +122,16 @@ export default {
       this.$q.dialog({
         title: 'Confirm',
         message: `Are You sure want to delete ${item.name}`,
-        cancel: true,
-        persistent: true
+        persistent: true,
+        cancel: {
+          label: 'No',
+          color: 'black',
+          flat: true
+        },
+        ok: {
+          label: 'Yes',
+          color: 'red',
+        },
       }).onOk(() => {
         this.$api.post(this.deleteUrl, {
           id: item.id

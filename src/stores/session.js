@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { setToken } from "src/boot/axios"
+import { useProfileStore } from "./profile"
 
 export const useSessionStore = defineStore('session', {
   state: () => ({
@@ -11,8 +12,10 @@ export const useSessionStore = defineStore('session', {
   },
   actions: {
     setSessionToken(val) {
-      // setToken(val);
+      setToken(val);
       this.token = val;
+      const profile = useProfileStore();
+      profile.fetchProfile();
     },
     setUserType(val) {
       this.userType = val;

@@ -62,14 +62,14 @@ export default {
     getBooksData() {
       if (!this.loading) {
         this.loading = true;
-        this.$api.get(urls.getBooksDataUrl).then(response => {
+        this.$api.get(urls.booksDataUrl).then(response => {
           this.loading = false;
           if (response.data.success) {
             this.booksList = response.data.data.map((book, i) => {
               return {
                 index: i + 1,
                 id: book.id,
-                name: book.heading, 
+                name: book.heading,
                 accountId: book.accountId,
                 description: book.description,
                 heading: book.heading,
