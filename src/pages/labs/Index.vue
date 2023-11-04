@@ -19,14 +19,14 @@
                       <q-space />
                       <q-icon name="more_vert" size="20px" class="cursor-pointer"></q-icon>
                     </div>
-                    <div class="flex q-my-xs">
-                      <div class="q-px-md shadow-4 rounded-borders q-pa-xs flex">{{ lab.osType }}</div>
-                    </div>
-                    <div class="col flex items-center">
-                      <div>
+                    <div class="flex">
+                      <p>
                         <stong>Instance : </stong>
                         {{ lab.size }}
-                      </div>
+                      </p>
+                    </div>
+                    <div class="col flex items-center">
+                      <div class="q-px-md shadow-4 rounded-borders q-pa-xs text-center" style="width:80px">{{ lab.osType }}</div>
                       <q-space />
                       <q-btn :label="lab.locked ? 'Locked' : 'Lock'" size="12px" dense class="q-px-md text-weight-bold"
                         rounded :style="{ background: lab.locked ? '#D49F8A' : '#7BFF90' }">
@@ -81,55 +81,55 @@ export default {
       });
     },
     getAzureVmsData() {
-      // this.labsData = [
-      //   {
-      //     "size": "Standard_D2s_v3",
-      //     "osType": "Windows",
-      //     "name": "Sys0001"
-      //   },
-      //   {
-      //     "size": "Standard_D2s_v3",
-      //     "osType": "Linux",
-      //     "name": "Sys0002"
-      //   },
-      //   {
-      //     "size": "Standard_D2s_v3",
-      //     "osType": "Windows",
-      //     "name": "Sys0003"
-      //   },
-      //   {
-      //     "size": "Standard_D2s_v3",
-      //     "osType": "Linux",
-      //     "name": "Sys0004"
-      //   },
-      //   {
-      //     "size": "Standard_D2s_v3",
-      //     "osType": "Windows",
-      //     "name": "Sys0005"
-      //   },
-      //   {
-      //     "size": "Standard_D2s_v3",
-      //     "osType": "Linux",
-      //     "name": "Sys0006"
-      //   },
-      //   {
-      //     "size": "Standard_D2s_v3",
-      //     "osType": "Windows",
-      //     "name": "Sys0007"
-      //   }
-      // ];
-      this.loading = true;
-      this.$api.get(urls.getAzureVmsUrl).then(response => {
-        this.loading = false;
-        if (response.data.success) {
-          this.labsData = response.data.data;
-        } else {
-          this.showMsg(response.data?.message, 'negative');
+      this.labsData = [
+        {
+          "size": "Standard_D2s_v3",
+          "osType": "Windows",
+          "name": "Sys0001"
+        },
+        {
+          "size": "Standard_D2s_v3",
+          "osType": "Linux",
+          "name": "Sys0002"
+        },
+        {
+          "size": "Standard_D2s_v3",
+          "osType": "Windows",
+          "name": "Sys0003"
+        },
+        {
+          "size": "Standard_D2s_v3",
+          "osType": "Linux",
+          "name": "Sys0004"
+        },
+        {
+          "size": "Standard_D2s_v3",
+          "osType": "Windows",
+          "name": "Sys0005"
+        },
+        {
+          "size": "Standard_D2s_v3",
+          "osType": "Linux",
+          "name": "Sys0006"
+        },
+        {
+          "size": "Standard_D2s_v3",
+          "osType": "Windows",
+          "name": "Sys0007"
         }
-      }).catch(error => {
-        this.loading = false;
-        this.showMsg(error.response?.data.message || error.message, 'negative');
-      })
+      ];
+      // this.loading = true;
+      // this.$api.get(urls.getAzureVmsUrl).then(response => {
+      //   this.loading = false;
+      //   if (response.data.success) {
+      //     this.labsData = response.data.data;
+      //   } else {
+      //     this.showMsg(response.data?.message, 'negative');
+      //   }
+      // }).catch(error => {
+      //   this.loading = false;
+      //   this.showMsg(error.response?.data.message || error.message, 'negative');
+      // })
     }
   }
 }

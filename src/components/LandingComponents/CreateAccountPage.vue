@@ -84,7 +84,13 @@ export default {
         email: this.email,
         password: this.password,
       }).then(response => {
-        console.log(response.data);
+        if (response.data.success) {
+          this.showMsg(response.data.data, 'positive');
+          this.showMsg("Please Login With Your credentials", 'positive');
+        } else {
+          this.showMsg(response.data.message, 'negative');
+        }
+        this.$router.push('/');
       }).catch(error => {
         this.showMsg(error.response?.data.message || error.message, 'negative');
       })

@@ -145,11 +145,9 @@
               <q-expansion-item v-if="module.menu" class="q-pa-none full-width module-select"
                 expand-icon-class="text-white" :default-opened="getExpansionBoolean(module)" :icon="module.icon"
                 :label="module.label">
-                <q-item v-for="(item, i) in module.menu" :key="item" clickable v-ripple class="module-select q-my-sm"
+                <q-item v-for="(item, i) in module.menu" :key="item" clickable v-ripple class="module-select q-my-sm q-px-md"
                   :class="getActiveMenuItemClass(module, item)" @click="changeLocation(module, item)">
-                  <q-item-section avatar>
-                    <q-icon :name="item.icon" />
-                  </q-item-section>
+                  <q-item-section avatar />
                   <q-item-section class="text-body1">
                     {{ item.label }}
                   </q-item-section>
@@ -161,7 +159,7 @@
 
         </q-list>
 
-        <q-item v-if="!miniState">
+        <!-- <q-item v-if="!miniState">
           <div class="text-center full-width q-py-md">
             <small>Upgrade To</small><br>
             <div class="items-center row justify-center">
@@ -182,7 +180,7 @@
             <small>for More resources</small><br>
             <q-btn label="upgrade" class="fin-text-blue bg-white q-px-lg q-my-sm" />
           </div>
-        </q-item>
+        </q-item> -->
 
       </q-scroll-area>
     </q-drawer>
