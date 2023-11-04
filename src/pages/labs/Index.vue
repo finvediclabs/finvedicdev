@@ -9,8 +9,8 @@
           <div class="col-12 colmd-6 col-lg-4 q-pa-md" v-for="(lab, index) in labsData" :key="lab.id">
             <q-card class="full-width shadow-8" style="border-radius: 10px!important;">
               <q-card-section horizontal :style="{ border: lab.locked ? '2px solid #FF7F50' : '2px solid #00C520' }">
-                <q-card-section class="q-pa-lg lab-img">
-                  <q-img :src="labImg" class="fit"></q-img>
+                <q-card-section class="q-pa-md lab-img flex items-center">
+                  <q-img :src="labImg" class="full-width"></q-img>
                 </q-card-section>
                 <q-card-section class="" style="width: 70%;font-size: 13px;">
                   <div class="column full-width">
@@ -85,37 +85,44 @@ export default {
         {
           "size": "Standard_D2s_v3",
           "osType": "Windows",
-          "name": "Sys0001"
+          "name": "Sys0001",
+          "locked": true,
         },
         {
           "size": "Standard_D2s_v3",
           "osType": "Linux",
-          "name": "Sys0002"
+          "name": "Sys0002",
+          "locked": false,
         },
         {
           "size": "Standard_D2s_v3",
           "osType": "Windows",
-          "name": "Sys0003"
+          "name": "Sys0003",
+          "locked": false,
         },
         {
           "size": "Standard_D2s_v3",
           "osType": "Linux",
-          "name": "Sys0004"
+          "name": "Sys0004",
+          "locked": true,
         },
         {
           "size": "Standard_D2s_v3",
           "osType": "Windows",
-          "name": "Sys0005"
+          "name": "Sys0005",
+          "locked": false,
         },
         {
           "size": "Standard_D2s_v3",
           "osType": "Linux",
-          "name": "Sys0006"
+          "name": "Sys0006",
+          "locked": false,
         },
         {
           "size": "Standard_D2s_v3",
           "osType": "Windows",
-          "name": "Sys0007"
+          "name": "Sys0007",
+          "locked": true,
         }
       ];
       // this.loading = true;
@@ -135,15 +142,6 @@ export default {
 }
 </script>
 <style>
-.select-box.q-field--auto-height.q-field--dense .q-field__control,
-.select-box.q-field--auto-height.q-field--dense .q-field__native,
-.select-box.q-field--dense .q-field__marginal {
-  height: 28px !important;
-  min-height: 28px;
-  max-height: 28px;
-  /* padding-right: 0px; */
-}
-
 .lab-img {
   width: 30%;
   box-shadow: 0px 0px 10px 0px #bbbbbb inset !important;

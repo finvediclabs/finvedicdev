@@ -10,7 +10,7 @@ export const useProfileStore = defineStore('profile', {
   },
   actions: {
     fetchProfile() {
-      axios.get(baseUrl + 'accounts/2').then(response => {
+      axios.get(baseUrl + 'api/accounts/2').then(response => {
         this.user = response.data.data;
       })
     },

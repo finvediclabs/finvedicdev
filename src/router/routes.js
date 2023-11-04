@@ -92,6 +92,11 @@ const routes = [
         component: () => import('pages/libraries/videos.vue'),
         meta: { item: 'videos' }
       },
+      {
+        path: 'class-room',
+        component: () => import('pages/libraries/CalanderEvents.vue'),
+        meta: { item: 'class-room' }
+      }
     ]
   },
   {

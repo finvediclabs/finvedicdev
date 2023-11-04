@@ -4,7 +4,7 @@
       <fin-portlet-item>
         <div class="row" style="max-width: 1100px">
           <div class="col-12 col-md-6 q-py-lg q-my-sm bg-white card-space" v-for="tab in tabsList">
-            <router-link class="btn" :to="`admin/${tab.path}`" style="text-decoration: none;">
+            <router-link class="btn" :to="`admin/${tab.path}`" style="text-decoration: none;" :class="{ disable: !tab.enable }">
               <q-card class="my-card card-link fin-card shadow-5" :style="{ background: tab.background }">
                 <q-card-section horizontal class="full-height">
                   <img class="card-img" :src="tab.image" />
@@ -61,6 +61,7 @@ export default {
           discription: 'Perfect for learning how the framework works.',
           path: 'users',
           background: '#FFCE70',
+          enable: true
         },
         {
           image: rolesPng,
@@ -68,6 +69,7 @@ export default {
           discription: 'Perfect for learning how the framework works.',
           path: 'roles',
           background: '#CCB4FF',
+          enable: true
         },
         {
           image: organizationPng,
@@ -75,6 +77,7 @@ export default {
           discription: 'Perfect for learning how the framework works.',
           path: 'organizations',
           background: '#1E90FF90',
+          enable: false
         },
         {
           image: vmSetupPng,
@@ -82,6 +85,7 @@ export default {
           discription: 'Perfect for learning how the framework works.',
           path: 'vm-setup',
           background: '#FF83DF',
+          enable: true
         },
         {
           image: booksPng,
@@ -89,6 +93,7 @@ export default {
           discription: 'Perfect for learning how the framework works.',
           path: 'books',
           background: 'rgba(55, 66, 250, 0.50)',
+          enable: true
         },
         {
           image: videosPng,
@@ -96,6 +101,7 @@ export default {
           discription: 'Perfect for learning how the framework works.',
           path: 'videos',
           background: 'rgba(30, 144, 255, 0.50)',
+          enable: true
         },
         {
           image: prasentationPng,
@@ -103,6 +109,7 @@ export default {
           discription: 'Perfect for learning how the framework works.',
           path: 'videos',
           background: '#FFBD80',
+          enable: true
         },
         {
           image: eventPng,
@@ -110,6 +117,7 @@ export default {
           discription: 'Perfect for learning how the framework works.',
           path: 'videos',
           background: '#FF9C78',
+          enable: true
         }
       ]
     }
@@ -147,5 +155,9 @@ export default {
     padding-left: 0;
     padding-right: 0;
   }
+}
+
+.disable {
+  pointer-events:none;
 }
 </style>
