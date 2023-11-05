@@ -738,6 +738,11 @@ color-convert@^2.0.1:
   dependencies:
     color-name "~1.1.4"
 
+color-hash@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.npmjs.org/color-hash/-/color-hash-2.0.2.tgz"
+  integrity sha512-6exeENAqBTuIR1wIo36mR8xVVBv6l1hSLd7Qmvf6158Ld1L15/dbahR9VUOiX7GmGJBCnQyS0EY+I8x+wa7egg==
+
 color-name@~1.1.4:
   version "1.1.4"
   resolved "https://registry.npmjs.org/color-name/-/color-name-1.1.4.tgz"
@@ -843,6 +848,11 @@ cross-spawn@^7.0.3:
     path-key "^3.1.0"
     shebang-command "^2.0.0"
     which "^2.0.1"
+
+crypto-js@^4.0.0:
+  version "4.2.0"
+  resolved "https://registry.npmjs.org/crypto-js/-/crypto-js-4.2.0.tgz"
+  integrity sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==
 
 cssom@^0.5.0:
   version "0.5.0"
@@ -2543,6 +2553,13 @@ vue-carousel-3d@^1.0.1:
     core-js "^3.6.5"
     vue "^2.6.11"
 
+vue-cryptojs@^2.4.5:
+  version "2.4.5"
+  resolved "https://registry.npmjs.org/vue-cryptojs/-/vue-cryptojs-2.4.5.tgz"
+  integrity sha512-ybxNMqTwaMkEGPSY39VjEsA18ifhx+nbTHs+WiNo2w5fuR67LBnl5bRgzryJlV96iIw3QHllcnWD2or/VlhMig==
+  dependencies:
+    crypto-js "^4.0.0"
+
 vue-demi@>=0.14.5:
   version "0.14.6"
   resolved "https://registry.npmjs.org/vue-demi/-/vue-demi-0.14.6.tgz"
@@ -2563,7 +2580,7 @@ vue@^2.6.11:
     "@vue/compiler-sfc" "2.7.15"
     csstype "^3.1.0"
 
-"vue@^2.6.14 || ^3.3.0", vue@^3.0.0, "vue@^3.0.0-0 || ^2.6.0", vue@^3.2.0, vue@^3.2.25, vue@^3.2.29, vue@>=3.2.0, vue@3.3.4:
+"vue@^2.6.14 || ^3.3.0", vue@^3.0.0, "vue@^3.0.0-0 || ^2.6.0", vue@^3.2.0, vue@^3.2.25, vue@^3.2.29, "vue@>= 2.0.0", vue@>=3.2.0, vue@3.3.4:
   version "3.3.4"
   resolved "https://registry.npmjs.org/vue/-/vue-3.3.4.tgz"
   integrity sha512-VTyEYn3yvIeY1Py0WaYGZsXnz3y5UnGi62GjVEqvEGPl6nxbOrCXbVOTQWBEJUqAyTUk2uJ5JLVnYJ6ZzGbrSw==

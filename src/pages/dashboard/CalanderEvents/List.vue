@@ -8,12 +8,11 @@
         <router-link :to="{ path: 'class-room/create' }">
           <q-btn label="Add Class" icon-right="add" no-caps class="text-weight-bolder " outline color="black" />
         </router-link>
-
       </fin-portlet-item>
     </fin-portlet-header>
     <fin-portlet-item>
       <fin-table :columns="header" :data="events" @reCall="getBooksData()" delete-url="api/book/delete"
-        @editFun="editDataFun" />
+        @editFun="editDataFun" :loading="loading"/>
     </fin-portlet-item>
   </fin-portlet>
 </template>
@@ -23,6 +22,8 @@ import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 import FinTable from "src/components/FinTable.vue"
+// import { inject } from 'vue'
+import CryptoJS from 'crypto-js'
 export default {
   components: {
     FinPortlet,
@@ -33,6 +34,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       header: [
         { label: 'S.No', key: 'index', align: 'center' },
         { label: 'Title', key: 'title', align: 'start' },
@@ -53,11 +55,11 @@ export default {
       this.events = events.map((v, i) => ({ ...v, index: i + 1 }));
     },
     editDataFun(val) {
-      this.editedEvent = val;
-      console.log(this.editedEvent);
+      let editedEvent = JSON.stringify(val);
+      let text = CryptoJS.AES.encrypt(editedEvent, "Secret Passphrase").toString();
       this.$router.push({
         path: 'class-room/create',
-        query: {id: JSON.stringify(val)},
+        query: {id: text},
       })
     }
   }

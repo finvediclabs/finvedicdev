@@ -14,7 +14,7 @@
     </fin-portlet-header>
     <fin-portlet-item>
       <fin-table :columns="header" :data="booksList" select @reCall="getVideosData()" delete-url="api/video/delete"
-        @editFun="editDataFun" />
+        @editFun="editDataFun" :loading="loading"/>
     </fin-portlet-item>
   </fin-portlet>
 </template>
@@ -36,6 +36,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       header: [
         { label: 'Cover', key: 'image', align: 'start', type: 'image' },
         { label: 'Title', key: 'title', align: 'start' },

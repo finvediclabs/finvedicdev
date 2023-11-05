@@ -37,7 +37,7 @@
       </div>
     </fin-portlet-header>
     <fin-portlet-item>
-      <fin-calender isReadOnly :events="events" :template="template"/>
+      <fin-calender isReadOnly :events="events" :template="template" />
     </fin-portlet-item>
   </fin-portlet>
 </template>
@@ -49,6 +49,8 @@ import FinPortletItem from 'src/components/Portlets/FinPortletItem.vue';
 import FinCalender from "src/components/FinCalender.vue";
 import classRoom from "src/assets/classRoom.png"
 import classCardImg from "src/assets/classCard.png";
+import ColorHash from 'color-hash'
+var colorHash = new ColorHash();
 export default {
   components: {
     FinCalender,
@@ -83,117 +85,8 @@ export default {
   },
   methods: {
     getEventsData() {
-      this.events = [
-        {
-          id: '1',
-          title: 'Payments',
-          dueDateClass: '',
-          color: 'white',
-          // backgroundColor: 'rgba(48, 203, 137, 0.7 0)',
-          start: '2023-11-01 10:30:00',
-          end: '2023-11-01 12:30:00',
-        },
-        {
-          id: '1',
-          title: 'events',
-          dueDateClass: '',
-          color: 'white',
-          backgroundColor: 'rgba(48, 203, 137, 0.70)',
-          start: '2023-11-01 12:30:00',
-          end: '2023-11-01 14:30:00',
-        },
-        {
-          id: '2',
-          title: 'Banking',
-          dueDateClass: '',
-          color: 'white',
-          backgroundColor: '#17DE8A',
-          start: '2023-11-02 12:30:00',
-          end: '2023-11-02 14:30:00',
-        },
-        {
-          id: '3',
-          title: 'Insurence',
-          dueDateClass: '',
-          color: 'white',
-          backgroundColor: '#5479F7',
-          start: '2023-11-03 13:30:00',
-          end: '2023-11-03 19:30:00',
-        },
-        {
-          id: '4',
-          title: 'Fixed Tranding',
-          dueDateClass: '',
-          color: 'white',
-          backgroundColor: '#17DE8A',
-          start: '2023-11-04 11:30:00',
-          end: '2023-11-04 13:30:00',
-        },
-        {
-          id: '5',
-          title: 'my event',
-          dueDateClass: '',
-          color: 'white',
-          // backgroundColor: 'rgba(48, 203, 137, 0.7 0)',
-          start: '2023-11-05 12:30:00',
-          end: '2023-11-05 14:30:00',
-        },
-        {
-          id: '6',
-          title: 'my event',
-          dueDateClass: '',
-          color: 'white',
-          backgroundColor: '#FFB21D',
-          start: '2023-11-05 14:30:00',
-          end: '2023-11-05 17:30:00',
-        },
-        {
-          id: '7',
-          title: 'my event',
-          dueDateClass: '',
-          color: 'white',
-          backgroundColor: '#5479F7',
-          start: '2023-11-06 10:30:00',
-          end: '2023-11-06 12:30:00',
-        },
-
-        {
-          id: '8',
-          title: 'my event',
-          dueDateClass: '',
-          color: 'white',
-          backgroundColor: '#17DE8A',
-          start: '2023-11-07 12:30:00',
-          end: '2023-11-07 14:30:00',
-        },
-        {
-          id: '9',
-          title: 'my event',
-          dueDateClass: '',
-          color: 'white',
-          // backgroundColor: 'rgba(48, 203, 137, 0.7 0)',
-          start: '2023-11-08 09:30:00',
-          end: '2023-11-08 10:30:00',
-        },
-        {
-          id: '10',
-          title: 'my event',
-          dueDateClass: '',
-          color: 'white',
-          backgroundColor: '#5479F7',
-          start: '2023-11-09 07:30:00',
-          end: '2023-11-09 09:30:00',
-        },
-        {
-          id: '11',
-          title: 'my event',
-          dueDateClass: '',
-          color: 'white',
-          backgroundColor: '#17DE8A',
-          start: '2023-11-10 10:30:00',
-          end: '2023-11-10 13:30:00',
-        },
-      ]
+      let events = localStorage.getItem('events') ? JSON.parse(localStorage.getItem('events')) : [];
+      this.events = events.map(event => ({ ...event, start: `${event.date} ${event.start}`, end: `${event.date} ${event.end}`, color: 'white', backgroundColor: colorHash.hex(event.title) }));
     }
   }
 }

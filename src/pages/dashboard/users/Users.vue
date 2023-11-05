@@ -18,7 +18,7 @@
     </fin-portlet-header>
     <fin-portlet-item>
       <fin-table :columns="header" :data="usersList" select @reCall="getUsersData()" delete-url="api/user/delete"
-        @editFun="editDataFun" />
+        @editFun="editDataFun" :loading="loading"/>
     </fin-portlet-item>
   </fin-portlet>
 

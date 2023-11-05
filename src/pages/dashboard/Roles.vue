@@ -7,7 +7,7 @@
     </fin-portlet-header>
     <fin-portlet-item>
       <fin-table :columns="header" :data="rolesList" select @reCall="getRolesData()" delete-url="api/role/delete"
-        @editFun="editDataFun" :showActions="false" />
+        @editFun="editDataFun" :showActions="false" :loading="loading"/>
     </fin-portlet-item>
   </fin-portlet>
 </template>

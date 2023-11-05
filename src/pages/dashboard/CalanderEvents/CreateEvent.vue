@@ -3,22 +3,27 @@
     <fin-portlet-header>
       <fin-portlet-heading :loading="loading" backArrow>Create Event</fin-portlet-heading>
     </fin-portlet-header>
-    <fin-portlet-item style="max-width: 1000px">
-      <div class="row">
+    <fin-portlet-item class="justify-center row">
+      <div class="row" style="max-width: 1000px">
         <div class="col-12 col-md-5 q-px-sm">
           <label class="form-label">Date</label>
           <date-picker v-model="date" auto-apply :enable-time-picker="false" :format="format" placeholder="Select Date"
-            class="full-width rounded-borders shadow-2 datePicker" :clearable="false" :inline="{ input: true }" />
+            class="full-width rounded-borders datePicker eventClass" :clearable="false" :inline="{ input: true }">
+            <template #input-icon>
+              <q-icon name="calendar_month" class="q-my-auto q-pb-lg q-px-sm" size="sm" />
+            </template>
+          </date-picker>
           <div class="errorMsgBox">
             <span v-if="errors.date && !date">{{ errors.date }}</span>
           </div>
         </div>
-        <div class="col-12 col-lg-7">
+        <div class="col-1"></div>
+        <div class="col-12 col-lg-6">
           <div class="row">
             <div class="col-12 col-sm-6 q-px-sm">
               <label class="form-label">Start Time</label>
               <date-picker v-model="startTime" auto-apply time-picker placeholder="Select Start Time"
-                class="shadow-5 q-py-sm rounded-borders time" :clearable="false" :is-24="false" closeOnAutoApply>
+                class="rounded-borders time inputBackground" :clearable="false" :is-24="false" closeOnAutoApply>
                 <template #input-icon>
                   <q-icon name="schedule" size="sm" class="q-ml-xs" />
                 </template>
@@ -30,7 +35,7 @@
             <div class="col-12 col-sm-6 q-px-sm">
               <label class="form-label">End Time</label>
               <date-picker v-model="endTime" auto-apply time-picker placeholder="Select End Time"
-                class="shadow-5 q-py-sm rounded-borders time" :clearable="false" :is-24="false">
+                class="rounded-borders time inputBackground" :clearable="false" :is-24="false">
                 <template #input-icon>
                   <q-icon name="schedule" size="sm" class="q-ml-xs" />
                 </template>
@@ -41,7 +46,7 @@
             </div>
             <div class="col-12 q-px-sm">
               <label class="form-label">Course</label>
-              <q-select v-model="course" class="shadow-5 q-px-md rounded-borders" borderless
+              <q-select v-model="course" class="q-px-md rounded-borders inputBackground" borderless
                 :options="['title-1', 'title-2']" />
               <div class="errorMsgBox">
                 <span v-if="errors.course && !course">{{ errors.course }}</span>
@@ -49,14 +54,14 @@
             </div>
             <div class="col-12 q-px-sm">
               <label class="form-label">Title</label>
-              <q-input v-model="title" class="shadow-5 q-px-md rounded-borders" borderless />
+              <q-input v-model="title" class="q-px-md rounded-borders inputBackground" borderless />
               <div class="errorMsgBox">
                 <span v-if="errors.title && !title">{{ errors.title }}</span>
               </div>
             </div>
             <div class="col-12 q-px-sm">
               <label class="form-label">Link</label>
-              <q-input v-model="link" class="shadow-5 q-px-md rounded-borders" borderless />
+              <q-input v-model="link" class="q-px-md rounded-borders inputBackground" borderless />
               <div class="errorMsgBox">
                 <span v-if="errors.link && !link">{{ errors.link }}</span>
               </div>
@@ -80,6 +85,7 @@ import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 import DatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 import moment from "moment";
+import CryptoJS from 'crypto-js'
 export default {
   components: {
     FinPortlet,
@@ -101,9 +107,10 @@ export default {
     }
   },
   mounted() {
-    var editedEvent = this.$route.query.id;
-    if (editedEvent) {
-      editedEvent = JSON.parse(editedEvent);
+    let Event = this.$route.query.id;
+    if (Event) {
+      Event = CryptoJS.AES.decrypt(Event, "Secret Passphrase").toString(CryptoJS.enc.Utf8);
+      let editedEvent = JSON.parse(Event);
       let startTime = editedEvent.start.split(":");
       let endTime = editedEvent.end.split(":");
       this.date = editedEvent.date;
@@ -128,9 +135,9 @@ export default {
     },
     format(date) {
       const day = date.getDate();
-      const month = date.getMonth() + 1;
+      const month = new Date(date).toLocaleDateString('en-US', { month: 'short' });
       const year = date.getFullYear();
-      return `${day} / ${month} /${year}`;
+      return `${day} ${month}, ${year}`;
     },
     validateForm() {
       if (this.date && this.startTime && this.endTime && this.course && this.title && this.link) {
@@ -157,7 +164,7 @@ export default {
         link: this.link,
       };
       if (this.index) {
-        events[this.index-1] = event;
+        events[this.index - 1] = event;
       } else {
         events.push(event);
       }
@@ -183,6 +190,16 @@ export default {
 }
 </script>
 <style>
+.eventClass .dp__input_focus {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  border: none;
+  background: #FCF7F7 !important;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 5px 0px rgb(202, 202, 202);
+}
+
 .form-label {
   font-weight: bold;
   margin-left: 10px;
@@ -190,9 +207,11 @@ export default {
 
 .time .dp__input {
   border: none;
-  padding-top: 5px !important;
-  padding-bottom: 5px;
+  padding-top: 15px !important;
+  padding-bottom: 15px;
   border-radius: 8px;
+
+  background: #FCF7F7 !important;
 }
 
 .errorMsgBox {
@@ -208,5 +227,17 @@ export default {
 
 .datePicker div {
   width: 100%;
+}
+
+.eventClass .dp__outer_menu_wrap .dp__menu {
+  border-radius: 10px;
+}
+
+.inputBackground,
+.eventClass .dp__outer_menu_wrap .dp__instance_calendar {
+  background: #FCF7F7;
+  box-shadow: 0px 0px 5px 0px rgb(202, 202, 202);
+  border-radius: 10px;
+  border: none;
 }
 </style>

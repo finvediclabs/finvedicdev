@@ -56,82 +56,31 @@
                     <span>More Chapters</span>
                   </q-carousel-control>
                   <q-carousel-control position="top-right" :offset="[20, 0]" class="q-gutter-xs">
-                    <q-btn push round dense color="orange" text-color="black" icon="arrow_left"
+                    <q-btn round dense class="shadow-2" text-color="black" icon="chevron_left"
                       @click="$refs.carousel.previous()" />
-                    <q-btn push round dense color="orange" text-color="black" icon="arrow_right"
+                    <q-btn round dense class="shadow-2" text-color="black" icon="chevron_right"
                       @click="$refs.carousel.next()" />
                   </q-carousel-control>
                 </template>
-                <q-carousel-slide :name="1" class="items-end q-pa-none">
+                <q-carousel-slide v-for="(slider, i) in allSlides" :name="i" class="items-end q-pa-none"
+                  v-if="chaptersData.length">
                   <div class="row full-height">
-                    <div class="col-4 q-px-sm full-height">
-                      <q-img class="full-height rounded-borders" src="https://cdn.quasar.dev/img/mountains.jpg" />
-                    </div>
-                    <div class="col-4 q-px-sm full-height">
-                      <q-img class="full-height rounded-borders" src="https://cdn.quasar.dev/img/mountains.jpg" />
-                    </div>
-                    <div class="col-4 q-px-sm full-height">
-                      <q-img class="full-height rounded-borders" src="https://cdn.quasar.dev/img/mountains.jpg" />
+                    <div class="col-4 q-px-sm full-height" v-for="item in slider">
+                      <q-img class="full-height rounded-borders" :src="item.chapterImagePath" />
                     </div>
                   </div>
                 </q-carousel-slide>
-                <q-carousel-slide :name="2" class="items-end q-pa-none">
+                <q-carousel-slide :name="0" v-else class="rounded-borders text-italic">
                   <div class="row full-height">
-                    <div class="col-4 q-px-sm full-height">
-                      <q-img class="full-height rounded-borders" src="https://cdn.quasar.dev/img/mountains.jpg" />
-                    </div>
-                    <div class="col-4 q-px-sm full-height">
-                      <q-img class="full-height rounded-borders" src="https://cdn.quasar.dev/img/mountains.jpg" />
-                    </div>
-                    <div class="col-4 q-px-sm full-height">
-                      <q-img class="full-height rounded-borders" src="https://cdn.quasar.dev/img/mountains.jpg" />
-                    </div>
-                  </div>
-                </q-carousel-slide>
-                <q-carousel-slide :name="3" class="items-end q-pa-none">
-                  <div class="row full-height">
-                    <div class="col-4 q-px-sm full-height">
-                      <q-img class="full-height rounded-borders" src="https://cdn.quasar.dev/img/mountains.jpg" />
-                    </div>
-                    <div class="col-4 q-px-sm full-height">
-                      <q-img class="full-height rounded-borders" src="https://cdn.quasar.dev/img/mountains.jpg" />
-                    </div>
-                    <div class="col-4 q-px-sm full-height">
-                      <q-img class="full-height rounded-borders" src="https://cdn.quasar.dev/img/mountains.jpg" />
-                    </div>
-                  </div>
-                </q-carousel-slide>
-                <q-carousel-slide :name="4" class="items-end q-pa-none">
-                  <div class="row full-height">
-                    <div class="col-4 q-px-sm full-height">
-                      <q-img class="full-height rounded-borders" src="https://cdn.quasar.dev/img/mountains.jpg" />
-                    </div>
-                    <div class="col-4 q-px-sm full-height">
-                      <q-img class="full-height rounded-borders" src="https://cdn.quasar.dev/img/mountains.jpg" />
-                    </div>
-                    <div class="col-4 q-px-sm full-height">
-                      <q-img class="full-height rounded-borders" src="https://cdn.quasar.dev/img/mountains.jpg" />
+                    <div class="col-4 q-px-sm full-height" v-for="item in 3">
+                      <q-skeleton class="full-width full-height" style="background-color: #F5F5F5;" />
                     </div>
                   </div>
                 </q-carousel-slide>
               </q-carousel>
-            </div>
-            <!-- <div class="col-6 col-md-4 col-lg-3 q-pa-sm" v-for="(item, index) in chaptersData" v-if="chaptersData.length">
-              <q-img :src="item.chapterImagePath" style="height: 150px; border: 1px solid #00000020;"
-                class="rounded-borders full-width bg-red full-width" v-if="index < 7">
-                <template v-slot:error>
-                  <q-img src="https://cakedummies.com/wp-content/uploads/book-cake-dummies-247x296.jpg"
-                    class="full-height full-width" />
-                </template>
-              </q-img>
-              <q-icon name="arrow_forward_ios" v-if="index == 7" style="height: 150px; border: 1px solid #00000020;"
-                class="rounded-borders full-width" />
-            </div>
-            <div class="col-6 col-md-4 col-lg-3 q-pa-sm" v-for="item in 8" v-else>
-              <q-skeleton height="150px" />
-            </div> -->
-          </div>
 
+            </div>
+          </div>
         </div>
       </div>
     </fin-portlte>
@@ -160,6 +109,7 @@ export default {
       loading: false,
       chaptersData: [],
       slide: 0,
+      allSlides: [],
     }
   },
   watch: {
@@ -234,6 +184,7 @@ export default {
               deletedAt: moment(chapter.deletedAt).format('YYYY-MM-DD')
             }
           });
+          this.getdummychapters(this.chaptersData);
         } else {
           this.showMsg(response.data?.message, 'negative');
         }
@@ -241,7 +192,20 @@ export default {
         this.chaptersLoader = false;
         this.showMsg(error.response?.data.message || error.message, 'negative');
       })
-    }
+    },
+    getdummychapters(chapter) {
+      let index = 0;
+      let slide = [];
+      for (let j = 0; j < chapter.length; j++) {
+        slide.push(chapter[j]);
+        this.allSlides[index] = slide;
+        if ((j + 1) % 3 == 0) {
+          index += 1;
+          slide = [];
+        }
+      }
+      console.log(this.allSlides);
+    },
   }
 };
 </script>

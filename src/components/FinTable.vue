@@ -11,7 +11,16 @@
           <th v-if="showActions"></th>
         </tr>
       </thead>
-      <tbody v-if="data.length">
+      <tbody v-if="loading">
+        <tr class="radius-10">
+          <td :colspan="columns.length + 1" class=" radius-10 text-italic">
+            <div style="min-height: 250px" class="q-pa-lg text-center row justify-center items-center">
+              <q-spinner-facebook size="md"/>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+      <tbody v-if="!loading && data.length">
         <tr v-for="(item, i) in data">
           <td v-if="allowSelect"><q-checkbox color="cyan" v-model="selectedItemsData" :val="item" /></td>
           <td v-for="(column, j) in columns" :key="column" :style="{ 'text-align': column.align }"
@@ -56,7 +65,7 @@
           </td>
         </tr>
       </tbody>
-      <tbody v-else class="radius-10">
+      <tbody v-if="!loading && !data.length" class="radius-10">
         <tr class="radius-10">
           <td :colspan="columns.length + 1" class=" radius-10 text-italic">
             <div style="min-height: 250px" class="q-pa-lg">
@@ -88,6 +97,10 @@ export default {
       default: null,
     },
     showActions: {
+      type: Boolean,
+      default: true,
+    },
+    loading: {
       type: Boolean,
       default: true,
     }
