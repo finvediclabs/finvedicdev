@@ -1,0 +1,65 @@
+<template>
+  <fin-portlet>
+    <fin-portlet-header>
+      <fin-portlet-heading :loading="loading" backArrow>
+        Calander Events
+      </fin-portlet-heading>
+      <fin-portlet-item>
+        <router-link :to="{ path: 'class-room/create' }">
+          <q-btn label="Add Class" icon-right="add" no-caps class="text-weight-bolder " outline color="black" />
+        </router-link>
+
+      </fin-portlet-item>
+    </fin-portlet-header>
+    <fin-portlet-item>
+      <fin-table :columns="header" :data="events" @reCall="getBooksData()" delete-url="api/book/delete"
+        @editFun="editDataFun" />
+    </fin-portlet-item>
+  </fin-portlet>
+</template>
+<script>
+import FinPortlet from "src/components/Portlets/FinPortlet.vue";
+import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
+import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
+import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
+import FinTable from "src/components/FinTable.vue"
+export default {
+  components: {
+    FinPortlet,
+    FinPortletHeader,
+    FinPortletHeading,
+    FinPortletItem,
+    FinTable
+  },
+  data() {
+    return {
+      header: [
+        { label: 'S.No', key: 'index', align: 'center' },
+        { label: 'Title', key: 'title', align: 'start' },
+        { label: 'Course', key: 'course', align: 'start' },
+        { label: 'Date', key: 'date', align: 'start' },
+        { label: 'Start Time', key: 'start', align: 'start' },
+        { label: 'End Time', key: 'end', align: 'start' },
+      ],
+      events: []
+    }
+  },
+  mounted() {
+    this.getEventsData();
+  },
+  methods: {
+    getEventsData() {
+      var events = localStorage.getItem('events') ? JSON.parse(localStorage.getItem('events')) : [];
+      this.events = events.map((v, i) => ({ ...v, index: i + 1 }));
+    },
+    editDataFun(val) {
+      this.editedEvent = val;
+      console.log(this.editedEvent);
+      this.$router.push({
+        path: 'class-room/create',
+        query: {id: JSON.stringify(val)},
+      })
+    }
+  }
+}
+</script>

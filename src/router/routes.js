@@ -60,6 +60,16 @@ const routes = [
         path: 'videos/create',
         component: () => import('pages/dashboard/videos/createVideo.vue'),
         meta: { item: 'books' }
+      },
+      {
+        path: 'class-room',
+        component: () => import('pages/dashboard/CalanderEvents/List.vue'),
+        meta: { items: '' }
+      },
+      {
+        path: 'class-room/create',
+        component: () => import('pages/dashboard/CalanderEvents/CreateEvent.vue'),
+        meta: { items: '' }
       }
     ],
   },

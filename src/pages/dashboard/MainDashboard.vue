@@ -115,7 +115,7 @@ export default {
           image: eventPng,
           title: 'Calander Events',
           discription: 'Perfect for learning how the framework works.',
-          path: 'videos',
+          path: 'class-room',
           background: '#FF9C78',
           enable: true
         }

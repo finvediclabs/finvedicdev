@@ -43,14 +43,80 @@
               {{ selectedSlide?.description }}
             </p>
           </fin-portlet-heading>
-
-
         </div>
-        <div class="col-12 col-md-6  justify-center">
-          <!-- <p>More Chapters</p> -->
-          <div class="row ">
+        <div class="col-2"></div>
+        <div class="col-12 col-md-4  justify-center self-end justify-end">
 
-            <div class="col-6 col-md-4 col-lg-3 q-pa-sm" v-for="(item, index) in chaptersData" v-if="chaptersData.length">
+          <div class="row ">
+            <div class="col-12" style="height: 240px;">
+              <q-carousel swipeable animated v-model="slide" ref="carousel" infinite class="full-height"
+                style="padding-top: 50px;">
+                <template v-slot:control>
+                  <q-carousel-control position="top-left" :offset="[20, 8]" class="text-black">
+                    <span>More Chapters</span>
+                  </q-carousel-control>
+                  <q-carousel-control position="top-right" :offset="[20, 0]" class="q-gutter-xs">
+                    <q-btn push round dense color="orange" text-color="black" icon="arrow_left"
+                      @click="$refs.carousel.previous()" />
+                    <q-btn push round dense color="orange" text-color="black" icon="arrow_right"
+                      @click="$refs.carousel.next()" />
+                  </q-carousel-control>
+                </template>
+                <q-carousel-slide :name="1" class="items-end q-pa-none">
+                  <div class="row full-height">
+                    <div class="col-4 q-px-sm full-height">
+                      <q-img class="full-height rounded-borders" src="https://cdn.quasar.dev/img/mountains.jpg" />
+                    </div>
+                    <div class="col-4 q-px-sm full-height">
+                      <q-img class="full-height rounded-borders" src="https://cdn.quasar.dev/img/mountains.jpg" />
+                    </div>
+                    <div class="col-4 q-px-sm full-height">
+                      <q-img class="full-height rounded-borders" src="https://cdn.quasar.dev/img/mountains.jpg" />
+                    </div>
+                  </div>
+                </q-carousel-slide>
+                <q-carousel-slide :name="2" class="items-end q-pa-none">
+                  <div class="row full-height">
+                    <div class="col-4 q-px-sm full-height">
+                      <q-img class="full-height rounded-borders" src="https://cdn.quasar.dev/img/mountains.jpg" />
+                    </div>
+                    <div class="col-4 q-px-sm full-height">
+                      <q-img class="full-height rounded-borders" src="https://cdn.quasar.dev/img/mountains.jpg" />
+                    </div>
+                    <div class="col-4 q-px-sm full-height">
+                      <q-img class="full-height rounded-borders" src="https://cdn.quasar.dev/img/mountains.jpg" />
+                    </div>
+                  </div>
+                </q-carousel-slide>
+                <q-carousel-slide :name="3" class="items-end q-pa-none">
+                  <div class="row full-height">
+                    <div class="col-4 q-px-sm full-height">
+                      <q-img class="full-height rounded-borders" src="https://cdn.quasar.dev/img/mountains.jpg" />
+                    </div>
+                    <div class="col-4 q-px-sm full-height">
+                      <q-img class="full-height rounded-borders" src="https://cdn.quasar.dev/img/mountains.jpg" />
+                    </div>
+                    <div class="col-4 q-px-sm full-height">
+                      <q-img class="full-height rounded-borders" src="https://cdn.quasar.dev/img/mountains.jpg" />
+                    </div>
+                  </div>
+                </q-carousel-slide>
+                <q-carousel-slide :name="4" class="items-end q-pa-none">
+                  <div class="row full-height">
+                    <div class="col-4 q-px-sm full-height">
+                      <q-img class="full-height rounded-borders" src="https://cdn.quasar.dev/img/mountains.jpg" />
+                    </div>
+                    <div class="col-4 q-px-sm full-height">
+                      <q-img class="full-height rounded-borders" src="https://cdn.quasar.dev/img/mountains.jpg" />
+                    </div>
+                    <div class="col-4 q-px-sm full-height">
+                      <q-img class="full-height rounded-borders" src="https://cdn.quasar.dev/img/mountains.jpg" />
+                    </div>
+                  </div>
+                </q-carousel-slide>
+              </q-carousel>
+            </div>
+            <!-- <div class="col-6 col-md-4 col-lg-3 q-pa-sm" v-for="(item, index) in chaptersData" v-if="chaptersData.length">
               <q-img :src="item.chapterImagePath" style="height: 150px; border: 1px solid #00000020;"
                 class="rounded-borders full-width bg-red full-width" v-if="index < 7">
                 <template v-slot:error>
@@ -63,7 +129,7 @@
             </div>
             <div class="col-6 col-md-4 col-lg-3 q-pa-sm" v-for="item in 8" v-else>
               <q-skeleton height="150px" />
-            </div>
+            </div> -->
           </div>
 
         </div>
@@ -93,6 +159,7 @@ export default {
       selectedSlide: {},
       loading: false,
       chaptersData: [],
+      slide: 0,
     }
   },
   watch: {
