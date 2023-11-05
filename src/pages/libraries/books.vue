@@ -97,7 +97,9 @@ export default {
   },
   watch: {
     selectedSlide() {
-      this.getChapthersData();
+      setTimeout(() => {
+        this.getChapthersData();
+      }, 500);
     },
   },
   mounted() {

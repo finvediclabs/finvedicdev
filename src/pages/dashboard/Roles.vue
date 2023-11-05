@@ -42,7 +42,9 @@ export default {
         { label: 'S.No', key: 'index', align: 'center' },
         { label: 'Name', key: 'name', align: 'start' },
         { label: 'Created By', key: 'createdBy', align: 'center' },
-        { label: 'updated By', key: 'updatedBy', align: 'center' },
+        { label: 'Updated By', key: 'updatedBy', align: 'center' },
+        { label: 'Created At', key: 'createdAt', align: 'center' },
+        { label: 'Updated At', key: 'updatedAt', align: 'center' }
       ],
       rolesList: [],
       loading: false,
@@ -63,32 +65,6 @@ export default {
       });
     },
     getRolesData() {
-      // let rolesList = [
-      //   {
-      //     "id": 4,
-      //     "name": "Admin",
-      //     "createdAt": 1698292800000,
-      //     "updatedAt": 1698292800000,
-      //     "createdBy": null,
-      //     "updatedBy": null
-      //   },
-      //   {
-      //     "id": 5,
-      //     "name": "Student",
-      //     "createdAt": 1698292800000,
-      //     "updatedAt": 1698292800000,
-      //     "createdBy": null,
-      //     "updatedBy": null
-      //   },
-      //   {
-      //     "id": 6,
-      //     "name": "Faculty",
-      //     "createdAt": 1698292800000,
-      //     "updatedAt": 1698292800000,
-      //     "createdBy": null,
-      //     "updatedBy": null
-      //   }
-      // ];
       this.$api.get(urls.getRolesUrl).then(response => {
         this.loading = false;
         if (response.data.success) {
@@ -99,7 +75,9 @@ export default {
               id: role.id,
               name: role.name,
               createdBy: role.createdBy,
-              updatedBy: role.updatedBy
+              updatedBy: role.updatedBy,
+              createdAt: moment(role.createdAt).format('YYYY-MM-DD HH:MM:SS'),
+              updatedAt: moment(role.updatedAt).format('YYYY-MM-DD HH:MM:SS'),
             }
           });
         } else {

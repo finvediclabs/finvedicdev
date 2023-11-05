@@ -77,11 +77,11 @@ export default {
           region: this.region
         }).then(response => {
           this.loader = false;
-          if (response.data.success) {
+          // if (response.data.success) {
             this.showMsg(response.data?.message, 'positive');
-          } else {
-            this.showMsg(response.data?.message, 'negative');
-          }
+          // } else {
+          //   this.showMsg(response.data?.message, 'negative');
+          // }
         }).catch(error => {
           this.loader = false;
           this.showMsg(error.response?.data.message || error.message, 'negative');

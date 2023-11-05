@@ -173,30 +173,61 @@ export default {
     },
     onSubmit() {
       if (!this.submitLoading) {
-        this.submitLoading = true;
-        let request = {
-          accountId: this.profile?.id,
-          firstName: this.user.fName,
-          lastName: this.user.lName,
-          email: this.user.mail,
-          phoneNumber: this.user.Number,
-          role: this.user.role,
-          id: this.user.id,
-          password: "Welcome@123",
-        };
-        this.$api.post(urls.usersUrl, request).then(response => {
-          this.submitLoading = false;
-          if (response.data.success) {
-            this.showMsg(response.data?.message, 'positive');
-            this.getUsersData();
-          } else {
-            this.showMsg(response.data?.message, 'negative');
-          }
-        }).catch(error => {
-          this.submitLoading = false;
-          this.showMsg(error.response?.data.message || error.message, 'negative');
-        })
+        if (this.user.id) {
+          this.updateUser();
+        } else {
+          this.createNewUser();
+        }
       }
+    },
+    createNewUser() {
+      this.submitLoading = true;
+      let request = {
+        accountId: this.profile?.id,
+        firstName: this.user.fName,
+        lastName: this.user.lName,
+        email: this.user.mail,
+        phoneNumber: this.user.Number,
+        role: this.user.role,
+        password: "Welcome@123",
+      };
+      this.$api.post(urls.usersUrl, request).then(response => {
+        this.submitLoading = false;
+        if (response.data.success) {
+          this.showMsg(response.data?.message, 'positive');
+          this.getUsersData();
+        } else {
+          this.showMsg(response.data?.message, 'negative');
+        }
+      }).catch(error => {
+        this.submitLoading = false;
+        this.showMsg(error.response?.data.message || error.message, 'negative');
+      })
+    },
+    updateUser() {
+      this.submitLoading = true;
+      let request = {
+        accountId: this.profile?.id,
+        firstName: this.user.fName,
+        lastName: this.user.lName,
+        email: this.user.mail,
+        phoneNumber: this.user.Number,
+        role: this.user.role,
+        id: this.user.id,
+        password: "Welcome@123",
+      };
+      this.$api.put(urls.usersUrl, request).then(response => {
+        this.submitLoading = false;
+        if (response.data.success) {
+          this.showMsg(response.data?.message, 'positive');
+          this.getUsersData();
+        } else {
+          this.showMsg(response.data?.message, 'negative');
+        }
+      }).catch(error => {
+        this.submitLoading = false;
+        this.showMsg(error.response?.data.message || error.message, 'negative');
+      })
     },
     closecreateUserDialog() {
       this.createUserDialog = false;

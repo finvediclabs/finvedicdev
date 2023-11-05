@@ -81,62 +81,18 @@ export default {
       });
     },
     getAzureVmsData() {
-      this.labsData = [
-        {
-          "size": "Standard_D2s_v3",
-          "osType": "Windows",
-          "name": "Sys0001",
-          "locked": true,
-        },
-        {
-          "size": "Standard_D2s_v3",
-          "osType": "Linux",
-          "name": "Sys0002",
-          "locked": false,
-        },
-        {
-          "size": "Standard_D2s_v3",
-          "osType": "Windows",
-          "name": "Sys0003",
-          "locked": false,
-        },
-        {
-          "size": "Standard_D2s_v3",
-          "osType": "Linux",
-          "name": "Sys0004",
-          "locked": true,
-        },
-        {
-          "size": "Standard_D2s_v3",
-          "osType": "Windows",
-          "name": "Sys0005",
-          "locked": false,
-        },
-        {
-          "size": "Standard_D2s_v3",
-          "osType": "Linux",
-          "name": "Sys0006",
-          "locked": false,
-        },
-        {
-          "size": "Standard_D2s_v3",
-          "osType": "Windows",
-          "name": "Sys0007",
-          "locked": true,
-        }
-      ];
-      // this.loading = true;
-      // this.$api.get(urls.getAzureVmsUrl).then(response => {
-      //   this.loading = false;
-      //   if (response.data.success) {
-      //     this.labsData = response.data.data;
-      //   } else {
-      //     this.showMsg(response.data?.message, 'negative');
-      //   }
-      // }).catch(error => {
-      //   this.loading = false;
-      //   this.showMsg(error.response?.data.message || error.message, 'negative');
-      // })
+      this.loading = true;
+      this.$api.get(urls.getAzureVmsUrl).then(response => {
+        this.loading = false;
+        // if (response.data.success) {
+          this.labsData = response.data.data;
+        // } else {
+        //   this.showMsg(response.data?.message, 'negative');
+        // }
+      }).catch(error => {
+        this.loading = false;
+        this.showMsg(error.response?.data.message || error.message, 'negative');
+      })
     }
   }
 }

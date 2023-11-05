@@ -8,7 +8,7 @@ import qs from "qs"
 // good idea to move this instance creation inside of the
 // "export default () => {}" function below (which runs individually
 // for each client)
-const coreUrl =(process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/'
+const coreUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/'
 
 const api = axios.create({
   baseURL: coreUrl,
@@ -16,10 +16,14 @@ const api = axios.create({
     const a = qs.stringify(params, { arrayFormat: 'brackets' });
     return a;
   },
- })
+})
 
- export function setToken(token) {
-  api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+export function setToken(token) {
+  if (token) {
+    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  } else {
+    api.defaults.headers.common['Authorization'] = ``;
+  }
 }
 
 export default boot(({ app }) => {

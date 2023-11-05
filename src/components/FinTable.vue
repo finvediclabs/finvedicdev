@@ -15,7 +15,7 @@
         <tr v-for="(item, i) in data">
           <td v-if="allowSelect"><q-checkbox color="cyan" v-model="selectedItemsData" :val="item" /></td>
           <td v-for="(column, j) in columns" :key="column" :style="{ 'text-align': column.align }"
-            class="vertical-middle">
+            class="vertical-middle q-py-sm">
             <span v-if="column.type === 'image'">
               <q-avatar size="40px">
                 <img :src="item[column.key]" class="fit">
