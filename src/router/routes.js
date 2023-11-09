@@ -52,6 +52,11 @@ const routes = [
         meta: { item: 'books' }
       },
       {
+        path: 'books/chapter/:id',
+        component: () => import('pages/dashboard/books/chapters.vue'),
+        meta: { item: 'chapters' }
+      },
+      {
         path: 'videos',
         component: () => import('pages/dashboard/videos/videos.vue'),
         meta: { item: 'books' }

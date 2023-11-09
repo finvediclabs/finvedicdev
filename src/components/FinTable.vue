@@ -26,7 +26,7 @@
           <td v-for="(column, j) in columns" :key="column" :style="{ 'text-align': column.align }"
             class="vertical-middle q-py-sm">
             <span v-if="column.type === 'image'">
-              <q-avatar size="40px">
+              <q-avatar size="40px" class="shadow-1">
                 <img :src="item[column.key]" class="fit">
               </q-avatar>
             </span>
@@ -43,15 +43,24 @@
                   </div>
                   <div class="q-py-sm text-weight-bolder">
                     <q-list>
+
+                      <q-item clickable v-close-popup @click="showChaptersList(item)" v-if="showChapters">
+                        <q-item-section>
+                          <q-item-label>Show Chapters</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                      <div class="justify-center flex" v-if="showChapters">
+                        <q-separator style="width: 70%" />
+                      </div>
                       <q-item clickable v-close-popup @click="editItem(item)">
                         <q-item-section>
                           <q-item-label>Edit</q-item-label>
                         </q-item-section>
                       </q-item>
-                      <div class="justify-center flex">
+                      <div class="justify-center flex" v-if="allowDelete">
                         <q-separator style="width: 70%" />
                       </div>
-                      <q-item clickable v-close-popup @click="deleteItem(item)">
+                      <q-item clickable v-close-popup @click="deleteItem(item)" v-if="allowDelete">
                         <q-item-section>
                           <q-item-label>Delete</q-item-label>
                         </q-item-section>
@@ -103,6 +112,10 @@ export default {
     loading: {
       type: Boolean,
       default: true,
+    },
+    showChapters: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -159,6 +172,9 @@ export default {
           this.showMsg(error.respinse?.data.message || error.message, 'negative');
         });
       });
+    },
+    showChaptersList(item) {
+      this.$emit('show-chapters', item)
     }
   }
 }

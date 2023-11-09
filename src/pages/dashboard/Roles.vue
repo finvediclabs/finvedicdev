@@ -7,7 +7,7 @@
     </fin-portlet-header>
     <fin-portlet-item>
       <fin-table :columns="header" :data="rolesList" select @reCall="getRolesData()" delete-url="api/role/delete"
-        @editFun="editDataFun" :showActions="false" :loading="loading"/>
+        @editFun="editDataFun" :showActions="false" :loading="loading" />
     </fin-portlet-item>
   </fin-portlet>
 </template>
@@ -20,13 +20,17 @@ import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 import { urls } from "src/pages/dashboard/urls";
 import moment from "moment"
 import { useProfileStore } from "src/stores/profile";
+import { useRolesStore } from "src/stores/roles"
 import { storeToRefs } from "pinia";
 export default {
   setup() {
     const profileStore = useProfileStore();
     const { profile } = storeToRefs(profileStore);
+    const rolesStore = useRolesStore();
+    const { roles } = storeToRefs(rolesStore);
     return {
-      profile
+      profile,
+      roles
     }
   },
   components: {
@@ -50,6 +54,11 @@ export default {
       loading: false,
     }
   },
+  watch: {
+    roles() {
+      this.getRolesData();
+    }
+  },
   mounted() {
     this.getRolesData();
   },
@@ -65,27 +74,17 @@ export default {
       });
     },
     getRolesData() {
-      this.$api.get(urls.getRolesUrl).then(response => {
-        this.loading = false;
-        if (response.data.success) {
-          let rolesList = response.data.data;
-          this.rolesList = rolesList.map((role, index) => {
-            return {
-              index: index + 1,
-              id: role.id,
-              name: role.name,
-              createdBy: role.createdBy,
-              updatedBy: role.updatedBy,
-              createdAt: moment(role.createdAt).format('YYYY-MM-DD HH:MM:SS'),
-              updatedAt: moment(role.updatedAt).format('YYYY-MM-DD HH:MM:SS'),
-            }
-          });
-        } else {
-          this.showMsg(response.data?.message, 'negative');
+      this.rolesList = this.roles.map((role, index) => {
+        return {
+          index: index + 1,
+          id: role.id,
+          name: role.name,
+          createdBy: role.createdBy,
+          updatedBy: role.updatedBy,
+          createdAt: moment(role.createdAt).format('YYYY-MM-DD HH:MM:SS'),
+          updatedAt: moment(role.updatedAt).format('YYYY-MM-DD HH:MM:SS'),
         }
-      }).catch(error => {
-        this.loading = false;
-        this.showMsg(error.response?.data.message || error.message, 'negative');
+
       });
     }
   }
