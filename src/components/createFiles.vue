@@ -1,25 +1,19 @@
 <template>
   <fin-portlet>
     <fin-portlet-header>
-      <fin-portlet-heading :loading="loading" backArrow>
-        Books Section
-      </fin-portlet-heading>
-      <fin-portlet-item>
-        <q-btn label="Create Book" icon="add" color="blue-15" class="fin-br-8 text-subtitle1 text-weight-bolder q-px-md"
-          dense no-caps />
-      </fin-portlet-item>
+      <fin-portlet-heading :loading="loading" backArrow> {{ queryData.title }}</fin-portlet-heading>
     </fin-portlet-header>
     <fin-portlet-item>
-      <q-form @submit="createBook">
+      <q-form @submit="onSubmit">
         <div class="row justify-center">
           <div class="col-12 col-md-6 ">
             <fin-portlet-item class="full-width q-pa-md">
-              <q-input v-model="title" filled label="Title"  lazy-rules
-                :rules="[val => val && val.length > 0 || 'Title Is required']"/>
+              <q-input v-model="title" filled label="Title" lazy-rules
+                :rules="[val => val && val.length > 0 || 'Title Is required']" />
             </fin-portlet-item>
             <fin-portlet-item class="full-width q-pa-md">
-              <q-input v-model="description" filled type="textarea" label="Description"  rows="12"  lazy-rules
-                :rules="[val => val && val.length > 0 || 'Discription Is required']"/>
+              <q-input v-model="description" filled type="textarea" label="Description" rows="12" lazy-rules
+                :rules="[val => val && val.length > 0 || 'Discription Is required']" />
             </fin-portlet-item>
           </div>
           <div class="col-12 col-md-4 q-pa-md text-center">
@@ -29,7 +23,8 @@
             </div>
           </div>
           <div class="col-12 col-lg-10 q-pa-md text-start">
-            <q-btn type="submit" label="Save" no-caps size="lg" class="q-px-xl shadow-1 bg-blue-15 text-white" :disable="loading">
+            <q-btn type="submit" label="Save" no-caps size="lg" class="q-px-xl shadow-1 bg-blue-15 text-white"
+              :disable="loading">
               <q-spinner-facebook size="xs" class="q-ml-sm" v-if="loading" />
             </q-btn>
           </div>
@@ -46,7 +41,7 @@ import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 import DropFile from "src/components/dropFile/DropFile.vue"
 import { useProfileStore } from "src/stores/profile";
 import { storeToRefs } from "pinia";
-import { urls } from "../urls"
+import CryptoJS from 'crypto-js'
 export default {
   setup() {
     const profileStore = useProfileStore();
@@ -55,7 +50,6 @@ export default {
       profile
     }
   },
-  name: 'create-book',
   components: {
     FinPortlet,
     FinPortletHeader,
@@ -70,6 +64,18 @@ export default {
       cover: [],
       errorFile: '',
       loading: false,
+      queryData: {},
+    }
+  },
+  mounted() {
+    let data = this.$route.query.data; //CryptoJS.AES.decrypt(this.$route.query.data, 'objects').toString(CryptoJS.enc.Utf-8);
+    this.queryData = data ? JSON.parse(data) : data;
+    if (this.queryData.item) {
+      let item = this.queryData.item;
+      this.title = item.title;
+      this.description = item.description;
+      this.id = item.id;
+      this.cover = item.cover;
     }
   },
   methods: {
@@ -86,8 +92,8 @@ export default {
     ChangeCover() {
       this.cover = this.$refs.file.values;
     },
-    createBook() {
-      if(!this.cover.length) {
+    onSubmit() {
+      if (!this.cover.length) {
         this.errorFile = "Image Is required";
         return false;
       }
@@ -95,15 +101,14 @@ export default {
       formData.append('accountId', this.profile?.id);
       formData.append('description', this.description);
       formData.append('heading', this.title);
-      formData.append('image', this.cover[0]);
-      formData.append('id', '');
+      // formData.append('image', this.cover[0]);
       if (!this.loading) {
         this.loading = true;
-        this.$api.post(urls.booksDataUrl, formData).then(response => {
+        this.$api.post(queryData.url, formData).then(response => {
           this.loading = false;
-          if(response.data.success) {
+          if (response.data.success) {
             this.showMsg(response.data?.message, 'positive');
-            this.$router.push({path: '/admin/books'});
+            this.$router.go(-1);
           } else {
             this.showMsg(response.data?.message, 'negative');
           }
@@ -112,7 +117,6 @@ export default {
           this.showMsg(error.response?.data.message || error.message, 'negative');
         })
       }
-
     },
     selectFilesData(val) {
       this.cover = val;

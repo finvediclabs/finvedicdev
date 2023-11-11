@@ -47,9 +47,9 @@ const routes = [
         meta: { item: 'books' }
       },
       {
-        path: 'books/create',
-        component: () => import('pages/dashboard/books/createBook.vue'),
-        meta: { item: 'books' }
+        path: 'create',
+        component: () => import('components/createFiles.vue'),
+        meta: { item: '' }
       },
       {
         path: 'books/chapter/:id',
@@ -62,9 +62,14 @@ const routes = [
         meta: { item: 'books' }
       },
       {
-        path: 'videos/create',
-        component: () => import('pages/dashboard/videos/createVideo.vue'),
-        meta: { item: 'books' }
+        path: 'videos/chapter/:id',
+        component: () => import('pages/dashboard/videos/chapters.vue'),
+        meta: { item: 'chapters' }
+      },
+      {
+        path: 'prasentations',
+        component: () => import('pages/dashboard/Prasentations.vue'),
+        meta: { item: 'chapters' }
       },
       {
         path: 'class-room',

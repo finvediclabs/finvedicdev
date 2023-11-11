@@ -1,19 +1,16 @@
 <template>
   <fin-portlet>
     <fin-portlet-header>
-      <fin-portlet-heading :loading="loading" backArrow>
-        Videos
-      </fin-portlet-heading>
+      <fin-portlet-heading :loading="loading" backArrow> Chapters List : {{ videoId }}</fin-portlet-heading>
       <fin-portlet-item>
-        <router-link :to="createFile()">
-          <q-btn label="Create Video" icon="add" color="blue-15"
-            class="fin-br-8 text-subtitle1 text-weight-bolder q-px-md" dense no-caps />
+        <router-link :to="this.createFile()">
+          <q-btn label="Create Chapter" outline icon="add" class="q-px-sm" color="blue-8" />
         </router-link>
       </fin-portlet-item>
     </fin-portlet-header>
     <fin-portlet-item>
-      <fin-table :columns="header" :data="videosList" select @reCall="getVideosData()" @editFun="editDataFun"
-        :loading="loading" showChapters @showChapters="showChaptersList" />
+      <fin-table :columns="header" :data="chaptersList" select @reCall="getChaptersData()" @editFun="editDataFun"
+        :loading="loading" />
     </fin-portlet-item>
   </fin-portlet>
 </template>
@@ -24,9 +21,7 @@ import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 import { urls } from "../urls"
-import CryptoJS from 'crypto-js'
 export default {
-  name: 'videos',
   components: {
     FinTable,
     FinPortlet,
@@ -36,18 +31,28 @@ export default {
   },
   data() {
     return {
-      loading: false,
       header: [
         { label: 'S.No', key: 'index', align: 'center' },
         { label: 'Cover', key: 'imagePath', align: 'start', type: 'image' },
         { label: 'Title', key: 'heading', align: 'start' },
         { label: 'Description', key: 'description', align: 'start' },
       ],
-      videosList: []
+      chaptersList: [],
+      loading: true,
+    }
+  },
+  computed: {
+    videoId() {
+      return this.$route.params.id;
     }
   },
   mounted() {
-    this.getVideosData();
+    this.getChaptersData();
+  },
+  watch: {
+    videoId() {
+      this.getChaptersData();
+    }
   },
   methods: {
     showMsg(message, type) {
@@ -60,20 +65,24 @@ export default {
         ]
       });
     },
-    getVideosData() {
-      if (!this.loading) {
+    getChaptersData() {
+      if (this.videoId) {
         this.loading = true;
-        this.$api.get(urls.videoDataUrl).then(response => {
+        this.$api.get(urls.videoChaptersUrl, {
+          params: {
+            videoId: this.videoId
+          }
+        }).then(response => {
           this.loading = false;
           if (response.data.success) {
-            this.videosList = response.data.data.map((item, index) =>({ ...item, index: index + 1 }));
+            this.chaptersList = response.data.data.map((item, index) =>({ ...item, index: index + 1 }));
           } else {
             this.showMsg(response.data?.message, 'negative');
           }
-        }).catch(error => {
+        }).catch((error) => {
           this.loading = false;
-          this.showMsg(error.response?.data.message || error.message, 'negative');
-        });
+          console.log(error);
+        })
       }
     },
     editDataFun(val) {
@@ -83,22 +92,19 @@ export default {
         id: val.id,
         cover: val.imagePath
       };
-      this.createFile( 'Update Video' ,item);
+      this.createFile('update Chapter', item);
     },
-    showChaptersList( video) {
-      this.$router.push({ path: `chapter/${video.id}` })
-    },
-    createFile(title ,item) {
+    createFile(title, item) {
       let params = {
-        title: title ?? 'Create Video',
-        url: urls.videoDataUrl,
+        title: title ?? 'Create Chapter',
+        url: urls.videoChaptersUrl,
         item: item
       };
       let text = JSON.stringify(params);
       // text = CryptoJS.AES.encrypt(editedEvent, "fileTypes").toString();
       if (item) {
         this.$router.push({
-          path: 'create',
+          path: '/admin/create',
           query: {
             data: text
           }
@@ -107,8 +113,6 @@ export default {
         return `/admin/create?data=${text}`;
       }
     }
-  },
+  }
 }
 </script>
-
-

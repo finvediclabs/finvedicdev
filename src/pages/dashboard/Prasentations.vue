@@ -1,53 +1,50 @@
 <template>
   <fin-portlet>
     <fin-portlet-header>
-      <fin-portlet-heading :loading="loading" backArrow>
-        Videos
+      <fin-portlet-heading backArrow :loading="loading">
+        Prasentations
       </fin-portlet-heading>
       <fin-portlet-item>
         <router-link :to="createFile()">
-          <q-btn label="Create Video" icon="add" color="blue-15"
-            class="fin-br-8 text-subtitle1 text-weight-bolder q-px-md" dense no-caps />
+          <q-btn label="Create" outline icon="add" class="q-px-md" color="blue-8" />
         </router-link>
       </fin-portlet-item>
     </fin-portlet-header>
     <fin-portlet-item>
-      <fin-table :columns="header" :data="videosList" select @reCall="getVideosData()" @editFun="editDataFun"
-        :loading="loading" showChapters @showChapters="showChaptersList" />
+      <fin-table :columns="header" :data="prasentations" select @reCall="getPrasentationsData()" @editFun="editDataFun"
+        :loading="loading" />
     </fin-portlet-item>
   </fin-portlet>
 </template>
 <script>
-import FinTable from "src/components/FinTable.vue"
 import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
-import { urls } from "../urls"
-import CryptoJS from 'crypto-js'
+import FinTable from "src/components/FinTable.vue";
+import { urls } from "./urls"
 export default {
-  name: 'videos',
   components: {
-    FinTable,
     FinPortlet,
     FinPortletHeader,
     FinPortletHeading,
     FinPortletItem,
+    FinTable
   },
   data() {
     return {
       loading: false,
       header: [
         { label: 'S.No', key: 'index', align: 'center' },
-        { label: 'Cover', key: 'imagePath', align: 'start', type: 'image' },
+        { label: 'Cover', key: 'videoCoverPath', align: 'start', type: 'image' },
         { label: 'Title', key: 'heading', align: 'start' },
         { label: 'Description', key: 'description', align: 'start' },
       ],
-      videosList: []
+      prasentations: [],
     }
   },
   mounted() {
-    this.getVideosData();
+    this.getPrasentationsData();
   },
   methods: {
     showMsg(message, type) {
@@ -60,38 +57,34 @@ export default {
         ]
       });
     },
-    getVideosData() {
-      if (!this.loading) {
-        this.loading = true;
-        this.$api.get(urls.videoDataUrl).then(response => {
-          this.loading = false;
-          if (response.data.success) {
-            this.videosList = response.data.data.map((item, index) =>({ ...item, index: index + 1 }));
-          } else {
-            this.showMsg(response.data?.message, 'negative');
-          }
-        }).catch(error => {
-          this.loading = false;
-          this.showMsg(error.response?.data.message || error.message, 'negative');
-        });
-      }
+    getPrasentationsData() {
+      this.loading = true;
+      this.$api.get(urls.prasentationsUrl).then(response => {
+        this.loading = false;
+        if (response.data.success) {
+          this.prasentations = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));
+        } else {
+          this.showMsg(response.data?.message, 'negative');
+        }
+      }).catch(error => {
+        this.loading = false;
+        this.showMsg(error.response?.data.message || error.message, 'negative');
+      });
     },
     editDataFun(val) {
+      console.log(val);
       let item = {
         title: val.heading,
         description: val.description,
         id: val.id,
-        cover: val.imagePath
+        cover: val.videoCoverPath
       };
-      this.createFile( 'Update Video' ,item);
+      this.createFile('Update Prasentation', item)
     },
-    showChaptersList( video) {
-      this.$router.push({ path: `chapter/${video.id}` })
-    },
-    createFile(title ,item) {
+    createFile(title, item) {
       let params = {
-        title: title ?? 'Create Video',
-        url: urls.videoDataUrl,
+        title: title ?? 'Create Prasention',
+        url: urls.prasentationsUrl,
         item: item
       };
       let text = JSON.stringify(params);
@@ -107,8 +100,6 @@ export default {
         return `/admin/create?data=${text}`;
       }
     }
-  },
+  }
 }
 </script>
-
-

@@ -107,7 +107,7 @@ export default {
           image: prasentationPng,
           title: 'Presentations',
           discription: 'Perfect for learning how the framework works.',
-          path: 'videos',
+          path: 'prasentations',
           background: '#FFBD80',
           enable: true
         },

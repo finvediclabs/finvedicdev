@@ -1,5 +1,5 @@
 <template>
-	<div class="carousel-3d-slide" :style="slideStyle" :class="computedClasses" @click="goTo()">
+	<div class="carousel-3d-slide cursor-pointer" :style="slideStyle" :class="computedClasses" @click="goTo()">
 		<slot :index="index" :isCurrent="isCurrent" :leftIndex="leftIndex" :rightIndex="rightIndex"/>
 	</div>
 </template>
@@ -126,15 +126,15 @@
 		visibility: hidden;
 		overflow: hidden;
 		top: 0;
-		border-radius: 1px;
-		border-color: #000;
-		border-color: rgba(0, 0, 0, 0.4);
+		border-radius: 2px;
+		border-color: #547999;
 		border-style: solid;
 		background-size: cover;
-		background-color: #ccc;
+		background-color: #5479F770;
 		display: block;
 		margin: 0;
 		box-sizing: border-box;
+    border-radius: 10px;
 	}
 
 	.carousel-3d-slide {

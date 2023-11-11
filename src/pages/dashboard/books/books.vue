@@ -5,7 +5,7 @@
         Books
       </fin-portlet-heading>
       <fin-portlet-item>
-        <router-link :to="'books/create'">
+        <router-link :to="this.createFile()">
           <q-btn label="Create Book" icon="add" color="blue-15" class="fin-br-8 text-subtitle1 text-weight-bolder q-px-md"
             dense no-caps />
         </router-link>
@@ -13,7 +13,7 @@
     </fin-portlet-header>
     <fin-portlet-item>
       <fin-table :columns="header" :data="booksList" select @reCall="getBooksData()" delete-url="api/book/delete"
-        @editFun="editDataFun" :loading="loading" showChapters @showChapters="showChaptersList"/>
+        @editFun="editDataFun" :loading="loading" showChapters @showChapters="showChaptersList" />
     </fin-portlet-item>
   </fin-portlet>
 </template>
@@ -24,6 +24,7 @@ import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 import { urls } from "../urls"
+import CryptoJS from 'crypto-js'
 export default {
   name: 'books',
   components: {
@@ -65,18 +66,7 @@ export default {
         this.$api.get(urls.booksDataUrl).then(response => {
           this.loading = false;
           if (response.data.success) {
-            this.booksList = response.data.data.map((book, i) => {
-              return {
-                index: i + 1,
-                id: book.id,
-                name: book.heading,
-                accountId: book.accountId,
-                description: book.description,
-                heading: book.heading,
-                imagePath: book.imagePath,
-                createdAt: book.createdAt,
-              }
-            });
+            this.booksList = response.data.data.map((item, index) =>({ ...item, index: index + 1 }));
           } else {
             this.showMsg(response.data?.message, 'negative');
           }
@@ -87,10 +77,35 @@ export default {
       }
     },
     editDataFun(val) {
-      console.log(val, 'val');
+      let item = {
+        title: val.heading,
+        description: val.description,
+        id: val.id,
+        cover: val.imagePath
+      };
+      this.createFile('Update Book',item);
     },
     showChaptersList(book) {
       this.$router.push({ path: `books/chapter/${book.id}` })
+    },
+    createFile(title, item) {
+      let params = {
+        title: title ?? 'Create Book',
+        url: urls.booksDataUrl,
+        item: item
+      };
+      const text = JSON.stringify(params);
+      // text = CryptoJS.AES.encrypt(editedEvent, 'objects').toString();
+      if (item) {
+        this.$router.push({
+          path: 'create',
+          query: {
+            data: text
+          }
+        });
+      } else {
+        return `create?data=${text}`;
+      }
     }
   },
 }

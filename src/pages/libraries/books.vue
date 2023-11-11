@@ -62,21 +62,35 @@
                       @click="$refs.carousel.next()" />
                   </q-carousel-control>
                 </template>
-                <q-carousel-slide v-for="(slider, i) in allSlides" :name="i" class="items-end q-pa-none"
-                  v-if="chaptersData.length">
-                  <div class="row full-height">
-                    <div class="col-4 q-px-sm full-height" v-for="item in slider">
-                      <q-img class="full-height rounded-borders" :src="item.chapterImagePath" />
+                <template v-if="chaptersData.length">
+                  <q-carousel-slide v-for="(slider, i) in allSlides" :name="i" class="items-end q-pa-none"
+                    v-if="chaptersLoader">
+                    <div class="row full-height">
+                      <div class="col-4 q-px-sm full-height" v-for="item in slider">
+                        <q-img class="full-height rounded-borders" :src="item.chapterImagePath" />
+                      </div>
                     </div>
-                  </div>
-                </q-carousel-slide>
-                <q-carousel-slide :name="0" v-else class="rounded-borders text-italic">
-                  <div class="row full-height">
-                    <div class="col-4 q-px-sm full-height" v-for="item in 3">
-                      <q-skeleton class="full-width full-height" style="background-color: #F5F5F5;" />
+                  </q-carousel-slide>
+                  <q-carousel-slide :name="0" v-else class="rounded-borders text-italic">
+                    <div class="row full-height">
+                      <div class="col-4 q-px-sm full-height" v-for="item in 3">
+                        <q-skeleton class="full-width full-height" style="background-color: #F5F5F5;" />
+                      </div>
                     </div>
-                  </div>
-                </q-carousel-slide>
+                  </q-carousel-slide>
+                </template>
+                <template v-else>
+                  <q-carousel-slide :name="0" class="rounded-borders text-italic">
+                    <div class="row full-height">
+                      <div class="col-12 q-px-sm full-height">
+                        <div square class="full-width full-height q-pa-md rounded-borders" style="background-color: #F5F5F5;">
+                          No Chapters Found
+                        </div>
+                      </div>
+                    </div>
+                  </q-carousel-slide>
+                </template>
+
               </q-carousel>
 
             </div>
@@ -141,16 +155,7 @@ export default {
       this.$api.get(urls.getBooksDataUrl).then(response => {
         this.loading = false;
         if (response.data.success) {
-          this.booksData = response.data.data.map(books => {
-            return {
-              id: books.id,
-              accountId: books.accountId,
-              description: books.description,
-              heading: books.heading,
-              imagePath: books.imagePath,
-              createdAt: books.createdAt,
-            }
-          });
+          this.booksData = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));
           this.selectedSlide = this.booksData.length ? this.booksData[0] : {};
         } else {
           this.showMsg(response.data?.message, 'negative');

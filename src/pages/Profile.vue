@@ -121,34 +121,34 @@ export default {
       });
     },
     getProfileData() {
-      this.profileData = {
-        image: profileImg,
-        firstName: 'Sandeep',
-        lastName: 'Perikala',
-        email: 'Sandeepperikala@gmail.com',
-        type: 'owner',
-        imgBgType: null
-      }
-      // this.loading = true;
-      // this.$api.get().then(response => {
-      //   if (response.data.success) {
-      // this.profileData = response.data.data;
-      this.editProfile = {
-        mail: this.profileData.email,
-        fName: this.profileData.firstName,
-        lName: this.profileData.lastName,
-        profile: this.profileData.image,
-        Usertype: this.profileData.type,
-        profileBg: this.profileData.imgBgType,
-      }
-      this.imageUrl = this.editProfile.profile;
-      //   } else {
-      //     this.showMsg(response.data.message, 'negative');
-      //   }
-      // }).catch(error => {
-      //   this.loading = false;
-      //   this.showMsg(error.response?.data.message || error.message, 'negative');
-      // });
+      // this.profileData = {
+      //   image: profileImg,
+      //   firstName: 'Sandeep',
+      //   lastName: 'Perikala',
+      //   email: 'Sandeepperikala@gmail.com',
+      //   type: 'owner',
+      //   imgBgType: null
+      // }
+      this.loading = true;
+      this.$api.get().then(response => {
+        if (response.data.success) {
+          this.profileData = response.data.data;
+          this.editProfile = {
+            mail: this.profileData.email,
+            fName: this.profileData.firstName,
+            lName: this.profileData.lastName,
+            profile: this.profileData.image,
+            Usertype: this.profileData.type,
+            profileBg: this.profileData.imgBgType,
+          }
+          this.imageUrl = this.editProfile.profile;
+        } else {
+          this.showMsg(response.data.message, 'negative');
+        }
+      }).catch(error => {
+        this.loading = false;
+        this.showMsg(error.response?.data.message || error.message, 'negative');
+      });
     },
     updateProfile() {
       var formdata = new FormData();

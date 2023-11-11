@@ -148,21 +148,7 @@ export default {
       this.$api.get(urls.usersUrl).then(response => {
         this.loading = false;
         if (response.data.success) {
-          this.usersList = response.data.data.map((user, index) => {
-            return {
-              "index": index + 1,
-              "id": user.id,
-              "accountId": user.accountId,
-              "firstName": user.firstName,
-              "lastName": user.lastName,
-              "name": `${user.firstName} ${user.lastName}`,
-              "email": user.email,
-              "owner": user.owner,
-              "photoPath": user.photoPath,
-              "createdAt": moment(user.createdAt).format('YYYY-MM-DD HH:mm:ss'),
-              "phoneNumber": user.phoneNumber
-            }
-          });
+          this.usersList = response.data.data.map((item, index) =>({ ...item, index: index + 1 }));
         } else {
           this.showMsg(response.data?.message, 'negative');
         }
