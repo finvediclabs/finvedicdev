@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { setToken } from "src/boot/axios"
 import { useProfileStore } from "./profile"
 import { useRolesStore } from "./roles"
+import { useCategorieStore } from './Categories';
 
 export const useSessionStore = defineStore('session', {
   state: () => ({
@@ -20,6 +21,9 @@ export const useSessionStore = defineStore('session', {
 
       const rolesStore = useRolesStore();
       rolesStore.fetchRoles();
+
+      const CategorieStore = useCategorieStore();
+      CategorieStore.fetchCategories();
     }
   },
 });

@@ -69,17 +69,17 @@ const routes = [
       {
         path: 'prasentations',
         component: () => import('pages/dashboard/Prasentations.vue'),
-        meta: { item: 'chapters' }
+        meta: { item: 'prasentations' }
       },
       {
         path: 'class-room',
         component: () => import('pages/dashboard/CalanderEvents/List.vue'),
-        meta: { items: '' }
+        meta: { items: 'class-room' }
       },
       {
         path: 'class-room/create',
         component: () => import('pages/dashboard/CalanderEvents/CreateEvent.vue'),
-        meta: { items: '' }
+        meta: { items: 'class-room' }
       }
     ],
   },
@@ -111,6 +111,11 @@ const routes = [
         path: 'videos',
         component: () => import('pages/libraries/videos.vue'),
         meta: { item: 'videos' }
+      },
+      {
+        path: 'prasentations',
+        component: () => import('pages/libraries/prasentations.vue'),
+        meta: { item: 'prasentations' }
       },
       {
         path: 'class-room',

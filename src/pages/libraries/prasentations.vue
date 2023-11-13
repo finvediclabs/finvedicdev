@@ -1,7 +1,7 @@
 <template>
   <fin-portlet>
     <fin-portlet-header>
-      <fin-portlet-heading :loading="loading">Books</fin-portlet-heading>
+      <fin-portlet-heading :loading="loading">Prasentations</fin-portlet-heading>
     </fin-portlet-header>
     <fin-portlet-item>
       <div class="row q-pb-lg">
@@ -25,10 +25,10 @@
         </div>
       </div>
     </fin-portlet-item>
-    <fin-portlet-item class="q-pb-xl" v-if="booksData.length">
-      <carousel-3d :totalSlides="booksData.length" :count="booksData.length" @beforeSlideChange="getCurrentSlide"
+    <fin-portlet-item class="q-pb-xl" v-if="prasentations.length">
+      <carousel-3d :totalSlides="prasentations.length" :count="prasentations.length" @beforeSlideChange="getCurrentSlide"
         :controls-visible="true">
-        <slide v-for="(slide, i) in booksData" :key="i" :index="i">
+        <slide v-for="(slide, i) in prasentations" :key="i" :index="i">
           <q-img :src="slide.imagePath" class="fit" :alt="slide.heading">
             <template v-slot:error>
               <q-img
@@ -149,14 +149,14 @@ export default {
   },
   data() {
     return {
-      booksData: [],
+      prasentations: [],
       selectedSlide: {},
       loading: false,
       chaptersData: [],
       slide: 0,
       allSlides: [],
       chaptersLoader: false,
-      loading: false
+      loading: false,
     }
   },
   watch: {
@@ -167,18 +167,18 @@ export default {
     },
     selectedCategory() {
       if (!this.selectedSubCategory?.id) {
-        this.getBooksData();
+        this.gePrasentations();
       }
     },
     selectedSubCategory() {
       if (this.selectedSubCategory?.id) {
-        this.getBooksData();
+        this.gePrasentations();
       }
     }
   },
   mounted() {
     if (this.selectedCategory) {
-      this.getBooksData();
+      this.gePrasentations();
     }
   },
   methods: {
@@ -193,9 +193,9 @@ export default {
       });
     },
     getCurrentSlide(index) {
-      this.selectedSlide = this.booksData[index];
+      this.selectedSlide = this.prasentations[index];
     },
-    getBooksData() {
+    gePrasentations() {
       this.loading = true;
       let request = {
         params: {
@@ -205,11 +205,11 @@ export default {
       if (this.selectedSubCategory && this.selectedCategory?.id == this.selectedSubCategory?.categoryCode) {
         request.params.subCategoryId = this.selectedSubCategory.id;
       }
-      this.$api.get(urls.getBooksDataUrl, request).then(response => {
+      this.$api.get(urls.getPrasentationsUrl, request).then(response => {
         this.loading = false;
         if (response.data.success) {
-          this.booksData = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));
-          this.selectedSlide = this.booksData.length ? this.booksData[0] : {};
+          this.prasentations = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));
+          this.selectedSlide = this.prasentations.length ? this.prasentations[0] : {};
         } else {
           this.showMsg(response.data?.message, 'negative');
         }
@@ -219,37 +219,37 @@ export default {
       });
     },
     getChapthersData() {
-      this.chaptersLoader = true;
-      this.$api.get(urls.getBookChapterUrl, {
-        params: {
-          bookId: this.selectedSlide?.id
-        }
-      }).then(response => {
-        this.chaptersLoader = false;
-        if (response.data.success) {
-          this.chaptersData = response.data.data.map((chapter, index) => {
-            return {
-              index: index + 1,
-              id: chapter.id,
-              bookId: chapter.bookId,
-              accountId: chapter.accountId,
-              description: chapter.description,
-              chapterTitle: chapter.chapterTitle,
-              chapterImagePath: chapter.firstchapterImagePath,
-              chapterFilePath: chapter.chapterFilePath,
-              createdAt: moment(chapter.createdAt).format('YYYY-MM-DD'),
-              updatedAt: moment(chapter.updatedAt).format('YYYY-MM-DD'),
-              deletedAt: moment(chapter.deletedAt).format('YYYY-MM-DD')
-            }
-          });
-          this.getdummychapters(this.chaptersData);
-        } else {
-          this.showMsg(response.data?.message, 'negative');
-        }
-      }).catch(error => {
-        this.chaptersLoader = false;
-        this.showMsg(error.response?.data.message || error.message, 'negative');
-      })
+      //   this.chaptersLoader = true;
+      //   this.$api.get(urls.getBookChapterUrl, {
+      //     params: {
+      //       bookId: this.selectedSlide?.id
+      //     }
+      //   }).then(response => {
+      //     this.chaptersLoader = false;
+      //     if (response.data.success) {
+      //       this.chaptersData = response.data.data.map((chapter, index) => {
+      //         return {
+      //           index: index + 1,
+      //           id: chapter.id,
+      //           bookId: chapter.bookId,
+      //           accountId: chapter.accountId,
+      //           description: chapter.description,
+      //           chapterTitle: chapter.chapterTitle,
+      //           chapterImagePath: chapter.firstchapterImagePath,
+      //           chapterFilePath: chapter.chapterFilePath,
+      //           createdAt: moment(chapter.createdAt).format('YYYY-MM-DD'),
+      //           updatedAt: moment(chapter.updatedAt).format('YYYY-MM-DD'),
+      //           deletedAt: moment(chapter.deletedAt).format('YYYY-MM-DD')
+      //         }
+      //       });
+      //       this.getdummychapters(this.chaptersData);
+      //     } else {
+      //       this.showMsg(response.data?.message, 'negative');
+      //     }
+      //   }).catch(error => {
+      //     this.chaptersLoader = false;
+      //     this.showMsg(error.response?.data.message || error.message, 'negative');
+      //   })
     },
     getdummychapters(chapter) {
       let index = 0;
@@ -262,7 +262,6 @@ export default {
           slide = [];
         }
       }
-      console.log(this.allSlides);
     },
   }
 };
