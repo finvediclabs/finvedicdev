@@ -2,7 +2,7 @@
   <div class="main">
     <div class="dropzone-container" @dragover="dragover" @dragleave="dragleave" @drop="drop">
       <input type="file" name="file" id="fileInput" class="hidden-input" @change="onChange" ref="file"
-        accept=".pdf,.jpg,.jpeg,.png" />
+        :accept="accept" />
       <label for="fileInput" class="file-label" v-if="!files.length">
         <div>
           <q-icon name="upload_file" size="100px" color="blue-2" />
@@ -32,6 +32,7 @@ export default {
       files: [],
     }
   },
+  props: ['accept'],
   methods: {
     onChange() {
       this.files.push(...this.$refs.file.files);

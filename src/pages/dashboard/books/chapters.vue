@@ -34,8 +34,8 @@ export default {
     return {
       header: [
         { label: 'S.No', key: 'index', align: 'center' },
-        { label: 'Cover', key: 'imagePath', align: 'start', type: 'image' },
-        { label: 'Title', key: 'heading', align: 'start' },
+        { label: 'Cover', key: 'chapterImagePath', align: 'start', type: 'image' },
+        { label: 'Title', key: 'chapterTitle', align: 'start' },
         { label: 'Description', key: 'description', align: 'start' },
       ],
       chaptersList: [],
@@ -66,9 +66,6 @@ export default {
         ]
       });
     },
-    editDataFun(item) {
-      console.log(item, 'item');
-    },
     getChaptersData() {
       if (this.bookId) {
         this.loading = true;
@@ -89,11 +86,12 @@ export default {
       }
     },
     editDataFun(val) {
+      console.log(val);
       let item = {
-        title: val.heading,
+        title: val.chapterTitle,
         description: val.description,
         id: val.id,
-        cover: val.imagePath
+        cover: val.chapterImagePath,
       };
       this.createFile('Update Chapter', item);
     },
@@ -101,13 +99,15 @@ export default {
       let params = {
         title: title ?? 'Create Chapter',
         url: urls.bookChaptersUrl,
-        item: item
+        item: item,
+        bookId: this.bookId,
+        chapter: true
       };
       let text = JSON.stringify(params);
       // text = CryptoJS.AES.encrypt(editedEvent, "fileTypes").toString();
       if (item) {
         this.$router.push({
-          path: 'create',
+          path: '/admin/create',
           query: {
             data: text
           }

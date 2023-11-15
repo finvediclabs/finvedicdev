@@ -6,15 +6,16 @@
     <fin-portlet-item>
       <q-form @submit="validatePostData">
         <div class="row justify-center">
-          <div class="col-10 q-pb-lg">
+          <div class="col-10 q-pb-lg" v-if="!chapter">
             <div class="row">
-              <div v-for="category in categories" class="col q-pa-sm">
-                <q-btn :label="category.categoryName" no-caps v-if="!subCategories[category.id]" class="full-width"
-                  size="lg" :class="selectedCategory?.id == category.id ? 'bg-finvedic text-white' : ''"
+              <div v-for="category in categories" class="col-12 col-sm-4 q-pa-sm" style="white-space: nowrap;">
+                <q-btn :label="category.categoryName" no-caps v-if="!subCategories[category.id]"
+                  class="full-width shadow-2" rounded size="lg"
+                  :class="selectedCategory?.id == category.id ? 'bg-finvedic text-white' : ''"
                   @click="selectCategory(category)" />
 
-                <q-btn-dropdown :label="category.categoryName" no-caps v-if="subCategories[category.id]"
-                  class="full-width" :class="{ 'bg-finvedic text-white': selectedCategory?.id === category.id }"
+                <q-btn-dropdown :label="category.categoryName" no-caps v-if="subCategories[category.id]" rounded
+                  class="full-width shadow-2" :class="{ 'bg-finvedic text-white': selectedCategory?.id === category.id }"
                   size="lg">
                   <q-list>
                     <q-item v-for="subCategory in subCategories[category.id]" clickable v-close-popup
@@ -97,18 +98,21 @@ export default {
       selectedCategory: {},
       selectedSubCategory: {},
       videoCoverPath: '',
-      error: {}
+      error: {},
+      chapter: false,
+      id: '',
     }
   },
   mounted() {
     let data = this.$route.query.data; //CryptoJS.AES.decrypt(this.$route.query.data, 'objects').toString(CryptoJS.enc.Utf-8);
-    this.queryData = data ? JSON.parse(data) : data;
+    this.queryData = JSON.parse(data);
+    this.chapter = this.queryData.chapter ?? false;
     if (this.queryData.item) {
       let item = this.queryData.item;
       this.title = item.title;
       this.description = item.description;
       this.id = item.id;
-      this.cover = item.cover;
+      this.cover[0] = item.cover;
     }
   },
   methods: {
@@ -126,56 +130,116 @@ export default {
       this.cover = this.$refs.file.values;
     },
     validatePostData() {
-      if (this.cover.length && this.selectedCategory?.id) {
-        if (this.subCategories[this.selectedCategory?.id]) {
-          if (this.selectedSubCategory?.id) {
-            this.uploadImg();
-          } else {
-            this.error[this.selectedCategory?.id] = 'Choose An Option'
-          }
-        } else {
+      if (this.chapter) {
+        if (this.cover.length) {
           this.uploadImg();
+        } else {
+          this.errorFile = "Image Is required";
         }
       } else {
-        this.errorFile = "Image Is required";
-        this.error.category = "Please Select An Option";
+        if (this.cover.length && this.selectedCategory?.id) {
+          if (this.subCategories[this.selectedCategory?.id]) {
+            if (this.selectedSubCategory?.id) {
+              this.uploadImg();
+            } else {
+              this.error[this.selectedCategory?.id] = 'Choose An Option'
+            }
+          } else {
+            this.uploadImg();
+          }
+        } else {
+          this.errorFile = "Image Is required";
+          this.error.category = "Please Select An Option";
+        }
       }
+
     },
     uploadImg() {
-      let formData = new FormData();
-      formData.append('file', this.cover[0]);
-      this.$api.post('fs/upload-file', formData).then(response => {
-        this.videoCoverPath = response.data.uri;
-        this.onSubmit();
-      }).catch(error => {
-        this.showMsg(error.response?.data.message || error.message, 'negative');
-      })
-    },
-    onSubmit() {
-      let request = {
-        accountId: this.profile?.id,
-        description: this.description,
-        heading: this.title,
-        videoCoverPath: this.videoCoverPath,
-        categoryId: this.selectedCategory.id
-      }
-      request.subCategory = this.selectedSubCategory.id;
-
       if (!this.loading) {
         this.loading = true;
-        this.$api.post(this.queryData.url, request).then(response => {
-          this.loading = false;
-          if (response.data.success) {
-            this.showMsg(response.data?.message, 'positive');
-            this.$router.go(-1);
+        let formData = new FormData();
+        formData.append('file', this.cover[0]);
+        this.$api.post('fs/upload-file', formData).then(response => {
+          this.videoCoverPath = response.data.uri;
+          if (this.id) {
+            this.updateData()
           } else {
-            this.showMsg(response.data?.message, 'negative');
+            this.onSubmit();
           }
         }).catch(error => {
-          this.loading = false;
           this.showMsg(error.response?.data.message || error.message, 'negative');
         })
       }
+    },
+    onSubmit() {
+      var request = {};
+      if (this.chapter) {
+        request = {
+          bookId: this.queryData.bookId,
+          accountId: this.profile?.id,
+          description: this.description,
+          chapterTitle: this.title,
+          videoCoverPath: this.videoCoverPath
+        }
+      } else {
+        request = {
+          accountId: this.profile?.id,
+          description: this.description,
+          heading: this.title,
+          videoCoverPath: this.videoCoverPath,
+          categoryId: this.selectedCategory.id
+        }
+        request.subCategory = this.selectedSubCategory.id;
+      }
+      this.$api.post(this.queryData.url, request).then(response => {
+        this.loading = false;
+        if (response.data.success) {
+          this.showMsg(response.data?.message || 'File Cretaed Successfully', 'positive');
+          this.$router.go(-1);
+        } else {
+          this.showMsg(response.data?.message, 'negative');
+        }
+      }).catch(error => {
+        this.loading = false;
+        this.showMsg(error.response?.data.message || error.message, 'negative');
+      })
+
+    },
+
+    updateData() {
+      var request = {};
+      if (this.chapter) {
+        request = {
+          bookId: this.queryData.bookId,
+          accountId: this.profile?.id,
+          description: this.description,
+          chapterTitle: this.title,
+          videoCoverPath: this.videoCoverPath
+        }
+      } else {
+        request = {
+          accountId: this.profile?.id,
+          description: this.description,
+          heading: this.title,
+          videoCoverPath: this.videoCoverPath,
+          categoryId: this.selectedCategory.id
+        }
+        request.subCategory = this.selectedSubCategory.id;
+      }
+      request.id = this.id;
+
+      this.$api.put(this.queryData.url, request).then(response => {
+        this.loading = false;
+        if (response.data.success) {
+          this.showMsg(response.data?.message || 'File Cretaed Successfully', 'positive');
+          this.$router.go(-1);
+        } else {
+          this.showMsg(response.data?.message, 'negative');
+        }
+      }).catch(error => {
+        this.loading = false;
+        this.showMsg(error.response?.data.message || error.message, 'negative');
+      })
     },
     selectFilesData(val) {
       this.cover = val;

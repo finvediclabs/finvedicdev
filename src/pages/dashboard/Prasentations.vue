@@ -76,7 +76,9 @@ export default {
         title: val.heading,
         description: val.description,
         id: val.id,
-        cover: val.videoCoverPath
+        cover: val.videoCoverPath,
+        categoryId: val.categoryId,
+        subCategoryId: val.subCategory
       };
       this.createFile('Update Prasentation', item)
     },
