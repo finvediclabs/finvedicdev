@@ -166,7 +166,6 @@ export default {
   },
   methods: {
     addEventListeners() {
-      // console.log(this.$listeners, 'Object.keys(this.$listeners)');
       // Object.keys(this.$listeners).forEach((eventName) => {
       //   this.calendarInstance.on(eventName, (...args) => this.$emit(eventName, ...args));
       // });

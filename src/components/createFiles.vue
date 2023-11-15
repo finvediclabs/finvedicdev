@@ -126,29 +126,22 @@ export default {
       this.cover = this.$refs.file.values;
     },
     validatePostData() {
-      console.log(this.cover,this.selectedCategory?.id );
       if (this.cover.length && this.selectedCategory?.id) {
-        alert('aaaaaaaaaaa')
         if (this.subCategories[this.selectedCategory?.id]) {
-          alert('sub Cat');
           if (this.selectedSubCategory?.id) {
             this.uploadImg();
           } else {
-
             this.error[this.selectedCategory?.id] = 'Choose An Option'
           }
         } else {
-          alert('category');
           this.uploadImg();
         }
       } else {
-        alert('saaaaadddddddddddddddddddddddd')
         this.errorFile = "Image Is required";
         this.error.category = "Please Select An Option";
       }
     },
     uploadImg() {
-      alert('hai');
       let formData = new FormData();
       formData.append('file', this.cover[0]);
       this.$api.post('fs/upload-file', formData).then(response => {
@@ -159,7 +152,6 @@ export default {
       })
     },
     onSubmit() {
-      alert('called');
       let request = {
         accountId: this.profile?.id,
         description: this.description,

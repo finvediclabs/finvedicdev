@@ -254,7 +254,6 @@ export default {
           slide = [];
         }
       }
-      console.log(this.allSlides);
     },
   }
 };

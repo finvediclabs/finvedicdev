@@ -24,6 +24,9 @@ export const useSessionStore = defineStore('session', {
 
       const CategorieStore = useCategorieStore();
       CategorieStore.fetchCategories();
+    },
+    setUserType(userType) {
+      this.userType = userType;
     }
   },
 });

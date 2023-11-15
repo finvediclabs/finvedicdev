@@ -72,7 +72,6 @@ export default {
       });
     },
     editDataFun(val) {
-      console.log(val);
       let item = {
         title: val.heading,
         description: val.description,

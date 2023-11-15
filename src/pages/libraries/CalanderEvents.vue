@@ -70,10 +70,8 @@ export default {
         //   return `<span style="color: white;">${title} ${start}~${(end)} </span>`;
         // },
         allday: (event) => {
-          console.log(event);
         },
         // allday(event) {
-        //   console.log(event,'event');
         //   return `<span style="color: gray;">${event.title}</span>`;
         // },
       },

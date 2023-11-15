@@ -400,7 +400,6 @@ export default {
      * @return {Number} Number of slides
      */
     getSlideCount () {
-      // console.log(this.$slots.default,'slotss');
       return this.count;
 
 //       if (this.$slots.default !== undefined) {
