@@ -6,7 +6,7 @@
       </fin-portlet-header>
       <fin-portlet-item>
         <div class="row">
-          <div class="col-12 colmd-6 col-lg-4 q-pa-md" v-for="(lab, index) in labsData" :key="lab.id">
+          <div class="col-12 col-sm-6 col-md-6 col-lg-4 q-pa-md" v-for="(lab, index) in labsData" :key="lab.id">
             <q-card class="full-width shadow-8" style="border-radius: 10px!important;">
               <q-card-section horizontal :style="{ border: lab.locked ? '2px solid #FF7F50' : '2px solid #00C520' }">
                 <q-card-section class="q-pa-md lab-img flex items-center">
