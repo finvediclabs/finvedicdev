@@ -68,8 +68,13 @@ const routes = [
       },
       {
         path: 'prasentations',
-        component: () => import('pages/dashboard/Prasentations.vue'),
+        component: () => import('src/pages/dashboard/prasentations/Prasentations.vue'),
         meta: { item: 'prasentations' }
+      },
+      {
+        path: 'prasentations/chapter/:id',
+        component: () => import('pages/dashboard/prasentations/chapters.vue'),
+        meta: { item: 'chapters' }
       },
       {
         path: 'class-room',

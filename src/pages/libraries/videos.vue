@@ -123,6 +123,7 @@ import { Carousel3d, Slide } from "src/components/carousel-3d";
 import { urls } from "./urls"
 import { storeToRefs } from "pinia";
 import { useCategorieStore } from "src/stores/Categories";
+import moment from "moment"
 export default {
   setup() {
     const categorieStore = useCategorieStore();

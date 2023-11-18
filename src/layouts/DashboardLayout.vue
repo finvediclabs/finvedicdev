@@ -218,7 +218,7 @@ export default {
       drawerLeft: window.innerWidth < 576 ? false : true,
       miniState: false,
       modulesList: [
-        { icon: 'person', label: 'Administration', value: 'admin' },
+        { icon: 'person', label: 'Administration', value: 'admin' , enable: true},
         { icon: 'groups', label: 'Labs', value: 'labs' },
         {
           icon: 'library_books', label: 'Libraries', value: 'library', menu: [
@@ -228,7 +228,7 @@ export default {
             { label: "Class Room", value: "class-room", icon: 'reduce_capacity' }
           ]
         },
-        { icon: 'summarize', label: 'Reports', value: 'reports' },
+        { icon: 'summarize', label: 'Reports', value: 'reports' }
       ],
       expanded: false,
       userName: 'Sandeep Perikala'

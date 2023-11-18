@@ -132,6 +132,7 @@ import { Carousel3d, Slide } from "src/components/carousel-3d";
 import { urls } from "./urls"
 import { storeToRefs } from "pinia";
 import { useCategorieStore } from "src/stores/Categories";
+import moment from "moment"
 export default {
   setup() {
     const categorieStore = useCategorieStore();
@@ -219,37 +220,37 @@ export default {
       });
     },
     getChapthersData() {
-      //   this.chaptersLoader = true;
-      //   this.$api.get(urls.getBookChapterUrl, {
-      //     params: {
-      //       bookId: this.selectedSlide?.id
-      //     }
-      //   }).then(response => {
-      //     this.chaptersLoader = false;
-      //     if (response.data.success) {
-      //       this.chaptersData = response.data.data.map((chapter, index) => {
-      //         return {
-      //           index: index + 1,
-      //           id: chapter.id,
-      //           bookId: chapter.bookId,
-      //           accountId: chapter.accountId,
-      //           description: chapter.description,
-      //           chapterTitle: chapter.chapterTitle,
-      //           chapterImagePath: chapter.firstchapterImagePath,
-      //           chapterFilePath: chapter.chapterFilePath,
-      //           createdAt: moment(chapter.createdAt).format('YYYY-MM-DD'),
-      //           updatedAt: moment(chapter.updatedAt).format('YYYY-MM-DD'),
-      //           deletedAt: moment(chapter.deletedAt).format('YYYY-MM-DD')
-      //         }
-      //       });
-      //       this.getdummychapters(this.chaptersData);
-      //     } else {
-      //       this.showMsg(response.data?.message, 'negative');
-      //     }
-      //   }).catch(error => {
-      //     this.chaptersLoader = false;
-      //     this.showMsg(error.response?.data.message || error.message, 'negative');
-      //   })
+        this.chaptersLoader = true;
+        this.$api.get(urls.getBookChapterUrl, {
+          params: {
+            bookId: this.selectedSlide?.id
+          }
+        }).then(response => {
+          this.chaptersLoader = false;
+          if (response.data.success) {
+            this.chaptersData = response.data.data.map((chapter, index) => {
+              return {
+                index: index + 1,
+                id: chapter.id,
+                bookId: chapter.bookId,
+                accountId: chapter.accountId,
+                description: chapter.description,
+                chapterTitle: chapter.chapterTitle,
+                chapterImagePath: chapter.firstchapterImagePath,
+                chapterFilePath: chapter.chapterFilePath,
+                createdAt: moment(chapter.createdAt).format('YYYY-MM-DD'),
+                updatedAt: moment(chapter.updatedAt).format('YYYY-MM-DD'),
+                deletedAt: moment(chapter.deletedAt).format('YYYY-MM-DD')
+              }
+            });
+            this.getdummychapters(this.chaptersData);
+          } else {
+            this.showMsg(response.data?.message, 'negative');
+          }
+        }).catch(error => {
+          this.chaptersLoader = false;
+          this.showMsg(error.response?.data.message || error.message, 'negative');
+        })
     },
     getdummychapters(chapter) {
       let index = 0;

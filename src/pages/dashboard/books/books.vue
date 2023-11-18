@@ -87,14 +87,15 @@ export default {
       };
       this.createFile('Update Book',item);
     },
-    showChaptersList(book) {
+    showChaptersList(book) { 
       this.$router.push({ path: `books/chapter/${book.id}` })
     },
-    createFile(title, item) {
+    createFile(title, item, id) {
       let params = {
         title: title ?? 'Create Book',
-        url: urls.booksDataUrl,
-        item: item
+        url: item?.id ? `${urls.booksDataUrl}/${item.id}` : urls.booksDataUrl,
+        item: item,
+        requiredCataloge: false
       };
       const text = JSON.stringify(params);
       // text = CryptoJS.AES.encrypt(editedEvent, 'objects').toString();

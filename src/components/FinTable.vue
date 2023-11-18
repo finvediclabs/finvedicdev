@@ -116,6 +116,10 @@ export default {
     showChapters: {
       type: Boolean,
       default: false
+    },
+    allowDelete: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

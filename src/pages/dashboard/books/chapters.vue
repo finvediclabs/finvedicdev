@@ -98,10 +98,12 @@ export default {
     createFile(title, item) {
       let params = {
         title: title ?? 'Create Chapter',
-        url: urls.bookChaptersUrl,
+        url: item?.id ? `${urls.bookChaptersUrl}/${item?.id}` : urls.bookChaptersUrl,
         item: item,
         bookId: this.bookId,
-        chapter: true
+        chapter: true,
+        requiredCataloge: false,
+        key: 'bookId'
       };
       let text = JSON.stringify(params);
       // text = CryptoJS.AES.encrypt(editedEvent, "fileTypes").toString();

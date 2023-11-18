@@ -33,8 +33,8 @@ export default {
     return {
       header: [
         { label: 'S.No', key: 'index', align: 'center' },
-        { label: 'Cover', key: 'imagePath', align: 'start', type: 'image' },
-        { label: 'Title', key: 'heading', align: 'start' },
+        { label: 'Cover', key: 'videoFilePath', align: 'start', type: 'image' },
+        { label: 'Title', key: 'chapterTitle', align: 'start' },
         { label: 'Description', key: 'description', align: 'start' },
       ],
       chaptersList: [],
@@ -87,18 +87,22 @@ export default {
     },
     editDataFun(val) {
       let item = {
-        title: val.heading,
+        title: val.chapterTitle,
         description: val.description,
         id: val.id,
-        cover: val.imagePath
+        cover: val.videoFilePath
       };
       this.createFile('update Chapter', item);
     },
     createFile(title, item) {
       let params = {
         title: title ?? 'Create Chapter',
-        url: urls.videoChaptersUrl,
-        item: item
+        url: item?.id ? `${urls.videoChaptersUrl}/${item.id}` : urls.videoChaptersUrl ,
+        item: item,
+        chapter: true,
+        requiredCataloge: false,
+        key: 'videoId',
+        videoId: this.videoId
       };
       let text = JSON.stringify(params);
       // text = CryptoJS.AES.encrypt(editedEvent, "fileTypes").toString();

@@ -6,7 +6,7 @@
     <fin-portlet-item>
       <q-form @submit="validatePostData">
         <div class="row justify-center">
-          <div class="col-10 q-pb-lg" v-if="!chapter">
+          <div class="col-10 q-pb-lg" v-if="requiredCataloge">
             <div class="row">
               <div v-for="category in categories" class="col-12 col-sm-4 q-pa-sm" style="white-space: nowrap;">
                 <q-btn :label="category.categoryName" no-caps v-if="!subCategories[category.id]"
@@ -32,9 +32,11 @@
                 </div>
               </div>
             </div>
-            <div v-if="!selectedCategory?.id" class="text-red" style="height: 20px;font-size: 14px;">{{ error.category }}
+            <div v-if="!selectedCategory?.id" class="text-red" style="height: 20px;font-size: 14px;">
+              {{ error.category }}
             </div>
           </div>
+
           <div class="col-12 col-md-6 ">
             <fin-portlet-item class="full-width q-pa-md">
               <q-input v-model="title" filled label="Title" lazy-rules
@@ -46,7 +48,12 @@
             </fin-portlet-item>
           </div>
           <div class="col-12 col-md-4 q-pa-md text-center">
-            <drop-file @update="selectFilesData" />
+            <div v-if="videoCoverPath" class="shadow-3 q-mx-auto fin-br-8" style="width: 200px;max-height: 300px;">
+              <q-btn class="float-right" icon="close" flat @click="videoCoverPath=''"/>
+              <q-img :src="videoCoverPath" class="full-width" style="width: 200px;max-height: 300px;"/>
+            </div>
+            <drop-file @update="selectFilesData" v-else/>
+
             <div style="height: 20px;font-size: 14px;" class="text-red q-pt-sm" v-if="!cover.length">
               {{ errorFile }}
             </div>
@@ -58,6 +65,7 @@
             </q-btn>
           </div>
         </div>
+
       </q-form>
     </fin-portlet-item>
   </fin-portlet>
@@ -72,13 +80,18 @@ import { useProfileStore } from "src/stores/profile";
 import { storeToRefs } from "pinia";
 import { useCategorieStore } from "src/stores/Categories";
 import CryptoJS from 'crypto-js'
+import { isThisSecond } from "date-fns";
 export default {
   setup() {
     const profileStore = useProfileStore();
     const { profile } = storeToRefs(profileStore);
     const categorieStore = useCategorieStore();
     const { categories, subCategories } = storeToRefs(categorieStore);
-    return { profile, categories, subCategories }
+    return {
+      profile,
+      categories,
+      subCategories
+    }
   },
   components: {
     FinPortlet,
@@ -101,18 +114,25 @@ export default {
       error: {},
       chapter: false,
       id: '',
+      requiredCataloge: true,
+      key: '',
     }
   },
   mounted() {
     let data = this.$route.query.data; //CryptoJS.AES.decrypt(this.$route.query.data, 'objects').toString(CryptoJS.enc.Utf-8);
     this.queryData = JSON.parse(data);
     this.chapter = this.queryData.chapter ?? false;
+    this.requiredCataloge = this.queryData.requiredCataloge ?? true;
+    this.key = this.queryData?.key;
     if (this.queryData.item) {
       let item = this.queryData.item;
       this.title = item.title;
       this.description = item.description;
       this.id = item.id;
-      this.cover[0] = item.cover;
+      // this.cover[0] = item.cover;
+      this.videoCoverPath = item.cover;
+      this.selectedCategory.id = item.categoryId;
+      this.selectedSubCategory.id = item.subCategoryId;
     }
   },
   methods: {
@@ -129,30 +149,60 @@ export default {
     ChangeCover() {
       this.cover = this.$refs.file.values;
     },
-    validatePostData() {
+    getRequest() {
+      var request = {
+        accountId: this.profile?.id,
+        description: this.description,
+        videoCoverPath: this.videoCoverPath,
+      };
+
       if (this.chapter) {
-        if (this.cover.length) {
-          this.uploadImg();
-        } else {
-          this.errorFile = "Image Is required";
-        }
+        request[this.key] = this.queryData[this.key];
+        request.chapterTitle = this.title;
       } else {
-        if (this.cover.length && this.selectedCategory?.id) {
+        request.heading = this.title;
+      }
+
+      if (this.requiredCataloge) {
+        request.categoryId = this.selectedCategory?.id;
+        request.subCategory = this.selectedSubCategory?.id;
+      }
+
+      return request;
+    },
+    validatePostData() {
+      if (this.requiredCataloge && (this.cover.length || this.videoCoverPath)) {
+        if (this.selectedCategory?.id) {
           if (this.subCategories[this.selectedCategory?.id]) {
             if (this.selectedSubCategory?.id) {
-              this.uploadImg();
+              if (this.id) {
+                this.videoCoverPath ? this.updateData() : this.uploadImg();
+              } else {
+                this.uploadImg();
+              }
             } else {
               this.error[this.selectedCategory?.id] = 'Choose An Option'
             }
           } else {
-            this.uploadImg();
+            if (this.id) {
+              this.videoCoverPath ? this.updateData() : this.uploadImg();
+            } else {
+              this.uploadImg();
+            }
           }
         } else {
-          this.errorFile = "Image Is required";
-          this.error.category = "Please Select An Option";
+          this.error.category = "Please Select Category";
         }
+      } else if (this.cover.length || this.videoCoverPath) {
+        if (this.id) {
+          this.videoCoverPath ? this.updateData() : this.uploadImg();
+        } else {
+          this.uploadImg();
+        }
+      } else {
+        this.errorFile = "Image Is required";
+        this.error.category = "Please Select Category";
       }
-
     },
     uploadImg() {
       if (!this.loading) {
@@ -162,7 +212,7 @@ export default {
         this.$api.post('fs/upload-file', formData).then(response => {
           this.videoCoverPath = response.data.uri;
           if (this.id) {
-            this.updateData()
+            this.updateData();
           } else {
             this.onSubmit();
           }
@@ -172,26 +222,7 @@ export default {
       }
     },
     onSubmit() {
-      var request = {};
-      if (this.chapter) {
-        request = {
-          bookId: this.queryData.bookId,
-          accountId: this.profile?.id,
-          description: this.description,
-          chapterTitle: this.title,
-          videoCoverPath: this.videoCoverPath
-        }
-      } else {
-        request = {
-          accountId: this.profile?.id,
-          description: this.description,
-          heading: this.title,
-          videoCoverPath: this.videoCoverPath,
-          categoryId: this.selectedCategory.id
-        }
-        request.subCategory = this.selectedSubCategory.id;
-      }
-      this.$api.post(this.queryData.url, request).then(response => {
+      this.$api.post(this.queryData.url, this.getRequest()).then(response => {
         this.loading = false;
         if (response.data.success) {
           this.showMsg(response.data?.message || 'File Cretaed Successfully', 'positive');
@@ -203,35 +234,13 @@ export default {
         this.loading = false;
         this.showMsg(error.response?.data.message || error.message, 'negative');
       })
-
     },
 
     updateData() {
-      var request = {};
-      if (this.chapter) {
-        request = {
-          bookId: this.queryData.bookId,
-          accountId: this.profile?.id,
-          description: this.description,
-          chapterTitle: this.title,
-          videoCoverPath: this.videoCoverPath
-        }
-      } else {
-        request = {
-          accountId: this.profile?.id,
-          description: this.description,
-          heading: this.title,
-          videoCoverPath: this.videoCoverPath,
-          categoryId: this.selectedCategory.id
-        }
-        request.subCategory = this.selectedSubCategory.id;
-      }
-      request.id = this.id;
-
-      this.$api.put(this.queryData.url, request).then(response => {
+      this.$api.put(this.queryData.url, this.getRequest()).then(response => {
         this.loading = false;
         if (response.data.success) {
-          this.showMsg(response.data?.message || 'File Cretaed Successfully', 'positive');
+          this.showMsg(response.data?.message || 'File Updated Successfully', 'positive');
           this.$router.go(-1);
         } else {
           this.showMsg(response.data?.message, 'negative');
