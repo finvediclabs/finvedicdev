@@ -101,7 +101,8 @@
                     <q-carousel-slide v-for="(slider, i) in allSlides" :name="i" class="items-end q-pa-none">
                       <div class="row full-height">
                         <div class="col-4 q-px-sm full-height" v-for="item in slider">
-                          <q-img class="full-height rounded-borders shadow-2 cursor-pointer" :src="item.chapterImagePath ?? 'dummy'">
+                          <q-img class="full-height rounded-borders shadow-2 cursor-pointer"
+                            :src="item.chapterImagePath ?? 'dummy'" @click="visitChapter(item)">
                             <template v-slot:error>
                               <q-img :src="DummyBook" class="fit" />
                             </template>
@@ -145,6 +146,7 @@ import { storeToRefs } from "pinia";
 import moment from "moment"
 import { useCategorieStore } from "src/stores/Categories";
 import DummyBook from "src/assets/dummyBook.jpg"
+import samplePDF from "src/assets/sample.pdf"
 export default {
   setup() {
     const categorieStore = useCategorieStore();
@@ -277,6 +279,16 @@ export default {
         }
       }
     },
+    visitChapter(chapter) {
+      let url = '/read-pdf';
+      let item = samplePDF;
+      this.$router.push({
+        path: url,
+        query: {
+          item: item
+        }
+      })
+    }
   }
 };
 </script>

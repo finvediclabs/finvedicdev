@@ -100,7 +100,7 @@
                       <div class="row full-height">
                         <div class="col-4 q-px-sm full-height" v-for="item in slider">
                           <q-img class="full-height rounded-borders shadow-2 cursor-pointer"
-                            :src="item.chapterImagePath ?? 'dummy'">
+                            :src="item.chapterImagePath ?? 'dummy'" @click="visitChapter(item)">
                             <template v-slot:error>
                               <q-img :src="DummyBook" class="fit" />
                             </template>
@@ -276,6 +276,16 @@ export default {
         }
       }
     },
+    visitChapter(chapter) {
+      let url = '/watch-video';
+      let item = chapter.videoFilePath ?? "https://youtu.be/VCtVrJLNR1c?si=O1pOuQo1s6492Qh-";
+      this.$router.push({
+        path: url,
+        query: {
+          item: item
+        }
+      })
+    }
   }
 };
 </script>

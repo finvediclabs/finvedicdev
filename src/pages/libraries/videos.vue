@@ -89,7 +89,8 @@
                     <q-carousel-slide v-for="(slider, i) in allSlides" :name="i" class="items-end q-pa-none">
                       <div class="row full-height">
                         <div class="col-4 q-px-sm full-height" v-for="item in slider">
-                          <q-img class="full-height rounded-borders shadow-2 cursor-pointer" :src="item.chapterImagePath ?? 'dummy'">
+                          <q-img class="full-height rounded-borders shadow-2 cursor-pointer"
+                            :src="item.chapterImagePath ?? 'dummy'" @click="visitChapter(item)">
                             <template v-slot:error>
                               <q-img :src="DummyBook" class="full-height full-width" />
                             </template>
@@ -265,6 +266,16 @@ export default {
         }
       }
     },
+    visitChapter(chapter) {
+      let url = '/watch-video';
+      let item = chapter.videoFilePath ?? "https://www.youtube.com/embed/Kaujug-JkDQ?si=i9bedPKDy5c5WEpd";
+      this.$router.push({
+        path: url,
+        query: {
+          item: item
+        }
+      })
+    }
   }
 };
 </script>

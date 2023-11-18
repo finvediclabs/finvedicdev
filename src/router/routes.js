@@ -4,7 +4,25 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/IndexPage.vue') }
+      {
+        path: '',
+        component: () => import('pages/IndexPage.vue')
+      },
+      {
+        path: 'watch-video',
+        component: () => import('components/WatchVideo.vue'),
+        meta: { item: '' }
+      },
+      {
+        path: 'read-pdf',
+        component: () => import('components/ReadPdf.vue'),
+        meta: { item: '' }
+      },
+      {
+        path: 'watch-ppt',
+        component: () => import('components/WatchPPT.vue'),
+        meta: { item: '' }
+      },
     ]
   },
   {
@@ -142,6 +160,7 @@ const routes = [
 
     ]
   },
+
   {
     path: '/Home',
     component: () => import('layouts/MainLayout.vue'),
