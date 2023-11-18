@@ -3,7 +3,7 @@
     <fin-portlet-header>
       <fin-portlet-heading :loading="loading">Books</fin-portlet-heading>
     </fin-portlet-header>
-    <fin-portlet-item>
+    <!-- <fin-portlet-item>
       <div class="row q-pb-lg">
         <div v-for="category in categories" class="col q-pa-sm">
           <q-btn :label="category.categoryName" no-caps v-if="!subCategories[category.id]" class="full-width" size="lg"
@@ -24,16 +24,14 @@
           </q-btn-dropdown>
         </div>
       </div>
-    </fin-portlet-item>
+    </fin-portlet-item> -->
     <fin-portlet-item class="q-pb-xl" v-if="booksData.length">
       <carousel-3d :totalSlides="booksData.length" :count="booksData.length" @beforeSlideChange="getCurrentSlide"
         :controls-visible="true">
         <slide v-for="(slide, i) in booksData" :key="i" :index="i">
-          <q-img :src="slide.imagePath" class="fit" :alt="slide.heading">
+          <q-img :src="slide.imagePath ?? 'dumy'" class="fit" :alt="slide.heading">
             <template v-slot:error>
-              <q-img
-                src="https://thumbs.dreamstime.com/b/wooden-man-trying-to-open-book-dummy-looking-something-books-literature-research-concept-information-search-195345616.jpg"
-                class="full-height full-width" />
+              <q-img :src="DummyBook" class="full-width full-height" />
             </template>
           </q-img>
         </slide>
@@ -46,31 +44,36 @@
     </fin-portlet-item>
     <fin-portlte>
       <div class="row">
-        <div class="col-12 col-md-6 flex q-pr-md">
-          <q-avatar style="width:250px; height: 300px" square>
-            <q-img :src="selectedSlide?.imagePath" class="fin-br-8 fit" style="border:1px solid #00000030"
-              :alt="selectedSlide?.heading">
-              <template v-slot:error>
-                <q-img
-                  src="https://thumbs.dreamstime.com/b/wooden-man-trying-to-open-book-dummy-looking-something-books-literature-research-concept-information-search-195345616.jpg"
-                  class="fit" />
-              </template>
-            </q-img>
-          </q-avatar>
-          <fin-portlet-heading class="q-pa-md" small>
-            {{ selectedSlide?.heading }}
-            <br>
-            <p style="font-size: 14px;font-weight: 300;">
-              {{ selectedSlide?.description }}
-            </p>
-          </fin-portlet-heading>
+        <div class="col-12 col-md-7  q-pr-md">
+          <div class="row">
+            <div class="col-12 col-md-5 row justify-center">
+              <q-avatar style="width:250px; height: 300px" square>
+                <q-img :src="selectedSlide?.imagePath ?? 'dummy'" class="fin-br-8 fit" style="border:1px solid #00000030"
+                  :alt="selectedSlide?.heading">
+                  <template v-slot:error>
+                    <q-img :src="DummyBook" class="fit" />
+                  </template>
+                </q-img>
+              </q-avatar>
+            </div>
+            <div class="col-12 col-md-6">
+              <fin-portlet-heading class="q-pa-md" small>
+                {{ selectedSlide?.heading }}
+                <br>
+                <p style="font-size: 14px;font-weight: 300;">
+                  {{ selectedSlide?.description }}
+                </p>
+              </fin-portlet-heading>
+            </div>
+          </div>
         </div>
-        <div class="col-2"></div>
+        <div class="col-1"></div>
         <div class="col-12 col-md-4  justify-center self-end justify-end">
           <div class="row ">
             <div class="col-12" style="height: 240px;">
               <q-carousel swipeable animated v-model="slide" ref="carousel" infinite class="full-height"
                 style="padding-top: 50px;">
+
                 <template v-slot:control>
                   <q-carousel-control position="top-left" :offset="[20, 8]" class="text-black">
                     <span>More Chapters</span>
@@ -82,16 +85,7 @@
                       @click="$refs.carousel.next()" />
                   </q-carousel-control>
                 </template>
-                <template v-if="chaptersData.length && !chaptersLoader">
-                  <q-carousel-slide v-for="(slider, i) in allSlides" :name="i" class="items-end q-pa-none"
-                    v-if="chaptersLoader">
-                    <div class="row full-height">
-                      <div class="col-4 q-px-sm full-height" v-for="item in slider">
-                        <q-img class="full-height rounded-borders" :src="item.chapterImagePath" />
-                      </div>
-                    </div>
-                  </q-carousel-slide>
-                </template>
+
                 <template v-if="chaptersLoader">
                   <q-carousel-slide :name="0" class="rounded-borders text-italic">
                     <div class="row full-height">
@@ -101,17 +95,34 @@
                     </div>
                   </q-carousel-slide>
                 </template>
-                <template v-if="!chaptersData.length && !chaptersLoader">
-                  <q-carousel-slide :name="0" class="rounded-borders text-italic">
-                    <div class="row full-height">
-                      <div class="col-12 q-px-sm full-height">
-                        <div square class="full-width full-height q-pa-md rounded-borders"
-                          style="background-color: #F5F5F5;">
-                          No Chapters Found
+
+                <template v-if="!chaptersLoader">
+                  <template v-if="chaptersData.length">
+                    <q-carousel-slide v-for="(slider, i) in allSlides" :name="i" class="items-end q-pa-none">
+                      <div class="row full-height">
+                        <div class="col-4 q-px-sm full-height" v-for="item in slider">
+                          <q-img class="full-height rounded-borders shadow-2 cursor-pointer" :src="item.chapterImagePath ?? 'dummy'">
+                            <template v-slot:error>
+                              <q-img :src="DummyBook" class="fit" />
+                            </template>
+                          </q-img>
                         </div>
                       </div>
-                    </div>
-                  </q-carousel-slide>
+                    </q-carousel-slide>
+                  </template>
+
+                  <template v-if="!chaptersData.length">
+                    <q-carousel-slide :name="0" class="rounded-borders text-italic">
+                      <div class="row full-height">
+                        <div class="col-12 q-px-sm full-height">
+                          <div square class="full-width full-height q-pa-md rounded-borders"
+                            style="background-color: #F5F5F5;">
+                            No Chapters Found
+                          </div>
+                        </div>
+                      </div>
+                    </q-carousel-slide>
+                  </template>
                 </template>
 
               </q-carousel>
@@ -133,6 +144,7 @@ import { urls } from "./urls"
 import { storeToRefs } from "pinia";
 import moment from "moment"
 import { useCategorieStore } from "src/stores/Categories";
+import DummyBook from "src/assets/dummyBook.jpg"
 export default {
   setup() {
     const categorieStore = useCategorieStore();
@@ -150,6 +162,7 @@ export default {
   },
   data() {
     return {
+      DummyBook: DummyBook,
       booksData: [],
       selectedSlide: {},
       loading: false,
@@ -198,15 +211,15 @@ export default {
     },
     getBooksData() {
       this.loading = true;
-      let request = {
-        params: {
-          categoryId: this.selectedCategory.id
-        }
-      }
-      if (this.selectedSubCategory && this.selectedCategory?.id == this.selectedSubCategory?.categoryCode) {
-        request.params.subCategoryId = this.selectedSubCategory.id;
-      }
-      this.$api.get(urls.getBooksDataUrl, request).then(response => {
+      // let request = {
+      //   params: {
+      //     categoryId: this.selectedCategory.id
+      //   }
+      // }
+      // if (this.selectedSubCategory && this.selectedCategory?.id == this.selectedSubCategory?.categoryCode) {
+      //   request.params.subCategoryId = this.selectedSubCategory.id;
+      // }
+      this.$api.get(urls.getBooksDataUrl).then(response => {
         this.loading = false;
         if (response.data.success) {
           this.booksData = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));

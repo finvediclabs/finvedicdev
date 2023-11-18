@@ -3,7 +3,7 @@
     <div class="col-12">
       <div class="row ">
         <div class="col-12 col-sm-6 col-lg-7 flex flex-center q-pb-md">
-          <q-img :src="LandingImg" style="max-width:65%" />
+          <q-img :src="LandingImg"  style="max-width:65%" />
         </div>
         <div class="col-12 col-sm-6 col-lg-4 self-center">
           <create-account-page v-if="currentPage == 'createPage'" @changePage="changePage" />

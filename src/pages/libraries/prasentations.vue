@@ -29,11 +29,9 @@
       <carousel-3d :totalSlides="prasentations.length" :count="prasentations.length" @beforeSlideChange="getCurrentSlide"
         :controls-visible="true">
         <slide v-for="(slide, i) in prasentations" :key="i" :index="i">
-          <q-img :src="slide.imagePath" class="fit" :alt="slide.heading">
+          <q-img :src="slide.imagePath ?? 'dummy'" class="fit" :alt="slide.heading">
             <template v-slot:error>
-              <q-img
-                src="https://thumbs.dreamstime.com/b/wooden-man-trying-to-open-book-dummy-looking-something-books-literature-research-concept-information-search-195345616.jpg"
-                class="full-height full-width" />
+              <q-img :src="DummyBook" class="full-height full-width" />
             </template>
           </q-img>
         </slide>
@@ -46,26 +44,30 @@
     </fin-portlet-item>
     <fin-portlte>
       <div class="row">
-        <div class="col-12 col-md-6 flex q-pr-md">
-          <q-avatar style="width:250px; height: 300px" square>
-            <q-img :src="selectedSlide?.imagePath" class="fin-br-8 fit" style="border:1px solid #00000030"
-              :alt="selectedSlide?.heading">
-              <template v-slot:error>
-                <q-img
-                  src="https://thumbs.dreamstime.com/b/wooden-man-trying-to-open-book-dummy-looking-something-books-literature-research-concept-information-search-195345616.jpg"
-                  class="fit" />
-              </template>
-            </q-img>
-          </q-avatar>
-          <fin-portlet-heading class="q-pa-md" small>
-            {{ selectedSlide?.heading }}
-            <br>
-            <p style="font-size: 14px;font-weight: 300;">
-              {{ selectedSlide?.description }}
-            </p>
-          </fin-portlet-heading>
+        <div class="col-12 col-md-7 q-pr-md ">
+          <div class="row">
+            <div class="col-12 col-md-5 row justify-center">
+              <q-avatar style="width:250px; height: 300px" square>
+                <q-img :src="selectedSlide?.imagePath ?? 'dummy'" class="fin-br-8 fit" style="border:1px solid #00000030"
+                  :alt="selectedSlide?.heading">
+                  <template v-slot:error>
+                    <q-img :src="DummyBook" class="full-height full-width" />
+                  </template>
+                </q-img>
+              </q-avatar>
+            </div>
+            <div class="col-12 col-md-6">
+              <fin-portlet-heading class="q-pa-md" small>
+                {{ selectedSlide?.heading }}
+                <br>
+                <p style="font-size: 14px;font-weight: 300;">
+                  {{ selectedSlide?.description }}
+                </p>
+              </fin-portlet-heading>
+            </div>
+          </div>
         </div>
-        <div class="col-2"></div>
+        <div class="col-1"></div>
         <div class="col-12 col-md-4  justify-center self-end justify-end">
           <div class="row ">
             <div class="col-12" style="height: 240px;">
@@ -87,7 +89,11 @@
                     v-if="chaptersLoader">
                     <div class="row full-height">
                       <div class="col-4 q-px-sm full-height" v-for="item in slider">
-                        <q-img class="full-height rounded-borders" :src="item.chapterImagePath" />
+                        <q-img class="full-height rounded-borders" :src="item.chapterImagePath ?? 'dummt'">
+                          <template v-slot:error>
+                            <q-img :src="DummyBook" class="full-height full-width" />
+                          </template>
+                        </q-img>
                       </div>
                     </div>
                   </q-carousel-slide>
@@ -132,7 +138,8 @@ import { Carousel3d, Slide } from "src/components/carousel-3d";
 import { urls } from "./urls"
 import { storeToRefs } from "pinia";
 import { useCategorieStore } from "src/stores/Categories";
-import moment from "moment"
+import moment from "moment";
+import DummyBook from "src/assets/dummyBook.jpg"
 export default {
   setup() {
     const categorieStore = useCategorieStore();
@@ -150,6 +157,7 @@ export default {
   },
   data() {
     return {
+      DummyBook: DummyBook,
       prasentations: [],
       selectedSlide: {},
       loading: false,
@@ -220,37 +228,37 @@ export default {
       });
     },
     getChapthersData() {
-        this.chaptersLoader = true;
-        this.$api.get(urls.getBookChapterUrl, {
-          params: {
-            bookId: this.selectedSlide?.id
-          }
-        }).then(response => {
-          this.chaptersLoader = false;
-          if (response.data.success) {
-            this.chaptersData = response.data.data.map((chapter, index) => {
-              return {
-                index: index + 1,
-                id: chapter.id,
-                bookId: chapter.bookId,
-                accountId: chapter.accountId,
-                description: chapter.description,
-                chapterTitle: chapter.chapterTitle,
-                chapterImagePath: chapter.firstchapterImagePath,
-                chapterFilePath: chapter.chapterFilePath,
-                createdAt: moment(chapter.createdAt).format('YYYY-MM-DD'),
-                updatedAt: moment(chapter.updatedAt).format('YYYY-MM-DD'),
-                deletedAt: moment(chapter.deletedAt).format('YYYY-MM-DD')
-              }
-            });
-            this.getdummychapters(this.chaptersData);
-          } else {
-            this.showMsg(response.data?.message, 'negative');
-          }
-        }).catch(error => {
-          this.chaptersLoader = false;
-          this.showMsg(error.response?.data.message || error.message, 'negative');
-        })
+      this.chaptersLoader = true;
+      this.$api.get(urls.getBookChapterUrl, {
+        params: {
+          bookId: this.selectedSlide?.id
+        }
+      }).then(response => {
+        this.chaptersLoader = false;
+        if (response.data.success) {
+          this.chaptersData = response.data.data.map((chapter, index) => {
+            return {
+              index: index + 1,
+              id: chapter.id,
+              bookId: chapter.bookId,
+              accountId: chapter.accountId,
+              description: chapter.description,
+              chapterTitle: chapter.chapterTitle,
+              chapterImagePath: chapter.firstchapterImagePath,
+              chapterFilePath: chapter.chapterFilePath,
+              createdAt: moment(chapter.createdAt).format('YYYY-MM-DD'),
+              updatedAt: moment(chapter.updatedAt).format('YYYY-MM-DD'),
+              deletedAt: moment(chapter.deletedAt).format('YYYY-MM-DD')
+            }
+          });
+          this.getdummychapters(this.chaptersData);
+        } else {
+          this.showMsg(response.data?.message, 'negative');
+        }
+      }).catch(error => {
+        this.chaptersLoader = false;
+        this.showMsg(error.response?.data.message || error.message, 'negative');
+      })
     },
     getdummychapters(chapter) {
       let index = 0;
