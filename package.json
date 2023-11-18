@@ -22,6 +22,7 @@
     "vue": "^3.0.0",
     "vue-carousel-3d": "^1.0.1",
     "vue-cryptojs": "^2.4.5",
+    "vue-pdf-embed": "^1.2.1",
     "vue-router": "^4.0.0"
   },
   "devDependencies": {

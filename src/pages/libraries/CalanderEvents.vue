@@ -22,34 +22,28 @@
             </q-card-section>
           </q-card>
         </div>
-        <div class="col-12 col-md-4 q-px-lg q-mt-xl">
-          <q-card class="my-card justify-center text-center full-height" style="background: #FFD18B;">
-            <q-card-section class="justify-center text-center">
-              <q-img :src="classCardImg" style="width: 35%;margin-top: -50px" />
-              <q-card-section style="width: 80%" class=" q-mx-auto">
-                <template v-for="category in categories">
+        <div class="col-12 col-md-4 q-my-auto q-mx-auto">
+          <template v-for="category in categories">
 
-                  <q-btn :label="category.categoryName" no-caps v-if="!subCategories[category.id]" outline
-                    class="full-width q-my-xs fin-br-8" :class="selectedCategory?.id == category.id ? 'bg-white' : ''"
-                    @click="selectCategory(category)" />
+            <q-btn :label="category.categoryName" no-caps v-if="!subCategories[category.id]" size="lg"
+              class="full-width q-my-sm fin-br-8 categoryClass"
+              :class="{'active-categoryClass' : selectedCategory?.id == category.id}" @click="selectCategory(category)" />
 
-                  <q-btn-dropdown :label="category.categoryName" no-caps v-if="subCategories[category.id]" outline
-                    class="full-width fin-br-8" :class="{ 'bg-white': selectedCategory?.id === category.id }">
-                    <q-list dense>
-                      <q-item v-for="subCategory in subCategories[category.id]" clickable v-close-popup
-                        @click="selectSubCategory(category, subCategory)"
-                        :active="selectedSubCategory?.id == subCategory.id" active-class="bg-black text-white">
-                        <q-item-section>
-                          <q-item-label><b>{{ subCategory.subCategoryName }}</b></q-item-label>
-                        </q-item-section>
-                      </q-item>
-                    </q-list>
-                  </q-btn-dropdown>
+            <q-btn-dropdown :label="category.categoryName" no-caps v-if="subCategories[category.id]" size="lg"
+              class="full-width q-my-sm fin-br-8 categoryClass"
+              :class="{ 'active-categoryClass': selectedCategory?.id === category.id }">
+              <q-list>
+                <q-item v-for="subCategory in subCategories[category.id]" clickable v-close-popup
+                  @click="selectSubCategory(category, subCategory)" :active="selectedSubCategory?.id == subCategory.id"
+                  active-class="active-categoryClass">
+                  <q-item-section>
+                    <q-item-label><b>{{ subCategory.subCategoryName }}</b></q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-btn-dropdown>
 
-                </template>
-              </q-card-section>
-            </q-card-section>
-          </q-card>
+          </template>
         </div>
       </div>
     </fin-portlet-header>
@@ -126,5 +120,14 @@ export default {
 .classRoomImg {
   width: 35%;
   margin-top: -50px;
+}
+
+.categoryClass {
+  background-color: #D6D6D6;
+}
+
+.active-categoryClass {
+  background: rgba(47, 203, 137, 0.53);
+  color: black
 }
 </style>
