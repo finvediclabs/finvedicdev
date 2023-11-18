@@ -46,7 +46,7 @@
     <fin-portlte>
       <div class="row">
         <div class="col-12 col-md-5 q-pt-lg q-px-lg">
-          <q-video :src="selectedSlide.videoCoverPath" :ratio="16 / 9" class="fin-br-8" />
+          <q-video :src="selectedSlide.videoCoverPath" :ratio="16/9" class="fin-br-8 shadow-1" />
           <fin-portlet-heading class="q-pa-md" small>
             {{ selectedSlide?.heading }}
             <br>
@@ -56,7 +56,7 @@
           </fin-portlet-heading>
         </div>
         <div class="col-3"></div>
-        <div class="col-12 col-md-4 column justify-center items-end">
+        <div class="col-12 col-md-4 column justify-top q-pt-lg items-end">
           <div class="row full-width ">
             <div class="col-12 bg-blue" style="height: 240px;">
               <q-carousel swipeable animated v-model="slide" ref="carousel" infinite class="full-height"

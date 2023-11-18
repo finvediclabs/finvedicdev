@@ -86,7 +86,6 @@ export default {
       }
     },
     editDataFun(val) {
-      console.log(val);
       let item = {
         title: val.chapterTitle,
         description: val.description,

@@ -63,8 +63,9 @@
         <q-space />
 
         <q-btn icon="notifications_active" round class="bg-finvedic text-white q-mx-lg">
-          <q-menu class="fin-br-8 q-py-md shadow-0" min-width="120px" style="width:230px;background: transparent!important;"
-            :offset="[-0, 10]" transition-show="flip-right" transition-hide="rotate">
+          <q-menu class="fin-br-8 q-py-md shadow-0" min-width="120px"
+            style="width:230px;background: transparent!important;" :offset="[-0, 10]" transition-show="flip-right"
+            transition-hide="rotate">
 
             <div style="background-color: #EAEAEA;opacity:0.99" class="q-py-md shadow-2 fin-br-8">
               <div class="q-pa-sm absolute-top-right arrow" style="margin-top: -19px">
@@ -141,12 +142,12 @@
                   {{ module.label }}
                 </q-item-section>
               </span>
-
               <q-expansion-item v-if="module.menu" class="q-pa-none full-width module-select"
-                expand-icon-class="text-white" :default-opened="getExpansionBoolean(module)" :icon="module.icon"
-                :label="module.label">
-                <q-item v-for="(item, i) in module.menu" :key="item" clickable v-ripple class="module-select q-my-sm q-px-md"
-                  :class="getActiveMenuItemClass(module, item)" @click="changeLocation(module, item)">
+                expand-icon-class="text-white" v-model="expand[module.value]"
+                :icon="module.icon" :label="module.label">
+                <q-item v-for="(item, i) in module.menu" :key="item" clickable v-ripple
+                  class="module-select q-my-sm q-px-md" :class="getActiveMenuItemClass(module, item)"
+                  @click="changeLocation(module, item)">
                   <q-item-section avatar />
                   <q-item-section class="text-body1">
                     {{ item.label }}
@@ -218,7 +219,7 @@ export default {
       drawerLeft: window.innerWidth < 576 ? false : true,
       miniState: false,
       modulesList: [
-        { icon: 'person', label: 'Administration', value: 'admin' , enable: true},
+        { icon: 'person', label: 'Administration', value: 'admin', enable: true },
         { icon: 'groups', label: 'Labs', value: 'labs' },
         {
           icon: 'library_books', label: 'Libraries', value: 'library', menu: [
@@ -230,7 +231,7 @@ export default {
         },
         { icon: 'summarize', label: 'Reports', value: 'reports' }
       ],
-      expanded: false,
+      expand: {},
       userName: 'Sandeep Perikala'
     }
   },
@@ -243,15 +244,22 @@ export default {
       module: this.$route.meta.module,
       item: this.$route.meta.item
     }
+    this.knowmoduleFunction();
   },
   watch: {
     token() {
       if (!this.token) {
         this.$router.push('/');
       }
-    }
+    },
   },
   methods: {
+    knowmoduleFunction() {
+      var filteredModule = this.modulesList.filter(module => module.menu );
+      filteredModule.forEach(module => {
+        this.expand[module.value] = this.selectedModule.module == module.value;
+      });
+    },
     toggleFunction() {
       if (screen.width < 576) {
         this.drawerLeft = !this.drawerLeft;
@@ -273,7 +281,8 @@ export default {
     },
 
     getExpansionBoolean(module) {
-      return this.selectedModule.module === module.value && this.selectedModule.item;
+      console.log(this.selectedModule.module === module.value)
+      return this.selectedModule.module === module.value;
     },
 
     changeLocation(module, item) {
@@ -350,5 +359,4 @@ export default {
 .mainHeader {
   background: rgba(230, 227, 227, 0.80);
   backdrop-filter: blur(19px);
-}
-</style>
+}</style>
