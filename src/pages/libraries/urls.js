@@ -3,6 +3,7 @@ export  const urls = {
   getBookChapterUrl: 'api/bookChapters',
   getVideosUrl: 'api/videos',
   getVideoChaptersUrl: 'api/videoChapters',
-  getPrasentationsUrl: 'api/presentations'
+  getPrasentationsUrl: 'api/presentations',
+  getPrasentationCaptersUrl: 'api/presentationChapters'
 
 }

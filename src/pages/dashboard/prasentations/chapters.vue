@@ -1,7 +1,7 @@
 <template>
   <fin-portlet>
     <fin-portlet-header>
-      <fin-portlet-heading :loading="loading" backArrow> Chapters List : {{ prasentationId }}</fin-portlet-heading>
+      <fin-portlet-heading :loading="loading" backArrow> Chapters List : {{ presentationId }}</fin-portlet-heading>
       <fin-portlet-item>
         <router-link :to="this.createFile()">
           <q-btn label="Create Chapter" outline icon="add" class="q-px-sm" color="blue-8" />
@@ -43,7 +43,7 @@ export default {
     }
   },
   computed: {
-    prasentationId() {
+    presentationId() {
       return this.$route.params.id;
     }
   },
@@ -51,7 +51,7 @@ export default {
     this.getChaptersData();
   },
   watch: {
-    prasentationId() {
+    presentationId() {
       this.getChaptersData();
     }
   },
@@ -67,11 +67,11 @@ export default {
       });
     },
     getChaptersData() {
-      if (this.prasentationId) {
+      if (this.presentationId) {
         this.loading = true;
         this.$api.get(urls.prasentationChapterUrl, {
           params: {
-            prasentationId: this.prasentationId
+            presentationId: this.presentationId
           }
         }).then(response => {
           this.loading = false;
@@ -91,7 +91,7 @@ export default {
         title: val.chapterTitle,
         description: val.description,
         id: val.id,
-        cover: val.chapterImagePath,
+        cover: val.presentationFilePath,
       };
       this.createFile('Update Chapter', item);
     },
@@ -100,10 +100,10 @@ export default {
         title: title ?? 'Create Chapter',
         url: item?.id ? `${urls.prasentationChapterUrl}/${item?.id}` : urls.prasentationChapterUrl,
         item: item,
-        prasentationId: this.prasentationId,
+        presentationId: this.presentationId,
         chapter: true,
         requiredCataloge: false,
-        key: 'prasentationId'
+        key: 'presentationId'
       };
       let text = JSON.stringify(params);
       // text = CryptoJS.AES.encrypt(editedEvent, "fileTypes").toString();

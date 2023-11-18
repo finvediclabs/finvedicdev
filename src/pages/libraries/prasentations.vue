@@ -5,13 +5,13 @@
     </fin-portlet-header>
     <fin-portlet-item>
       <div class="row q-pb-lg">
-        <div v-for="category in categories" class="col q-pa-sm">
+        <div v-for="category in categories" class="col-12 col-sm-4 q-pa-sm">
           <q-btn :label="category.categoryName" no-caps v-if="!subCategories[category.id]" class="full-width" size="lg"
-            :class="selectedCategory?.id == category.id ? 'bg-finvedic text-white' : ''"
-            @click="selectCategory(category)" />
+            :class="selectedCategory?.id == category.id ? 'bg-finvedic text-white' : ''" @click="selectCategory(category)"
+            rounded />
 
           <q-btn-dropdown :label="category.categoryName" no-caps v-if="subCategories[category.id]" class="full-width"
-            :class="{ 'bg-finvedic text-white': selectedCategory?.id === category.id }" size="lg">
+            :class="{ 'bg-finvedic text-white': selectedCategory?.id === category.id }" size="lg" rounded>
             <q-list>
               <q-item v-for="subCategory in subCategories[category.id]" clickable v-close-popup
                 @click="selectSubCategory(category, subCategory)"
@@ -84,20 +84,6 @@
                       @click="$refs.carousel.next()" />
                   </q-carousel-control>
                 </template>
-                <template v-if="chaptersData.length && !chaptersLoader">
-                  <q-carousel-slide v-for="(slider, i) in allSlides" :name="i" class="items-end q-pa-none"
-                    v-if="chaptersLoader">
-                    <div class="row full-height">
-                      <div class="col-4 q-px-sm full-height" v-for="item in slider">
-                        <q-img class="full-height rounded-borders" :src="item.chapterImagePath ?? 'dummt'">
-                          <template v-slot:error>
-                            <q-img :src="DummyBook" class="full-height full-width" />
-                          </template>
-                        </q-img>
-                      </div>
-                    </div>
-                  </q-carousel-slide>
-                </template>
                 <template v-if="chaptersLoader">
                   <q-carousel-slide :name="0" class="rounded-borders text-italic">
                     <div class="row full-height">
@@ -107,17 +93,35 @@
                     </div>
                   </q-carousel-slide>
                 </template>
-                <template v-if="!chaptersData.length && !chaptersLoader">
-                  <q-carousel-slide :name="0" class="rounded-borders text-italic">
-                    <div class="row full-height">
-                      <div class="col-12 q-px-sm full-height">
-                        <div square class="full-width full-height q-pa-md rounded-borders"
-                          style="background-color: #F5F5F5;">
-                          No Chapters Found
+
+                <template v-if="!chaptersLoader">
+                  <template v-if="chaptersData.length">
+                    <q-carousel-slide v-for="(slider, i) in allSlides" :name="i" class="items-end q-pa-none">
+                      <div class="row full-height">
+                        <div class="col-4 q-px-sm full-height" v-for="item in slider">
+                          <q-img class="full-height rounded-borders shadow-2 cursor-pointer"
+                            :src="item.chapterImagePath ?? 'dummy'">
+                            <template v-slot:error>
+                              <q-img :src="DummyBook" class="fit" />
+                            </template>
+                          </q-img>
                         </div>
                       </div>
-                    </div>
-                  </q-carousel-slide>
+                    </q-carousel-slide>
+                  </template>
+
+                  <template v-if="!chaptersData.length">
+                    <q-carousel-slide :name="0" class="rounded-borders text-italic">
+                      <div class="row full-height">
+                        <div class="col-12 q-px-sm full-height">
+                          <div square class="full-width full-height q-pa-md rounded-borders"
+                            style="background-color: #F5F5F5;">
+                            No Chapters Found
+                          </div>
+                        </div>
+                      </div>
+                    </q-carousel-slide>
+                  </template>
                 </template>
 
               </q-carousel>
@@ -229,9 +233,9 @@ export default {
     },
     getChapthersData() {
       this.chaptersLoader = true;
-      this.$api.get(urls.getBookChapterUrl, {
+      this.$api.get(urls.getPrasentationCaptersUrl, {
         params: {
-          bookId: this.selectedSlide?.id
+          presentationId: this.selectedSlide?.id
         }
       }).then(response => {
         this.chaptersLoader = false;

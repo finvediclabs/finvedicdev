@@ -5,7 +5,7 @@
     </fin-portlet-header>
     <fin-portlet-item>
       <div class="row q-pb-lg">
-        <div v-for="category in categories" class="col q-pa-sm">
+        <div v-for="category in categories" class="col-12 col-sm-4 q-pa-sm">
           <q-btn :label="category.categoryName" no-caps v-if="!subCategories[category.id]" class="full-width" size="lg"
             :class="selectedCategory?.id == category.id ? 'bg-finvedic text-white' : ''"
             @click="selectCategory(category)" />
