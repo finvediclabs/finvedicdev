@@ -1,9 +1,7 @@
 <template>
   <fin-portlet>
     <fin-portlet-header>
-      <fin-portlet-heading :loading="loading" backArrow>
-        Videos
-      </fin-portlet-heading>
+      <fin-portlet-heading :loading="loading" backArrow>Videos</fin-portlet-heading>
       <fin-portlet-item>
         <router-link :to="createFile()">
           <q-btn label="Create Video" icon="add" color="blue-15"

@@ -1,7 +1,7 @@
 <template>
   <fin-portlet>
     <fin-portlet-header>
-      <fin-portlet-heading :loading="loading" backArrow> Chapters List : {{ bookId }}</fin-portlet-heading>
+      <fin-portlet-heading :loading="loading" backArrow>Chapters List : {{ bookId }}</fin-portlet-heading>
       <fin-portlet-item>
         <router-link :to="this.createFile()">
           <q-btn label="Create Chapter" outline icon="add" class="q-px-sm" color="blue-8" />

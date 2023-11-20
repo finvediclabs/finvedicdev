@@ -1,7 +1,7 @@
 <template>
   <fin-portlet>
     <fin-portlet-header>
-      <fin-portlet-heading :loading="loading" backArrow> {{ queryData.title }}</fin-portlet-heading>
+      <fin-portlet-heading :loading="loading" backArrow>{{ queryData.title }}</fin-portlet-heading>
     </fin-portlet-header>
     <fin-portlet-item>
       <q-form @submit="validatePostData">

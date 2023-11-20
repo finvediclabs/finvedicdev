@@ -1,9 +1,7 @@
 <template>
   <fin-portlet>
     <fin-portlet-header>
-      <fin-portlet-heading :loading="loading" backArrow>
-        Vm Setup
-      </fin-portlet-heading>
+      <fin-portlet-heading :loading="loading" backArrow>Vm Setup</fin-portlet-heading>
     </fin-portlet-header>
     <fin-portlet-item class="full-width  text-center items-center justify-center">
       <div style="max-width: 1100px;min-width: 425px;">

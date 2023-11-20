@@ -1,9 +1,7 @@
 <template>
   <fin-portlet>
     <fin-portlet-header>
-      <fin-portlet-heading :loading="loading" backArrow>
-        Roles
-      </fin-portlet-heading>
+      <fin-portlet-heading :loading="loading" backArrow>Roles</fin-portlet-heading>
     </fin-portlet-header>
     <fin-portlet-item>
       <fin-table :columns="header" :data="rolesList" select @reCall="getRolesData()" delete-url="api/role/delete"

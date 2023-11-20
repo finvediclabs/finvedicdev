@@ -1,9 +1,7 @@
 <template>
   <fin-portlet>
     <fin-portlet-header>
-      <fin-portlet-heading backArrow :loading="loading">
-        Prasentations
-      </fin-portlet-heading>
+      <fin-portlet-heading backArrow :loading="loading">Prasentations</fin-portlet-heading>
       <fin-portlet-item>
         <router-link :to="createFile()">
           <q-btn label="Create" outline icon="add" class="q-px-md" color="blue-8" />

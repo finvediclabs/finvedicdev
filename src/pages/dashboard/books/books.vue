@@ -1,9 +1,7 @@
 <template>
   <fin-portlet>
     <fin-portlet-header>
-      <fin-portlet-heading :loading="loading" backArrow>
-        Books
-      </fin-portlet-heading>
+      <fin-portlet-heading :loading="loading" backArrow>Books</fin-portlet-heading>
       <fin-portlet-item>
         <router-link :to="this.createFile()">
           <q-btn label="Create Book" icon="add" color="blue-15" class="fin-br-8 text-subtitle1 text-weight-bolder q-px-md"
@@ -87,7 +85,7 @@ export default {
       };
       this.createFile('Update Book',item);
     },
-    showChaptersList(book) { 
+    showChaptersList(book) {
       this.$router.push({ path: `books/chapter/${book.id}` })
     },
     createFile(title, item, id) {
