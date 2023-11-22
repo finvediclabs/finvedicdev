@@ -7,7 +7,14 @@ const routes = [
       {
         path: '',
         component: () => import('pages/IndexPage.vue')
-      },
+      }
+    ]
+  },
+  {
+    path: '/',
+    meta: { title: 'Reading Pages', module: 'reading' },
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
       {
         path: 'watch-video',
         component: () => import('components/WatchVideo.vue'),
@@ -27,6 +34,7 @@ const routes = [
   },
   {
     path: '/login',
+    meta: { title: 'landing', module: 'login' },
     component: () => import('layouts/LandingLayout.vue'),
   },
   {

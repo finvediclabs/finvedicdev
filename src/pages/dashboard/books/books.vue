@@ -93,7 +93,8 @@ export default {
         title: title ?? 'Create Book',
         url: item?.id ? `${urls.booksDataUrl}/${item.id}` : urls.booksDataUrl,
         item: item,
-        requiredCataloge: false
+        requiredCataloge: false,
+        coverKey: 'imagePath'
       };
       const text = JSON.stringify(params);
       // text = CryptoJS.AES.encrypt(editedEvent, 'objects').toString();

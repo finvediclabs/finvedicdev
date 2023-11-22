@@ -101,8 +101,10 @@ export default {
         item: item,
         chapter: true,
         requiredCataloge: false,
-        key: 'videoId',
-        videoId: this.videoId
+        parentKey: 'videoId',
+        videoId: this.videoId,
+        fileKey:"videoFilePath",
+        coverRequired: false,
       };
       let text = JSON.stringify(params);
       // text = CryptoJS.AES.encrypt(editedEvent, "fileTypes").toString();

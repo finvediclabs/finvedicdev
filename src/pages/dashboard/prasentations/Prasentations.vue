@@ -86,8 +86,9 @@ export default {
     createFile(title, item) {
       let params = {
         title: title ?? 'Create Prasention',
-        url: urls.prasentationsUrl,
-        item: item
+        url: item?.id ? `${urls.prasentationsUrl}/${item.id}` : urls.prasentationsUrl,
+        item: item,
+        coverKey: 'videoCoverPath'
       };
       let text = JSON.stringify(params);
       // text = CryptoJS.AES.encrypt(editedEvent, "fileTypes").toString();

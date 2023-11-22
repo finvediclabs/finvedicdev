@@ -90,7 +90,7 @@ export default {
         title: val.chapterTitle,
         description: val.description,
         id: val.id,
-        cover: val.presentationFilePath,
+        file: val.presentationFilePath,
       };
       this.createFile('Update Chapter', item);
     },
@@ -102,7 +102,9 @@ export default {
         presentationId: this.presentationId,
         chapter: true,
         requiredCataloge: false,
-        key: 'presentationId'
+        parentKey: 'presentationId',
+        fileKey: "presentationFilePath",
+        coverRequired: false,
       };
       let text = JSON.stringify(params);
       // text = CryptoJS.AES.encrypt(editedEvent, "fileTypes").toString();

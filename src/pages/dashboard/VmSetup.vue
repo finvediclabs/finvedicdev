@@ -5,22 +5,27 @@
     </fin-portlet-header>
     <fin-portlet-item class="full-width  text-center items-center justify-center">
       <div style="max-width: 1100px;min-width: 425px;">
-        <q-form @submit="createVms">
+        <q-form @submit="validateFields">
           <div class="row">
             <div class="col-12 col-md-1 q-pa-sm "></div>
             <div class="col-12 col-md-5 q-pa-sm">
-              <q-select v-model="version" :options="['Windows', 'Linux']" outlined label="VM Type" lazy-rules
-                :rules="[val => val && val.length > 0 || 'Choose An Option']" />
+              <q-select v-model="version" :options="['Windows', 'Linux']" borderless label="VM Type"
+                class="shadow-3 fin-br-8 q-px-sm bg-grey-1" />
+              <div style="height: 20px;font-size: 14px;margin-top:-10px" class="text-red q-pt-sm" v-if="!version">
+                {{ errors.version }}
+              </div>
             </div>
             <div class="col-12 col-md-1 q-pa-sm "></div>
             <div class="col-12 col-md-5 q-pa-sm ">
-              <q-input v-model="nos" outlined label="No Of VM's" lazy-rules
-                :rules="[val => val && val.length > 0 || `No Of Vm's Is Required`]" />
+              <q-input v-model="nos" type="number" borderless label="No Of VM's" class="shadow-3 fin-br-8 q-px-sm bg-grey-1" />
+              <div style="height: 20px;font-size: 14px;margin-top:-10px" class="text-red q-pt-sm" v-if="!nos">
+                {{ errors.nos }}
+              </div>
             </div>
           </div>
           <fin-portlet-item class="q-pa-sm text-right q-mt-xl">
-            <q-btn color="primary" no-caps class="sub-btn q-ml-sm" style="min-width:150px" label="Create VM"
-              type="submit" :disable="loader">
+            <q-btn color="primary" no-caps class="sub-btn q-ml-sm fin-br-8" style="min-width:150px" label="Create VM" type="submit"
+              :disable="loader">
               <q-spinner-facebook color="white" class="q-pl-sm" v-if="loader" />
             </q-btn>
           </fin-portlet-item>
@@ -47,10 +52,11 @@ export default {
   data() {
     return {
       version: "",
-      nos: "",
+      nos: 0,
       instance: "Standard_D2s_v3=3",
       region: "East-US",
       loader: false,
+      errors: {}
     }
   },
   methods: {
@@ -64,6 +70,16 @@ export default {
         ]
       });
     },
+    validateFields() {
+      if (this.version && this.nos > 0) {
+        this.createVms()
+      } else {
+        this.errors = {
+          version: "Vm Type is required",
+          nos: "No Of Vm's is required"
+        }
+      }
+    },
     createVms() {
       if (!this.loader) {
         this.loader = true;
@@ -76,7 +92,7 @@ export default {
         }).then(response => {
           this.loader = false;
           // if (response.data.success) {
-            this.showMsg(response.data?.message, 'positive');
+          this.showMsg(response.data?.message, 'positive');
           // } else {
           //   this.showMsg(response.data?.message, 'negative');
           // }

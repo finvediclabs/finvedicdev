@@ -24,7 +24,7 @@
         <tr v-for="(item, i) in data">
           <td v-if="allowSelect"><q-checkbox color="cyan" v-model="selectedItemsData" :val="item" /></td>
           <td v-for="(column, j) in columns" :key="column" :style="{ 'text-align': column.align }"
-            class="vertical-middle q-py-sm">
+            class="vertical-middle" style="padding-top:10px;padding-bottom: 10px;">
             <span v-if="column.type === 'image'">
               <q-avatar size="40px" class="shadow-1">
                 <img :src="item[column.key]" class="fit">
@@ -35,7 +35,7 @@
             </span>
           </td>
           <td class="text-right" v-if="showActions">
-            <q-icon name="more_horiz" class="bg- q-px-sm cursor-pointer" size="sm">
+            <q-icon name="more_vert" class="bg- q-px-sm cursor-pointer" size="sm">
               <q-menu style="width:150px;background: transparent!important;" class="shadow-0">
                 <div style="background-color: #EAEAEA;opacity:0.99" class="fin-br-8 q-mt-sm">
                   <div class="absolute-top-right" style="margin-top: -19px">

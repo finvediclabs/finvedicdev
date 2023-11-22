@@ -92,7 +92,8 @@ export default {
       let params = {
         title: title ?? 'Create Video',
         url: item?.id ? `${urls.videoDataUrl}/${item.id}` : urls.videoDataUrl,
-        item: item
+        item: item,
+        coverKey: 'videoCoverPath'
       };
       let text = JSON.stringify(params);
       // text = CryptoJS.AES.encrypt(editedEvent, "fileTypes").toString();

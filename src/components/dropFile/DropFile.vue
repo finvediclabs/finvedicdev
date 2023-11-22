@@ -1,16 +1,15 @@
 <template>
   <div class="main">
-    <div class="dropzone-container" @dragover="dragover" @dragleave="dragleave" @drop="drop">
-      <input type="file" name="file" id="fileInput" class="hidden-input" @change="onChange" ref="file"
-        :accept="accept" />
-      <label for="fileInput" class="file-label" v-if="!files.length">
+    <div class="dropzone-container shadow-3" style=" position: relative;" @dragover="dragover" @dragleave="dragleave" @drop="drop">
+      <input type="file" name="file" :id="fileRef" class="hidden-input" @change="onChange" :ref="fileRef" :accept="accept" />
+      <label :for="fileRef" class="file-label" v-if="!files.length">
         <div>
           <q-icon name="upload_file" size="100px" color="blue-2" />
           <br>
           <i class="text-grey-5">Drag and drop</i>
         </div>
       </label>
-      <div class="preview-container" v-if="files.length">
+      <div class="dropzone-container" v-if="files.length">
         <div v-for="file in files" :key="file.name" class="preview-card">
           <div>
             <img class="preview-img" :src="generateURL(file)" />
@@ -32,11 +31,11 @@ export default {
       files: [],
     }
   },
-  props: ['accept'],
+  props: ['accept', 'fileRef'],
   methods: {
     onChange() {
-      this.files.push(...this.$refs.file.files);
-      let incomingFiles = Array.from(this.$refs.file.files);
+      this.files.push(...this.$refs[this.fileRef].files);
+      let incomingFiles = Array.from(this.$refs[this.fileRef].files);
       const fileExist = this.files.some((r) =>
         incomingFiles.some(
           (file) => file.name === r.name && file.size === r.size
@@ -56,7 +55,7 @@ export default {
     },
     drop(e) {
       e.preventDefault();
-      this.$refs.file.files = e.dataTransfer.files;
+      this.$refs[this.fileRef].files = e.dataTransfer.files;
       this.onChange();
       this.isDragging = false;
     },
@@ -84,15 +83,14 @@ export default {
 }
 
 .dropzone-container {
-  height: 240px;
+  height: 200px;
   width: 200px;
   border: 1px solid #e2e8f0;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 10px;
-  position: relative;
-  background: rgba(0, 0, 0, 0.05)
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .hidden-input {
@@ -104,9 +102,14 @@ export default {
 }
 
 .file-label {
+  width: 100%;
+  height: 100%;
   font-size: 20px;
   display: block;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .preview-card {

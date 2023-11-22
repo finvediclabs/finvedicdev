@@ -7,11 +7,11 @@
       <div class="row q-pb-lg">
         <div v-for="category in categories" class="col-12 col-sm-4 q-pa-sm">
           <q-btn :label="category.categoryName" no-caps v-if="!subCategories[category.id]" class="full-width" size="lg"
-            :class="selectedCategory?.id == category.id ? 'bg-finvedic text-white' : ''"
+            :class="selectedCategory?.id == category.id ? 'bg-finvedic text-white' : ''" rounded
             @click="selectCategory(category)" />
 
           <q-btn-dropdown :label="category.categoryName" no-caps v-if="subCategories[category.id]" class="full-width"
-            :class="{ 'bg-finvedic text-white': selectedCategory?.id === category.id }" size="lg">
+            :class="{ 'bg-finvedic text-white': selectedCategory?.id === category.id }" size="lg" rounded>
             <q-list>
               <q-item v-for="subCategory in subCategories[category.id]" clickable v-close-popup
                 @click="selectSubCategory(category, subCategory)"

@@ -5,17 +5,18 @@
     </fin-portlet-header>
     <fin-portlet-item>
       <q-form @submit="validatePostData">
-        <div class="row justify-center">
-          <div class="col-10 q-pb-lg" v-if="requiredCataloge">
+        <div class="row">
+          <div class="col-12" v-if="requiredCataloge">
             <div class="row">
-              <div v-for="category in categories" class="col-12 col-sm-4 q-pa-sm" style="white-space: nowrap;">
+
+              <div v-for="category in categories" class="col-12 col-sm-4 q-px-md" style="white-space: nowrap;">
                 <q-btn :label="category.categoryName" no-caps v-if="!subCategories[category.id]"
-                  class="full-width shadow-2" rounded size="lg"
+                  class="full-width shadow-3 fin-br-8"  size="lg"
                   :class="selectedCategory?.id == category.id ? 'bg-finvedic text-white' : ''"
                   @click="selectCategory(category)" />
 
-                <q-btn-dropdown :label="category.categoryName" no-caps v-if="subCategories[category.id]" rounded
-                  class="full-width shadow-2" :class="{ 'bg-finvedic text-white': selectedCategory?.id === category.id }"
+                <q-btn-dropdown :label="category.categoryName" no-caps v-if="subCategories[category.id]"
+                  class="full-width shadow-3 fin-br-8" :class="{ 'bg-finvedic text-white': selectedCategory?.id === category.id }"
                   size="lg">
                   <q-list>
                     <q-item v-for="subCategory in subCategories[category.id]" clickable v-close-popup
@@ -28,37 +29,60 @@
                   </q-list>
                 </q-btn-dropdown>
                 <div v-if="selectedCategory?.id && subCategories[selectedCategory.id] && !selectedSubCategory?.id">
-                  {{ error[selectedCategory.id] }}
+                  {{ errors[selectedCategory.id] }}
                 </div>
               </div>
             </div>
             <div v-if="!selectedCategory?.id" class="text-red" style="height: 20px;font-size: 14px;">
-              {{ error.category }}
+              {{ errors.category }}
             </div>
           </div>
 
-          <div class="col-12 col-md-6 ">
-            <fin-portlet-item class="full-width q-pa-md">
-              <q-input v-model="title" filled label="Title" lazy-rules
-                :rules="[val => val && val.length > 0 || 'Title Is required']" />
-            </fin-portlet-item>
-            <fin-portlet-item class="full-width q-pa-md">
-              <q-input v-model="description" filled type="textarea" label="Description" rows="12" lazy-rules
-                :rules="[val => val && val.length > 0 || 'Discription Is required']" />
-            </fin-portlet-item>
-          </div>
-          <div class="col-12 col-md-4 q-pa-md text-center">
-            <div v-if="videoCoverPath" class="shadow-3 q-mx-auto fin-br-8" style="width: 200px;max-height: 300px;">
-              <q-btn class="float-right" icon="close" flat @click="videoCoverPath=''"/>
-              <q-img :src="videoCoverPath" class="full-width" style="width: 200px;max-height: 300px;"/>
-            </div>
-            <drop-file @update="selectFilesData" v-else/>
+          <div class="col-12 col-md-7 q-px-md">
 
-            <div style="height: 20px;font-size: 14px;" class="text-red q-pt-sm" v-if="!cover.length">
-              {{ errorFile }}
-            </div>
+            <fin-portlet-item class="full-width q-my-md">
+              <q-input v-model="title" borderless label="Title" class="shadow-3 fin-br-8 q-px-sm bg-grey-2" />
+              <div v-if="!title" class="text-red" style="height: 20px;font-size: 14px;">
+                {{ errors.title }}
+              </div>
+            </fin-portlet-item>
+
+            <fin-portlet-item class="full-width">
+              <q-input v-model="description" borderless type="textarea" label="Description" rows="16"
+                class="fin-br-8 shadow-3 q-pa-sm bg-grey-2" />
+              <div v-if="!description" class="text-red" style="height: 20px;font-size: 14px;">
+                {{ errors.description }}
+              </div>
+            </fin-portlet-item>
+
           </div>
-          <div class="col-12 col-lg-10 q-pa-md text-start">
+          <div class="col-12 col-md-5 q-px-md">
+            <div class="q-mx-auto" style="width: 200px;max-height: 300px;" v-if="coverRequired">
+              <label class="text-weight-bolder">Cover</label>
+              <div v-if="coverPath" class="shadow-3 dropzone-container">
+                <q-btn class="q-pa-xs close-btn bg-grey-5" size="sm" icon="close" flat @click="coverPath = ''" />
+                <q-img :src="coverPath" class="full-width preview-img"/>
+              </div>
+              <drop-file @update="(val) => cover = val" :fileRef="'cover'" accept=".jpg, .jpeg, .png" v-else />
+              <div style="height: 30px;font-size: 14px;margin-top:-10px" class="text-red q-pt-sm" v-if="!cover.length">
+                {{ errors.cover }}
+              </div>
+            </div>
+
+            <div class="q-mx-auto" style="width: 200px;max-height: 300px;" v-if="chapter">
+              <label class="text-weight-bolder">File </label>
+              <div v-if="filePath" class="shadow-3 dropzone-container">
+                <q-btn class="q-pa-xs close-btn bg-grey-5" size="sm" icon="close" flat @click="filePath = ''" />
+                <q-img :src="filePath" class="full-width preview-img" style="width: 180px;max-height: 180px;" />
+              </div>
+              <drop-file @update="(val) => files = val" :fileRef="'file'" v-else />
+              <div style="height: 20px;font-size: 14px;margin-top:-10px" class="text-red q-pt-sm" v-if="!files.length">
+                {{ errors.file }}
+              </div>
+            </div>
+
+          </div>
+          <div class="col-12 col-lg-11 q-py-xl q-px-xl text-right">
             <q-btn type="submit" label="Save" no-caps size="lg" class="q-px-xl shadow-1 bg-blue-15 text-white"
               :disable="loading">
               <q-spinner-facebook size="xs" class="q-ml-sm" v-if="loading" />
@@ -105,17 +129,21 @@ export default {
       title: "",
       description: "",
       cover: [],
-      errorFile: '',
       loading: false,
       queryData: {},
       selectedCategory: {},
       selectedSubCategory: {},
-      videoCoverPath: '',
-      error: {},
+      coverPath: '',
+      errors: {},
       chapter: false,
       id: '',
       requiredCataloge: true,
-      key: '',
+      parentKey: '',
+      coverKey: '',
+      fileKey: '',
+      files: [],
+      filePath: '',
+      coverRequired: true,
     }
   },
   mounted() {
@@ -123,14 +151,18 @@ export default {
     this.queryData = JSON.parse(data);
     this.chapter = this.queryData.chapter ?? false;
     this.requiredCataloge = this.queryData.requiredCataloge ?? true;
-    this.key = this.queryData?.key;
+    this.parentKey = this.queryData?.parentKey;
+    this.fileKey = this.queryData?.fileKey;
+    this.coverKey = this.queryData?.coverKey;
+    this.coverRequired = this.queryData?.coverRequired ?? true;
     if (this.queryData.item) {
       let item = this.queryData.item;
       this.title = item.title;
       this.description = item.description;
       this.id = item.id;
       // this.cover[0] = item.cover;
-      this.videoCoverPath = item.cover;
+      this.coverPath = item.cover;
+      this.filePath = item.file;
       this.selectedCategory.id = item.categoryId;
       this.selectedSubCategory.id = item.subCategoryId;
     }
@@ -146,19 +178,17 @@ export default {
         ]
       });
     },
-    ChangeCover() {
-      this.cover = this.$refs.file.values;
-    },
     getRequest() {
       var request = {
         accountId: this.profile?.id,
         description: this.description,
-        videoCoverPath: this.videoCoverPath,
       };
 
+      request[this.coverKey] = this.coverPath;
       if (this.chapter) {
-        request[this.key] = this.queryData[this.key];
+        request[this.parentKey] = this.queryData[this.parentKey];
         request.chapterTitle = this.title;
+        request[this.fileKey] = this.filePath;
       } else {
         request.heading = this.title;
       }
@@ -171,55 +201,87 @@ export default {
       return request;
     },
     validatePostData() {
-      if (this.requiredCataloge && (this.cover.length || this.videoCoverPath)) {
-        if (this.selectedCategory?.id) {
-          if (this.subCategories[this.selectedCategory?.id]) {
-            if (this.selectedSubCategory?.id) {
-              if (this.id) {
-                this.videoCoverPath ? this.updateData() : this.uploadImg();
-              } else {
-                this.uploadImg();
-              }
-            } else {
-              this.error[this.selectedCategory?.id] = 'Choose An Option'
-            }
-          } else {
-            if (this.id) {
-              this.videoCoverPath ? this.updateData() : this.uploadImg();
-            } else {
-              this.uploadImg();
-            }
+      var errorsCount = 0;
+      if (this.requiredCataloge) {
+        if (!this.selectedCategory?.id) { errorsCount += 1; }
+        if (this.subCategories[this.selectedCategory?.id]) {
+          if (!this.selectedSubCategory?.id) {
+            errorsCount += 1;
+          }
+        }
+      }
+
+      if (!this.title) { alert('title'); errorsCount += 1; }
+
+      if (!this.description) { alert('description'); errorsCount += 1; }
+
+      if (this.coverRequired) {
+        (this.cover.length || this.coverPath) ? '' : errorsCount += 1;
+      }
+      if (this.chapter) {
+        (this.files.length || this.filePath) ? '' : errorsCount += 1;
+      }
+
+      if (!errorsCount) {
+        this.errors = {};
+        if (this.id) {
+          if (this.cover.length && this.coverRequired) { this.uploadImg(); }
+          else if (this.files.length) { this.uploadFile(); }
+          else {
+            this.updateData();
           }
         } else {
-          this.error.category = "Please Select Category";
-        }
-      } else if (this.cover.length || this.videoCoverPath) {
-        if (this.id) {
-          this.videoCoverPath ? this.updateData() : this.uploadImg();
-        } else {
-          this.uploadImg();
+          this.coverRequired ? this.uploadImg() : this.uploadFile();
         }
       } else {
-        this.errorFile = "Image Is required";
-        this.error.category = "Please Select Category";
+        this.errors = {
+          title: "Title Is required",
+          description: "Discription Is required",
+          cover: "Cover image is required",
+          file: "file is required",
+          category: "Please Select Category",
+        }
+        if (this.requiredCataloge) {
+          this.errors[this.selectedCategory?.id] = 'Choose An Option';
+        }
       }
     },
+
     uploadImg() {
       if (!this.loading) {
         this.loading = true;
         let formData = new FormData();
         formData.append('file', this.cover[0]);
         this.$api.post('fs/upload-file', formData).then(response => {
-          this.videoCoverPath = response.data.uri;
-          if (this.id) {
-            this.updateData();
-          } else {
-            this.onSubmit();
-          }
+          this.coverPath = response.data.uri;
+          this.nextFunction();
         }).catch(error => {
           this.showMsg(error.response?.data.message || error.message, 'negative');
         })
       }
+    },
+    nextFunction() {
+
+      if (this.id) {
+        this.chapter ? (this.files.length ? this.uploadFile() : this.updateData()) : this.updateData();
+      } else {
+        this.chapter ? this.uploadFile() : this.onSubmit();
+      }
+    },
+    uploadFile() {
+      this.loading = true;
+      let formData = new FormData();
+      formData.append('file', this.files[0]);
+      this.$api.post('fs/upload-file', formData).then(response => {
+        this.filePath = response.data.uri;
+        if (this.id) {
+          this.updateData();
+        } else {
+          this.onSubmit();
+        }
+      }).catch(error => {
+        this.showMsg(error.response?.data.message || error.message, 'negative');
+      })
     },
     onSubmit() {
       this.$api.post(this.queryData.url, this.getRequest()).then(response => {
@@ -250,9 +312,6 @@ export default {
         this.showMsg(error.response?.data.message || error.message, 'negative');
       })
     },
-    selectFilesData(val) {
-      this.cover = val;
-    },
     selectCategory(category) {
       this.selectedCategory = category;
       this.selectedSubCategory = {};
@@ -264,3 +323,31 @@ export default {
   }
 }
 </script>
+<style>
+.dropzone-container {
+  height: 200px;
+  width: 200px;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  position: relative;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.close-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 9;
+}
+
+.preview-img {
+  width: 150px;
+  height: 150px;
+  border-radius: 5px;
+  border: 1px solid #a2a2a2;
+  background-color: #a2a2a2;
+}
+</style>
