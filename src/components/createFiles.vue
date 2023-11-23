@@ -294,7 +294,8 @@ export default {
         }
       }).catch(error => {
         this.loading = false;
-        this.showMsg(error.response?.data.message || error.message, 'negative');
+        var message = error.response?.data.fieldErrors[0] ? error.response?.data.fieldErrors[0].field + ' ' + error.response?.data.fieldErrors[0].errorCode : '';
+        this.showMsg( message || error.message, 'negative');
       })
     },
 
@@ -309,7 +310,8 @@ export default {
         }
       }).catch(error => {
         this.loading = false;
-        this.showMsg(error.response?.data.message || error.message, 'negative');
+        var message = error.response?.data.fieldErrors[0] ? error.response?.data.fieldErrors[0].field + ' ' + error.response?.data.fieldErrors[0].errorCode : '';
+        this.showMsg( message || error.message, 'negative');
       })
     },
     selectCategory(category) {
