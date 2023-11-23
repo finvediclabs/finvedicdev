@@ -11,7 +11,7 @@
     </fin-portlet-header>
     <fin-portlet-item>
       <fin-table :columns="header" :data="videosList" select @reCall="getVideosData()" @editFun="editDataFun"
-        :loading="loading" showChapters @showChapters="showChaptersList" />
+        :loading="loading" showChapters @showChapters="showChaptersList" allowDelete delete-url=""/>
     </fin-portlet-item>
   </fin-portlet>
 </template>

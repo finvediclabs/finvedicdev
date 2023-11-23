@@ -10,7 +10,7 @@
       </fin-portlet-item>
     </fin-portlet-header>
     <fin-portlet-item>
-      <fin-table :columns="header" :data="booksList" select @reCall="getBooksData()" delete-url="api/book/delete"
+      <fin-table :columns="header" :data="booksList" select @reCall="getBooksData()" allowDelete delete-url=""
         @editFun="editDataFun" :loading="loading" showChapters @showChapters="showChaptersList" />
     </fin-portlet-item>
   </fin-portlet>

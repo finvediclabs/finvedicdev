@@ -9,7 +9,7 @@
     </fin-portlet-header>
     <fin-portlet-item>
       <fin-table :columns="header" :data="organizations" select @reCall="getOrganizations()" @editFun="editDataFun"
-        delete-url="api/organization/delete" />
+      allowDelete delete-url="" />
     </fin-portlet-item>
   </fin-portlet>
   <q-dialog v-model="createOrganizationDialog">

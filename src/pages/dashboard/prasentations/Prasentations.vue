@@ -10,7 +10,7 @@
     </fin-portlet-header>
     <fin-portlet-item>
       <fin-table :columns="header" :data="prasentations" select @reCall="getPrasentationsData()" @editFun="editDataFun"
-        :loading="loading" showChapters @showChapters="showChaptersList"/>
+        :loading="loading" showChapters @showChapters="showChaptersList" allowDelete delete-url=""/>
     </fin-portlet-item>
   </fin-portlet>
 </template>
