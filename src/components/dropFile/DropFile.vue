@@ -31,20 +31,47 @@ export default {
       files: [],
     }
   },
-  props: ['accept', 'fileRef'],
+  props: ['accept', 'fileRef', 'minSize', 'maxSize'],
   methods: {
+    showMsg(message, type) {
+      this.$q.notify({
+        message: message || "Something Went Wrong!",
+        type: type,
+        position: 'top-right',
+        actions: [
+          { icon: 'close', color: 'white', handler: () => { } }
+        ]
+      });
+    },
     onChange() {
-      this.files.push(...this.$refs[this.fileRef].files);
-      let incomingFiles = Array.from(this.$refs[this.fileRef].files);
-      const fileExist = this.files.some((r) =>
-        incomingFiles.some(
-          (file) => file.name === r.name && file.size === r.size
-        )
-      );
-      if (!fileExist) {
-        this.files.push(...incomingFiles);
+      console.log(this.$refs[this.fileRef].files);
+      if( this.$refs[this.fileRef].files) {
+        var file = this.$refs[this.fileRef].files[0];
+        if( (file.size/1024) >=  Number(this.minSize) && (file.size/1024) <= Number(this.maxSize) ) {
+          alert(file.size);
+          this.files.push(...this.$refs[this.fileRef].files);
+          let incomingFiles = Array.from(this.$refs[this.fileRef].files);
+          const fileExist = this.files.some((r) =>
+            incomingFiles.some(
+              (file) => file.name === r.name && file.size === r.size
+            )
+          );
+          if (!fileExist) {
+            this.files.push(...incomingFiles);
+          }
+          this.$emit('update', this.files);
+        } else {
+          var minMB = this.minSize < 1024 ? this.minSize : Number(this.minSize)/1024;
+          var minMBType = this.minSize < 1024 ? 'kb' :'mb';
+          var maxMB = this.maxSize < 1024 ? this.maxSize : Number(this.maxSize)/1024;
+          var maxMBType = this.maxSize < 1024 ? 'kb' :'mb';
+          var fileSize = parseFloat(file.size/1024).toFixed(2);
+          var fileSizeType = fileSize < 1024 ? 'kb' :'mb';
+          var message = `Please upload file between ${minMB}${minMBType} - ${maxMB}${maxMBType} and your file size is ${fileSize}${fileSizeType}.`;
+          this.showMsg(message, 'negative');
+          this.$refs[this.fileRef].files.value = '';
+        }
       }
-      this.$emit('update', this.files);
     },
     dragover(e) {
       e.preventDefault();

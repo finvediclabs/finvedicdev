@@ -63,7 +63,7 @@
                 <q-btn class="q-pa-xs close-btn bg-grey-5" size="sm" icon="close" flat @click="coverPath = ''" />
                 <q-img :src="coverPath" class="full-width preview-img"/>
               </div>
-              <drop-file @update="(val) => cover = val" :fileRef="'cover'" accept=".jpg, .jpeg, .png" v-else />
+              <drop-file @update="(val) => cover = val" :fileRef="'cover'" accept=".jpg, .jpeg, .png" min-size="512" max-size="30720" v-else />
               <div style="height: 30px;font-size: 14px;margin-top:-10px" class="text-red q-pt-sm" v-if="!cover.length">
                 {{ errors.cover }}
               </div>
@@ -75,7 +75,7 @@
                 <q-btn class="q-pa-xs close-btn bg-grey-5" size="sm" icon="close" flat @click="filePath = ''" />
                 <q-img :src="filePath" class="full-width preview-img" style="width: 180px;max-height: 180px;" />
               </div>
-              <drop-file @update="(val) => files = val" :fileRef="'file'" v-else />
+              <drop-file @update="(val) => files = val" :fileRef="'file'" :accept="fileAccept" min-size="512" max-size="30720" v-else/>
               <div style="height: 20px;font-size: 14px;margin-top:-10px" class="text-red q-pt-sm" v-if="!files.length">
                 {{ errors.file }}
               </div>
@@ -144,10 +144,11 @@ export default {
       files: [],
       filePath: '',
       coverRequired: true,
+      fileAccept: '',
     }
   },
   mounted() {
-    let data = this.$route.query.data; //CryptoJS.AES.decrypt(this.$route.query.data, 'objects').toString(CryptoJS.enc.Utf-8);
+    let data = this.$route.query.data;//CryptoJS.AES.decrypt(this.$route.query.data, 'fileTypes').toString(CryptoJS.enc.Utf8);
     this.queryData = JSON.parse(data);
     this.chapter = this.queryData.chapter ?? false;
     this.requiredCataloge = this.queryData.requiredCataloge ?? true;
@@ -155,6 +156,7 @@ export default {
     this.fileKey = this.queryData?.fileKey;
     this.coverKey = this.queryData?.coverKey;
     this.coverRequired = this.queryData?.coverRequired ?? true;
+    this.fileAccept = this.queryData?.fileAccept;
     if (this.queryData.item) {
       let item = this.queryData.item;
       this.title = item.title;
