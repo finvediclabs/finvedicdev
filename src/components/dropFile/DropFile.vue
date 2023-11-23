@@ -48,7 +48,6 @@ export default {
       if( this.$refs[this.fileRef].files) {
         var file = this.$refs[this.fileRef].files[0];
         if( (file.size/1024) >=  Number(this.minSize) && (file.size/1024) <= Number(this.maxSize) ) {
-          alert(file.size);
           this.files.push(...this.$refs[this.fileRef].files);
           let incomingFiles = Array.from(this.$refs[this.fileRef].files);
           const fileExist = this.files.some((r) =>

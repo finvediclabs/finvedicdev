@@ -213,9 +213,9 @@ export default {
         }
       }
 
-      if (!this.title) { alert('title'); errorsCount += 1; }
+      if (!this.title) { errorsCount += 1; }
 
-      if (!this.description) { alert('description'); errorsCount += 1; }
+      if (!this.description) { errorsCount += 1; }
 
       if (this.coverRequired) {
         (this.cover.length || this.coverPath) ? '' : errorsCount += 1;

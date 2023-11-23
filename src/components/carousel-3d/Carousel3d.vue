@@ -11,7 +11,6 @@
 <script>
 import autoplay from "./mixins/autoplay";
 import Controls from "./Controls.vue";
-import LogInPageVue from "../LandingComponents/LogInPage.vue";
 
 const noop = () => {
 }

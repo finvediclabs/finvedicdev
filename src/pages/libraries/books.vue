@@ -27,7 +27,7 @@
     </fin-portlet-item> -->
     <fin-portlet-item class="q-pb-xl" v-if="booksData.length">
       <carousel-3d :totalSlides="booksData.length" :count="booksData.length" @beforeSlideChange="getCurrentSlide"
-        :controls-visible="true">
+        :controls-visible="true" width="270" height="360" display="7" >
         <slide v-for="(slide, i) in booksData" :key="i" :index="i">
           <q-img :src="slide.imagePath ?? 'dumy'" class="fit" :alt="slide.heading">
             <template v-slot:error>

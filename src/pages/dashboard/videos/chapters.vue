@@ -105,6 +105,7 @@ export default {
         videoId: this.videoId,
         fileKey:"videoFilePath",
         coverRequired: false,
+        fileAccept: "video/mp4,video/x-m4v,video/*",
       };
       let text = JSON.stringify(params);
       // text = CryptoJS.AES.encrypt(editedEvent, "fileTypes").toString();

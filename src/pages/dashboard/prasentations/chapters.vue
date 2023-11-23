@@ -105,6 +105,7 @@ export default {
         parentKey: 'presentationId',
         fileKey: "presentationFilePath",
         coverRequired: false,
+        fileAccept: ".doc, .docx,.ppt, .pptx, .pdf",
       };
       let text = JSON.stringify(params);
       // text = CryptoJS.AES.encrypt(editedEvent, "fileTypes").toString();

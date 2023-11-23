@@ -105,10 +105,11 @@ export default {
         requiredCataloge: false,
         parentKey: 'bookId',
         coverKey: "chapterImagePath",
-        fileKey: "chapterFilePath"
+        fileKey: "chapterFilePath",
+        fileAccept: ".doc, .docx,.pdf",
       };
       let text = JSON.stringify(params);
-      // text = CryptoJS.AES.encrypt(editedEvent, "fileTypes").toString();
+      // let text = CryptoJS.AES.encrypt(editedEvent, "fileTypes").toString();
       if (item) {
         this.$router.push({
           path: '/admin/create',
