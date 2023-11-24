@@ -4,12 +4,12 @@
       <fin-portlet-heading :loading="loading" backArrow>Books</fin-portlet-heading>
       <fin-portlet-item>
         <router-link :to="this.createFile()">
-          <q-btn label="Create Book" icon="add" color="blue-15" class="fin-br-8 text-subtitle1 text-weight-bolder q-px-md"
-            dense no-caps />
+          <q-btn  label="Add Book" dense color="blue-15" class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder"
+          no-caps />
         </router-link>
       </fin-portlet-item>
     </fin-portlet-header>
-    <fin-portlet-item>
+    <fin-portlet-item class="table-scroll">
       <fin-table :columns="header" :data="booksList" select @reCall="getBooksData()" allowDelete delete-url=""
         @editFun="editDataFun" :loading="loading" showChapters @showChapters="showChaptersList" />
     </fin-portlet-item>
@@ -38,8 +38,8 @@ export default {
       header: [
         { label: 'S.No', key: 'index', align: 'center' },
         { label: 'Cover', key: 'imagePath', align: 'start', type: 'image' },
-        { label: 'Title', key: 'heading', align: 'start' },
-        { label: 'Description', key: 'description', align: 'start' },
+        { label: 'Title', key: 'heading', align: 'start', width: '150px' },
+        { label: 'Description', key: 'description', align: 'start', width: '250px' },
       ],
       booksList: []
     }

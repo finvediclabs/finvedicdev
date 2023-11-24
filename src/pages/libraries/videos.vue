@@ -6,12 +6,12 @@
     <fin-portlet-item>
       <div class="row q-pb-lg">
         <div v-for="category in categories" class="col-12 col-sm-4 q-pa-sm">
-          <q-btn :label="category.categoryName" no-caps v-if="!subCategories[category.id]" class="full-width fin-br-8"
+          <q-btn :label="category.categoryName" no-caps v-if="!subCategories[category.id]" class="full-width fin-br-8 shadow-2"
             size="lg" :class="selectedCategory?.id == category.id ? 'bg-finvedic text-white' : ''"
             @click="selectCategory(category)" />
 
           <q-btn-dropdown :label="category.categoryName" no-caps v-if="subCategories[category.id]"
-            class="full-width fin-br-8" :class="{ 'bg-finvedic text-white': selectedCategory?.id === category.id }"
+            class="full-width fin-br-8 shadow-2" :class="{ 'bg-finvedic text-white': selectedCategory?.id === category.id }"
             size="lg">
             <q-list>
               <q-item v-for="subCategory in subCategories[category.id]" clickable v-close-popup
@@ -40,7 +40,7 @@
     </fin-portlet-item>
     <fin-portlet-item v-else style="height: 272px" class="q-pb-xl">
       <div class="full-width full-height flex flex-center">
-        <q-spinner-facebook color="blue-9" size="3.5em" />
+        <q-spinner-ios color="blue-9" size="3.5em" />
       </div>
     </fin-portlet-item>
 

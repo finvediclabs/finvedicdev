@@ -4,11 +4,12 @@
       <fin-portlet-heading :loading="loading" backArrow>Chapters List : {{ presentationId }}</fin-portlet-heading>
       <fin-portlet-item>
         <router-link :to="this.createFile()">
-          <q-btn label="Create Chapter" outline icon="add" class="q-px-sm" color="blue-8" />
+          <q-btn label="Add Chapter" dense color="blue-15" class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder"
+          no-caps />
         </router-link>
       </fin-portlet-item>
     </fin-portlet-header>
-    <fin-portlet-item>
+    <fin-portlet-item class="table-scroll">
       <fin-table :columns="header" :data="chaptersList" select @reCall="getChaptersData()" @editFun="editDataFun"
         :loading="loading" allowDelete delete-url=""/>
     </fin-portlet-item>
@@ -35,8 +36,8 @@ export default {
       header: [
         { label: 'S.No', key: 'index', align: 'center' },
         { label: 'Cover', key: 'chapterImagePath', align: 'start', type: 'image' },
-        { label: 'Title', key: 'chapterTitle', align: 'start' },
-        { label: 'Description', key: 'description', align: 'start' },
+        { label: 'Title', key: 'chapterTitle', align: 'start', width: '150px' },
+        { label: 'Description', key: 'description', align: 'start', width: '250px' },
       ],
       chaptersList: [],
       loading: true,

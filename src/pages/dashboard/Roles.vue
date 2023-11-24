@@ -3,7 +3,7 @@
     <fin-portlet-header>
       <fin-portlet-heading :loading="loading" backArrow>Roles</fin-portlet-heading>
     </fin-portlet-header>
-    <fin-portlet-item>
+    <fin-portlet-item class="table-scroll" style="white-space: nowrap;">
       <fin-table :columns="header" :data="rolesList" select @reCall="getRolesData()" allowDelete delete-url=""
         @editFun="editDataFun" :showActions="false" :loading="loading" />
     </fin-portlet-item>

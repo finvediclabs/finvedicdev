@@ -1,7 +1,7 @@
 <template>
-  <div class="full-width fin-table" :class="{ singleData: data.length == 1 }">
-    <table class="table full-width rounded-borders shadow-6" borders="0">
-      <thead>
+  <div class="full-width fin-table shadow-6 q-my-md fin-br-8" :class="{ singleData: data.length == 1 }">
+    <table class="table full-width rounded-borders" borders="0">
+      <thead style="white-space: nowrap;">
         <tr>
           <th style="width: 50px" v-if="allowSelect"><q-checkbox v-model="allSelect" :val="data" dark /></th>
           <th v-for="(column, j) in columns" :key="column" :style="{ 'text-align': column.align }"
@@ -15,7 +15,7 @@
         <tr class="radius-10">
           <td :colspan="columns.length + 1" class=" radius-10 text-italic">
             <div style="min-height: 250px" class="q-pa-lg text-center row justify-center items-center">
-              <q-spinner-facebook size="md"/>
+              <q-spinner-ios size="lg" color="black"/>
             </div>
           </td>
         </tr>
@@ -23,7 +23,7 @@
       <tbody v-if="!loading && data.length">
         <tr v-for="(item, i) in data">
           <td v-if="allowSelect"><q-checkbox color="cyan" v-model="selectedItemsData" :val="item" /></td>
-          <td v-for="(column, j) in columns" :key="column" :style="{ 'text-align': column.align }"
+          <td v-for="(column, j) in columns" :key="column" :style="{ 'text-align': column.align,'min-width': column.width }"
             class="vertical-middle" style="padding-top:10px;padding-bottom: 10px;">
             <span v-if="column.type === 'image'">
               <q-avatar size="40px" class="shadow-1">
@@ -186,6 +186,7 @@ export default {
 <style>
 .fin-table {
   min-height: 400px;
+  background-color: #F5F5F5;
 }
 
 .fin-table .table thead {

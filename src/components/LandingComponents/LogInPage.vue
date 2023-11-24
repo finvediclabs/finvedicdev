@@ -22,7 +22,7 @@
           </div>
           <q-btn color="primary" no-caps class="full-width sub-btn" padding="md" label="Log In" type="submit"
             :disable="loading">
-            <q-spinner-facebook color="white" class="q-pl-sm" v-if="loading" />
+            <q-spinner-ios color="white" class="q-pl-sm" v-if="loading" />
           </q-btn>
         </q-form>
       </div>

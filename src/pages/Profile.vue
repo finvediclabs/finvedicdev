@@ -62,7 +62,7 @@
                 <q-btn label="Cancel" no-caps color="red" @click="cancelEdit()" v-if="!disableEdit" />
                 <q-btn color="primary" no-caps class="sub-btn q-ml-sm" style="min-width:150px" label="Update"
                   type="submit" :disable="loading" v-if="!disableEdit">
-                  <q-spinner-facebook color="white" class="q-pl-sm" v-if="loading" />
+                  <q-spinner-ios color="white" class="q-pl-sm" v-if="loading" />
                 </q-btn>
               </div>
             </div>

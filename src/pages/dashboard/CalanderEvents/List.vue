@@ -4,11 +4,12 @@
       <fin-portlet-heading :loading="loading" backArrow>Calander Events</fin-portlet-heading>
       <fin-portlet-item>
         <router-link :to="{ path: 'class-room/create' }">
-          <q-btn label="Add Class" outline class="q-px-sm fin-br-8 q-px-md" color="blue-8" />
+          <q-btn label="Add Class" dense color="blue-15" class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder"
+          no-caps/>
         </router-link>
       </fin-portlet-item>
     </fin-portlet-header>
-    <fin-portlet-item>
+    <fin-portlet-item class="table-scroll" style="white-space: nowrap;">
       <fin-table :columns="header" :data="events" @reCall="getBooksData()" allowDelete delete-url=""
         @editFun="editDataFun" :loading="loading"/>
     </fin-portlet-item>

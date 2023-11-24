@@ -117,6 +117,7 @@ export default {
 </script>
 <style>
 .login-class {
+  position:relative;
   background: #5479F7;
 }
 

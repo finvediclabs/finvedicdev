@@ -4,20 +4,20 @@
       <fin-portlet-heading :loading="loading" backArrow>Vm Setup</fin-portlet-heading>
     </fin-portlet-header>
     <fin-portlet-item class="full-width  text-center items-center justify-center">
-      <div style="max-width: 1100px;min-width: 425px;">
+      <div style="max-width: 1100px;">
         <q-form @submit="validateFields">
           <div class="row">
             <div class="col-12 col-md-1 q-pa-sm "></div>
             <div class="col-12 col-md-5 q-pa-sm">
               <q-select v-model="version" :options="['Windows', 'Linux']" borderless label="VM Type"
-                class="shadow-3 fin-br-8 q-px-sm bg-grey-1" />
+                class="shadow-3 fin-br-8 q-px-md bg-grey-1" />
               <div style="height: 20px;font-size: 14px;margin-top:-10px" class="text-red q-pt-sm" v-if="!version">
                 {{ errors.version }}
               </div>
             </div>
             <div class="col-12 col-md-1 q-pa-sm "></div>
             <div class="col-12 col-md-5 q-pa-sm ">
-              <q-input v-model="nos" type="number" borderless label="No Of VM's" class="shadow-3 fin-br-8 q-px-sm bg-grey-1" />
+              <q-input v-model="nos" type="number" borderless label="No Of VM's" class="shadow-3 fin-br-8 q-px-md bg-grey-1" />
               <div style="height: 20px;font-size: 14px;margin-top:-10px" class="text-red q-pt-sm" v-if="!nos">
                 {{ errors.nos }}
               </div>
@@ -26,7 +26,7 @@
           <fin-portlet-item class="q-pa-sm text-right q-mt-xl">
             <q-btn color="primary" no-caps class="sub-btn q-ml-sm fin-br-8" style="min-width:150px" label="Create VM" type="submit"
               :disable="loader">
-              <q-spinner-facebook color="white" class="q-pl-sm" v-if="loader" />
+              <q-spinner-ios color="white" class="q-pl-sm" v-if="loader" />
             </q-btn>
           </fin-portlet-item>
         </q-form>
@@ -52,7 +52,7 @@ export default {
   data() {
     return {
       version: "",
-      nos: 0,
+      nos: '',
       instance: "Standard_D2s_v3=3",
       region: "East-US",
       loader: false,

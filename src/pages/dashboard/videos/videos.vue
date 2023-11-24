@@ -4,12 +4,12 @@
       <fin-portlet-heading :loading="loading" backArrow>Videos</fin-portlet-heading>
       <fin-portlet-item>
         <router-link :to="createFile()">
-          <q-btn label="Create Video" icon="add" color="blue-15"
-            class="fin-br-8 text-subtitle1 text-weight-bolder q-px-md" dense no-caps />
+          <q-btn  label="Add Video" dense color="blue-15" class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder"
+          no-caps />
         </router-link>
       </fin-portlet-item>
     </fin-portlet-header>
-    <fin-portlet-item>
+    <fin-portlet-item class="table-scroll">
       <fin-table :columns="header" :data="videosList" select @reCall="getVideosData()" @editFun="editDataFun"
         :loading="loading" showChapters @showChapters="showChaptersList" allowDelete delete-url=""/>
     </fin-portlet-item>
@@ -38,8 +38,8 @@ export default {
       header: [
         { label: 'S.No', key: 'index', align: 'center' },
         { label: 'Cover', key: 'videoCoverPath', align: 'start', type: 'image' },
-        { label: 'Title', key: 'heading', align: 'start' },
-        { label: 'Description', key: 'description', align: 'start' },
+        { label: 'Title', key: 'heading', align: 'start', width: '150px' },
+        { label: 'Description', key: 'description', align: 'start', width: '250px' },
       ],
       videosList: []
     }

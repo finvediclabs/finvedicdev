@@ -85,7 +85,7 @@
           <div class="col-12 col-lg-11 q-py-xl q-px-xl text-right">
             <q-btn type="submit" label="Save" no-caps size="lg" class="q-px-xl shadow-1 bg-blue-15 text-white"
               :disable="loading">
-              <q-spinner-facebook size="xs" class="q-ml-sm" v-if="loading" />
+              <q-spinner-ios size="xs" class="q-ml-sm" v-if="loading" />
             </q-btn>
           </div>
         </div>

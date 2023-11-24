@@ -1,13 +1,13 @@
 <template>
   <q-layout view="hHh Lpr fFf">
     <q-header>
-      <q-toolbar class=" text-black q-pa-sm mainHeader">
+      <q-toolbar class=" text-black q-pa-sm q-pr-lg mainHeader">
         <q-item>
           <q-item-section avatar>
-            <q-btn flat @click="toggleFunction" color="blue-10" round dense icon="menu" />
+          <q-btn flat @click="toggleFunction" color="blue-10" round dense icon="menu" />
           </q-item-section>
           <q-item-section class="text-h5 text-weight-bolder">
-            <svg xmlns="http://www.w3.org/2000/svg" width="197" height="30" viewBox="0 0 197 30" fill="none">
+            <svg xmlns="http://www.w3.org/2000/svg" :width="widthSVG" height="30" viewBox="0 0 197 30" fill="none">
               <path d="M197 25.0071H174.011V0.961853H185.507L185.532 13.5971H197V25.0071Z" fill="#5479F7" />
               <path
                 d="M196.042 25.9689H172.095V1.92365H184.206L184.232 14.4107H196.042V25.9689ZM172.374 25.6921H195.763V14.6954H183.956L183.93 2.20568H172.374V25.6921Z"
@@ -62,7 +62,7 @@
         </q-item>
         <q-space />
 
-        <q-btn icon="notifications_active" round class="bg-finvedic text-white q-mx-lg">
+        <q-btn icon="notifications_active" round class="bg-finvedic text-white q-mx-lg" :size="isMobile ? 'sm' : 'md'">
           <q-menu class="fin-br-8 q-py-md shadow-0" min-width="120px"
             style="width:230px;background: transparent!important;" :offset="[-0, 10]" transition-show="flip-right"
             transition-hide="rotate">
@@ -93,7 +93,7 @@
           </q-menu>
         </q-btn>
 
-        <q-avatar size="50px" class="shadow-4">
+        <q-avatar class="shadow-4" :size="isMobile ? '40px' : '50px'">
           <q-img src="../assets/profile.png" class="profileImg cursor-pointer rounded full-width full-height" />
           <q-menu :offset="[-5, 5]" max-width="300px" style="width:230px;background: transparent!important;"
             class="fin-br-8 q-py-md shadow-0" transition-show="flip-right" transition-hide="rotate">
@@ -124,8 +124,8 @@
       </q-toolbar>
     </q-header>
     <q-drawer v-model="drawerLeft" show-if-above :mini="miniState" width="230" breakpoint="576"
-      class="bg-finvedic text-white fin-drawer-style shadow-2">
-      <q-scroll-area class="fit q-pl-md q-pt-md" :horizontal-thumb-style="{ opacity: 0 }">
+      class="text-white fin-drawer-style shadow-2">
+      <q-scroll-area class="fit q-pl-md q-pt-md bg-finvedic q-pt-xl" :horizontal-thumb-style="{ opacity: 0 }">
         <q-list>
           <div class="left-drawer">
             <template v-for="(module, index ) in modules">
@@ -140,6 +140,7 @@
                     {{ module.label }}
                   </q-item-section>
                 </span>
+
                 <q-expansion-item v-if="module.menu" class="q-pa-none full-width module-select"
                   expand-icon-class="text-white" v-model="expand[module.value]" :icon="module.icon" :label="module.label">
                   <q-item v-for="(item, i) in module.menu" :key="item" clickable v-ripple
@@ -151,14 +152,10 @@
                     </q-item-section>
                   </q-item>
                 </q-expansion-item>
-
               </q-item>
             </template>
-
           </div>
-
         </q-list>
-
       </q-scroll-area>
     </q-drawer>
     <q-page-container>
@@ -191,7 +188,8 @@ export default {
       profileMenu: false,
       CurrentDate: new Date().toDateString(),
       selectedModule: {},
-      drawerLeft: window.innerWidth < 576 ? false : true,
+      drawerLeft: window.innerWidth < 600 ? false : true,
+      isMobile: window.innerWidth > 600 ? false : true,
       miniState: false,
       modulesList: [
         { icon: 'person', label: 'Administration', value: 'admin' },
@@ -211,11 +209,11 @@ export default {
 
       adminAccess: ["admin", "labs", "library", "reports"],
       studentsAccess: ["labs", "library", "reports"],
-      facultyAccess: ["labs", "library", "reports"]
-
+      facultyAccess: ["labs", "library", "reports"],
     }
   },
   computed: {
+    widthSVG() { return window.innerWidth > 600 ? 197 : 150 },
     modules() {
       var userAccess = [];
       if(this.userType == 1) {
@@ -350,7 +348,12 @@ export default {
   margin-top: 40px;
   border: none !important;
   border-radius: 0px 20px 0px 0px;
-  padding-top: 40px;
+  /* padding-top: 40px; */
+  background: transparent!important;
+}
+
+.q-drawer {
+  background-color: transparent;
 }
 
 .mainHeader {

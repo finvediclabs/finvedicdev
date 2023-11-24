@@ -10,11 +10,11 @@
           dense />
       </fin-portlet-item>
       <fin-portlet-item>
-        <q-btn label="Add New" icon="add" dense color="blue-15" class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder"
+        <q-btn label="Add User" dense color="blue-15" class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder"
           no-caps @click="createUser()" />
       </fin-portlet-item>
     </fin-portlet-header>
-    <fin-portlet-item>
+    <fin-portlet-item class="table-scroll">
       <fin-table :columns="header" :data="usersList" select @reCall="getUsersData()" allowDelete delete-url=""
         @editFun="editDataFun" :loading="loading"/>
     </fin-portlet-item>
@@ -52,7 +52,7 @@
             <div class="col-12 col-md-6 q-px-sm q-py-xs text-right q-pt-lg">
               <q-btn label="Close" v-close-popup type="reset" color="primary" flat class="q-mr-sm" no-caps />
               <q-btn label="Submit" type="submit" color="primary" :disable="submitLoading" no-caps>
-                <q-spinner-facebook size="xs" class="q-ml-sm" v-if="submitLoading" />
+                <q-spinner-ios size="xs" class="q-ml-sm" v-if="submitLoading" />
               </q-btn>
             </div>
           </div>

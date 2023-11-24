@@ -4,7 +4,7 @@
       <q-icon name="arrow_back" style="font-weight: bold;" class="cursor-pointer" @click="$router.go(-1)"
         v-if="backArrow" />
       <slot></slot>
-      <q-spinner-facebook v-if="loading" color="blue-10" size="1em" />
+      <q-spinner-ios v-if="loading" color="black" size="0.6em" class="q-ml-sm"/>
     </p>
   </div>
 </template>

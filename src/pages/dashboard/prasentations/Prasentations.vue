@@ -4,11 +4,12 @@
       <fin-portlet-heading backArrow :loading="loading">Prasentations</fin-portlet-heading>
       <fin-portlet-item>
         <router-link :to="createFile()">
-          <q-btn label="Create" outline icon="add" class="q-px-md" color="blue-8" />
+          <q-btn label="Add New" dense color="blue-15" class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder"
+          no-caps/>
         </router-link>
       </fin-portlet-item>
     </fin-portlet-header>
-    <fin-portlet-item>
+    <fin-portlet-item class="table-scroll">
       <fin-table :columns="header" :data="prasentations" select @reCall="getPrasentationsData()" @editFun="editDataFun"
         :loading="loading" showChapters @showChapters="showChaptersList" allowDelete delete-url=""/>
     </fin-portlet-item>
@@ -35,8 +36,8 @@ export default {
       header: [
         { label: 'S.No', key: 'index', align: 'center' },
         { label: 'Cover', key: 'videoCoverPath', align: 'start', type: 'image' },
-        { label: 'Title', key: 'heading', align: 'start' },
-        { label: 'Description', key: 'description', align: 'start' },
+        { label: 'Title', key: 'heading', align: 'start', width: '150px' },
+        { label: 'Description', key: 'description', align: 'start', width: '250px' },
       ],
       prasentations: [],
     }
