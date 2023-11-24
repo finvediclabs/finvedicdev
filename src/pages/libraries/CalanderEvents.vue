@@ -1,9 +1,9 @@
 <template>
-  <fin-portlet style="min-width: 600px;overflow-x: auto;">
+  <fin-portlet>
     <fin-portlet-header>
       <div class="row full-width">
         <div class="col-1"></div>
-        <div class="col-12 col-md-6 q-mt-xl">
+        <div class="col-12 col-md-6 " :class="{'q-mt-xl': !isMobile} ">
           <q-card class="my-card full-width text-white full-height" style="background: #2FCB89;">
             <q-card-section class="row justify-between">
               <div>
@@ -11,7 +11,7 @@
                 <br>
                 <div class="text-h4 text-weight-bolder">Upcomming Class</div>
               </div>
-              <q-img :src="classRoom" class="classRoomImg " />
+              <q-img :src="classRoom" class="classRoomImg" v-if="!isMobile" />
             </q-card-section>
             <q-card-section class="row justify-between">
               <div class="items-center">
@@ -48,7 +48,7 @@
       </div>
     </fin-portlet-header>
     <fin-portlet-item>
-      <fin-calender isReadOnly :events="events" :template="template" />
+      <fin-calender isReadOnly :events="events" :template="template" :view="isMobile ? 'day' : 'week'"/>
     </fin-portlet-item>
   </fin-portlet>
 </template>
@@ -80,6 +80,7 @@ export default {
   },
   data() {
     return {
+      isMobile: window.innerWidth < 600 ? true : false,
       classRoom: classRoom,
       classCardImg: classCardImg,
       calendar: '',
@@ -89,9 +90,10 @@ export default {
         //   return `<span style="color: white;">${title} ${start}~${(end)} </span>`;
         // },
         allday: (event) => {
+          return `<span style="color: gray;">${event}</span>`;
         },
         // allday(event) {
-        //   return `<span style="color: gray;">${event.title}</span>`;
+        //   return `<span style="color: gray;">${event}</span>`;
         // },
       },
       events: [],
@@ -127,7 +129,7 @@ export default {
 }
 
 .active-categoryClass {
-  background: rgba(47, 203, 137, 0.53);
-  color: black
+  background:linear-gradient(to right, rgba(47, 203, 137) 2%, rgba(47, 203, 137, 0.53) 1px);
+  color: black;
 }
 </style>

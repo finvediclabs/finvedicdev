@@ -276,7 +276,6 @@ export default {
     },
 
     getExpansionBoolean(module) {
-      console.log(this.selectedModule.module === module.value)
       return this.selectedModule.module === module.value;
     },
 

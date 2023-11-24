@@ -44,7 +44,6 @@ export default {
       });
     },
     onChange() {
-      console.log(this.$refs[this.fileRef].files);
       if( this.$refs[this.fileRef].files) {
         var file = this.$refs[this.fileRef].files[0];
         if( (file.size/1024) >=  Number(this.minSize) && (file.size/1024) <= Number(this.maxSize) ) {

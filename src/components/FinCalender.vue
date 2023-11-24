@@ -190,7 +190,7 @@ export default {
       const startYear = start.getFullYear();
       const endYear = end.getFullYear();
 
-      switch (this.selectedView) {
+      switch (this.view) {
         case 'month':
           this.dateRangeText = `${new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })}`;
 
