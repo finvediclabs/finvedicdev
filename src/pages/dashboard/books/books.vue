@@ -10,7 +10,7 @@
       </fin-portlet-item>
     </fin-portlet-header>
     <fin-portlet-item class="table-scroll">
-      <fin-table :columns="header" :data="booksList" select @reCall="getBooksData()" allowDelete delete-url=""
+      <fin-table :columns="header" :data="booksList" select @reCall="getBooksData()" allowDelete :delete-url="deleteUrl"
         @editFun="editDataFun" :loading="loading" showChapters @showChapters="showChaptersList" />
     </fin-portlet-item>
   </fin-portlet>
@@ -34,6 +34,7 @@ export default {
   },
   data() {
     return {
+      deleteUrl: urls.booksDataUrl,
       loading: false,
       header: [
         { label: 'S.No', key: 'index', align: 'center' },

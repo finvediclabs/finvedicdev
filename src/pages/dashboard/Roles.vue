@@ -4,7 +4,7 @@
       <fin-portlet-heading :loading="loading" backArrow>Roles</fin-portlet-heading>
     </fin-portlet-header>
     <fin-portlet-item class="table-scroll" style="white-space: nowrap;">
-      <fin-table :columns="header" :data="rolesList" select @reCall="getRolesData()" allowDelete delete-url=""
+      <fin-table :columns="header" :data="rolesList" select @reCall="getRolesData()" allowDelete :delete-url="deleteUrl"
         @editFun="editDataFun" :showActions="false" :loading="loading" />
     </fin-portlet-item>
   </fin-portlet>
@@ -40,6 +40,7 @@ export default {
   },
   data() {
     return {
+      deleteUrl: urls.getRolesUrl,
       header: [
         { label: 'S.No', key: 'index', align: 'center' },
         { label: 'Name', key: 'name', align: 'start' },

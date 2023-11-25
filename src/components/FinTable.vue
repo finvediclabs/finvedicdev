@@ -15,7 +15,7 @@
         <tr class="radius-10">
           <td :colspan="columns.length + 1" class=" radius-10 text-italic">
             <div style="min-height: 250px" class="q-pa-lg text-center row justify-center items-center">
-              <q-spinner-ios size="lg" color="black"/>
+              <q-spinner-ios size="lg" color="black" />
             </div>
           </td>
         </tr>
@@ -23,8 +23,9 @@
       <tbody v-if="!loading && data.length">
         <tr v-for="(item, i) in data">
           <td v-if="allowSelect"><q-checkbox color="cyan" v-model="selectedItemsData" :val="item" /></td>
-          <td v-for="(column, j) in columns" :key="column" :style="{ 'text-align': column.align,'min-width': column.width }"
-            class="vertical-middle" style="padding-top:10px;padding-bottom: 10px;">
+          <td v-for="(column, j) in columns" :key="column"
+            :style="{ 'text-align': column.align, 'min-width': column.width }" class="vertical-middle"
+            style="padding-top:10px;padding-bottom: 10px;">
             <span v-if="column.type === 'image'">
               <q-avatar size="40px" class="shadow-1">
                 <img :src="item[column.key]" class="fit">
@@ -163,9 +164,7 @@ export default {
           color: 'red',
         },
       }).onOk(() => {
-        this.$api.post(this.deleteUrl, {
-          id: item.id
-        }).then(response => {
+        this.$api.delete(this.deleteUrl + '/' + item.id).then(response => {
           if (response.data.success) {
             this.showMsg(response.data.message, 'positive');
             this.$emit('reCall');

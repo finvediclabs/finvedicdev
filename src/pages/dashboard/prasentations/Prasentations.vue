@@ -11,7 +11,7 @@
     </fin-portlet-header>
     <fin-portlet-item class="table-scroll">
       <fin-table :columns="header" :data="prasentations" select @reCall="getPrasentationsData()" @editFun="editDataFun"
-        :loading="loading" showChapters @showChapters="showChaptersList" allowDelete delete-url=""/>
+        :loading="loading" showChapters @showChapters="showChaptersList" allowDelete :delete-url="deleteUrl"/>
     </fin-portlet-item>
   </fin-portlet>
 </template>
@@ -32,6 +32,7 @@ export default {
   },
   data() {
     return {
+      deleteUrl: urls.prasentationsUrl,
       loading: false,
       header: [
         { label: 'S.No', key: 'index', align: 'center' },

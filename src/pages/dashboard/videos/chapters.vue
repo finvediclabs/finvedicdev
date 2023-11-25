@@ -11,7 +11,7 @@
     </fin-portlet-header>
     <fin-portlet-item class="table-scroll">
       <fin-table :columns="header" :data="chaptersList" select @reCall="getChaptersData()" @editFun="editDataFun"
-        :loading="loading" allowDelete delete-url=""/>
+        :loading="loading" allowDelete :delete-url="deleteUrl"/>
     </fin-portlet-item>
   </fin-portlet>
 </template>
@@ -32,6 +32,7 @@ export default {
   },
   data() {
     return {
+      deleteUrl: urls.videoChaptersUrl,
       header: [
         { label: 'S.No', key: 'index', align: 'center' },
         { label: 'Cover', key: 'videoFilePath', align: 'start', type: 'image' },

@@ -78,6 +78,10 @@ import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 import profileImg from "src/assets/profile.png";
+import { urls } from "src/pages/dashboard/urls";
+import { useProfileStore } from "src/stores/profile";
+import { storeToRefs } from "pinia";
+
 export default {
   name: 'profile',
   components: {
@@ -85,6 +89,13 @@ export default {
     FinPortletHeader,
     FinPortletHeading,
     FinPortletItem,
+  },
+  setup() {
+    const profileStore = useProfileStore();
+    const { profile } = storeToRefs(profileStore);
+    return {
+      profile,
+    }
   },
   data() {
     return {
@@ -104,10 +115,19 @@ export default {
         'Student'
       ],
       imageUrl: '',
+      getUserUrl: '',
     }
   },
   mounted() {
-    this.getProfileData();
+    if (this.profile) {
+      this.getProfileData();
+    }
+
+  },
+  watch: {
+    profile() {
+      this.getProfileData();
+    }
   },
   methods: {
     showMsg(message, type) {
@@ -121,16 +141,9 @@ export default {
       });
     },
     getProfileData() {
-      // this.profileData = {
-      //   image: profileImg,
-      //   firstName: 'Sandeep',
-      //   lastName: 'Perikala',
-      //   email: 'Sandeepperikala@gmail.com',
-      //   type: 'owner',
-      //   imgBgType: null
-      // }
+      this.getUserUrl = urls.usersUrl + '/' + this.profile.id;
       this.loading = true;
-      this.$api.get().then(response => {
+      this.$api.get(this.getUserUrl).then(response => {
         if (response.data.success) {
           this.profileData = response.data.data;
           this.editProfile = {

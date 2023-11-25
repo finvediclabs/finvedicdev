@@ -15,7 +15,7 @@
       </fin-portlet-item>
     </fin-portlet-header>
     <fin-portlet-item class="table-scroll">
-      <fin-table :columns="header" :data="usersList" select @reCall="getUsersData()" allowDelete delete-url=""
+      <fin-table :columns="header" :data="usersList" select @reCall="getUsersData()" allowDelete :delete-url="deleteUrl"
         @editFun="editDataFun" :loading="loading"/>
     </fin-portlet-item>
   </fin-portlet>
@@ -88,6 +88,7 @@ export default {
   },
   data() {
     return {
+      deleteUrl: urls.usersUrl,
       tab: 'allUsers',
       roleSearch: '',
       roleOptions: ['trinee', 'client'],
