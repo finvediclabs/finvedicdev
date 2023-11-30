@@ -107,9 +107,9 @@ export default {
     }
   },
   mounted() {
-    let Event = this.$route.query.id;
+    let Event = this.$route.query.params;
     if (Event) {
-      Event = CryptoJS.AES.decrypt(Event, "Secret Passphrase").toString(CryptoJS.enc.Utf8);
+      Event = CryptoJS.AES.decrypt(Event, "params").toString(CryptoJS.enc.Utf8);
       let editedEvent = JSON.parse(Event);
       let startTime = editedEvent.start.split(":");
       let endTime = editedEvent.end.split(":");
@@ -147,7 +147,7 @@ export default {
           date: "Date is required",
           startTime: "Start Time is required",
           endTime: "End Time is required",
-          course: "Course is requried",
+          course: "Course is required",
           title: "Title is required",
           link: "Link is required"
         }
@@ -157,8 +157,8 @@ export default {
       let events = localStorage.getItem('events') ? JSON.parse(localStorage.getItem('events')) : [];
       let event = {
         date: moment(this.date).format('YYYY-MM-DD'),
-        start: `${this.gettwoDigits(this.startTime.hours)}:${this.gettwoDigits(this.startTime.minutes)}`,
-        end: `${this.gettwoDigits(this.endTime.hours)}:${this.gettwoDigits(this.endTime.minutes)}`,
+        start: `${this.getTwoDigits(this.startTime.hours)}:${this.getTwoDigits(this.startTime.minutes)}`,
+        end: `${this.getTwoDigits(this.endTime.hours)}:${this.getTwoDigits(this.endTime.minutes)}`,
         course: this.course,
         title: this.title,
         link: this.link,
@@ -172,7 +172,7 @@ export default {
       this.showMsg("Event Added Successfully", 'positive');
       this.clearData();
     },
-    gettwoDigits(myNumber) {
+    getTwoDigits(myNumber) {
       return myNumber.toLocaleString('en-US', {
         minimumIntegerDigits: 2,
         useGrouping: false

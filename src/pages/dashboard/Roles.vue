@@ -4,7 +4,7 @@
       <fin-portlet-heading :loading="loading" backArrow>Roles</fin-portlet-heading>
     </fin-portlet-header>
     <fin-portlet-item class="table-scroll" style="white-space: nowrap;">
-      <fin-table :columns="header" :data="rolesList" select @reCall="getRolesData()" allowDelete :delete-url="deleteUrl"
+      <fin-table :columns="header" :data="rolesList" select @reCall="getRolesData()" allowDelete delete-url=""
         @editFun="editDataFun" :showActions="false" :loading="loading" />
     </fin-portlet-item>
   </fin-portlet>
@@ -15,11 +15,11 @@ import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
-import { urls } from "src/pages/dashboard/urls";
 import moment from "moment"
 import { useProfileStore } from "src/stores/profile";
 import { useRolesStore } from "src/stores/roles"
 import { storeToRefs } from "pinia";
+
 export default {
   setup() {
     const profileStore = useProfileStore();
@@ -40,7 +40,6 @@ export default {
   },
   data() {
     return {
-      deleteUrl: urls.getRolesUrl,
       header: [
         { label: 'S.No', key: 'index', align: 'center' },
         { label: 'Name', key: 'name', align: 'start' },

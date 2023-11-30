@@ -1,17 +1,15 @@
 <template>
   <fin-portlet>
     <fin-portlet-header>
-      <fin-portlet-heading :loading="loading" backArrow>Chapters List : {{ presentationId }}</fin-portlet-heading>
+      <fin-portlet-heading :loading="loading" backArrow>Chapters List : {{ bookId }}</fin-portlet-heading>
       <fin-portlet-item>
-        <router-link :to="this.createFile()">
-          <q-btn label="Add Chapter" dense color="blue-15" class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder"
-          no-caps />
-        </router-link>
+        <q-btn label="Add Chapter" dense color="blue-15" class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder"
+          no-caps @click="createFile()" />
       </fin-portlet-item>
     </fin-portlet-header>
     <fin-portlet-item class="table-scroll">
       <fin-table :columns="header" :data="chaptersList" select @reCall="getChaptersData()" @editFun="editDataFun"
-        :loading="loading" allowDelete :delete-url="deleteUrl"/>
+        :loading="loading" allowDelete :delete-url="deleteUrl" />
     </fin-portlet-item>
   </fin-portlet>
 </template>
@@ -21,7 +19,7 @@ import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
-import { urls } from "../urls"
+import { urls } from "../Urls"
 import CryptoJS from 'crypto-js'
 export default {
   components: {
@@ -33,7 +31,7 @@ export default {
   },
   data() {
     return {
-      deleteUrl: urls.prasentationChapterUrl,
+      deleteUrl: urls.bookChaptersUrl,
       header: [
         { label: 'S.No', key: 'index', align: 'center' },
         { label: 'Cover', key: 'chapterImagePath', align: 'start', type: 'image' },
@@ -45,7 +43,7 @@ export default {
     }
   },
   computed: {
-    presentationId() {
+    bookId() {
       return this.$route.params.id;
     }
   },
@@ -53,7 +51,7 @@ export default {
     this.getChaptersData();
   },
   watch: {
-    presentationId() {
+    bookId() {
       this.getChaptersData();
     }
   },
@@ -69,16 +67,16 @@ export default {
       });
     },
     getChaptersData() {
-      if (this.presentationId) {
+      if (this.bookId) {
         this.loading = true;
-        this.$api.get(urls.prasentationChapterUrl, {
+        this.$api.get(urls.bookChaptersUrl, {
           params: {
-            presentationId: this.presentationId
+            bookId: this.bookId
           }
         }).then(response => {
           this.loading = false;
           if (response.data.success) {
-            this.chaptersList = response.data.data.map((item, index) =>({ ...item, index: index + 1 }));
+            this.chaptersList = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));
           } else {
             this.showMsg(response.data?.message, 'negative');
           }
@@ -92,35 +90,32 @@ export default {
         title: val.chapterTitle,
         description: val.description,
         id: val.id,
-        file: val.presentationFilePath,
+        cover: val.chapterImagePath,
+        file: val.chapterFilePath
       };
       this.createFile('Update Chapter', item);
     },
     createFile(title, item) {
       let params = {
         title: title ?? 'Create Chapter',
-        url: item?.id ? `${urls.prasentationChapterUrl}/${item?.id}` : urls.prasentationChapterUrl,
+        url: item?.id ? `${urls.bookChaptersUrl}/${item?.id}` : urls.bookChaptersUrl,
         item: item,
-        presentationId: this.presentationId,
+        bookId: this.bookId,
         chapter: true,
         requiredCataloge: false,
-        parentKey: 'presentationId',
-        fileKey: "presentationFilePath",
-        coverRequired: false,
-        fileAccept: ".doc, .docx,.ppt, .pptx, .pdf",
+        parentKey: 'bookId',
+        coverKey: "chapterImagePath",
+        fileKey: "chapterFilePath",
+        fileAccept: ".doc, .docx,.pdf",
       };
-      let text = JSON.stringify(params);
-      // text = CryptoJS.AES.encrypt(editedEvent, "fileTypes").toString();
-      if (item) {
-        this.$router.push({
-          path: '/admin/create',
-          query: {
-            data: text
-          }
-        });
-      } else {
-        return `/admin/create?data=${text}`;
-      }
+      params = JSON.stringify(params);
+      this.$router.push({
+        path: '/admin/create',
+        query: {
+          params: CryptoJS.AES.encrypt(params, 'fileData').toString()
+        }
+      });
+
     }
   }
 }

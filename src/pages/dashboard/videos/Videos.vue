@@ -3,15 +3,13 @@
     <fin-portlet-header>
       <fin-portlet-heading :loading="loading" backArrow>Videos</fin-portlet-heading>
       <fin-portlet-item>
-        <router-link :to="createFile()">
-          <q-btn  label="Add Video" dense color="blue-15" class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder"
-          no-caps />
-        </router-link>
+          <q-btn label="Add Video" dense color="blue-15" class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder"
+            no-caps @click="createFile()"/>
       </fin-portlet-item>
     </fin-portlet-header>
     <fin-portlet-item class="table-scroll">
       <fin-table :columns="header" :data="videosList" select @reCall="getVideosData()" @editFun="editDataFun"
-        :loading="loading" showChapters @showChapters="showChaptersList" allowDelete :delete-url="deleteUrl"/>
+        :loading="loading" showChapters @showChapters="showChaptersList" allowDelete :delete-url="deleteUrl" />
     </fin-portlet-item>
   </fin-portlet>
 </template>
@@ -21,7 +19,7 @@ import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
-import { urls } from "../urls"
+import { urls } from "../Urls"
 import CryptoJS from 'crypto-js'
 export default {
   name: 'videos',
@@ -65,7 +63,7 @@ export default {
         this.$api.get(urls.videoDataUrl).then(response => {
           this.loading = false;
           if (response.data.success) {
-            this.videosList = response.data.data.map((item, index) =>({ ...item, index: index + 1 }));
+            this.videosList = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));
           } else {
             this.showMsg(response.data?.message, 'negative');
           }
@@ -84,30 +82,25 @@ export default {
         categoryId: val.categoryId,
         subCategoryId: val.subCategory
       };
-      this.createFile( 'Update Video' ,item);
+      this.createFile('Update Video', item);
     },
-    showChaptersList( video) {
+    showChaptersList(video) {
       this.$router.push({ path: `videos/chapter/${video.id}` })
     },
-    createFile(title ,item) {
+    createFile(title, item) {
       let params = {
         title: title ?? 'Create Video',
         url: item?.id ? `${urls.videoDataUrl}/${item.id}` : urls.videoDataUrl,
         item: item,
         coverKey: 'videoCoverPath'
       };
-      let text = JSON.stringify(params);
-      // text = CryptoJS.AES.encrypt(editedEvent, "fileTypes").toString();
-      if (item) {
-        this.$router.push({
-          path: 'create',
-          query: {
-            data: text
-          }
-        });
-      } else {
-        return `/admin/create?data=${text}`;
-      }
+      params = JSON.stringify(params);
+      this.$router.push({
+        path: '/admin/create',
+        query: {
+          params: CryptoJS.AES.encrypt(params, 'fileData').toString()
+        }
+      });
     }
   },
 }

@@ -142,7 +142,7 @@ import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 import { Carousel3d, Slide } from "src/components/carousel-3d";
-import { urls } from "./urls"
+import { urls } from "./Urls"
 import { storeToRefs } from "pinia";
 import moment from "moment"
 import { useCategorieStore } from "src/stores/Categories";
@@ -293,3 +293,4 @@ export default {
   }
 };
 </script>
+./Urls

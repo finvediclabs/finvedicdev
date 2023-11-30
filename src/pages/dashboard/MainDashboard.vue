@@ -42,7 +42,7 @@ import organizationPng from "src/assets/Saly-15.png";
 import vmSetupPng from "src/assets/vmSetup.png";
 import booksPng from "src/assets/Saly-16.png";
 import videosPng from "src/assets/Saly-24.png";
-import prasentationPng from "src/assets/Rectangle.png";
+import presentationPng from "src/assets/Rectangle.png";
 import eventPng from "src/assets/Rectangle (1).png";
 
 export default {
@@ -104,10 +104,10 @@ export default {
           enable: true
         },
         {
-          image: prasentationPng,
+          image: presentationPng,
           title: 'Presentations',
           discription: 'Perfect for learning how the framework works.',
-          path: 'prasentations',
+          path: 'presentations',
           background: '#FFBD80',
           enable: true
         },

@@ -67,7 +67,7 @@ import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
-import { urls } from "src/pages/dashboard/urls";
+import { urls } from "src/pages/dashboard/Urls";
 import moment from "moment"
 import { useProfileStore } from "src/stores/profile";
 import { storeToRefs } from "pinia";
@@ -246,3 +246,4 @@ export default {
   opacity: 0.9;
 }
 </style>
+src/pages/dashboard/Urls

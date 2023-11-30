@@ -6,6 +6,6 @@ export const urls = {
   videoDataUrl: 'api/videos',
   bookChaptersUrl: 'api/bookChapters',
   videoChaptersUrl: 'api/videoChapters',
-  prasentationsUrl: 'api/presentations',
-  prasentationChapterUrl: 'api/presentationChapters'
+  presentationsUrl: 'api/presentations',
+  presentationChapterUrl: 'api/presentationChapters'
 }

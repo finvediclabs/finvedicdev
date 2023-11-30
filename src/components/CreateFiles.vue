@@ -1,7 +1,7 @@
 <template>
   <fin-portlet>
     <fin-portlet-header>
-      <fin-portlet-heading :loading="loading" backArrow>{{ queryData.title }}</fin-portlet-heading>
+      <fin-portlet-heading :loading="loading" backArrow>{{ queryParams.title }}</fin-portlet-heading>
     </fin-portlet-header>
     <fin-portlet-item>
       <q-form @submit="validatePostData">
@@ -130,7 +130,7 @@ export default {
       description: "",
       cover: [],
       loading: false,
-      queryData: {},
+      queryParams: {},
       selectedCategory: {},
       selectedSubCategory: {},
       coverPath: '',
@@ -148,17 +148,17 @@ export default {
     }
   },
   mounted() {
-    let data = this.$route.query.data;//CryptoJS.AES.decrypt(this.$route.query.data, 'fileTypes').toString(CryptoJS.enc.Utf8);
-    this.queryData = JSON.parse(data);
-    this.chapter = this.queryData.chapter ?? false;
-    this.requiredCataloge = this.queryData.requiredCataloge ?? true;
-    this.parentKey = this.queryData?.parentKey;
-    this.fileKey = this.queryData?.fileKey;
-    this.coverKey = this.queryData?.coverKey;
-    this.coverRequired = this.queryData?.coverRequired ?? true;
-    this.fileAccept = this.queryData?.fileAccept;
-    if (this.queryData.item) {
-      let item = this.queryData.item;
+    let data =  CryptoJS.AES.decrypt(this.$route.query.params, 'fileData').toString(CryptoJS.enc.Utf8);
+    this.queryParams = JSON.parse(data);
+    this.chapter = this.queryParams.chapter ?? false;
+    this.requiredCataloge = this.queryParams.requiredCataloge ?? true;
+    this.parentKey = this.queryParams?.parentKey;
+    this.fileKey = this.queryParams?.fileKey;
+    this.coverKey = this.queryParams?.coverKey;
+    this.coverRequired = this.queryParams?.coverRequired ?? true;
+    this.fileAccept = this.queryParams?.fileAccept;
+    if (this.queryParams.item) {
+      let item = this.queryParams.item;
       this.title = item.title;
       this.description = item.description;
       this.id = item.id;
@@ -188,7 +188,7 @@ export default {
 
       request[this.coverKey] = this.coverPath;
       if (this.chapter) {
-        request[this.parentKey] = this.queryData[this.parentKey];
+        request[this.parentKey] = this.queryParams[this.parentKey];
         request.chapterTitle = this.title;
         request[this.fileKey] = this.filePath;
       } else {
@@ -286,7 +286,7 @@ export default {
       })
     },
     onSubmit() {
-      this.$api.post(this.queryData.url, this.getRequest()).then(response => {
+      this.$api.post(this.queryParams.url, this.getRequest()).then(response => {
         this.loading = false;
         if (response.data.success) {
           this.showMsg(response.data?.message || 'File Cretaed Successfully', 'positive');
@@ -302,7 +302,7 @@ export default {
     },
 
     updateData() {
-      this.$api.put(this.queryData.url, this.getRequest()).then(response => {
+      this.$api.put(this.queryParams.url, this.getRequest()).then(response => {
         this.loading = false;
         if (response.data.success) {
           this.showMsg(response.data?.message || 'File Updated Successfully', 'positive');

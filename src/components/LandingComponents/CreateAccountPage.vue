@@ -8,10 +8,10 @@
         <q-form @submit="onSubmit">
 
           <q-input outlined class="q-my-sm" v-model="name" label="Name" dense lazy-rules
-            :rules="[val => val && val.length > 0 || 'Name is requried']" />
+            :rules="[val => val && val.length > 0 || 'Name is required']" />
 
           <q-input outlined class="q-my-sm" v-model="userName" label="User Name" dense lazy-rules
-            :rules="[val => val && val.length > 0 || 'User Name is requried']" />
+            :rules="[val => val && val.length > 0 || 'User Name is required']" />
 
           <q-input outlined class="q-my-sm" v-model="email" label="Email Address" dense lazy-rules
             :rules="[val => val && val.length > 0 || 'Email is required']" />

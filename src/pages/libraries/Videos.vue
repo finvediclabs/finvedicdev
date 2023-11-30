@@ -1,7 +1,7 @@
 <template>
   <fin-portlet>
     <fin-portlet-header>
-      <fin-portlet-heading :loading="loading">Prasentations</fin-portlet-heading>
+      <fin-portlet-heading>Videos</fin-portlet-heading>
     </fin-portlet-header>
     <fin-portlet-item>
       <div class="row q-pb-lg">
@@ -26,10 +26,10 @@
         </div>
       </div>
     </fin-portlet-item>
-    <fin-portlet-item class="q-pb-xl" v-if="prasentations.length">
-      <carousel-3d :totalSlides="prasentations.length" :count="prasentations.length" @beforeSlideChange="getCurrentSlide"
+    <fin-portlet-item class="q-pb-xl" v-if="VideosList.length">
+      <carousel-3d :totalSlides="VideosList.length" :count="VideosList.length" @beforeSlideChange="getCurrentSlide"
         :controls-visible="true">
-        <slide v-for="(slide, i) in prasentations" :key="i" :index="i">
+        <slide v-for="(slide, i) in VideosList" :key="i" :index="i">
           <q-img :src="slide.imagePath ?? 'dummy'" class="fit" :alt="slide.heading">
             <template v-slot:error>
               <q-img :src="DummyBook" class="full-height full-width" />
@@ -43,37 +43,26 @@
         <q-spinner-ios color="blue-9" size="3.5em" />
       </div>
     </fin-portlet-item>
-    <fin-portlte>
+
+    <fin-portlet>
       <div class="row">
-        <div class="col-12 col-md-7 q-pr-md ">
-          <div class="row">
-            <div class="col-12 col-md-5 row justify-center">
-              <q-avatar style="width:250px; height: 300px" square>
-                <q-img :src="selectedSlide?.imagePath ?? 'dummy'" class="fin-br-8 fit" style="border:1px solid #00000030"
-                  :alt="selectedSlide?.heading">
-                  <template v-slot:error>
-                    <q-img :src="DummyBook" class="full-height full-width" />
-                  </template>
-                </q-img>
-              </q-avatar>
-            </div>
-            <div class="col-12 col-md-6">
-              <fin-portlet-heading class="q-pa-md" small>
-                {{ selectedSlide?.heading }}
-                <br>
-                <p style="font-size: 14px;font-weight: 300;">
-                  {{ selectedSlide?.description }}
-                </p>
-              </fin-portlet-heading>
-            </div>
-          </div>
+        <div class="col-12 col-md-5 q-pt-lg q-px-lg">
+          <q-video :src="selectedSlide.videoCoverPath" :ratio="16 / 9" class="fin-br-8 shadow-1" />
+          <fin-portlet-heading class="q-pa-md" small>
+            {{ selectedSlide?.heading }}
+            <br>
+            <p style="font-size: 14px;font-weight: 300;">
+              {{ selectedSlide?.description }}
+            </p>
+          </fin-portlet-heading>
         </div>
-        <div class="col-1"></div>
-        <div class="col-12 col-md-4  justify-center self-end justify-end">
-          <div class="row ">
-            <div class="col-12" style="height: 300px;">
+        <div class="col-3"></div>
+        <div class="col-12 col-md-4 column justify-top q-pt-lg items-end">
+          <div class="row full-width ">
+            <div class="col-12 bg-blue" style="height: 300px;">
               <q-carousel swipeable animated v-model="slide" ref="carousel" infinite class="full-height"
                 style="padding-top: 50px;">
+
                 <template v-slot:control>
                   <q-carousel-control position="top-left" :offset="[20, 8]" class="text-black">
                     <span>More Chapters</span>
@@ -85,6 +74,7 @@
                       @click="$refs.carousel.next()" />
                   </q-carousel-control>
                 </template>
+
                 <template v-if="chaptersLoader">
                   <q-carousel-slide :name="0" class="rounded-borders text-italic">
                     <div class="row full-height">
@@ -96,12 +86,12 @@
                 </template>
 
                 <template v-if="!chaptersLoader">
-                  <template v-if="chaptersData.length">
+                  <template v-if="chapters.length">
                     <q-carousel-slide v-for="(slider, i) in allSlides" :name="i" class="items-end q-pa-none">
                       <div class="row full-height">
                         <div class="col-6 fin-br-8 q-px-sm" style="height:110px" v-for="item in slider">
                           <q-img class="full-height fin-br-8 shadow-2 cursor-pointer "
-                            :src="item.presentationFilePath ?? 'dummy'" @click="visitChapter(item)">
+                            :src="item.videoFilePath ?? 'dummy'" @click="visitChapter(item)">
                             <template v-slot:error>
                               <q-img :src="DummyBook" class="full-height full-width" />
                             </template>
@@ -111,7 +101,7 @@
                     </q-carousel-slide>
                   </template>
 
-                  <template v-if="!chaptersData.length">
+                  <template v-if="!chapters.length">
                     <q-carousel-slide :name="0" class="rounded-borders text-italic">
                       <div class="row full-height">
                         <div class="col-12 q-px-sm full-height">
@@ -126,12 +116,11 @@
                 </template>
 
               </q-carousel>
-
             </div>
           </div>
         </div>
       </div>
-    </fin-portlte>
+    </fin-portlet>
   </fin-portlet>
 </template>
 <script>
@@ -140,11 +129,11 @@ import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 import { Carousel3d, Slide } from "src/components/carousel-3d";
-import { urls } from "./urls"
+import { urls } from "./Urls"
 import { storeToRefs } from "pinia";
 import { useCategorieStore } from "src/stores/Categories";
-import moment from "moment";
 import DummyBook from "src/assets/dummyBook.jpg"
+import moment from "moment"
 export default {
   setup() {
     const categorieStore = useCategorieStore();
@@ -163,14 +152,14 @@ export default {
   data() {
     return {
       DummyBook: DummyBook,
-      prasentations: [],
+      VideosList: [],
       selectedSlide: {},
       loading: false,
-      chaptersData: [],
+      chapters: [],
       slide: 0,
       allSlides: [],
       chaptersLoader: false,
-      loading: false,
+      loading: false
     }
   },
   watch: {
@@ -181,19 +170,20 @@ export default {
     },
     selectedCategory() {
       if (!this.selectedSubCategory?.id) {
-        this.gePrasentations();
+        this.getVideosData();
       }
     },
     selectedSubCategory() {
       if (this.selectedSubCategory?.id) {
-        this.gePrasentations();
+        this.getVideosData();
       }
     }
   },
   mounted() {
     if (this.selectedCategory) {
-      this.gePrasentations();
+      this.getVideosData();
     }
+
   },
   methods: {
     showMsg(message, type) {
@@ -207,9 +197,9 @@ export default {
       });
     },
     getCurrentSlide(index) {
-      this.selectedSlide = this.prasentations[index];
+      this.selectedSlide = this.VideosList[index];
     },
-    gePrasentations() {
+    getVideosData() {
       this.loading = true;
       let request = {
         params: {
@@ -219,11 +209,11 @@ export default {
       if (this.selectedSubCategory && this.selectedCategory?.id == this.selectedSubCategory?.categoryCode) {
         request.params.subCategoryId = this.selectedSubCategory.id;
       }
-      this.$api.get(urls.getPrasentationsUrl, request).then(response => {
+      this.$api.get(urls.getVideosUrl, request).then(response => {
         this.loading = false;
         if (response.data.success) {
-          this.prasentations = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));
-          this.selectedSlide = this.prasentations.length ? this.prasentations[0] : {};
+          this.VideosList = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));
+          this.selectedSlide = this.VideosList.length ? this.VideosList[0] : {};
         } else {
           this.showMsg(response.data?.message, 'negative');
         }
@@ -234,15 +224,15 @@ export default {
     },
     getChapthersData() {
       this.chaptersLoader = true;
-      this.$api.get(urls.getPrasentationCaptersUrl, {
+      this.$api.get(urls.getVideoChaptersUrl, {
         params: {
-          presentationId: this.selectedSlide?.id
+          videoId: this.selectedSlide?.id
         }
       }).then(response => {
         this.chaptersLoader = false;
         if (response.data.success) {
-          this.chaptersData = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));
-          this.getdummychapters(this.chaptersData);
+          this.chapters = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));
+          this.getdummychapters(this.chapters);
         } else {
           this.showMsg(response.data?.message, 'negative');
         }
@@ -257,7 +247,7 @@ export default {
       for (let j = 0; j < chapter.length; j++) {
         slide.push(chapter[j]);
         this.allSlides[index] = slide;
-        if ((j + 1) % 3 == 0) {
+        if ((j + 1) % 4 == 0) {
           index += 1;
           slide = [];
         }
@@ -265,7 +255,7 @@ export default {
     },
     visitChapter(chapter) {
       let url = '/watch-video';
-      let item = chapter.presentationFilePath ?? "https://youtu.be/VCtVrJLNR1c?si=O1pOuQo1s6492Qh-";
+      let item = chapter.videoFilePath ?? "https://www.youtube.com/embed/Kaujug-JkDQ?si=i9bedPKDy5c5WEpd";
       this.$router.push({
         path: url,
         query: {

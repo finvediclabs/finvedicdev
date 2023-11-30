@@ -41,7 +41,7 @@ import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
-import { urls } from "./urls";
+import { urls } from "./Urls";
 export default {
   components: {
     FinPortlet,
@@ -92,7 +92,7 @@ export default {
         }).then(response => {
           this.loader = false;
           // if (response.data.success) {
-          this.showMsg(response.data?.message, 'positive');
+          this.showMsg(response.data?.message || 'Vms created Successfully', 'positive');
           // } else {
           //   this.showMsg(response.data?.message, 'negative');
           // }
@@ -107,3 +107,4 @@ export default {
   }
 }
 </script>
+./Urls

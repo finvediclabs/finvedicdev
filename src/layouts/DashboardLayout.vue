@@ -198,7 +198,7 @@ export default {
           icon: 'library_books', label: 'Libraries', value: 'library', menu: [
             { label: "Books", value: 'books', icon: 'menu_book' },
             { label: "Videos", value: "videos", icon: 'switch_video' },
-            { label: "Prasentations", value: "prasentations", icon: 'switch_video' },
+            { label: "Presentations", value: "presentations", icon: 'switch_video' },
             { label: "Class Room", value: "class-room", icon: 'reduce_capacity' }
           ]
         },

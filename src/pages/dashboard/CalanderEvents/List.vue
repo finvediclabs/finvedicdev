@@ -5,13 +5,13 @@
       <fin-portlet-item>
         <router-link :to="{ path: 'class-room/create' }">
           <q-btn label="Add Class" dense color="blue-15" class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder"
-          no-caps/>
+            no-caps />
         </router-link>
       </fin-portlet-item>
     </fin-portlet-header>
     <fin-portlet-item class="table-scroll" style="white-space: nowrap;">
       <fin-table :columns="header" :data="events" @reCall="getBooksData()" allowDelete delete-url=""
-        @editFun="editDataFun" :loading="loading"/>
+        @editFun="editDataFun" :loading="loading" />
     </fin-portlet-item>
   </fin-portlet>
 </template>
@@ -54,11 +54,12 @@ export default {
       this.events = events.map((v, i) => ({ ...v, index: i + 1 }));
     },
     editDataFun(val) {
-      let editedEvent = JSON.stringify(val);
-      let text = CryptoJS.AES.encrypt(editedEvent, "Secret Passphrase").toString();
+      let params = JSON.stringify(val);
       this.$router.push({
         path: 'class-room/create',
-        query: {id: text},
+        query: {
+          params: CryptoJS.AES.encrypt(params, "params").toString()
+        },
       })
     }
   }

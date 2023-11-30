@@ -3,10 +3,8 @@
     <fin-portlet-header>
       <fin-portlet-heading :loading="loading" backArrow>Books</fin-portlet-heading>
       <fin-portlet-item>
-        <router-link :to="this.createFile()">
-          <q-btn  label="Add Book" dense color="blue-15" class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder"
-          no-caps />
-        </router-link>
+        <q-btn label="Add Book" dense color="blue-15" class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder" no-caps
+          @click="createFile()" />
       </fin-portlet-item>
     </fin-portlet-header>
     <fin-portlet-item class="table-scroll">
@@ -21,7 +19,7 @@ import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
-import { urls } from "../urls"
+import { urls } from "../Urls"
 import CryptoJS from 'crypto-js'
 export default {
   name: 'books',
@@ -65,7 +63,7 @@ export default {
         this.$api.get(urls.booksDataUrl).then(response => {
           this.loading = false;
           if (response.data.success) {
-            this.booksList = response.data.data.map((item, index) =>({ ...item, index: index + 1 }));
+            this.booksList = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));
           } else {
             this.showMsg(response.data?.message, 'negative');
           }
@@ -84,31 +82,26 @@ export default {
         categoryId: val.categoryId,
         subCategoryId: val.subCategory
       };
-      this.createFile('Update Book',item);
+      this.createFile('Update Book', item);
     },
     showChaptersList(book) {
       this.$router.push({ path: `books/chapter/${book.id}` })
     },
-    createFile(title, item, id) {
-      let params = {
+    createFile(title, item) {
+      var params = {
         title: title ?? 'Create Book',
         url: item?.id ? `${urls.booksDataUrl}/${item.id}` : urls.booksDataUrl,
         item: item,
         requiredCataloge: false,
         coverKey: 'imagePath'
       };
-      const text = JSON.stringify(params);
-      // text = CryptoJS.AES.encrypt(editedEvent, 'objects').toString();
-      if (item) {
-        this.$router.push({
-          path: 'create',
-          query: {
-            data: text
-          }
-        });
-      } else {
-        return `create?data=${text}`;
-      }
+      params = JSON.stringify(params);
+      this.$router.push({
+        path: '/admin/create',
+        query: {
+          params: CryptoJS.AES.encrypt(params, 'fileData').toString()
+        }
+      });
     }
   },
 }

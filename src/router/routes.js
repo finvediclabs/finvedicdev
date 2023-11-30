@@ -69,38 +69,38 @@ const routes = [
       },
       {
         path: 'books',
-        component: () => import('pages/dashboard/books/books.vue'),
+        component: () => import('pages/dashboard/books/Books.vue'),
         meta: { item: 'books' }
       },
       {
-        path: 'create',
-        component: () => import('components/createFiles.vue'),
-        meta: { item: '' }
-      },
-      {
         path: 'books/chapter/:id',
-        component: () => import('pages/dashboard/books/chapters.vue'),
+        component: () => import('pages/dashboard/books/Chapters.vue'),
         meta: { item: 'chapters' }
       },
       {
         path: 'videos',
-        component: () => import('pages/dashboard/videos/videos.vue'),
+        component: () => import('pages/dashboard/videos/Videos.vue'),
         meta: { item: 'books' }
       },
       {
         path: 'videos/chapter/:id',
-        component: () => import('pages/dashboard/videos/chapters.vue'),
+        component: () => import('pages/dashboard/videos/Chapters.vue'),
         meta: { item: 'chapters' }
       },
       {
-        path: 'prasentations',
-        component: () => import('src/pages/dashboard/prasentations/Prasentations.vue'),
-        meta: { item: 'prasentations' }
+        path: 'presentations',
+        component: () => import('src/pages/dashboard/presentations/Presentations.vue'),
+        meta: { item: 'presentations' }
       },
       {
-        path: 'prasentations/chapter/:id',
-        component: () => import('pages/dashboard/prasentations/chapters.vue'),
+        path: 'presentations/chapter/:id',
+        component: () => import('pages/dashboard/presentations/Chapters.vue'),
         meta: { item: 'chapters' }
+      },
+      {
+        path: 'create',
+        component: () => import('components/CreateFiles.vue'),
+        meta: { item: '' }
       },
       {
         path: 'class-room',
@@ -135,18 +135,18 @@ const routes = [
     children: [
       {
         path: 'books',
-        component: () => import('pages/libraries/books.vue'),
+        component: () => import('pages/libraries/Books.vue'),
         meta: { item: 'books' }
       },
       {
         path: 'videos',
-        component: () => import('pages/libraries/videos.vue'),
+        component: () => import('pages/libraries/Videos.vue'),
         meta: { item: 'videos' }
       },
       {
-        path: 'prasentations',
-        component: () => import('pages/libraries/prasentations.vue'),
-        meta: { item: 'prasentations' }
+        path: 'presentations',
+        component: () => import('pages/libraries/Presentations.vue'),
+        meta: { item: 'presentations' }
       },
       {
         path: 'class-room',
@@ -162,7 +162,7 @@ const routes = [
     children: [
       {
         path: '',
-        component: () => import('pages/reports/index.vue'),
+        component: () => import('pages/reports/Index.vue'),
         meta: { item: '' }
       }
     ]
