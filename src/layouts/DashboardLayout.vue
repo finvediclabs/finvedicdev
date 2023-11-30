@@ -123,7 +123,7 @@
 
       </q-toolbar>
     </q-header>
-    <q-drawer v-model="drawerLeft" show-if-above :mini="miniState" width="230" breakpoint="576"
+    <q-drawer v-model="drawerLeft" show-if-above :mini="miniState" width="230" breakpoint="900"
       class="text-white fin-drawer-style shadow-2">
       <q-scroll-area class="fit q-pl-md q-pt-md bg-finvedic q-pt-xl" :horizontal-thumb-style="{ opacity: 0 }">
         <q-list>

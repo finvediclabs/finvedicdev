@@ -156,6 +156,18 @@ const routes = [
     ]
   },
   {
+    path: '/reports',
+    meta: { title: 'Reports', module: 'reports' },
+    component: () => import('layouts/DashboardLayout.vue'),
+    children: [
+      {
+        path: '',
+        component: () => import('pages/reports/index.vue'),
+        meta: { item: '' }
+      }
+    ]
+  },
+  {
     path: '/profile',
     meta: { title: 'profile', module: 'profile' },
     component: () => import('layouts/DashboardLayout.vue'),

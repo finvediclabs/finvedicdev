@@ -44,9 +44,9 @@
     </fin-portlet-item>
     <fin-portlte>
       <div class="row">
-        <div class="col-12 col-md-7  q-pr-md">
+        <div class="col-12 col-md-6 col-lg-7  q-pr-md">
           <div class="row">
-            <div class="col-12 col-md-5 row justify-center">
+            <div class="col-12 col-sm-6 col-md-5 row justify-center">
               <q-avatar style="width:250px; height: 300px" square>
                 <q-img :src="selectedSlide?.imagePath ?? 'dummy'" class="fin-br-8 fit" style="border:1px solid #00000030"
                   :alt="selectedSlide?.heading">
@@ -56,7 +56,7 @@
                 </q-img>
               </q-avatar>
             </div>
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-sm-6 col-md-6">
               <fin-portlet-heading class="q-pa-md" small>
                 {{ selectedSlide?.heading }}
                 <br>
@@ -71,6 +71,7 @@
         <div class="col-12 col-md-4  justify-center self-end justify-end">
           <div class="row ">
             <div class="col-12" style="height: 240px;">
+
               <q-carousel swipeable animated v-model="slide" ref="carousel" infinite class="full-height"
                 style="padding-top: 50px;">
 
