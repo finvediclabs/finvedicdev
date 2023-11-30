@@ -21,7 +21,7 @@
                     </div>
                     <div class="flex">
                       <p>
-                        <stong>Instance : </stong>
+                        <strong>Instance : </strong>
                         {{ lab.size }}
                       </p>
                     </div>

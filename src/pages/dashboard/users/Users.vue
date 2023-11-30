@@ -6,7 +6,7 @@
         <q-select v-model="roleSearch" :options="roleOptions" label="Roles" outlined class="fin-input" dense />
       </fin-portlet-item>
       <fin-portlet-item>
-        <q-select v-model="programSearch" :options="['trinee', 'client']" outlined label="Programs" class="fin-input"
+        <q-select v-model="programSearch" :options="['trine', 'client']" outlined label="Programs" class="fin-input"
           dense />
       </fin-portlet-item>
       <fin-portlet-item>
@@ -41,7 +41,7 @@
                 :rules="[val => val && val.length > 0 || 'Email Is required']" />
             </div>
             <div class="col-12 q-px-sm q-py-xs">
-              <q-input outlined v-model="user.Number" type="number" label="Phonbe Nunber *" lazy-rules
+              <q-input outlined v-model="user.Number" type="number" label="Phone Number *" lazy-rules
                 :rules="[val => val && val.length > 0 || 'Phone Number Is required']" />
             </div>
             <div class="col-12 q-px-sm q-py-xs">
@@ -91,7 +91,7 @@ export default {
       deleteUrl: urls.usersUrl,
       tab: 'allUsers',
       roleSearch: '',
-      roleOptions: ['trinee', 'client'],
+      roleOptions: ['trine', 'client'],
       programSearch: '',
       loading: true,
       createUserDialog: false,
@@ -214,7 +214,7 @@ export default {
         this.showMsg(error.response?.data.message || error.message, 'negative');
       })
     },
-    closecreateUserDialog() {
+    closeCreateUserDialog() {
       this.createUserDialog = false;
       this.$refs.form.reset();
     },

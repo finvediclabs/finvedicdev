@@ -6,18 +6,18 @@
     <fin-portlet-item>
       <q-form @submit="validatePostData">
         <div class="row">
-          <div class="col-12" v-if="requiredCategory">
+          <div class="col-12 q-pb-md" v-if="requiredCategory">
             <div class="row">
 
               <div v-for="category in categories" class="col-12 col-sm-4 q-px-md" style="white-space: nowrap;">
                 <q-btn :label="category.categoryName" no-caps v-if="!subCategories[category.id]"
-                  class="full-width shadow-3 fin-br-8"  size="lg"
+                  class="full-width shadow-3 fin-br-8" size="lg"
                   :class="selectedCategory?.id == category.id ? 'bg-finvedic text-white' : ''"
                   @click="selectCategory(category)" />
 
                 <q-btn-dropdown :label="category.categoryName" no-caps v-if="subCategories[category.id]"
-                  class="full-width shadow-3 fin-br-8" :class="{ 'bg-finvedic text-white': selectedCategory?.id === category.id }"
-                  size="lg">
+                  class="full-width shadow-3 fin-br-8"
+                  :class="{ 'bg-finvedic text-white': selectedCategory?.id === category.id }" size="lg">
                   <q-list>
                     <q-item v-for="subCategory in subCategories[category.id]" clickable v-close-popup
                       @click="selectSubCategory(category, subCategory)"
@@ -28,13 +28,14 @@
                     </q-item>
                   </q-list>
                 </q-btn-dropdown>
-                <div v-if="selectedCategory?.id && subCategories[selectedCategory.id] && !selectedSubCategory?.id">
-                  {{ errors[selectedCategory.id] }}
+                <div class="errorMsgBox"
+                  v-if="selectedCategory?.id && subCategories[selectedCategory.id] && !selectedSubCategory?.id">
+                  <span>{{ errors[selectedCategory.id] }}</span>
                 </div>
               </div>
             </div>
-            <div v-if="!selectedCategory?.id" class="text-red" style="height: 20px;font-size: 14px;">
-              {{ errors.category }}
+            <div class="q-px-md errorMsgBox">
+              <span v-if="!selectedCategory?.id">{{ errors.category }}</span>
             </div>
           </div>
 
@@ -42,16 +43,16 @@
 
             <fin-portlet-item class="full-width q-my-md">
               <q-input v-model="title" borderless label="Title" class="shadow-3 fin-br-8 q-px-sm bg-grey-2" />
-              <div v-if="!title" class="text-red" style="height: 20px;font-size: 14px;">
-                {{ errors.title }}
+              <div class="errorMsgBox" style="height: 20px;font-size: 14px;">
+                <span v-if="!title">{{ errors.title }}</span>
               </div>
             </fin-portlet-item>
 
             <fin-portlet-item class="full-width">
               <q-input v-model="description" borderless type="textarea" label="Description" rows="16"
                 class="fin-br-8 shadow-3 q-pa-sm bg-grey-2" />
-              <div v-if="!description" class="text-red" style="height: 20px;font-size: 14px;">
-                {{ errors.description }}
+              <div class="errorMsgBox">
+                <span v-if="!description">{{ errors.description }}</span>
               </div>
             </fin-portlet-item>
 
@@ -61,11 +62,12 @@
               <label class="text-weight-bolder">Cover</label>
               <div v-if="coverPath" class="shadow-3 dropzone-container">
                 <q-btn class="q-pa-xs close-btn bg-grey-5" size="sm" icon="close" flat @click="coverPath = ''" />
-                <q-img :src="coverPath" class="full-width preview-img"/>
+                <q-img :src="coverPath" class="full-width preview-img" />
               </div>
-              <drop-file @update="(val) => cover = val" :fileRef="'cover'" accept=".jpg, .jpeg, .png" min-size="512" max-size="30720" v-else />
-              <div style="height: 30px;font-size: 14px;margin-top:-10px" class="text-red q-pt-sm" v-if="!cover.length">
-                {{ errors.cover }}
+              <drop-file @update="(val) => cover = val" :fileRef="'cover'" accept=".jpg, .jpeg, .png" min-size="512"
+                max-size="30720" v-else />
+              <div class="errorMsgBox">
+                <span v-if="!cover.length">{{ errors.cover }}</span>
               </div>
             </div>
 
@@ -75,9 +77,10 @@
                 <q-btn class="q-pa-xs close-btn bg-grey-5" size="sm" icon="close" flat @click="filePath = ''" />
                 <q-img :src="filePath" class="full-width preview-img" style="width: 180px;max-height: 180px;" />
               </div>
-              <drop-file @update="(val) => files = val" :fileRef="'file'" :accept="fileAccept" min-size="512" max-size="30720" v-else/>
-              <div style="height: 20px;font-size: 14px;margin-top:-10px" class="text-red q-pt-sm" v-if="!files.length">
-                {{ errors.file }}
+              <drop-file @update="(val) => files = val" :fileRef="'file'" :accept="fileAccept" min-size="512"
+                max-size="30720" v-else />
+              <div class=" errorMsgBox">
+                <span v-if="!files.length">{{ errors.file }}</span>
               </div>
             </div>
 
@@ -148,7 +151,7 @@ export default {
     }
   },
   mounted() {
-    let data =  CryptoJS.AES.decrypt(this.$route.query.params, 'fileData').toString(CryptoJS.enc.Utf8);
+    let data = CryptoJS.AES.decrypt(this.$route.query.params, 'fileData').toString(CryptoJS.enc.Utf8);
     this.queryParams = JSON.parse(data);
     this.chapter = this.queryParams.chapter ?? false;
     this.requiredCategory = this.queryParams.requiredCategory ?? true;
@@ -238,7 +241,7 @@ export default {
       } else {
         this.errors = {
           title: "Title Is required",
-          description: "Discription Is required",
+          description: "Description Is required",
           cover: "Cover image is required",
           file: "file is required",
           category: "Please Select Category",
@@ -289,7 +292,7 @@ export default {
       this.$api.post(this.queryParams.url, this.getRequest()).then(response => {
         this.loading = false;
         if (response.data.success) {
-          this.showMsg(response.data?.message || 'File Cretaed Successfully', 'positive');
+          this.showMsg(response.data?.message || 'File Created Successfully', 'positive');
           this.$router.go(-1);
         } else {
           this.showMsg(response.data?.message, 'negative');
@@ -297,7 +300,7 @@ export default {
       }).catch(error => {
         this.loading = false;
         var message = error.response?.data.fieldErrors[0] ? error.response?.data.fieldErrors[0].field + ' ' + error.response?.data.fieldErrors[0].errorCode : '';
-        this.showMsg( message || error.message, 'negative');
+        this.showMsg(message || error.message, 'negative');
       })
     },
 
@@ -313,7 +316,7 @@ export default {
       }).catch(error => {
         this.loading = false;
         var message = error.response?.data.fieldErrors[0] ? error.response?.data.fieldErrors[0].field + ' ' + error.response?.data.fieldErrors[0].errorCode : '';
-        this.showMsg( message || error.message, 'negative');
+        this.showMsg(message || error.message, 'negative');
       })
     },
     selectCategory(category) {

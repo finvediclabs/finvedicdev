@@ -1,7 +1,7 @@
 <template>
   <fin-portlet>
     <fin-portlet-header>
-      <fin-portlet-heading :loading="loading" backArrow>Calander Events</fin-portlet-heading>
+      <fin-portlet-heading :loading="loading" backArrow>Calender Events</fin-portlet-heading>
       <fin-portlet-item>
         <router-link :to="{ path: 'class-room/create' }">
           <q-btn label="Add Class" dense color="blue-15" class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder"

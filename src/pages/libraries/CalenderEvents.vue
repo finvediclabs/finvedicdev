@@ -9,7 +9,7 @@
               <div>
                 <div>Schedule</div>
                 <br>
-                <div class="text-h4 text-weight-bolder">Upcomming Class</div>
+                <div class="text-h4 text-weight-bolder">Upcoming Class</div>
               </div>
               <q-img :src="classRoom" class="classRoomImg" v-if="!isMobile" />
             </q-card-section>

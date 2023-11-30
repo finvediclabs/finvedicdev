@@ -55,7 +55,7 @@
                 </q-input>
               </div> -->
               <div class="q-pa-sm col-12">
-                <q-select outlined v-model="editProfile.Usertype" :options="options" label="Type" :disable="disableEdit"
+                <q-select outlined v-model="editProfile.UserType" :options="options" label="Type" :disable="disableEdit"
                   lazy-rules :rules="[val => val && val.length > 0 || 'Type is required']" />
               </div>
               <div class="q-pa-sm col-12 text-right" style="min-height:70px">
@@ -78,7 +78,7 @@ import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 import profileImg from "src/assets/profile.png";
-import { urls } from "src/pages/dashboard/urls";
+import { urls } from "src/pages/dashboard/Urls";
 import { useProfileStore } from "src/stores/profile";
 import { storeToRefs } from "pinia";
 
@@ -107,7 +107,7 @@ export default {
         fName: '',
         lName: '',
         profile: '',
-        Usertype: '',
+        UserType: '',
       },
       options: [
         'Admin',
@@ -151,7 +151,7 @@ export default {
             fName: this.profileData.firstName,
             lName: this.profileData.lastName,
             profile: this.profileData.image,
-            Usertype: this.profileData.type,
+            UserType: this.profileData.type,
             profileBg: this.profileData.imgBgType,
           }
           this.imageUrl = this.editProfile.profile;
@@ -164,15 +164,15 @@ export default {
       });
     },
     updateProfile() {
-      var formdata = new FormData();
-      formdata.append('image', this.editProfile.profile);
-      formdata.append('firstName', this.editProfile.fName);
-      formdata.append('lastName', this.editProfile.lName);
-      formdata.append('email', this.editProfile.mail);
-      formdata.append('type', this.editProfile.Usertype);
-      formdata.append('imgBgType', this.editProfile.profileBg);
+      var formData = new FormData();
+      formData.append('image', this.editProfile.profile);
+      formData.append('firstName', this.editProfile.fName);
+      formData.append('lastName', this.editProfile.lName);
+      formData.append('email', this.editProfile.mail);
+      formData.append('type', this.editProfile.UserType);
+      formData.append('imgBgType', this.editProfile.profileBg);
       this.loading = true;
-      this.$api.post(url, formdata).then(response => {
+      this.$api.post(url, formData).then(response => {
         if (response.data.success) {
           this.showMsg(response.data.message, 'positive');
           this.getProfileData();
@@ -190,7 +190,7 @@ export default {
         fName: this.profileData.firstName,
         lName: this.profileData.lastName,
         profile: this.profileData.image,
-        Usertype: this.profileData.type,
+        UserType: this.profileData.type,
       }
       this.imageUrl = this.editProfile.profile;
       this.disableEdit = true;

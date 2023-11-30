@@ -29,7 +29,7 @@
       <carousel-3d :totalSlides="booksData.length" :count="booksData.length" @beforeSlideChange="getCurrentSlide"
         :controls-visible="true" width="270" height="360" display="7" >
         <slide v-for="(slide, i) in booksData" :key="i" :index="i">
-          <q-img :src="slide.imagePath ?? 'dumy'" class="fit" :alt="slide.heading">
+          <q-img :src="slide.imagePath ?? 'dummy'" class="fit" :alt="slide.heading">
             <template v-slot:error>
               <q-img :src="DummyBook" class="full-width full-height" />
             </template>
@@ -42,7 +42,7 @@
         <q-spinner-ios color="blue-9" size="3.5em" />
       </div>
     </fin-portlet-item>
-    <fin-portlte>
+    <fin-portlet>
       <div class="row">
         <div class="col-12 col-md-6 col-lg-7  q-pr-md">
           <div class="row">
@@ -133,7 +133,7 @@
           </div>
         </div>
       </div>
-    </fin-portlte>
+    </fin-portlet>
   </fin-portlet>
 </template>
 <script>
@@ -179,7 +179,7 @@ export default {
   watch: {
     selectedSlide() {
       setTimeout(() => {
-        this.getChapthersData();
+        this.getChaptersData();
       }, 500);
     },
     selectedCategory() {
@@ -235,7 +235,7 @@ export default {
         this.showMsg(error.message, 'negative');
       });
     },
-    getChapthersData() {
+    getChaptersData() {
       this.chaptersLoader = true;
       this.$api.get(urls.getBookChapterUrl, {
         params: {
@@ -259,7 +259,7 @@ export default {
               deletedAt: moment(chapter.deletedAt).format('YYYY-MM-DD')
             }
           });
-          this.getdummychapters(this.chaptersData);
+          this.getDummyChapters(this.chaptersData);
         } else {
           this.showMsg(response.data?.message, 'negative');
         }
@@ -268,7 +268,7 @@ export default {
         this.showMsg(error.response?.data.message || error.message, 'negative');
       })
     },
-    getdummychapters(chapter) {
+    getDummyChapters(chapter) {
       let index = 0;
       let slide = [];
       for (let j = 0; j < chapter.length; j++) {

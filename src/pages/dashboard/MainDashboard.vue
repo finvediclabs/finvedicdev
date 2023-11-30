@@ -12,7 +12,7 @@
                     <div class="column justify-between full-height text-right">
                       <div class="col">
                         <div class="col text-h6 q-pb-sm text-weight-bolder">{{ tab.title }}</div>
-                        <div class="col">{{ tab.discription }}</div>
+                        <div class="col">{{ tab.description }}</div>
                       </div>
                       <!-- <div class="col no-padding" style="flex: none">
                       <router-link class="btn" :to="`admin/${tab.path}`">
@@ -58,7 +58,7 @@ export default {
         {
           image: usersPng,
           title: 'Users',
-          discription: 'Perfect for learning how the framework works.',
+          description: 'Perfect for learning how the framework works.',
           path: 'users',
           background: '#FFCE70',
           enable: true
@@ -66,7 +66,7 @@ export default {
         {
           image: rolesPng,
           title: 'Roles',
-          discription: 'Perfect for learning how the framework works.',
+          description: 'Perfect for learning how the framework works.',
           path: 'roles',
           background: '#CCB4FF',
           enable: true
@@ -74,7 +74,7 @@ export default {
         {
           image: organizationPng,
           title: 'Organizations',
-          discription: 'Perfect for learning how the framework works.',
+          description: 'Perfect for learning how the framework works.',
           path: 'organizations',
           background: '#1E90FF90',
           enable: false
@@ -82,7 +82,7 @@ export default {
         {
           image: vmSetupPng,
           title: 'VM Setup',
-          discription: 'Perfect for learning how the framework works.',
+          description: 'Perfect for learning how the framework works.',
           path: 'vm-setup',
           background: '#FF83DF',
           enable: true
@@ -90,7 +90,7 @@ export default {
         {
           image: booksPng,
           title: 'Books',
-          discription: 'Perfect for learning how the framework works.',
+          description: 'Perfect for learning how the framework works.',
           path: 'books',
           background: 'rgba(55, 66, 250, 0.50)',
           enable: true
@@ -98,7 +98,7 @@ export default {
         {
           image: videosPng,
           title: 'Videos',
-          discription: 'Perfect for learning how the framework works.',
+          description: 'Perfect for learning how the framework works.',
           path: 'videos',
           background: 'rgba(30, 144, 255, 0.50)',
           enable: true
@@ -106,15 +106,15 @@ export default {
         {
           image: presentationPng,
           title: 'Presentations',
-          discription: 'Perfect for learning how the framework works.',
+          description: 'Perfect for learning how the framework works.',
           path: 'presentations',
           background: '#FFBD80',
           enable: true
         },
         {
           image: eventPng,
-          title: 'Calander Events',
-          discription: 'Perfect for learning how the framework works.',
+          title: 'Calender Events',
+          description: 'Perfect for learning how the framework works.',
           path: 'class-room',
           background: '#FF9C78',
           enable: true

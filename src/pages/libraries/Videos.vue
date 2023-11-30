@@ -165,7 +165,7 @@ export default {
   watch: {
     selectedSlide() {
       setTimeout(() => {
-        this.getChapthersData();
+        this.getChaptersData();
       }, 500);
     },
     selectedCategory() {
@@ -222,7 +222,7 @@ export default {
         this.showMsg(error.message, 'negative');
       });
     },
-    getChapthersData() {
+    getChaptersData() {
       this.chaptersLoader = true;
       this.$api.get(urls.getVideoChaptersUrl, {
         params: {
@@ -232,7 +232,7 @@ export default {
         this.chaptersLoader = false;
         if (response.data.success) {
           this.chapters = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));
-          this.getdummychapters(this.chapters);
+          this.getDummyChapters(this.chapters);
         } else {
           this.showMsg(response.data?.message, 'negative');
         }
@@ -241,7 +241,7 @@ export default {
         this.showMsg(error.response?.data.message || error.message, 'negative');
       })
     },
-    getdummychapters(chapter) {
+    getDummyChapters(chapter) {
       let index = 0;
       let slide = [];
       for (let j = 0; j < chapter.length; j++) {

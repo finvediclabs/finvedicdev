@@ -30,7 +30,7 @@
                 :rules="[val => val && val.length > 0 || 'Email Is required']" />
             </div>
             <div class="q-px-sm q-py-xs col-12">
-              <q-input outlined v-model="editOrganization.number" type="number" label="Phonbe Nunber *" lazy-rules
+              <q-input outlined v-model="editOrganization.number" type="number" label="Phone Number *" lazy-rules
                 :rules="[val => val && val.length > 0 || 'Phone Number Is required']" />
             </div>
             <div class="q-px-sm q-py-xs col-12">

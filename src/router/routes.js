@@ -104,12 +104,12 @@ const routes = [
       },
       {
         path: 'class-room',
-        component: () => import('pages/dashboard/CalanderEvents/List.vue'),
+        component: () => import('pages/dashboard/CalenderEvents/List.vue'),
         meta: { items: 'class-room' }
       },
       {
         path: 'class-room/create',
-        component: () => import('pages/dashboard/CalanderEvents/CreateEvent.vue'),
+        component: () => import('pages/dashboard/CalenderEvents/CreateEvent.vue'),
         meta: { items: 'class-room' }
       }
     ],
@@ -150,7 +150,7 @@ const routes = [
       },
       {
         path: 'class-room',
-        component: () => import('pages/libraries/CalanderEvents.vue'),
+        component: () => import('pages/libraries/CalenderEvents.vue'),
         meta: { item: 'class-room' }
       }
     ]

@@ -239,7 +239,7 @@ export default {
       module: this.$route.meta.module,
       item: this.$route.meta.item
     }
-    this.knowmoduleFunction();
+    this.knowModuleFunction();
   },
   watch: {
     token() {
@@ -249,7 +249,7 @@ export default {
     },
   },
   methods: {
-    knowmoduleFunction() {
+    knowModuleFunction() {
       var filteredModule = this.modulesList.filter(module => module.menu);
       filteredModule.forEach(module => {
         this.expand[module.value] = this.selectedModule.module == module.value;

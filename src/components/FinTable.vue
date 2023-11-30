@@ -169,10 +169,10 @@ export default {
             this.showMsg(response.data.message, 'positive');
             this.$emit('reCall');
           } else {
-            this.this.showMsg(respinse?.data.message, 'negative');
+            this.this.showMsg(response?.data.message, 'negative');
           }
         }).catch(error => {
-          this.showMsg(error.respinse?.data.message || error.message, 'negative');
+          this.showMsg(error.response?.data.message || error.message, 'negative');
         });
       });
     },

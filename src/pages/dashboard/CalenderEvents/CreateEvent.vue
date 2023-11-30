@@ -214,17 +214,6 @@ export default {
   background: #FCF7F7 !important;
 }
 
-.errorMsgBox {
-  height: 20px;
-  font-weight: bold;
-  margin-left: 10px;
-
-  & span {
-    font-size: 12px;
-    color: red;
-  }
-}
-
 .datePicker div {
   width: 100%;
 }

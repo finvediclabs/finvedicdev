@@ -43,7 +43,7 @@
         <q-spinner-ios color="blue-9" size="3.5em" />
       </div>
     </fin-portlet-item>
-    <fin-portlte>
+    <fin-portlet>
       <div class="row">
         <div class="col-12 col-md-7 q-pr-md ">
           <div class="row">
@@ -131,7 +131,7 @@
           </div>
         </div>
       </div>
-    </fin-portlte>
+    </fin-portlet>
   </fin-portlet>
 </template>
 <script>
@@ -242,7 +242,7 @@ export default {
         this.chaptersLoader = false;
         if (response.data.success) {
           this.chaptersData = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));
-          this.getdummychapters(this.chaptersData);
+          this.getDummyChapters(this.chaptersData);
         } else {
           this.showMsg(response.data?.message, 'negative');
         }
@@ -251,7 +251,7 @@ export default {
         this.showMsg(error.response?.data.message || error.message, 'negative');
       })
     },
-    getdummychapters(chapter) {
+    getDummyChapters(chapter) {
       let index = 0;
       let slide = [];
       for (let j = 0; j < chapter.length; j++) {

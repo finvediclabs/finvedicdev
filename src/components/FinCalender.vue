@@ -16,7 +16,7 @@ import FinPortletItem from './Portlets/FinPortletItem.vue';
 import Calendar from '@toast-ui/calendar';
 import '@toast-ui/calendar/dist/toastui-calendar.min.css';
 export default {
-  name: 'fin-calander',
+  name: 'fin-calender',
   components: {
     Calendar,
     FinPortlet,

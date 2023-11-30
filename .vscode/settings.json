@@ -1,6 +1,9 @@
 {
     "cSpell.ignoreWords": [
         "Portlets",
-        "portlet"
+        "finvedic",
+        "pinia",
+        "portlet",
+        "toastui"
     ]
 }
