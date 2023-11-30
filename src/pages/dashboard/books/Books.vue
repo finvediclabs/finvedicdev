@@ -92,7 +92,7 @@ export default {
         title: title ?? 'Create Book',
         url: item?.id ? `${urls.booksDataUrl}/${item.id}` : urls.booksDataUrl,
         item: item,
-        requiredCataloge: false,
+        requiredCategory: false,
         coverKey: 'imagePath'
       };
       params = JSON.stringify(params);

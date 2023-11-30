@@ -142,14 +142,14 @@ import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 import { Carousel3d, Slide } from "src/components/carousel-3d";
 import { urls } from "./Urls"
 import { storeToRefs } from "pinia";
-import { useCategorieStore } from "src/stores/Categories";
+import { useCategoryStore } from "src/stores/Categories";
 import moment from "moment";
 import DummyBook from "src/assets/dummyBook.jpg"
 export default {
   setup() {
-    const categorieStore = useCategorieStore();
-    const { categories, subCategories, selectedCategory, selectedSubCategory } = storeToRefs(categorieStore);
-    const { selectCategory, selectSubCategory } = categorieStore;
+    const categoryStore = useCategoryStore();
+    const { categories, subCategories, selectedCategory, selectedSubCategory } = storeToRefs(categoryStore);
+    const { selectCategory, selectSubCategory } = categoryStore;
     return { categories, subCategories, selectedCategory, selectedSubCategory, selectCategory, selectSubCategory }
   },
   components: {

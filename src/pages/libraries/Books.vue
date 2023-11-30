@@ -145,14 +145,14 @@ import { Carousel3d, Slide } from "src/components/carousel-3d";
 import { urls } from "./Urls"
 import { storeToRefs } from "pinia";
 import moment from "moment"
-import { useCategorieStore } from "src/stores/Categories";
+import { useCategoryStore } from "src/stores/Categories";
 import DummyBook from "src/assets/dummyBook.jpg"
 import samplePDF from "src/assets/sample.pdf"
 export default {
   setup() {
-    const categorieStore = useCategorieStore();
-    const { categories, subCategories, selectedCategory, selectedSubCategory } = storeToRefs(categorieStore);
-    const { selectCategory, selectSubCategory } = categorieStore;
+    const categoryStore = useCategoryStore();
+    const { categories, subCategories, selectedCategory, selectedSubCategory } = storeToRefs(categoryStore);
+    const { selectCategory, selectSubCategory } = categoryStore;
     return { categories, subCategories, selectedCategory, selectedSubCategory, selectCategory, selectSubCategory }
   },
   components: {

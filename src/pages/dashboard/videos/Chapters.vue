@@ -101,7 +101,7 @@ export default {
         url: item?.id ? `${urls.videoChaptersUrl}/${item.id}` : urls.videoChaptersUrl,
         item: item,
         chapter: true,
-        requiredCataloge: false,
+        requiredCategory: false,
         parentKey: 'videoId',
         videoId: this.videoId,
         fileKey: "videoFilePath",

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import axios from 'axios'
 const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-export const useCategorieStore = defineStore('categories', {
+export const useCategoryStore = defineStore('categories', {
   state: () => ({
     categories: [],
     subCategories: [],

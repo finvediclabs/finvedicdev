@@ -61,14 +61,14 @@ import FinCalender from "src/components/FinCalender.vue";
 import classRoom from "src/assets/classRoom.png"
 import classCardImg from "src/assets/classCard.png";
 import { storeToRefs } from "pinia";
-import { useCategorieStore } from "src/stores/Categories";
+import { useCategoryStore } from "src/stores/Categories";
 import ColorHash from 'color-hash'
 var colorHash = new ColorHash();
 export default {
   setup() {
-    const categorieStore = useCategorieStore();
-    const { categories, subCategories, selectedCategory, selectedSubCategory } = storeToRefs(categorieStore);
-    const { selectCategory, selectSubCategory } = categorieStore;
+    const categoryStore = useCategoryStore();
+    const { categories, subCategories, selectedCategory, selectedSubCategory } = storeToRefs(categoryStore);
+    const { selectCategory, selectSubCategory } = categoryStore;
     return { categories, subCategories, selectedCategory, selectedSubCategory, selectCategory, selectSubCategory }
   },
   components: {

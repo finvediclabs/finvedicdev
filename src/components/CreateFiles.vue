@@ -6,7 +6,7 @@
     <fin-portlet-item>
       <q-form @submit="validatePostData">
         <div class="row">
-          <div class="col-12" v-if="requiredCataloge">
+          <div class="col-12" v-if="requiredCategory">
             <div class="row">
 
               <div v-for="category in categories" class="col-12 col-sm-4 q-px-md" style="white-space: nowrap;">
@@ -102,15 +102,15 @@ import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 import DropFile from "src/components/dropFile/DropFile.vue"
 import { useProfileStore } from "src/stores/profile";
 import { storeToRefs } from "pinia";
-import { useCategorieStore } from "src/stores/Categories";
+import { useCategoryStore } from "src/stores/Categories";
 import CryptoJS from 'crypto-js'
 import { isThisSecond } from "date-fns";
 export default {
   setup() {
     const profileStore = useProfileStore();
     const { profile } = storeToRefs(profileStore);
-    const categorieStore = useCategorieStore();
-    const { categories, subCategories } = storeToRefs(categorieStore);
+    const categoryStore = useCategoryStore();
+    const { categories, subCategories } = storeToRefs(categoryStore);
     return {
       profile,
       categories,
@@ -137,7 +137,7 @@ export default {
       errors: {},
       chapter: false,
       id: '',
-      requiredCataloge: true,
+      requiredCategory: true,
       parentKey: '',
       coverKey: '',
       fileKey: '',
@@ -151,7 +151,7 @@ export default {
     let data =  CryptoJS.AES.decrypt(this.$route.query.params, 'fileData').toString(CryptoJS.enc.Utf8);
     this.queryParams = JSON.parse(data);
     this.chapter = this.queryParams.chapter ?? false;
-    this.requiredCataloge = this.queryParams.requiredCataloge ?? true;
+    this.requiredCategory = this.queryParams.requiredCategory ?? true;
     this.parentKey = this.queryParams?.parentKey;
     this.fileKey = this.queryParams?.fileKey;
     this.coverKey = this.queryParams?.coverKey;
@@ -195,7 +195,7 @@ export default {
         request.heading = this.title;
       }
 
-      if (this.requiredCataloge) {
+      if (this.requiredCategory) {
         request.categoryId = this.selectedCategory?.id;
         request.subCategory = this.selectedSubCategory?.id;
       }
@@ -204,7 +204,7 @@ export default {
     },
     validatePostData() {
       var errorsCount = 0;
-      if (this.requiredCataloge) {
+      if (this.requiredCategory) {
         if (!this.selectedCategory?.id) { errorsCount += 1; }
         if (this.subCategories[this.selectedCategory?.id]) {
           if (!this.selectedSubCategory?.id) {
@@ -243,7 +243,7 @@ export default {
           file: "file is required",
           category: "Please Select Category",
         }
-        if (this.requiredCataloge) {
+        if (this.requiredCategory) {
           this.errors[this.selectedCategory?.id] = 'Choose An Option';
         }
       }

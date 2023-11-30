@@ -101,7 +101,7 @@ export default {
         item: item,
         presentationId: this.presentationId,
         chapter: true,
-        requiredCataloge: false,
+        requiredCategory: false,
         parentKey: 'presentationId',
         fileKey: "presentationFilePath",
         coverRequired: false,

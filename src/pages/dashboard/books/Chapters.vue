@@ -102,7 +102,7 @@ export default {
         item: item,
         bookId: this.bookId,
         chapter: true,
-        requiredCataloge: false,
+        requiredCategory: false,
         parentKey: 'bookId',
         coverKey: "chapterImagePath",
         fileKey: "chapterFilePath",
