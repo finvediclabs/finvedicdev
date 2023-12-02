@@ -3,7 +3,7 @@
     <fin-portlet-header>
       <fin-portlet-heading :loading="loading" backArrow>Vm Setup</fin-portlet-heading>
     </fin-portlet-header>
-    <fin-portlet-item class="full-width  text-center items-center justify-center">
+    <fin-portlet-item class="full-width items-center justify-center">
       <div style="max-width: 1100px;">
         <q-form @submit="validateFields">
           <div class="row">
@@ -11,15 +11,15 @@
             <div class="col-12 col-md-5 q-pa-sm">
               <q-select v-model="version" :options="['Windows', 'Linux']" borderless label="VM Type"
                 class="shadow-3 fin-br-8 q-px-md bg-grey-1" />
-              <div style="height: 20px;font-size: 14px;margin-top:-10px" class="text-red q-pt-sm" v-if="!version">
-                {{ errors.version }}
+              <div class="errorMsgBox">
+                <span v-if="!version">{{ errors.version }}</span>
               </div>
             </div>
             <div class="col-12 col-md-1 q-pa-sm "></div>
             <div class="col-12 col-md-5 q-pa-sm ">
               <q-input v-model="nos" type="number" borderless label="No Of VM's" class="shadow-3 fin-br-8 q-px-md bg-grey-1" />
-              <div style="height: 20px;font-size: 14px;margin-top:-10px" class="text-red q-pt-sm" v-if="!nos">
-                {{ errors.nos }}
+              <div class="errorMsgBox">
+                <span  v-if="!nos">{{ errors.nos }}</span>
               </div>
             </div>
           </div>
