@@ -3,7 +3,7 @@
     <fin-portlet-header>
       <div class="row full-width">
         <div class="col-1"></div>
-        <div class="col-12 col-md-6 " :class="{'q-mt-xl': !isMobile} ">
+        <div class="col-12 col-md-6 " :class="{ 'q-mt-xl': !isMobile }">
           <q-card class="my-card full-width text-white full-height" style="background: #2FCB89;">
             <q-card-section class="row justify-between">
               <div>
@@ -27,7 +27,8 @@
 
             <q-btn :label="category.categoryName" no-caps v-if="!subCategories[category.id]" size="lg"
               class="full-width q-my-sm fin-br-8 categoryClass"
-              :class="{'active-categoryClass' : selectedCategory?.id == category.id}" @click="selectCategory(category)" />
+              :class="{ 'active-categoryClass': selectedCategory?.id == category.id }"
+              @click="selectCategory(category)" />
 
             <q-btn-dropdown :label="category.categoryName" no-caps v-if="subCategories[category.id]" size="lg"
               class="full-width q-my-sm fin-br-8 categoryClass"
@@ -48,7 +49,7 @@
       </div>
     </fin-portlet-header>
     <fin-portlet-item>
-      <fin-calender isReadOnly :events="events" :template="template" :view="isMobile ? 'day' : 'week'"/>
+      <fin-calender isReadOnly :events="events" :template="template" :view="isMobile ? 'day' : 'week'" />
     </fin-portlet-item>
   </fin-portlet>
 </template>
@@ -64,6 +65,7 @@ import { storeToRefs } from "pinia";
 import { useCategoryStore } from "src/stores/Categories";
 import ColorHash from 'color-hash'
 var colorHash = new ColorHash();
+import { urls } from "./Urls"
 export default {
   setup() {
     const categoryStore = useCategoryStore();
@@ -101,19 +103,60 @@ export default {
   },
   watch: {
     selectedCategory() {
-      console.log(this.selectedCategory);
+      if (this.selectedCategory) {
+        this.getEventsData();
+      }
     },
     selectedSubCategory() {
-      console.log(this.selectedSubCategory);
+      if (this.selectedCategory) {
+        this.getEventsData();
+      }
     }
   },
   mounted() {
-    this.getEventsData();
+    if (this.selectedCategory) {
+      this.getEventsData();
+    }
   },
   methods: {
+    showMsg(message, type) {
+      this.$q.notify({
+        message: message || "Something Went Wrong!",
+        type: type,
+        position: 'top-right',
+        actions: [
+          { icon: 'close', color: 'white', handler: () => { } }
+        ]
+      });
+    },
     getEventsData() {
-      let events = localStorage.getItem('events') ? JSON.parse(localStorage.getItem('events')) : [];
-      this.events = events.map(event => ({ ...event, start: `${event.date} ${event.start}`, end: `${event.date} ${event.end}`, color: 'white', backgroundColor: colorHash.hex(event.title) }));
+      var request = {
+        categoryId: this.selectedCategory?.id,
+        subCategoryId: this.selectedSubCategory?.id
+      };
+      this.loading = true;
+      this.$api.get(urls.getEvents, {
+        params: request
+      }).then(response => {
+        this.loading = false;
+        if (response.data.success) {
+          let events = response.data.data;
+          this.events = events.map(event => (
+            { 
+              ...event,
+              start: `${event.date} ${event.start}`,
+              end: `${event.date} ${event.end}`,
+              color: 'white',
+              backgroundColor: colorHash.hex(event.title)
+            }
+          ));
+        } else {
+          this.showMsg(response.data?.message, 'negative');
+        }
+      }).catch(error => {
+        this.loading = false;
+        this.showMsg(error.response?.data.message || error.message, 'negative');
+      })
     }
   }
 }
@@ -129,7 +172,7 @@ export default {
 }
 
 .active-categoryClass {
-  background:linear-gradient(to right, rgba(47, 203, 137) 2%, rgba(47, 203, 137, 0.53) 1px);
+  background: linear-gradient(to right, rgba(47, 203, 137) 2%, rgba(47, 203, 137, 0.53) 1px);
   color: black;
 }
 </style>
