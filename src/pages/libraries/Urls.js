@@ -6,5 +6,5 @@ export  const urls = {
   getPresentationsUrl: 'api/presentations',
   getPresentationChaptersUrl: 'api/presentationChapters',
 
-  getEvents: 'api/calendarEvents',
+  getEvents: 'api/calendarEvents'
 }
