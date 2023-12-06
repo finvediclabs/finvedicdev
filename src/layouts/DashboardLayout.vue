@@ -94,7 +94,7 @@
         </q-btn>
 
         <q-avatar class="shadow-4" :size="isMobile ? '40px' : '50px'">
-          <q-img src="../assets/profile.png" class="profileImg cursor-pointer rounded full-width full-height" />
+          <q-img :src="user.photoPath || profileImg" class="profileImg cursor-pointer rounded full-width full-height" />
           <q-menu :offset="[-5, 5]" max-width="300px" style="width:230px;background: transparent!important;"
             class="fin-br-8 q-py-md shadow-0" transition-show="flip-right" transition-hide="rotate">
             <div style="background-color: #EAEAEA;opacity:0.99" class="q-py-md shadow-2 fin-br-8">
@@ -123,6 +123,7 @@
 
       </q-toolbar>
     </q-header>
+
     <q-drawer v-model="drawerLeft" show-if-above :mini="miniState" width="230" breakpoint="900"
       class="text-white fin-drawer-style shadow-2">
       <q-scroll-area class="fit q-pl-md q-pt-md bg-finvedic q-pt-xl" :horizontal-thumb-style="{ opacity: 0 }">
@@ -170,21 +171,27 @@
 import { storeToRefs } from "pinia";
 import { useSessionStore } from "src/stores/session";
 import { setToken } from "src/boot/axios"
+import { useProfileStore } from "src/stores/profile";
+import profileImg from "src/assets/profile.png"
 export default {
   name: 'dashboard-layout',
   setup() {
     const session = useSessionStore();
     const { token, userType } = storeToRefs(session);
     const { setUserType, setSessionToken } = session;
+    const profileStore = useProfileStore();
+    const { user } = storeToRefs(profileStore);
     return {
       token,
       userType,
       setUserType,
-      setSessionToken
+      setSessionToken,
+      user
     }
   },
   data() {
     return {
+      profileImg: profileImg,
       profileMenu: false,
       CurrentDate: new Date().toDateString(),
       selectedModule: {},
@@ -216,9 +223,9 @@ export default {
     widthSVG() { return window.innerWidth > 600 ? 197 : 150 },
     modules() {
       var userAccess = [];
-      if(this.userType == 1) {
+      if(this.userType == 4) {
         userAccess = this.adminAccess;
-      } else if(this.userType == 2 ) {
+      } else if(this.userType == 6 ) {
         userAccess = this.facultyAccess;
       } else {
         userAccess = this.studentsAccess;

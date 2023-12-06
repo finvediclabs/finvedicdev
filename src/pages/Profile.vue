@@ -3,13 +3,13 @@
     <fin-portlet-header>
       <fin-portlet-heading :loading="loading" back-arrow>Profile</fin-portlet-heading>
       <fin-portlet-item>
-        <q-btn label="Edit" no-caps class="text-white sub-btn" flat icon-size="10px" @click="disableEdit = false"
-          v-if="disableEdit"></q-btn>
+        <q-btn label="Edit" no-caps class="text-white sub-btn fin-br-8 q-px-xl" @click="disableEdit = false"
+          v-if="disableEdit" />
       </fin-portlet-item>
     </fin-portlet-header>
-    <fin-portlet-item>
+    <fin-portlet-item class="q-py-xl">
       <div class="row justify-center ">
-        <div class="col-12 col-md-3 text-center q-pb-lg">
+        <div class="col-12 col-md-3 text-center q-pb-lg column justify-center items-center">
           <q-avatar size="200px" style="background: #FF7F50"
             :class="{ 'rounded-borders': editProfile.profileBg == 'square' }" :square="editProfile.profileBg == 'square'">
             <q-img :src="imageUrl" class="fit"></q-img>
@@ -31,38 +31,45 @@
         </div>
         <div class="col-md-1"></div>
         <div class="col-12 col-md-5">
-          <q-form @submit="updateProfile">
+          <q-form @submit="verifyData">
             <div class="row">
-              <div class="q-pa-sm col-12 col-md-6 ">
-                <q-input outlined v-model="editProfile.fName" label="First Name" :disable="disableEdit" lazy-rules
-                  :rules="[val => val && val.length > 0 || 'First Name is required']" />
+              <div class="col-12">
+                <q-input label="Name" borderless class="shadow-3 q-px-md fin-br-8" v-model="profile.name"
+                  :disable="disableEdit" />
+                <div class="errorMsgBox">
+                  <span v-if="error.name && !profile.name">{{ error.name }}</span>
+                </div>
               </div>
-              <div class="q-pa-sm col-12 col-md-6 ">
-                <q-input outlined v-model="editProfile.lName" label="First Name" :disable="disableEdit" lazy-rules
-                  :rules="[val => val && val.length > 0 || 'Last Name is required']" />
+
+              <div class="col-12">
+                <q-input label="Email" type="email" borderless class="shadow-3 q-px-md fin-br-8" v-model="profile.email"
+                  disable />
+                <div class="errorMsgBox">
+                  <span v-if="error.email && !profile.email">{{ error.email }}</span>
+                </div>
               </div>
-              <div class="q-pa-sm col-12">
-                <q-input outlined v-model="editProfile.mail" label="Email Address" :disable="disableEdit" lazy-rules
-                  :rules="[val => val && val.length > 0 || 'Email is required']" />
+
+              <div class="col-12">
+                <q-input label="Phone Number" borderless class="shadow-3 q-px-md fin-br-8" v-model="profile.phoneNumber"
+                  :disable="disableEdit" />
+                <div class="errorMsgBox">
+                  <span v-if="error.phoneNumber && !profile.phoneNumber">{{ error.phoneNumber }}</span>
+                </div>
               </div>
-              <!-- <div class="q-pa-sm col-12">
-                <q-input v-model="password" outlined class="q-my-sm" label="Password" :type="isPwd ? 'password' : 'text'"
-                  lazy-rules :rules="[val => val && val.length > 0 || 'Password is required']" :disable="disableEdit">
-                  <template v-slot:append>
-                    <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer"
-                      @click="isPwd = !isPwd" />
-                  </template>
-                </q-input>
-              </div> -->
-              <div class="q-pa-sm col-12">
-                <q-select outlined v-model="editProfile.UserType" :options="options" label="Type" :disable="disableEdit"
-                  lazy-rules :rules="[val => val && val.length > 0 || 'Type is required']" />
+
+              <div class="col-12">
+                <q-select borderless class="shadow-3 q-px-md fin-br-8" v-model="profile.role" label="Role"
+                  :options="roles" option-value="id" option-label="name" disable />
+                <div class="errorMsgBox">
+                  <span v-if="error.role && !profile.role">{{ error.role }}</span>
+                </div>
               </div>
+
               <div class="q-pa-sm col-12 text-right" style="min-height:70px">
-                <q-btn label="Cancel" no-caps color="red" @click="cancelEdit()" v-if="!disableEdit" />
-                <q-btn color="primary" no-caps class="sub-btn q-ml-sm" style="min-width:150px" label="Update"
+                <q-btn label="Cancel" no-caps color="red" class="fin-br-8" @click="cancelEdit()" size="md" v-if="!disableEdit" />
+                <q-btn color="primary" no-caps class="fin-br-8 q-ml-sm" size="md" style="min-width:150px" label="Update"
                   type="submit" :disable="loading" v-if="!disableEdit">
-                  <q-spinner-ios color="white" class="q-pl-sm" v-if="loading" />
+                  <!-- <q-spinner-ios color="white" class="q-pl-sm" v-if="loading" /> -->
                 </q-btn>
               </div>
             </div>
@@ -81,6 +88,7 @@ import profileImg from "src/assets/profile.png";
 import { urls } from "src/pages/dashboard/Urls";
 import { useProfileStore } from "src/stores/profile";
 import { storeToRefs } from "pinia";
+import { useRolesStore } from "src/stores/roles"
 
 export default {
   name: 'profile',
@@ -92,13 +100,21 @@ export default {
   },
   setup() {
     const profileStore = useProfileStore();
-    const { profile } = storeToRefs(profileStore);
+    const { user } = storeToRefs(profileStore);
+    const { setUserData } = profileStore;
+    const rolesStore = useRolesStore();
+    const { roles } = storeToRefs(rolesStore);
     return {
-      profile,
+      roles,
+      user,
+      setUserData
     }
   },
   data() {
     return {
+      profile: {},
+      error: {},
+
       loading: false,
       disableEdit: true,
       profileData: {},
@@ -112,21 +128,18 @@ export default {
       options: [
         'Admin',
         'Faculty',
-        'Student'
+        'Student'//
       ],
       imageUrl: '',
       getUserUrl: '',
     }
   },
   mounted() {
-    if (this.profile) {
-      this.getProfileData();
-    }
-
+    this.getUserData();
   },
   watch: {
-    profile() {
-      this.getProfileData();
+    user() {
+      this.getUserData();
     }
   },
   methods: {
@@ -140,65 +153,86 @@ export default {
         ]
       });
     },
-    getProfileData() {
-      this.getUserUrl = urls.usersUrl + '/' + this.profile.id;
-      this.loading = true;
-      this.$api.get(this.getUserUrl).then(response => {
+    getUserData() {
+      this.$api.get(`api/users/${this.user.id}`).then(response => {
         if (response.data.success) {
-          this.profileData = response.data.data;
-          this.editProfile = {
-            mail: this.profileData.email,
-            fName: this.profileData.firstName,
-            lName: this.profileData.lastName,
-            profile: this.profileData.image,
-            UserType: this.profileData.type,
-            profileBg: this.profileData.imgBgType,
+          var user = response.data.data;
+          this.profile = {
+            name: user.name,
+            email: user.email,
+            phoneNumber: user.phoneNumber,
+            role: this.user.roles ? this.user.roles[0] : [],
           }
-          this.imageUrl = this.editProfile.profile;
+          this.imageUrl = this.user.photoPath;
         } else {
           this.showMsg(response.data.message, 'negative');
         }
       }).catch(error => {
         this.loading = false;
         this.showMsg(error.response?.data.message || error.message, 'negative');
-      });
+      })
+
     },
+    verifyData() {
+      var errorCount = 0;
+      this.profile.name ? '' : errorCount++;
+      this.profile.email ? '' : errorCount++;
+      this.profile.phoneNumber ? '' : errorCount++;
+      this.profile.role ? '' : errorCount++;
+      if (!errorCount) {
+        this.profile.file ? this.uploadImg() : this.updateProfile();
+      } else {
+        this.error = {
+          name: "Name is required",
+          email: "Email is required",
+          phoneNumber: "phone Number is required",
+          role: "Role is required",
+        }
+      }
+    },
+    uploadImg() {
+      if (!this.loading) {
+        this.loading = true;
+        let formData = new FormData();
+        formData.append('file', this.profile.file);
+        this.$api.post('fs/upload-file', formData).then(response => {
+          this.imageUrl = response.data.uri;
+          this.updateProfile();
+        }).catch(error => {
+          this.showMsg(error.response?.data.message || error.message, 'negative');
+        })
+      }
+    },
+
     updateProfile() {
-      var formData = new FormData();
-      formData.append('image', this.editProfile.profile);
-      formData.append('firstName', this.editProfile.fName);
-      formData.append('lastName', this.editProfile.lName);
-      formData.append('email', this.editProfile.mail);
-      formData.append('type', this.editProfile.UserType);
-      formData.append('imgBgType', this.editProfile.profileBg);
-      this.loading = true;
-      this.$api.post(url, formData).then(response => {
+      var user = this.user;
+      var request = {
+        user,
+        name: this.profile.name,
+        email: this.profile.email,
+        phoneNumber: this.profile.phoneNumber,
+        photoPath: this.imageUrl,
+        password: this.user.password
+      };
+      this.$api.put(`api/users/${this.user.id}`, request).then(response => {
         if (response.data.success) {
-          this.showMsg(response.data.message, 'positive');
-          this.getProfileData();
+          this.cancelEdit()
         } else {
           this.showMsg(response.data.message, 'negative');
         }
       }).catch(error => {
         this.loading = false;
         this.showMsg(error.response?.data.message || error.message, 'negative');
-      });
+      })
     },
     cancelEdit() {
-      this.editProfile = {
-        mail: this.profileData.email,
-        fName: this.profileData.firstName,
-        lName: this.profileData.lastName,
-        profile: this.profileData.image,
-        UserType: this.profileData.type,
-      }
-      this.imageUrl = this.editProfile.profile;
+      this.getUserData();
       this.disableEdit = true;
     },
     onChange() {
-      this.editProfile.profile = this.$refs.file.files.length ? this.$refs.file.files[0] : '';
-      if (typeof this.editProfile.profile === 'object') {
-        let fileSrc = URL.createObjectURL(this.editProfile.profile);
+      this.profile.file = this.$refs.file.files.length ? this.$refs.file.files[0] : '';
+      if (typeof this.profile.file === 'object') {
+        let fileSrc = URL.createObjectURL(this.profile.file);
         this.imageUrl = fileSrc;
       }
     },
@@ -223,4 +257,3 @@ export default {
   padding: 8px 16px;
 }
 </style>
-src/pages/dashboard/Urls

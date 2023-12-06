@@ -111,7 +111,9 @@ export default {
           sessionStorage.setItem('userType', 1);
           this.setUserData(response.data.user);
           this.setSessionToken(response.data.accessToken);
-          this.setUserType(response.data.userType || 1);
+          var user = response.data.user;
+          this.setUserType( user.roles?.length ? user.roles[0].id : '' );
+
         }).catch(error => {
           this.loading = false;
           this.showMsg(error.response?.data.message || error.message, 'negative');
