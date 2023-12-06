@@ -163,7 +163,7 @@ export default {
             phoneNumber: user.phoneNumber,
             role: this.user.roles ? this.user.roles[0] : [],
           }
-          this.imageUrl = this.user.photoPath;
+          this.imageUrl = user.photoPath;
         } else {
           this.showMsg(response.data.message, 'negative');
         }
@@ -211,7 +211,7 @@ export default {
         name: this.profile.name,
         email: this.profile.email,
         phoneNumber: this.profile.phoneNumber,
-        photoPath: this.imageUrl,
+        // photoPath: this.imageUrl,
         password: this.user.password
       };
       this.$api.put(`api/users/${this.user.id}`, request).then(response => {

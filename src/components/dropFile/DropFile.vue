@@ -46,7 +46,7 @@ export default {
     onChange() {
       if( this.$refs[this.fileRef].files) {
         var file = this.$refs[this.fileRef].files[0];
-        if( (file.size/1024) >=  Number(this.minSize) && (file.size/1024) <= Number(this.maxSize) ) {
+        // if( (file.size/1024) >=  Number(this.minSize) && (file.size/1024) <= Number(this.maxSize) ) {
           this.files.push(...this.$refs[this.fileRef].files);
           let incomingFiles = Array.from(this.$refs[this.fileRef].files);
           const fileExist = this.files.some((r) =>
@@ -58,17 +58,17 @@ export default {
             this.files.push(...incomingFiles);
           }
           this.$emit('update', this.files);
-        } else {
-          var minMB = this.minSize < 1024 ? this.minSize : Number(this.minSize)/1024;
-          var minMBType = this.minSize < 1024 ? 'kb' :'mb';
-          var maxMB = this.maxSize < 1024 ? this.maxSize : Number(this.maxSize)/1024;
-          var maxMBType = this.maxSize < 1024 ? 'kb' :'mb';
-          var fileSize = parseFloat(file.size/1024).toFixed(2);
-          var fileSizeType = fileSize < 1024 ? 'kb' :'mb';
-          var message = `Please upload file between ${minMB}${minMBType} - ${maxMB}${maxMBType} and your file size is ${fileSize}${fileSizeType}.`;
-          this.showMsg(message, 'negative');
-          this.$refs[this.fileRef].files.value = '';
-        }
+        // } else {
+        //   var minMB = this.minSize < 1024 ? this.minSize : Number(this.minSize)/1024;
+        //   var minMBType = this.minSize < 1024 ? 'kb' :'mb';
+        //   var maxMB = this.maxSize < 1024 ? this.maxSize : Number(this.maxSize)/1024;
+        //   var maxMBType = this.maxSize < 1024 ? 'kb' :'mb';
+        //   var fileSize = parseFloat(file.size/1024).toFixed(2);
+        //   var fileSizeType = fileSize < 1024 ? 'kb' :'mb';
+        //   var message = `Please upload file between ${minMB}${minMBType} - ${maxMB}${maxMBType} and your file size is ${fileSize}${fileSizeType}.`;
+        //   this.showMsg(message, 'negative');
+        //   this.$refs[this.fileRef].files.value = '';
+        // }
       }
     },
     dragover(e) {

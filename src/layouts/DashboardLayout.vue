@@ -215,8 +215,8 @@ export default {
       userName: 'Sandeep Perikala',
 
       adminAccess: ["admin", "labs", "library", "reports"],
-      studentsAccess: ["labs", "library", "reports"],
-      facultyAccess: ["labs", "library", "reports"],
+      studentsAccess: ["admin","labs", "library", "reports"],
+      facultyAccess: [ "labs", "library", "reports"],
     }
   },
   computed: {
