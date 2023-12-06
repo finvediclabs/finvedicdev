@@ -4,6 +4,7 @@ const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
 export const useProfileStore = defineStore('profile', {
   state: () => ({
     profile: null,
+    user: sessionStorage.getItem('profile') ?  JSON.parse(sessionStorage.getItem('profile')) : null,
   }),
   getters: {
 
@@ -14,5 +15,9 @@ export const useProfileStore = defineStore('profile', {
         this.profile = response.data.data;
       })
     },
+    setUserData(user) {
+      sessionStorage.setItem('profile', JSON.stringify(user));
+      this.user = user;
+    }
   },
 });

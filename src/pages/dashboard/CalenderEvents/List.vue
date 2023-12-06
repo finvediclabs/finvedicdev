@@ -22,6 +22,8 @@ import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 import FinTable from "src/components/FinTable.vue"
 // import { inject } from 'vue'
+import moment from "moment"
+import { urls } from "src/pages/dashboard/Urls";
 import CryptoJS from 'crypto-js'
 export default {
   components: {
@@ -49,12 +51,37 @@ export default {
     this.getEventsData();
   },
   methods: {
+    showMsg(message, type) {
+      this.$q.notify({
+        message: message || "Something Went Wrong!",
+        type: type,
+        position: 'top-right',
+        actions: [
+          { icon: 'close', color: 'white', handler: () => { } }
+        ]
+      });
+    },
     getEventsData() {
-      var events = localStorage.getItem('events') ? JSON.parse(localStorage.getItem('events')) : [];
-      this.events = events.map((v, i) => ({ ...v, index: i + 1 }));
+      this.loading = true;
+      this.$api.get(urls.getEvents).then(response => {
+        this.loading = false;
+        if (response.data.success) {
+          this.events = response.data.data.map((item, index) => ({ ...item, createdAt: moment(item.createdAt).format('YYYY-MM-DD'), index: index + 1 }));
+        } else {
+          this.showMsg(response.data?.message, 'negative');
+        }
+      }).catch(error => {
+        this.loading = false;
+        this.showMsg(error.response?.data.message || error.message, 'negative');
+      })
+
+
+      // var events = localStorage.getItem('events') ? JSON.parse(localStorage.getItem('events')) : [];
+      // this.events = events.map((v, i) => ({ ...v, index: i + 1 }));
     },
     editDataFun(val) {
       let params = JSON.stringify(val);
+      console.log(val);
       this.$router.push({
         path: 'class-room/create',
         query: {

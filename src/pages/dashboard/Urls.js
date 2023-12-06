@@ -7,5 +7,7 @@ export const urls = {
   bookChaptersUrl: 'api/bookChapters',
   videoChaptersUrl: 'api/videoChapters',
   presentationsUrl: 'api/presentations',
-  presentationChapterUrl: 'api/presentationChapters'
+  presentationChapterUrl: 'api/presentationChapters',
+
+  getEvents: 'api/calendarEvents',
 }

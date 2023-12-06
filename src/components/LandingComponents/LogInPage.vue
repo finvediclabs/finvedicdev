@@ -39,17 +39,21 @@ import AccountLogIn from "./AccountLogIn.vue";
 import { urls } from "./Urls"
 import { storeToRefs } from "pinia";
 import { useSessionStore } from "src/stores/session";
+import { useProfileStore } from "src/stores/profile";
 export default {
   name: 'login-page',
   setup() {
     const session = useSessionStore();
     const { token, userType } = storeToRefs(session);
     const { setSessionToken, setUserType } = session;
+    const profileStore  = useProfileStore();
+    const { setUserData } = profileStore;
     return {
       setSessionToken,
       setUserType,
       token,
-      userType
+      userType,
+      setUserData
     }
   },
   components: {
@@ -103,14 +107,11 @@ export default {
           password: this.password,
         }).then(response => {
           this.loading = false;
-          // if (response.data.success) {
-            sessionStorage.setItem('accessToken', response.data.accessToken);
-            sessionStorage.setItem('userType', 1);
-            this.setSessionToken(response.data.accessToken);
-            this.setUserType(response.data.userType || 1);
-          // } else {
-            // this.showMsg(response.data.message || "Something Went Wrong!");
-          // }
+          sessionStorage.setItem('accessToken', response.data.accessToken);
+          sessionStorage.setItem('userType', 1);
+          this.setUserData(response.data.user);
+          this.setSessionToken(response.data.accessToken);
+          this.setUserType(response.data.userType || 1);
         }).catch(error => {
           this.loading = false;
           this.showMsg(error.response?.data.message || error.message, 'negative');

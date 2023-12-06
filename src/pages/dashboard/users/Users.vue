@@ -10,13 +10,13 @@
           dense />
       </fin-portlet-item>
       <fin-portlet-item>
-        <q-btn label="Add User" dense color="blue-15" class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder"
-          no-caps @click="createUser()" />
+        <q-btn label="Add User" dense color="blue-15" class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder" no-caps
+          @click="createUser()" />
       </fin-portlet-item>
     </fin-portlet-header>
     <fin-portlet-item class="table-scroll">
       <fin-table :columns="header" :data="usersList" select @reCall="getUsersData()" allowDelete :delete-url="deleteUrl"
-        @editFun="editDataFun" :loading="loading"/>
+        @editFun="editDataFun" :loading="loading" />
     </fin-portlet-item>
   </fin-portlet>
 
@@ -28,14 +28,14 @@
       <fin-portlet-item class="w-100 createUserDialog">
         <q-form @submit="onSubmit" class="formContent" ref="form">
           <div class="row justify-center">
-            <div class="col-12 col-md-6 q-px-sm q-py-xs">
-              <q-input outlined v-model="user.fName" label="First Name *" lazy-rules
-                :rules="[val => val && val.length > 0 || 'First Name Is required']" />
+            <div class="col-12 col-md-12 q-px-sm q-py-xs">
+              <q-input outlined v-model="user.name" label="Name *" lazy-rules
+                :rules="[val => val && val.length > 0 || 'Name Is required']" />
             </div>
-            <div class="col-12 col-md-6 q-px-sm q-py-xs">
+            <!-- <div class="col-12 col-md-6 q-px-sm q-py-xs">
               <q-input outlined v-model="user.lName" label="Last Name *" lazy-rules
                 :rules="[val => val && val.length > 0 || 'Last Name Is required']" />
-            </div>
+            </div> -->
             <div class="col-12  q-px-sm q-py-xs">
               <q-input outlined v-model="user.mail" type="email" label="Email *" lazy-rules
                 :rules="[val => val && val.length > 0 || 'Email Is required']" />
@@ -99,7 +99,7 @@ export default {
       ownerOptions: ['position-1', 'position-2', 'position-3', 'position-4'],
       header: [
         { label: 'S.No', key: 'index', align: 'center' },
-        { label: 'Name', key: 'firstName', align: 'start' },
+        { label: 'Name', key: 'name', align: 'start' },
         { label: 'Email Address', key: 'email', align: 'center' },
         { label: 'Role', key: 'owner', align: 'center' },
         { label: 'Date Added', key: 'createdAt', align: 'center' },
@@ -107,12 +107,13 @@ export default {
       usersList: [],
       submitLoading: false,
       user: {
-        fName: '',
+        name: '',
         lName: '',
         mail: '',
         Number: '',
         role: '',
         id: '',
+        password: ''
       }
     }
   },
@@ -147,7 +148,7 @@ export default {
       this.$api.get(urls.usersUrl).then(response => {
         this.loading = false;
         if (response.data.success) {
-          this.usersList = response.data.data.map((item, index) =>({ ...item, createdAt: moment(item.createdAt).format('YYYY-MM-DD') , index: index + 1 }));
+          this.usersList = response.data.data.map((item, index) => ({ ...item, createdAt: moment(item.createdAt).format('YYYY-MM-DD'), index: index + 1 }));
         } else {
           this.showMsg(response.data?.message, 'negative');
         }
@@ -169,8 +170,7 @@ export default {
       this.submitLoading = true;
       let request = {
         accountId: this.profile?.id,
-        firstName: this.user.fName,
-        lastName: this.user.lName,
+        name: this.user.name,
         email: this.user.mail,
         phoneNumber: this.user.Number,
         role: this.user.role,
@@ -193,19 +193,19 @@ export default {
       this.submitLoading = true;
       let request = {
         accountId: this.profile?.id,
-        firstName: this.user.fName,
-        lastName: this.user.lName,
+        name: this.user.name,
         email: this.user.mail,
         phoneNumber: this.user.Number,
         role: this.user.role,
         id: this.user.id,
-        password: "Welcome@123",
+        password: this.user.password,
       };
-      this.$api.put(urls.usersUrl, request).then(response => {
+      this.$api.put(`${urls.usersUrl}/${this.user.id}`, request).then(response => {
         this.submitLoading = false;
         if (response.data.success) {
           this.showMsg(response.data?.message, 'positive');
           this.getUsersData();
+          this.closeCreateUserDialog();
         } else {
           this.showMsg(response.data?.message, 'negative');
         }
@@ -220,12 +220,13 @@ export default {
     },
     editDataFun(val) {
       this.user = {
-        fName: val.firstName,
+        name: val.name,
         lName: val.lastName,
         mail: val.email,
         Number: val.phoneNumber,
         role: val.owner,
         id: val.id,
+        password: val.password
       };
       this.createUserDialog = true;
     }

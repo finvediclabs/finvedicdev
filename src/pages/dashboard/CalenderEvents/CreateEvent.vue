@@ -47,7 +47,7 @@
             <div class="col-12 q-px-sm">
               <label class="form-label">Course</label>
               <q-select v-model="course" class="q-px-md rounded-borders inputBackground" borderless
-                :options="['title-1', 'title-2']" />
+                :options="courseOptions" option-label="categoryName" option-value="categoryName" />
               <div class="errorMsgBox">
                 <span v-if="errors.course && !course">{{ errors.course }}</span>
               </div>
@@ -86,7 +86,24 @@ import DatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 import moment from "moment";
 import CryptoJS from 'crypto-js'
+import { urls } from "src/pages/dashboard/Urls";
+
+import { useProfileStore } from "src/stores/profile";
+import { storeToRefs } from "pinia";
+import { useCategoryStore } from "src/stores/Categories";
 export default {
+  setup() {
+    const profileStore = useProfileStore();
+    const { profile, user } = storeToRefs(profileStore);
+    const categoryStore = useCategoryStore();
+    const { categories, subCategories } = storeToRefs(categoryStore);
+    return {
+      user,
+      profile,
+      categories,
+      subCategories
+    }
+  },
   components: {
     FinPortlet,
     FinPortletHeader,
@@ -103,7 +120,22 @@ export default {
       title: '',
       link: '',
       errors: {},
-      index: '',
+      editedEvent: {}
+    }
+  },
+  computed: {
+    courseOptions() {
+      var courses = [];
+      this.categories.forEach(item => {
+        if (this.subCategories[item.id]) {
+          this.subCategories[item.id].forEach(item => {
+            courses.push(item.subCategoryName)
+          });
+        } else {
+          courses.push(item.categoryName)
+        }
+      });
+      return courses;
     }
   },
   mounted() {
@@ -119,7 +151,7 @@ export default {
       this.course = editedEvent.course;
       this.title = editedEvent.title;
       this.link = editedEvent.link;
-      this.index = editedEvent.index;
+      this.editedEvent = editedEvent;
     }
   },
   methods: {
@@ -141,7 +173,7 @@ export default {
     },
     validateForm() {
       if (this.date && this.startTime && this.endTime && this.course && this.title && this.link) {
-        this.createEvent();
+        this.editedEvent ? this.updateEvent() : this.createEvent();
       } else {
         this.errors = {
           date: "Date is required",
@@ -154,24 +186,70 @@ export default {
       }
     },
     createEvent() {
-      let events = localStorage.getItem('events') ? JSON.parse(localStorage.getItem('events')) : [];
-      let event = {
+      var request = {
+        accountId: null,
+        course: this.course,
+        title: this.title,
+        createdBy: this.user.name,
+        lastUpdatedBy: this.user.name,
         date: moment(this.date).format('YYYY-MM-DD'),
         start: `${this.getTwoDigits(this.startTime.hours)}:${this.getTwoDigits(this.startTime.minutes)}`,
         end: `${this.getTwoDigits(this.endTime.hours)}:${this.getTwoDigits(this.endTime.minutes)}`,
+        link: this.link,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      }
+
+      this.$api.post(urls.getEvents, request).then(response => {
+        this.loading = false;
+        if (response.data.success) {
+          this.showMsg(response.data?.message || 'Event Created Successfully', 'positive');
+          this.clearData();
+          this.$router.go(-1);
+        } else {
+          this.showMsg(response.data?.message, 'negative');
+        }
+      }).catch(error => {
+        this.loading = false;
+        var message = error.response?.data.message || error.response?.data.message || 'Something went wrong!';
+        this.showMsg(message || error.message, 'negative');
+      });
+    },
+
+    updateEvent() {
+      var request = {
+        id: this.editedEvent.id,
+        accountId: null,
         course: this.course,
         title: this.title,
+        createdBy: this.editedEvent.createdBy,
+        lastUpdatedBy: this.user.name,
+        date: moment(this.date).format('YYYY-MM-DD'),
+        start: `${this.getTwoDigits(this.startTime.hours)}:${this.getTwoDigits(this.startTime.minutes)}`,
+        end: `${this.getTwoDigits(this.endTime.hours)}:${this.getTwoDigits(this.endTime.minutes)}`,
         link: this.link,
-      };
-      if (this.index) {
-        events[this.index - 1] = event;
-      } else {
-        events.push(event);
+        createdAt: this.editedEvent.createdAt,
+        deletedAt: null,
+        updatedAt: new Date(),
       }
-      localStorage.setItem('events', JSON.stringify(events));
-      this.showMsg("Event Added Successfully", 'positive');
-      this.clearData();
+
+      this.$api.put(`${urls.getEvents}/${this.editedEvent.id}`, request).then(response => {
+        this.loading = false;
+        if (response.data.success) {
+          this.showMsg(response.data?.message || 'Event Updated Successfully', 'positive');
+          this.clearData();
+          this.$router.go(-1);
+        } else {
+          this.showMsg(response.data?.message, 'negative');
+        }
+      }).catch(error => {
+        this.loading = false;
+        var message = error.response?.data.message || error.response?.data.message || 'Something went wrong!';
+        this.showMsg(message || error.message, 'negative');
+      });
     },
+
     getTwoDigits(myNumber) {
       return myNumber.toLocaleString('en-US', {
         minimumIntegerDigits: 2,
