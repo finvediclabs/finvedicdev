@@ -142,7 +142,7 @@ export default {
         if (response.data.success) {
           let events = response.data.data;
           this.events = events.map(event => (
-            { 
+            {
               ...event,
               start: `${event.date} ${event.start}`,
               end: `${event.date} ${event.end}`,

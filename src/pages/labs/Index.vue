@@ -10,7 +10,7 @@
             <q-card class="full-width shadow-8" style="border-radius: 10px!important;">
               <q-card-section horizontal :style="{ border: lab.locked ? '2px solid #FF7F50' : '2px solid #00C520' }">
                 <q-card-section class="q-pa-md lab-img flex items-center">
-                  <q-img :src="labImg" class="full-width"></q-img>
+                  <q-img :src="labImg" class="full-width"/>
                 </q-card-section>
                 <q-card-section class="" style="width: 70%;font-size: 13px;">
                   <div class="column full-width">

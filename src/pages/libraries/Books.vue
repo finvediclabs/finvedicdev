@@ -29,7 +29,7 @@
       <carousel-3d :totalSlides="booksData.length" :count="booksData.length" @beforeSlideChange="getCurrentSlide"
         :controls-visible="true" width="270" height="360" display="7" >
         <slide v-for="(slide, i) in booksData" :key="i" :index="i">
-          <q-img :src="slide.imagePath ?? 'dummy'" class="fit" :alt="slide.heading">
+          <q-img :src="slide.imagePath ?? 'dummy'" class="fit" :alt="slide.heading" >
             <template v-slot:error>
               <q-img :src="DummyBook" class="full-width full-height" />
             </template>
@@ -49,7 +49,7 @@
             <div class="col-12 col-sm-6 col-md-5 row justify-center">
               <q-avatar style="width:250px; height: 300px" square>
                 <q-img :src="selectedSlide?.imagePath ?? 'dummy'" class="fin-br-8 fit" style="border:1px solid #00000030"
-                  :alt="selectedSlide?.heading">
+                  :alt="selectedSlide?.heading" >
                   <template v-slot:error>
                     <q-img :src="DummyBook" class="fit" />
                   </template>
@@ -148,6 +148,7 @@ import moment from "moment"
 import { useCategoryStore } from "src/stores/Categories";
 import DummyBook from "src/assets/dummyBook.jpg"
 import samplePDF from "src/assets/sample.pdf"
+import CryptoJS from 'crypto-js'
 export default {
   setup() {
     const categoryStore = useCategoryStore();
@@ -286,7 +287,7 @@ export default {
       this.$router.push({
         path: url,
         query: {
-          item: item
+          item:  CryptoJS.AES.encrypt(item, 'fileData').toString()
         }
       })
     }

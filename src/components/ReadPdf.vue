@@ -4,7 +4,7 @@
       <fin-portlet-heading backArrow></fin-portlet-heading>
     </fin-portlet-header>
     <fin-portlet-item>
-      <vue-pdf-embed :source="pdfPath" >
+      <vue-pdf-embed :source="pdfPath">
         <template v-slot:before-page>
           <div class="row bg-dark">
             <q-separator dark />
@@ -13,7 +13,7 @@
         <template v-slot:after-page>
           <div class="row text-center">
             <q-space />
-            Organized By Sandy
+            <span style="display: none">Organized By Sandy</span>
           </div>
         </template>
       </vue-pdf-embed>
@@ -27,6 +27,7 @@ import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 import VuePdfEmbed from 'vue-pdf-embed'
+import CryptoJS from 'crypto-js'
 export default {
   name: 'read-pdf',
   data() {
@@ -43,7 +44,7 @@ export default {
     FinPortletItem,
   },
   mounted() {
-    this.pdfPath = this.$route.query.item;
+    this.pdfPath = CryptoJS.AES.decrypt(this.$route.query.item, 'fileData').toString(CryptoJS.enc.Utf8);
   },
   methods: {
   }

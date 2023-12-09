@@ -12,7 +12,7 @@
         <div class="col-12 col-md-3 text-center q-pb-lg column justify-center items-center">
           <q-avatar size="200px" style="background: #FF7F50"
             :class="{ 'rounded-borders': editProfile.profileBg == 'square' }" :square="editProfile.profileBg == 'square'">
-            <q-img :src="imageUrl" class="fit"></q-img>
+            <q-img :src="imageUrl" class="fit" />
           </q-avatar>
           <div class="q-mt-md" v-if="!disableEdit">
             <label for="fileInput" class="profile-label">
@@ -211,7 +211,7 @@ export default {
         name: this.profile.name,
         email: this.profile.email,
         phoneNumber: this.profile.phoneNumber,
-        // photoPath: this.imageUrl,
+        photoPath: this.imageUrl,
         password: this.user.password
       };
       this.$api.put(`api/users/${this.user.id}`, request).then(response => {

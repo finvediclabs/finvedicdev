@@ -145,6 +145,7 @@ import { storeToRefs } from "pinia";
 import { useCategoryStore } from "src/stores/Categories";
 import moment from "moment";
 import DummyBook from "src/assets/dummyBook.jpg"
+import CryptoJS from 'crypto-js'
 export default {
   setup() {
     const categoryStore = useCategoryStore();
@@ -278,11 +279,11 @@ export default {
     },
     visitChapter(chapter) {
       let url = '/watch-video';
-      let item = chapter.presentationFilePath ?? "https://youtu.be/VCtVrJLNR1c?si=O1pOuQo1s6492Qh-";
+      let item = chapter.presentationFilePath;
       this.$router.push({
         path: url,
         query: {
-          item: item
+          item:  CryptoJS.AES.encrypt(item, 'fileData').toString()
         }
       })
     }

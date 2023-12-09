@@ -45,8 +45,8 @@
                 :rules="[val => val && val.length > 0 || 'Phone Number Is required']" />
             </div>
             <div class="col-12 q-px-sm q-py-xs">
-              <q-select outlined v-model="user.role" :options="ownerOptions" label="Owner *" lazy-rules
-                :rules="[val => val && val.length > 0 || 'Select option']" />
+              <q-select outlined v-model="user.role" :options="roles" label="Owner *" lazy-rules
+                :rules="[val => val || 'Select option']"  option-label="name"/>
             </div>
             <div class="col-12 col-md-6 q-px-sm q-py-xs text-center q-pt-lg"></div>
             <div class="col-12 col-md-6 q-px-sm q-py-xs text-right q-pt-lg">
@@ -71,12 +71,17 @@ import { urls } from "src/pages/dashboard/Urls";
 import moment from "moment"
 import { useProfileStore } from "src/stores/profile";
 import { storeToRefs } from "pinia";
+import { useRolesStore } from "src/stores/roles"
+
 export default {
   setup() {
     const profileStore = useProfileStore();
     const { profile } = storeToRefs(profileStore);
+    const rolesStore = useRolesStore();
+    const { roles } = storeToRefs(rolesStore);
     return {
-      profile
+      profile,
+      roles
     }
   },
   components: {
@@ -179,8 +184,9 @@ export default {
       this.$api.post(urls.usersUrl, request).then(response => {
         this.submitLoading = false;
         if (response.data.success) {
-          this.showMsg(response.data?.message, 'positive');
+          this.showMsg(response.data?.message || 'new User created', 'positive');
           this.getUsersData();
+          this.closeCreateUserDialog();
         } else {
           this.showMsg(response.data?.message, 'negative');
         }

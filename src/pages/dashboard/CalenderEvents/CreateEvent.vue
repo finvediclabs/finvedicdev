@@ -173,7 +173,7 @@ export default {
     },
     validateForm() {
       if (this.date && this.startTime && this.endTime && this.course && this.title && this.link) {
-        this.editedEvent ? this.updateEvent() : this.createEvent();
+        this.editedEvent?.id ? this.updateEvent() : this.createEvent();
       } else {
         this.errors = {
           date: "Date is required",

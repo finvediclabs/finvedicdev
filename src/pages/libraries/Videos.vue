@@ -89,11 +89,11 @@
                   <template v-if="chapters.length">
                     <q-carousel-slide v-for="(slider, i) in allSlides" :name="i" class="items-end q-pa-none">
                       <div class="row full-height">
-                        <div class="col-6 fin-br-8 q-px-sm" style="height:110px" v-for="chapter in slider">
-                          <q-img class="full-height fin-br-8 shadow-2 cursor-pointer "
-                            :src="chapter.videoCoverPath ?? 'dummy'" @click="visitChapter(chapter)">
+                        <div class="col-6 fin-br-8 q-px-sm" style="height:110px" v-for="item in slider">
+                          <q-img class="full-height fin-br-8 shadow-2 cursor-pointer"
+                            :src="item.videoFilePath ?? 'dummy'" @click="visitChapter(item)">
                             <template v-slot:error>
-                              <q-img :src="chapter.videoCoverPath" class="full-height full-width" />
+                              <q-img :src="DummyBook" class="full-height full-width"  />
                             </template>
                           </q-img>
                         </div>
@@ -134,6 +134,8 @@ import { storeToRefs } from "pinia";
 import { useCategoryStore } from "src/stores/Categories";
 import DummyBook from "src/assets/dummyBook.jpg"
 import moment from "moment"
+import CryptoJS from 'crypto-js'
+import ViewJs from "src/components/viewjs.vue"
 export default {
   setup() {
     const categoryStore = useCategoryStore();
@@ -148,6 +150,7 @@ export default {
     FinPortletHeader,
     FinPortletHeading,
     FinPortletItem,
+    ViewJs
   },
   data() {
     return {
@@ -160,6 +163,20 @@ export default {
       allSlides: [],
       chaptersLoader: false,
       loading: false
+    }
+  },
+  computed: {
+    selectedVideoData() {
+      return {
+        allowFullScreen: true,
+        preload: 'auto',
+        sources: [
+          {
+            url: this.selectedSlide?.videoCoverPath,
+            type: 'video/mp4'
+          },
+        ]
+      }
     }
   },
   watch: {
@@ -268,11 +285,11 @@ export default {
     },
     visitChapter(chapter) {
       let url = '/watch-video';
-      let item = chapter.videoFilePath ?? "https://www.youtube.com/embed/Kaujug-JkDQ?si=i9bedPKDy5c5WEpd";
+      let item = chapter.videoFilePath;
       this.$router.push({
         path: url,
         query: {
-          item: item
+          item: CryptoJS.AES.encrypt(item, 'fileData').toString()
         }
       })
     }
