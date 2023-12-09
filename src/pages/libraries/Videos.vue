@@ -257,7 +257,7 @@ export default {
               description: chapter.description,
               chapterTitle: chapter.chapterTitle,
               videoCoverPath: chapter.videoCoverPath,
-              videoFilePath: chapter.chaptervideoFilePath,
+              videoFilePath: chapter.videoFilePath,
               createdAt: moment(chapter.createdAt).format('YYYY-MM-DD'),
               updatedAt: moment(chapter.updatedAt).format('YYYY-MM-DD'),
               deletedAt: moment(chapter.deletedAt).format('YYYY-MM-DD')
