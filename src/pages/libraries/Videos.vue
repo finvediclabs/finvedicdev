@@ -30,7 +30,7 @@
       <carousel-3d :totalSlides="VideosList.length" :count="VideosList.length" @beforeSlideChange="getCurrentSlide"
         :controls-visible="true">
         <slide v-for="(slide, i) in VideosList" :key="i" :index="i">
-          <q-img :src="slide.imagePath ?? 'dummy'" class="fit" :alt="slide.heading">
+          <q-img :src="slide.videoCoverPath ?? 'dummy'" class="fit" :alt="slide.heading">
             <template v-slot:error>
               <q-img :src="DummyBook" class="full-height full-width" />
             </template>
@@ -47,7 +47,7 @@
     <fin-portlet>
       <div class="row">
         <div class="col-12 col-md-5 q-pt-lg q-px-lg">
-          <q-video :src="selectedSlide.videoCoverPath" :ratio="16 / 9" class="fin-br-8 shadow-1" />
+          <q-img :src="selectedSlide.videoCoverPath" :ratio="16 / 9" class="fin-br-8 shadow-1" />
           <fin-portlet-heading class="q-pa-md" small>
             {{ selectedSlide?.heading }}
             <br>
@@ -89,11 +89,11 @@
                   <template v-if="chapters.length">
                     <q-carousel-slide v-for="(slider, i) in allSlides" :name="i" class="items-end q-pa-none">
                       <div class="row full-height">
-                        <div class="col-6 fin-br-8 q-px-sm" style="height:110px" v-for="item in slider">
+                        <div class="col-6 fin-br-8 q-px-sm" style="height:110px" v-for="chapter in slider">
                           <q-img class="full-height fin-br-8 shadow-2 cursor-pointer "
-                            :src="item.videoFilePath ?? 'dummy'" @click="visitChapter(item)">
+                            :src="chapter.videoCoverPath ?? 'dummy'" @click="visitChapter(chapter)">
                             <template v-slot:error>
-                              <q-img :src="DummyBook" class="full-height full-width" />
+                              <q-img :src="chapter.videoCoverPath" class="full-height full-width" />
                             </template>
                           </q-img>
                         </div>
@@ -231,8 +231,21 @@ export default {
       }).then(response => {
         this.chaptersLoader = false;
         if (response.data.success) {
-          this.chapters = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));
-          this.getDummyChapters(this.chapters);
+          this.chapters = response.data.data.map((chapter, index) => {
+            return {
+              index: index + 1,
+              id: chapter.id,
+              videoId: chapter.videoId,
+              accountId: chapter.accountId,
+              description: chapter.description,
+              chapterTitle: chapter.chapterTitle,
+              videoCoverPath: chapter.videoCoverPath,
+              videoFilePath: chapter.chaptervideoFilePath,
+              createdAt: moment(chapter.createdAt).format('YYYY-MM-DD'),
+              updatedAt: moment(chapter.updatedAt).format('YYYY-MM-DD'),
+              deletedAt: moment(chapter.deletedAt).format('YYYY-MM-DD')
+            }
+          });this.getDummyChapters(this.chapters);
         } else {
           this.showMsg(response.data?.message, 'negative');
         }

@@ -101,11 +101,11 @@
                   <template v-if="chaptersData.length">
                     <q-carousel-slide v-for="(slider, i) in allSlides" :name="i" class="items-end q-pa-none">
                       <div class="row full-height">
-                        <div class="col-4 q-px-sm full-height" v-for="item in slider">
+                        <div class="col-4 q-px-sm full-height" v-for="chapter in slider">
                           <q-img class="full-height rounded-borders shadow-2 cursor-pointer"
-                            :src="item.chapterImagePath ?? 'dummy'" @click="visitChapter(item)">
+                            :src="chapter.chapterImagePath ?? 'dummy'" @click="visitChapter(chapter)">
                             <template v-slot:error>
-                              <q-img :src="DummyBook" class="fit" />
+                              <q-img :src="chapter.chapterImagePath" class="fit" />
                             </template>
                           </q-img>
                         </div>
@@ -252,7 +252,7 @@ export default {
               accountId: chapter.accountId,
               description: chapter.description,
               chapterTitle: chapter.chapterTitle,
-              chapterImagePath: chapter.firstchapterImagePath,
+              chapterImagePath: chapter.chapterImagePath,
               chapterFilePath: chapter.chapterFilePath,
               createdAt: moment(chapter.createdAt).format('YYYY-MM-DD'),
               updatedAt: moment(chapter.updatedAt).format('YYYY-MM-DD'),
@@ -282,7 +282,7 @@ export default {
     },
     visitChapter(chapter) {
       let url = '/read-pdf';
-      let item = samplePDF;
+      let item =chapter.chapterFilePath;
       this.$router.push({
         path: url,
         query: {

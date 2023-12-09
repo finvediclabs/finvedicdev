@@ -100,12 +100,12 @@ export default {
         title: title ?? 'Create Chapter',
         url: item?.id ? `${urls.videoChaptersUrl}/${item.id}` : urls.videoChaptersUrl,
         item: item,
+        videoId: this.videoId,
         chapter: true,
         requiredCategory: false,
         parentKey: 'videoId',
-        videoId: this.videoId,
+        coverKey: "videoCoverPath",
         fileKey: "videoFilePath",
-        coverRequired: false,
         fileAccept: "video/mp4,video/x-m4v,video/*",
       };
       params = JSON.stringify(params);

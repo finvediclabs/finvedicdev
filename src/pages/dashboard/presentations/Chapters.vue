@@ -34,7 +34,7 @@ export default {
       deleteUrl: urls.presentationChapterUrl,
       header: [
         { label: 'S.No', key: 'index', align: 'center' },
-        { label: 'Cover', key: 'chapterImagePath', align: 'start', type: 'image' },
+        { label: 'Cover', key: 'presentationCoverPath', align: 'start', type: 'image' },
         { label: 'Title', key: 'chapterTitle', align: 'start', width: '150px' },
         { label: 'Description', key: 'description', align: 'start', width: '250px' },
       ],
@@ -104,7 +104,7 @@ export default {
         requiredCategory: false,
         parentKey: 'presentationId',
         fileKey: "presentationFilePath",
-        coverRequired: false,
+        coverKey: "presentationCoverPath",
         fileAccept: ".doc, .docx,.ppt, .pptx, .pdf",
       };
       params = JSON.stringify(params);

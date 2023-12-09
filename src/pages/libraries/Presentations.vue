@@ -30,7 +30,7 @@
       <carousel-3d :totalSlides="presentations.length" :count="presentations.length" @beforeSlideChange="getCurrentSlide"
         :controls-visible="true">
         <slide v-for="(slide, i) in presentations" :key="i" :index="i">
-          <q-img :src="slide.imagePath ?? 'dummy'" class="fit" :alt="slide.heading">
+          <q-img :src="slide.videoCoverPath ?? 'dummy'" class="fit" :alt="slide.heading">
             <template v-slot:error>
               <q-img :src="DummyBook" class="full-height full-width" />
             </template>
@@ -49,7 +49,7 @@
           <div class="row">
             <div class="col-12 col-md-5 row justify-center">
               <q-avatar style="width:250px; height: 300px" square>
-                <q-img :src="selectedSlide?.imagePath ?? 'dummy'" class="fin-br-8 fit" style="border:1px solid #00000030"
+                <q-img :src="selectedSlide?.videoCoverPath ?? 'dummy'" class="fin-br-8 fit" style="border:1px solid #00000030"
                   :alt="selectedSlide?.heading">
                   <template v-slot:error>
                     <q-img :src="DummyBook" class="full-height full-width" />
@@ -99,11 +99,11 @@
                   <template v-if="chaptersData.length">
                     <q-carousel-slide v-for="(slider, i) in allSlides" :name="i" class="items-end q-pa-none">
                       <div class="row full-height">
-                        <div class="col-6 fin-br-8 q-px-sm" style="height:110px" v-for="item in slider">
+                        <div class="col-6 fin-br-8 q-px-sm" style="height:110px" v-for="chapter in slider">
                           <q-img class="full-height fin-br-8 shadow-2 cursor-pointer "
-                            :src="item.presentationFilePath ?? 'dummy'" @click="visitChapter(item)">
+                            :src="chapter.presentationCoverPath ?? 'dummy'" @click="visitChapter(chapter)">
                             <template v-slot:error>
-                              <q-img :src="DummyBook" class="full-height full-width" />
+                              <q-img :src="chapter.presentationCoverPath" class="full-height full-width" />
                             </template>
                           </q-img>
                         </div>
@@ -241,8 +241,21 @@ export default {
       }).then(response => {
         this.chaptersLoader = false;
         if (response.data.success) {
-          this.chaptersData = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));
-          this.getDummyChapters(this.chaptersData);
+          this.chaptersData = response.data.data.map((chapter, index) => {
+            return {
+              index: index + 1,
+              id: chapter.id,
+              presentationId: chapter.presentationId,
+              accountId: chapter.accountId,
+              description: chapter.description,
+              chapterTitle: chapter.chapterTitle,
+              presentationCoverPath: chapter.presentationCoverPath,
+              presentationFilePath: chapter.presentationFilePath,
+              createdAt: moment(chapter.createdAt).format('YYYY-MM-DD'),
+              updatedAt: moment(chapter.updatedAt).format('YYYY-MM-DD'),
+              deletedAt: moment(chapter.deletedAt).format('YYYY-MM-DD')
+            }
+          });this.getDummyChapters(this.chaptersData);
         } else {
           this.showMsg(response.data?.message, 'negative');
         }
