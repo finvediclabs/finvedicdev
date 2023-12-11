@@ -278,8 +278,8 @@ export default {
       }
     },
     visitChapter(chapter) {
-      let url = '/watch-video';
-      let item = chapter.presentationFilePath;
+      let url = '/watch-ppt';
+      let item = chapter.presentationFilePath ;
       this.$router.push({
         path: url,
         query: {
