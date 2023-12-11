@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": "dev",
+    "baseUrl": ".",
     "paths": {
       "src/*": [
         "src/*"
