@@ -215,14 +215,14 @@ export default {
     },
     getBooksData() {
       this.loading = true;
-      // let request = {
-      //   params: {
-      //     categoryId: this.selectedCategory.id
-      //   }
-      // }
-      // if (this.selectedSubCategory && this.selectedCategory?.id == this.selectedSubCategory?.categoryCode) {
-      //   request.params.subCategoryId = this.selectedSubCategory.id;
-      // }
+       let request = {
+        params: {
+          categoryId: this.selectedCategory.id
+         }
+       }
+       if (this.selectedSubCategory && this.selectedCategory?.id == this.selectedSubCategory?.categoryCode) {
+         request.params.subCategoryId = this.selectedSubCategory.id;
+       }
       this.$api.get(urls.getBooksDataUrl).then(response => {
         this.loading = false;
         if (response.data.success) {

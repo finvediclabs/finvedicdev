@@ -5,10 +5,13 @@
     </fin-portlet-header>
     <fin-portlet-item>
       <vue-pdf-embed :source="pdfPath">
+        
         <template v-slot:before-page>
           <div class="row bg-dark">
             <q-separator dark />
+            
           </div>
+          
         </template>
         <template v-slot:after-page>
           <div class="row text-center">

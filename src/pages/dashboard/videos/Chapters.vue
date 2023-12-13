@@ -34,7 +34,7 @@ export default {
       deleteUrl: urls.videoChaptersUrl,
       header: [
         { label: 'S.No', key: 'index', align: 'center' },
-        { label: 'Cover', key: 'videoFilePath', align: 'start', type: 'image' },
+        { label: 'Cover', key: 'videoCoverPath', align: 'start', type: 'image' },
         { label: 'Title', key: 'chapterTitle', align: 'start', width: '150px' },
         { label: 'Description', key: 'description', align: 'start', width: '250px' },
       ],

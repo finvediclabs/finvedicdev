@@ -91,7 +91,7 @@
                       <div class="row full-height">
                         <div class="col-6 fin-br-8 q-px-sm" style="height:110px" v-for="item in slider">
                           <q-img class="full-height fin-br-8 shadow-2 cursor-pointer"
-                            :src="item.videoFilePath ?? 'dummy'" @click="visitChapter(item)">
+                            :src="item.videoCoverPath ?? 'dummy'" @click="visitChapter(item)">
                             <template v-slot:error>
                               <q-img :src="DummyBook" class="full-height full-width"  />
                             </template>
@@ -220,12 +220,12 @@ export default {
       this.loading = true;
       let request = {
         params: {
-          categoryId: this.selectedCategory.id
+          categoryId: this.selectCategory.id
         }
       }
-      if (this.selectedSubCategory && this.selectedCategory?.id == this.selectedSubCategory?.categoryCode) {
-        request.params.subCategoryId = this.selectedSubCategory.id;
-      }
+      //if (this.selectedSubCategory && this.selectedCategory?.id == this.selectedSubCategory?.categoryCode) {
+       // request.params.subCategoryId = this.selectedSubCategory.id;
+      //}
       this.$api.get(urls.getVideosUrl, request).then(response => {
         this.loading = false;
         if (response.data.success) {
@@ -248,7 +248,7 @@ export default {
       }).then(response => {
         this.chaptersLoader = false;
         if (response.data.success) {
-          this.chapters = response.data.data.map((chapter, index) => {
+          this.chapters = response.data.data.map((item,chapter,index) => {
             return {
               index: index + 1,
               id: chapter.id,
@@ -256,7 +256,7 @@ export default {
               accountId: chapter.accountId,
               description: chapter.description,
               chapterTitle: chapter.chapterTitle,
-              videoCoverPath: chapter.videoCoverPath,
+              videoCoverPath: item.videoCoverPath,
               videoFilePath: chapter.videoFilePath,
               createdAt: moment(chapter.createdAt).format('YYYY-MM-DD'),
               updatedAt: moment(chapter.updatedAt).format('YYYY-MM-DD'),
