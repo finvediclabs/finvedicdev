@@ -94,7 +94,7 @@
         </q-btn>
 
         <q-avatar class="shadow-4" :size="isMobile ? '40px' : '50px'">
-          <q-img :src="user.photoPath || profileImg" class="profileImg cursor-pointer rounded full-width full-height" />
+          <q-img :src="user?.photoPath || profileImg" class="profileImg cursor-pointer rounded full-width full-height" />
           <q-menu :offset="[-5, 5]" max-width="300px" style="width:230px;background: transparent!important;"
             class="fin-br-8 q-py-md shadow-0" transition-show="flip-right" transition-hide="rotate">
             <div style="background-color: #EAEAEA;opacity:0.99" class="q-py-md shadow-2 fin-br-8">
@@ -124,7 +124,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="drawerLeft" show-if-above :mini="miniState" width="230" breakpoint="900"
+    <q-drawer v-if="showDrawer" v-model="drawerLeft" show-if-above :mini="miniState" width="230" breakpoint="900"
       class="text-white fin-drawer-style shadow-2">
       <q-scroll-area class="fit q-pl-md q-pt-md bg-finvedic q-pt-xl" :horizontal-thumb-style="{ opacity: 0 }">
         <q-list>
@@ -142,12 +142,14 @@
                   </q-item-section>
                 </span>
 
-                <q-expansion-item v-if="module.menu" class="q-pa-none full-width module-select"
+                <q-expansion-item v-if="module.menu" class="q-pa-none full-width module-select" :content-inset-level="0.5"
                   expand-icon-class="text-white" v-model="expand[module.value]" :icon="module.icon" :label="module.label">
                   <q-item v-for="(item, i) in module.menu" :key="item" clickable v-ripple
                     class="module-select q-my-sm q-px-md" :class="getActiveMenuItemClass(module, item)"
                     @click="changeLocation(module, item)">
-                    <q-item-section avatar />
+                    <q-item-section avatar >
+                      <q-icon :name="item.icon" />
+                    </q-item-section>
                     <q-item-section class="text-body2">
                       {{ item.label }}
                     </q-item-section>
@@ -205,7 +207,7 @@ export default {
           icon: 'library_books', label: 'Libraries', value: 'library', menu: [
             { label: "Books", value: 'books', icon: 'menu_book' },
             { label: "Videos", value: "videos", icon: 'switch_video' },
-            { label: "Presentations", value: "presentations", icon: 'switch_video' },
+            { label: "Presentations", value: "presentations", icon: 'newspaper' },
             { label: "Class Room", value: "class-room", icon: 'reduce_capacity' }
           ]
         },
@@ -215,7 +217,7 @@ export default {
       userName: 'Sandeep Perikala',
 
       adminAccess: ["admin", "labs", "library", "reports"],
-      studentsAccess: ["admin","labs", "library", "reports"],
+      studentsAccess: ["admin", "labs", "library", "reports"],
       facultyAccess: [ "labs", "library", "reports"],
     }
   },
@@ -231,6 +233,12 @@ export default {
         userAccess = this.studentsAccess;
       }
       return this.modulesList.filter(mode => userAccess.includes(mode.value) );
+    }
+  },
+  props: {
+    showDrawer: {
+      type: Boolean,
+      default: true
     }
   },
   mounted() {
@@ -365,5 +373,9 @@ export default {
 .mainHeader {
   background: rgba(230, 227, 227, 0.80);
   backdrop-filter: blur(19px);
+}
+
+.q-item__section--avatar {
+  min-width: inherit !important;
 }
 </style>

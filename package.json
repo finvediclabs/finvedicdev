@@ -25,7 +25,8 @@
     "vue-chartjs": "^5.2.0",
     "vue-cryptojs": "^2.4.5",
     "vue-pdf-embed": "^1.2.1",
-    "vue-router": "^4.0.0"
+    "vue-router": "^4.0.0",
+    "vue3-pdf-app": "^1.0.3"
   },
   "devDependencies": {
     "@quasar/app-vite": "^1.3.0",

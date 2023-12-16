@@ -13,7 +13,10 @@ const routes = [
   {
     path: '/',
     meta: { title: 'Reading Pages', module: 'reading' },
-    component: () => import('layouts/MainLayout.vue'),
+    component: () => import('layouts/DashboardLayout.vue'),
+    props:{
+        showDrawer: false,
+    },
     children: [
       {
         path: 'watch-video',
