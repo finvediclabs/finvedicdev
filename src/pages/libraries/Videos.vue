@@ -6,13 +6,14 @@
     <fin-portlet-item>
       <div class="row q-pb-lg">
         <div v-for="category in categories" class="col-12 col-sm-4 q-pa-sm">
-          <q-btn :label="category.categoryName" no-caps v-if="!subCategories[category.id]" class="full-width fin-br-8 shadow-2"
-            size="lg" :class="selectedCategory?.id == category.id ? 'bg-finvedic text-white' : ''"
+          <q-btn :label="category.categoryName" no-caps v-if="!subCategories[category.id]"
+            class="full-width fin-br-8 shadow-2" size="lg"
+            :class="selectedCategory?.id == category.id ? 'bg-finvedic text-white' : ''"
             @click="selectCategory(category)" />
 
           <q-btn-dropdown :label="category.categoryName" no-caps v-if="subCategories[category.id]"
-            class="full-width fin-br-8 shadow-2" :class="{ 'bg-finvedic text-white': selectedCategory?.id === category.id }"
-            size="lg">
+            class="full-width fin-br-8 shadow-2"
+            :class="{ 'bg-finvedic text-white': selectedCategory?.id === category.id }" size="lg">
             <q-list>
               <q-item v-for="subCategory in subCategories[category.id]" clickable v-close-popup
                 @click="selectSubCategory(category, subCategory)"
@@ -28,7 +29,7 @@
     </fin-portlet-item>
     <fin-portlet-item class="q-pb-xl" v-if="VideosList.length">
       <carousel-3d :totalSlides="VideosList.length" :count="VideosList.length" @beforeSlideChange="getCurrentSlide"
-        :controls-visible="true">
+        :controls-visible="true" :width="slideWidth">
         <slide v-for="(slide, i) in VideosList" :key="i" :index="i">
           <q-img :src="slide.videoCoverPath ?? 'dummy'" class="fit" :alt="slide.heading">
             <template v-slot:error>
@@ -93,7 +94,7 @@
                           <q-img class="full-height fin-br-8 shadow-2 cursor-pointer"
                             :src="item.videoCoverPath ?? 'dummy'" @click="visitChapter(item)">
                             <template v-slot:error>
-                              <q-img :src="DummyBook" class="full-height full-width"  />
+                              <q-img :src="DummyBook" class="full-height full-width" />
                             </template>
                           </q-img>
                         </div>
@@ -162,7 +163,8 @@ export default {
       slide: 0,
       allSlides: [],
       chaptersLoader: false,
-      loading: false
+      loading: false,
+      slideWidth: window.innerWidth < 470 ? window.innerWidth - 30 : 450,
     }
   },
   computed: {
@@ -223,9 +225,6 @@ export default {
           categoryId: this.selectCategory.id
         }
       }
-      //if (this.selectedSubCategory && this.selectedCategory?.id == this.selectedSubCategory?.categoryCode) {
-       // request.params.subCategoryId = this.selectedSubCategory.id;
-      //}
       this.$api.get(urls.getVideosUrl, request).then(response => {
         this.loading = false;
         if (response.data.success) {
@@ -248,21 +247,21 @@ export default {
       }).then(response => {
         this.chaptersLoader = false;
         if (response.data.success) {
-          this.chapters = response.data.data.map((item,chapter,index) => {
+          this.chapters = response.data.data.map((item, index) => {
             return {
               index: index + 1,
-              id: chapter.id,
-              videoId: chapter.videoId,
-              accountId: chapter.accountId,
-              description: chapter.description,
-              chapterTitle: chapter.chapterTitle,
+              id: item.id,
+              videoId: item.videoId,
+              accountId: item.accountId,
+              description: item.description,
+              chapterTitle: item.chapterTitle,
               videoCoverPath: item.videoCoverPath,
-              videoFilePath: chapter.videoFilePath,
-              createdAt: moment(chapter.createdAt).format('YYYY-MM-DD'),
-              updatedAt: moment(chapter.updatedAt).format('YYYY-MM-DD'),
-              deletedAt: moment(chapter.deletedAt).format('YYYY-MM-DD')
+              videoFilePath: item.videoFilePath,
+              createdAt: moment(item.createdAt).format('YYYY-MM-DD'),
+              updatedAt: moment(item.updatedAt).format('YYYY-MM-DD'),
+              deletedAt: moment(item.deletedAt).format('YYYY-MM-DD')
             }
-          });this.getDummyChapters(this.chapters);
+          }); this.getDummyChapters(this.chapters);
         } else {
           this.showMsg(response.data?.message, 'negative');
         }
@@ -284,7 +283,11 @@ export default {
       }
     },
     visitChapter(chapter) {
+      var ext = chapter.videoFilePath?.substr(chapter.videoFilePath.lastIndexOf('.') + 1);
       let url = '/watch-video';
+      if(ext == 'pptx' ) { url = '/watch-ppt'; }
+      else if(ext == 'mp4') { url = '/watch-video'; }
+      else if(ext == 'pdf') { url = '/read-pdf'; }
       let item = chapter.videoFilePath;
       this.$router.push({
         path: url,

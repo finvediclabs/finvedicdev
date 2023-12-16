@@ -4,7 +4,8 @@
       <q-toolbar class=" text-black q-pa-sm q-pr-lg mainHeader">
         <q-item>
           <q-item-section avatar>
-          <q-btn flat @click="toggleFunction" color="blue-10" round dense icon="menu" />
+          <q-btn flat @click="toggleFunction" color="blue-10" round dense icon="menu" v-if="showDrawer"/>
+          <q-icon name="arrow_back" style="font-weight: bold;" class="cursor-pointer" @click="$router.go(-1)" v-if="!showDrawer" />
           </q-item-section>
           <q-item-section class="text-h5 text-weight-bolder">
             <svg xmlns="http://www.w3.org/2000/svg" :width="widthSVG" height="30" viewBox="0 0 197 30" fill="none">

@@ -282,7 +282,11 @@ export default {
       }
     },
     visitChapter(chapter) {
+      var ext = chapter.chapterFilePath?.substr(chapter.chapterFilePath.lastIndexOf('.') + 1);
       let url = '/read-pdf';
+      if(ext == 'pptx' ) { url = '/watch-ppt'; }
+      else if(ext == 'mp4') { url = '/watch-video'; }
+      else if(ext == 'pdf') { url = '/read-pdf'; }
       let item =chapter.chapterFilePath;
       this.$router.push({
         path: url,

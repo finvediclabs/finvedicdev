@@ -28,7 +28,7 @@
     </fin-portlet-item>
     <fin-portlet-item class="q-pb-xl" v-if="presentations.length">
       <carousel-3d :totalSlides="presentations.length" :count="presentations.length" @beforeSlideChange="getCurrentSlide"
-        :controls-visible="true">
+        :controls-visible="true" :width="slideWidth">
         <slide v-for="(slide, i) in presentations" :key="i" :index="i">
           <q-img :src="slide.videoCoverPath ?? 'dummy'" class="fit" :alt="slide.heading">
             <template v-slot:error>
@@ -172,6 +172,7 @@ export default {
       allSlides: [],
       chaptersLoader: false,
       loading: false,
+      slideWidth: window.innerWidth < 470 ? window.innerWidth - 30 : 450,
     }
   },
   watch: {
@@ -278,7 +279,11 @@ export default {
       }
     },
     visitChapter(chapter) {
+      var ext = chapter.presentationFilePath?.substr(chapter.presentationFilePath.lastIndexOf('.') + 1);
       let url = '/watch-ppt';
+      if(ext == 'pptx' ) { url = '/watch-ppt'; }
+      else if(ext == 'mp4') { url = '/watch-video'; }
+      else if(ext == 'pdf') { url = '/read-pdf'; }
       let item = chapter.presentationFilePath ;
       this.$router.push({
         path: url,
