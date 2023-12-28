@@ -29,7 +29,7 @@
     </fin-portlet-item>
     <fin-portlet-item class="q-pb-xl" v-if="VideosList.length">
       <carousel-3d :totalSlides="VideosList.length" :count="VideosList.length" @beforeSlideChange="getCurrentSlide"
-        :controls-visible="true" :width="slideWidth">
+        :controls-visible="true" :width="384" height="216">
         <slide v-for="(slide, i) in VideosList" :key="i" :index="i">
           <q-img :src="slide.videoCoverPath ?? 'dummy'" class="fit" :alt="slide.heading">
             <template v-slot:error>
