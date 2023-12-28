@@ -45,33 +45,20 @@
     </fin-portlet-item>
     <fin-portlet>
       <div class="row">
-        <div class="col-12 col-md-7 q-pr-md ">
-          <div class="row">
-            <div class="col-12 col-md-5 row justify-center">
-              <q-avatar style="width:250px; height: 300px" square>
-                <q-img :src="selectedSlide?.videoCoverPath ?? 'dummy'" class="fin-br-8 fit" style="border:1px solid #00000030"
-                  :alt="selectedSlide?.heading">
-                  <template v-slot:error>
-                    <q-img :src="DummyBook" class="full-height full-width" />
-                  </template>
-                </q-img>
-              </q-avatar>
-            </div>
-            <div class="col-12 col-md-6">
-              <fin-portlet-heading class="q-pa-md" small>
-                {{ selectedSlide?.heading }}
-                <br>
-                <p style="font-size: 14px;font-weight: 300;">
-                  {{ selectedSlide?.description }}
-                </p>
-              </fin-portlet-heading>
-            </div>
-          </div>
+            <div class="col-12 col-md-5 q-pt-lg q-px-lg">
+          <q-img :src="selectedSlide.videoCoverPath" :ratio="16 / 9" class="fin-br-8 shadow-1" />
+          <fin-portlet-heading class="q-pa-md" small>
+            {{ selectedSlide?.heading }}
+            <br>
+            <p style="font-size: 14px;font-weight: 300;">
+              {{ selectedSlide?.description }}
+            </p>
+          </fin-portlet-heading>
         </div>
-        <div class="col-1"></div>
-        <div class="col-12 col-md-4  justify-center self-end justify-end">
-          <div class="row ">
-            <div class="col-12" style="height: 300px;">
+        <div class="col-3"></div>
+        <div class="col-12 col-md-4 column justify-top q-pt-lg items-end">
+          <div class="row full-width ">
+            <div class="col-12 bg-blue" style="height: 300px;">
               <q-carousel swipeable animated v-model="slide" ref="carousel" infinite class="full-height"
                 style="padding-top: 50px;">
                 <template v-slot:control>
@@ -284,7 +271,7 @@ export default {
       if(ext == 'pptx' ) { url = '/watch-ppt'; }
       else if(ext == 'mp4') { url = '/watch-video'; }
       else if(ext == 'pdf') { url = '/read-pdf'; }
-      let item = chapter.presentationFilePath ;
+      let item = chapter.description ;
       this.$router.push({
         path: url,
         query: {
