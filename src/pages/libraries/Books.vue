@@ -56,7 +56,7 @@
                 </q-img>
               </q-avatar>
             </div>
-            <div class="col-12 col-sm-6 col-md-6">
+            <div class="col-12 col-sm-6 col-md-6" style="padding-left: 5%;">
               <fin-portlet-heading class="q-pa-md" small>
                 {{ selectedSlide?.heading }}
                 <br>
