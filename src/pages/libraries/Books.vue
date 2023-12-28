@@ -27,9 +27,9 @@
     </fin-portlet-item> -->
     <fin-portlet-item class="q-pb-xl" v-if="booksData.length">
       <carousel-3d :totalSlides="booksData.length" :count="booksData.length" @beforeSlideChange="getCurrentSlide"
-        :controls-visible="true" width="270" height="360" display="7" >
+        :controls-visible="true" width="248" height="350" display="7" >
         <slide v-for="(slide, i) in booksData" :key="i" :index="i">
-          <q-img :src="slide.imagePath ?? 'dummy'" class="fit" :alt="slide.heading" >
+          <q-img :src="slide.imagePath ?? 'dummy'" class="fin-br-8 fit" :alt="slide.heading" >
             <template v-slot:error>
               <q-img :src="DummyBook" class="full-width full-height" />
             </template>
@@ -47,7 +47,7 @@
         <div class="col-12 col-md-6 col-lg-7  q-pr-md">
           <div class="row">
             <div class="col-12 col-sm-6 col-md-5 row justify-center">
-              <q-avatar style="width:250px; height: 300px" square>
+              <q-avatar style="width:248px; height: 350px" square>
                 <q-img :src="selectedSlide?.imagePath ?? 'dummy'" class="fin-br-8 fit" style="border:1px solid #00000030"
                   :alt="selectedSlide?.heading" >
                   <template v-slot:error>
@@ -68,7 +68,7 @@
           </div>
         </div>
         <div class="col-1"></div>
-        <div class="col-12 col-md-4  justify-center self-end justify-end">
+        <div class="col-12 col-md-4  justify-center">
           <div class="row ">
             <div class="col-12" style="height: 240px;">
 
