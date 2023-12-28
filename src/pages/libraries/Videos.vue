@@ -288,7 +288,7 @@ export default {
       if(ext == 'pptx' ) { url = '/watch-ppt'; }
       else if(ext == 'mp4') { url = '/watch-video'; }
       else if(ext == 'pdf') { url = '/read-pdf'; }
-      let item = chapter.videoFilePath;
+      let item = chapter.description;
       this.$router.push({
         path: url,
         query: {
