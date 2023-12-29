@@ -71,7 +71,8 @@ export default {
   },
   methods: {
     download (vmname) {
-                window.location.href = urls.downloadVmUr+"/"+vmname;
+              const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+                window.location.href = baseUrl+"/download/"+vmname;
             },
     showMsg(message, type) {
       this.$q.notify({
