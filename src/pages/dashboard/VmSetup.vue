@@ -54,7 +54,7 @@ export default {
       version: "",
       nos: '',
       instance: "Standard_D2s_v3=3",
-      region: "East-US",
+      region: "East US",
       loader: false,
       errors: {}
     }
