@@ -8,7 +8,7 @@
         <div class="row">
           <div class="col-12 col-sm-6 col-md-6 col-lg-4 q-pa-md" v-for="(lab, index) in labsData" :key="lab.id">
             <q-card class="full-width shadow-8" style="border-radius: 10px!important;">
-              <q-card-section horizontal :style="{ border: lab.locked ? '2px solid #FF7F50' : '2px solid #00C520' }">
+              <q-card-section horizontal :style="{ border: lab.locked ? '2px solid #FF7F50' : '2px solid #00C520' }" @click="download">
                 <q-card-section class="q-pa-md lab-img flex items-center">
                   <q-img :src="labImg" class="full-width"/>
                 </q-card-section>
@@ -70,6 +70,9 @@ export default {
     this.getAzureVmsData();
   },
   methods: {
+    download (vmname) {
+                window.location.href = urls.downloadVmUr+"/"+vmname;
+            },
     showMsg(message, type) {
       this.$q.notify({
         message: message || "Something Went Wrong!",
