@@ -43,6 +43,7 @@
         <q-spinner-ios color="blue-9" size="3.5em" />
       </div>
     </fin-portlet-item>
+    
     <fin-portlet>
       <div class="row">
             <div class="col-12 col-md-5 q-pt-lg q-px-lg">
@@ -61,6 +62,7 @@
             <div class="col-12 bg-blue" style="height: 300px;">
               <q-carousel swipeable animated v-model="slide" ref="carousel" infinite class="full-height"
                 style="padding-top: 50px;">
+                
                 <template v-slot:control>
                   <q-carousel-control position="top-left" :offset="[20, 8]" class="text-black">
                     <span>More Chapters</span>
@@ -83,12 +85,12 @@
                 </template>
 
                 <template v-if="!chaptersLoader">
-                  <template v-if="chaptersData.length">
+                  <template v-if="chapters.length">
                     <q-carousel-slide v-for="(slider, i) in allSlides" :name="i" class="items-end q-pa-none">
                       <div class="row full-height">
-                        <div class="col-6 fin-br-8 q-px-sm" style="height:110px" v-for="chapter in slider">
+                        <div class="col-6 fin-br-8 q-px-sm" style="height:110px" v-for="item in slider">
                           <q-img class="full-height fin-br-8 shadow-2 cursor-pointer "
-                            :src="chapter.presentationCoverPath ?? 'dummy'" @click="visitChapter(chapter)">
+                            :src="item.presentationCoverPath ?? 'dummy'" @click="visitChapter(item)">
                             <template v-slot:error>
                               <q-img :src="chapter.presentationCoverPath" class="full-height full-width" />
                             </template>
@@ -98,7 +100,7 @@
                     </q-carousel-slide>
                   </template>
 
-                  <template v-if="!chaptersData.length">
+                  <template v-if="!chapters.length">
                     <q-carousel-slide :name="0" class="rounded-borders text-italic">
                       <div class="row full-height">
                         <div class="col-12 q-px-sm full-height">
@@ -154,7 +156,7 @@ export default {
       presentations: [],
       selectedSlide: {},
       loading: false,
-      chaptersData: [],
+      chapters: [],
       slide: 0,
       allSlides: [],
       chaptersLoader: false,
@@ -230,7 +232,7 @@ export default {
       }).then(response => {
         this.chaptersLoader = false;
         if (response.data.success) {
-          this.chaptersData = response.data.data.map((chapter, index) => {
+          this.chapters = response.data.data.map((chapter, index) => {
             return {
               index: index + 1,
               id: chapter.id,
@@ -244,7 +246,7 @@ export default {
               updatedAt: moment(chapter.updatedAt).format('YYYY-MM-DD'),
               deletedAt: moment(chapter.deletedAt).format('YYYY-MM-DD')
             }
-          });this.getDummyChapters(this.chaptersData);
+          });this.getDummyChapters(this.chapters);
         } else {
           this.showMsg(response.data?.message, 'negative');
         }
@@ -259,7 +261,7 @@ export default {
       for (let j = 0; j < chapter.length; j++) {
         slide.push(chapter[j]);
         this.allSlides[index] = slide;
-        if ((j + 1) % 3 == 0) {
+        if ((j + 1) % 4 == 0) {
           index += 1;
           slide = [];
         }
