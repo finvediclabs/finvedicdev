@@ -88,7 +88,7 @@
                   <template v-if="chapters.length">
                     <q-carousel-slide v-for="(slider, i) in allSlides" :name="i" class="items-end q-pa-none">
                       <div class="row full-height">
-                        <div class="col-6 fin-br-8 q-px-sm" style="height:110px" v-for="item in slider">
+                        <div class="col-6 fin-br-8 q-px-sm" style="height:110px;" v-for="item in slider">
                           <q-img class="full-height fin-br-8 shadow-2 cursor-pointer "
                             :src="item.presentationCoverPath ?? 'dummy'" @click="visitChapter(item)">
                             <template v-slot:error>
@@ -99,6 +99,7 @@
                       </div>
                     </q-carousel-slide>
                   </template>
+                  
 
                   <template v-if="!chapters.length">
                     <q-carousel-slide :name="0" class="rounded-borders text-italic">
@@ -258,12 +259,13 @@ export default {
     getDummyChapters(chapter) {
       let index = 0;
       let slide = [];
+      
       for (let j = 0; j < chapter.length; j++) {
         slide.push(chapter[j]);
         this.allSlides[index] = slide;
-        if ((j + 1) % 4 == 0) {
+        if ((j + 1) % 4  == 0) {
           index += 1;
-          slide = [];
+          slide = []
         }
       }
     },

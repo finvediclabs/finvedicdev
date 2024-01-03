@@ -35,15 +35,22 @@
 
 
   </fin-portlet>
+  <fin-portlet-item class="table-scroll">
+      <fin-table :columns="header" :data="VMsList" select @reCall="getVMsData()" allowDelete :delete-url="deleteUrl"
+        @editFun="editDataFun" :loading="loading" />
+    </fin-portlet-item>
 </template>
 <script>
+import FinTable from "src/components/FinTable.vue"
 import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
+import axios from "axios";
 import { urls } from "./Urls";
 export default {
   components: {
+    FinTable,
     FinPortlet,
     FinPortletHeader,
     FinPortletHeading,
@@ -56,8 +63,19 @@ export default {
       instance: "Standard_D2s_v3=3",
       region: "East US",
       loader: false,
-      errors: {}
+      errors: {},
+      deleteUrl: urls.getAzureVmsUrl,
+      loading: false,
+      header: [
+        { label: 'Size', key: 'size', align: 'center' },
+        { label: 'OS Type', key: 'osType', align: 'start'},
+        { label: 'Name', key: 'name', align: 'start', width: '150px'}
+      ],
+      VMsList: []
     }
+  },
+  mounted() {
+    this.getVMsData();
   },
   methods: {
     showMsg(message, type) {
@@ -69,6 +87,17 @@ export default {
           { icon: 'close', color: 'white', handler: () => { } }
         ]
       });
+    },
+    getVMsData() {
+      this.loading = true;
+      this.$api.get(urls.getAzureVmsUrl).then(response => {
+        this.loading = false;
+        // if (response.data.success) {
+          this.VMsList = response.data.data;
+        }).catch(error => {
+        this.loading = false;
+        this.showMsg(error.response?.data.message || error.message, 'negative');
+      })
     },
     validateFields() {
       if (this.version && this.nos > 0) {

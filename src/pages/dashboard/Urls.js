@@ -8,6 +8,6 @@ export const urls = {
   videoChaptersUrl: 'api/videoChapters',
   presentationsUrl: 'api/presentations',
   presentationChapterUrl: 'api/presentationChapters',
-
+  getAzureVmsUrl: 'getazurevms',
   getEvents: 'api/calendarEvents',
 }

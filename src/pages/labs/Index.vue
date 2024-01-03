@@ -42,6 +42,7 @@
       </fin-portlet-item>
     </fin-portlet>
   </q-page>
+  
 </template>
 <script>
 import labsImg from "src/assets/labs.png";

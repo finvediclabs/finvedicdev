@@ -249,6 +249,7 @@ export default {
         if (response.data.success) {
           this.chapters = response.data.data.map((item, index) => {
             return {
+            
               index: index + 1,
               id: item.id,
               videoId: item.videoId,
