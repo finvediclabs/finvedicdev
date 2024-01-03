@@ -6,8 +6,8 @@
       </fin-portlet-header>
       <fin-portlet-item>
         <div class="row">
-          <div class="col-12 col-sm-6 col-md-6 col-lg-4 q-pa-md" v-for="(lab, index) in labsData" :key="lab.id">
-            <q-card class="full-width shadow-8" style="border-radius: 10px!important;">
+          <div class="col-12 col-sm-4 col-md-4 col-lg-4 q-pa-md" v-for="(lab, index) in labsData" :key="lab.id">
+            <q-card class="shadow-8" style="border-radius: 10px!important;">
               <q-card-section horizontal :style="{ border: lab.locked ? '2px solid #FF7F50' : '2px solid #00C520' }" @click="download(lab.name)">
                 <q-card-section class="q-pa-md lab-img flex items-center">
                   <q-img :src="labImg" class="full-width"/>
@@ -15,7 +15,7 @@
                 <q-card-section class="" style="width: 70%;font-size: 13px;">
                   <div class="column full-width">
                     <div class="col flex items-center">
-                      <fin-portlet-heading small>{{ lab.name }}</fin-portlet-heading>
+                      <span style="font-weight: bold;font-size: large;">{{ lab.name }}</span>
                       <q-space />
                       <q-icon name="more_vert" size="20px" class="cursor-pointer"></q-icon>
                     </div>

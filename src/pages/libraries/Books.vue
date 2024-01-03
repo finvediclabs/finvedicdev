@@ -27,7 +27,7 @@
     </fin-portlet-item> -->
     <fin-portlet-item class="q-pb-xl" v-if="booksData.length">
       <carousel-3d :totalSlides="booksData.length" :count="booksData.length" @beforeSlideChange="getCurrentSlide"
-        :controls-visible="true" width="248" height="350" display="7" >
+        :controls-visible="true" width="186" height="262" display="7" >
         <slide v-for="(slide, i) in booksData" :key="i" :index="i">
           <q-img :src="slide.imagePath ?? 'dummy'" class="fin-br-8 fit" :alt="slide.heading" >
             <template v-slot:error>
@@ -43,11 +43,13 @@
       </div>
     </fin-portlet-item>
     <fin-portlet>
-      <div class="row">
+      <div class="row" >
         <div class="col-12 col-md-6 col-lg-7  q-pr-md">
           <div class="row">
-            <div class="col-12 col-sm-6 col-md-5 row justify-center">
-              <q-avatar style="width:248px; height: 350px" square>
+            <div class="col-1"></div>
+            <div class="col-12 col-sm-4 col-md-4 row justify-center">
+              
+              <q-avatar style="width:186px; height: 262px" square>
                 <q-img :src="selectedSlide?.imagePath ?? 'dummy'" class="fin-br-8 fit" style="border:1px solid #00000030"
                   :alt="selectedSlide?.heading" >
                   <template v-slot:error>
@@ -56,7 +58,8 @@
                 </q-img>
               </q-avatar>
             </div>
-            <div class="col-12 col-sm-6 col-md-6" style="padding-left: 5%;">
+      
+            <div class="col-12 col-sm-7 col-md-7" style="padding-left: 5%;">
               <fin-portlet-heading class="q-pa-md" small>
                 {{ selectedSlide?.heading }}
                 <br>
@@ -67,10 +70,10 @@
             </div>
           </div>
         </div>
-        <div class="col-1"></div>
-        <div class="col-12 col-md-4  justify-center">
+        <div class="col-2"></div>
+        <div class="col-12 col-md-4">
           <div class="row ">
-            <div class="col-12" style="height: 240px;">
+            <div class="col-12" style="height: 200px;">
 
               <q-carousel swipeable animated v-model="slide" ref="carousel" infinite class="full-height"
                 style="padding-top: 50px;">
@@ -130,6 +133,7 @@
               </q-carousel>
 
             </div>
+            
           </div>
         </div>
       </div>

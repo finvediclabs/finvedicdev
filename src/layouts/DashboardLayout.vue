@@ -125,7 +125,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-if="showDrawer" v-model="drawerLeft" show-if-above :mini="miniState" width="230" breakpoint="900"
+    <q-drawer v-if="showDrawer" v-model="drawerLeft" show-if-above :mini="miniState" width="180" breakpoint="900"
       class="text-white fin-drawer-style shadow-2">
       <q-scroll-area class="fit q-pl-md q-pt-md bg-finvedic q-pt-xl" :horizontal-thumb-style="{ opacity: 0 }">
         <q-list>
@@ -143,7 +143,7 @@
                   </q-item-section>
                 </span>
 
-                <q-expansion-item v-if="module.menu" class="q-pa-none full-width module-select" :content-inset-level="0.5"
+                <q-expansion-item v-if="module.menu" class="q-pa-none full-width module-select" :content-inset-level="0.2"
                   expand-icon-class="text-white" v-model="expand[module.value]" :icon="module.icon" :label="module.label">
                   <q-item v-for="(item, i) in module.menu" :key="item" clickable v-ripple
                     class="module-select q-my-sm q-px-md" :class="getActiveMenuItemClass(module, item)"
