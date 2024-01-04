@@ -4,12 +4,14 @@
       <div class="row full-width">
         <div class="col-1"></div>
         <div class="col-12 col-md-6 " :class="{ 'q-mt-xl': !isMobile }">
+        <!-- v-for="(event, index) in events" :key="event.id" -->
+        
           <q-card class="my-card full-width text-white full-height" style="background: #2FCB89;">
-            <q-card-section class="row justify-between">
+            <q-card-section class="row justify-between" >
               <div>
                 <div>Schedule</div>
                 <br>
-                <div class="text-h4 text-weight-bolder">Upcoming Class</div>
+                <div class="text-h4 text-weight-bolder">Title</div>
               </div>
               <q-img :src="classRoom" class="classRoomImg" v-if="!isMobile" />
             </q-card-section>
@@ -87,10 +89,10 @@ export default {
       classCardImg: classCardImg,
       calendar: '',
       template: {
-        // time(event) {
-        //   const { start, end, title } = event;
-        //   return `<span style="color: white;">${title} ${start}~${(end)} </span>`;
-        // },
+        time(event) {
+        const { start, end, title } = event;
+        return `<span style="color: white;">${title} ${start}~${(end)} </span>`;
+        },
         allday: (event) => {
           return `<span style="color: gray;">${event}</span>`;
         },

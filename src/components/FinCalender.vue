@@ -53,8 +53,8 @@ export default {
           timezonesCollapsed: false,
           eventView: true,
           taskView: false,
-          hourStart: 5,
-          hourEnd: 23,
+          hourStart: 0,
+          hourEnd: 24,
           startDayOfWeek:1,
         }
       }

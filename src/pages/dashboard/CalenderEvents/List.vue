@@ -10,7 +10,7 @@
       </fin-portlet-item>
     </fin-portlet-header>
     <fin-portlet-item class="table-scroll" style="white-space: nowrap;">
-      <fin-table :columns="header" :data="events" @reCall="getBooksData()" allowDelete delete-url=""
+      <fin-table :columns="header" :data="events" @reCall="getEventsData()" allowDelete delete-url="deleteUrl"
         @editFun="editDataFun" :loading="loading" />
     </fin-portlet-item>
   </fin-portlet>
@@ -35,6 +35,7 @@ export default {
   },
   data() {
     return {
+      deleteUrl: urls.getEvents,
       loading: false,
       header: [
         { label: 'S.No', key: 'index', align: 'center' },
