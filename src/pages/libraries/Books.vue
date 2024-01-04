@@ -70,7 +70,7 @@
             </div>
           </div>
         </div>
-        <div class="col-2"></div>
+        <div class="col-1"></div>
         <div class="col-12 col-md-4">
           <div class="row ">
             <div class="col-12" style="height: 200px;">
