@@ -9,5 +9,6 @@ export const urls = {
   presentationsUrl: 'api/presentations',
   presentationChapterUrl: 'api/presentationChapters',
   getAzureVmsUrl: 'getazurevms',
+  deletevm:'deletevm',
   getEvents: 'api/calendarEvents',
 }

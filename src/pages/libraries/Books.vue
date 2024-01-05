@@ -45,9 +45,9 @@
     <fin-portlet>
       <div class="row" >
         <div class="col-12 col-md-6 col-lg-7  q-pr-md">
-          <div class="row">
+          <div class="row" style="border: 2px solid #d3d3d3;border-radius: 15px;">
             <div class="col-1"></div>
-            <div class="col-12 col-sm-4 col-md-4 row justify-center">
+            <div class="col-12 col-sm-4 col-md-4 row justify-center" style="padding-top: 2%;padding-bottom: 2%;">
               
               <q-avatar style="width:186px; height: 262px" square>
                 <q-img :src="selectedSlide?.imagePath ?? 'dummy'" class="fin-br-8 fit" style="border:1px solid #00000030"
@@ -71,18 +71,18 @@
           </div>
         </div>
         <div class="col-1"></div>
-        <div class="col-12 col-md-4">
-          <div class="row ">
-            <div class="col-12" style="height: 200px;">
+        <div class="col-12 col-md-5" style="border: 2px solid #d3d3d3;border-radius: 15px;">
+          <div class="row " >
+            <div class="col-10 justify-center" style="height: 200px;padding-top: 2%;margin-left: auto;margin-right: auto;">
 
               <q-carousel swipeable animated v-model="slide" ref="carousel" infinite class="full-height"
-                style="padding-top: 50px;">
+                style="padding-top: 60px;">
 
                 <template v-slot:control>
-                  <q-carousel-control position="top-left" :offset="[20, 8]" class="text-black">
+                  <q-carousel-control position="top-left" :offset="[25, 10]" class="text-black">
                     <span>More Chapters</span>
                   </q-carousel-control>
-                  <q-carousel-control position="top-right" :offset="[20, 0]" class="q-gutter-xs">
+                  <q-carousel-control position="top-right" :offset="[20, 10]" class="q-gutter-xs">
                     <q-btn round dense class="shadow-2" text-color="black" icon="chevron_left"
                       @click="$refs.carousel.previous()" />
                     <q-btn round dense class="shadow-2" text-color="black" icon="chevron_right"
