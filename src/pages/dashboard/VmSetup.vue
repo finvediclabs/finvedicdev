@@ -36,7 +36,7 @@
 
   </fin-portlet>
   <fin-portlet-item class="table-scroll">
-      <fin-table :columns="header" :data="VMsList" select @reCall="getVMsData()" allowDelete :get-url="deleteUrl()"
+      <fin-table :columns="header" :data="VMsList" select @reCall="getVMsData()" allowDelete :delete-url="deleteUrl"
         @editFun="editDataFun" :loading="loading" />
     </fin-portlet-item>
 </template>
@@ -64,7 +64,7 @@ export default {
       region: "East US",
       loader: false,
       errors: {},
-      
+      deleteUrl: urls.deletevm,
       loading: false,
       header: [
         { label: 'Size', key: 'size', align: 'center' },
