@@ -1,7 +1,6 @@
 <template>
   <fin-portlet>
     <fin-portlet-header>
-      <fin-portlet-heading :loading="loading">Books</fin-portlet-heading>
     </fin-portlet-header>
     <!-- <fin-portlet-item>
       <div class="row q-pb-lg">
@@ -27,7 +26,7 @@
     </fin-portlet-item> -->
     <fin-portlet-item class="q-pb-xl" v-if="booksData.length">
       <carousel-3d :totalSlides="booksData.length" :count="booksData.length" @beforeSlideChange="getCurrentSlide"
-        :controls-visible="true" width="279" height="393" display="7" >
+        :controls-visible="true" width="235" height="325" display="9" >
         <slide v-for="(slide, i) in booksData" :key="i" :index="i">
           <q-img :src="slide.imagePath ?? 'dummy'" class="fin-br-8 fit" :alt="slide.heading" >
             <template v-slot:error>

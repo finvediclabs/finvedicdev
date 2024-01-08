@@ -64,12 +64,13 @@ export default {
       region: "East US",
       loader: false,
       errors: {},
-      deleteUrl: urls.deletevm,
+      deleteUrl: urls.getAzureVmsUrl,
       loading: false,
       header: [
         { label: 'Size', key: 'size', align: 'center' },
         { label: 'OS Type', key: 'osType', align: 'start'},
-        { label: 'Name', key: 'name', align: 'start', width: '150px'}
+        { label: 'Name', key: 'name', align: 'start'},
+        {label: 'Active'}
       ],
       VMsList: []
     }

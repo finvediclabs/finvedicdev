@@ -1,4 +1,5 @@
 export const urls = {
-  getAzureVmsUrl: "getazurevms",
-  downloadVmUr:"download"
+  getAzureVmsUrl: "api/labVms",
+  downloadVmUr:"download",
+  deletevmUrl:"deletevm"
 }

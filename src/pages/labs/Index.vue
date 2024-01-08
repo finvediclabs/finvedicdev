@@ -8,14 +8,14 @@
         <div class="row">
           <div class="col-12 col-sm-4 col-md-4 col-lg-4 q-pa-md" v-for="(lab, index) in labsData" :key="lab.id">
             <q-card class="shadow-8" style="border-radius: 10px!important;">
-              <q-card-section horizontal :style="{ border: lab.locked ? '2px solid #FF7F50' : '2px solid #00C520' }" @click="download(lab.name)">
+              <q-card-section horizontal :style="{ border: lab.locked ? '2px solid #FF7F50' : '2px solid #00C520' }">
                 <q-card-section class="q-pa-md lab-img flex items-center">
                   <q-img :src="labImg" class="full-width"/>
                 </q-card-section>
                 <q-card-section class="" style="width: 70%;font-size: 13px;">
                   <div class="column full-width">
                     <div class="col flex items-center">
-                      <span style="font-weight: bold;font-size: large;">{{ lab.name }}</span>
+                      <span style="font-weight: bold;font-size: ;" >{{ lab.name }}</span>
                       <q-space />
                       <q-icon name="more_vert" size="20px" class="cursor-pointer"></q-icon>
                     </div>
@@ -26,10 +26,10 @@
                       </p>
                     </div>
                     <div class="col flex items-center">
-                      <div class="q-px-md shadow-4 rounded-borders q-pa-xs text-center" style="width:80px">{{ lab.osType }}</div>
+                      <div class="q-px-md shadow-4 rounded-borders q-pa-xs text-center" style="width:80px" @click="download(lab.name)">{{ lab.type }}</div>
                       <q-space />
-                      <q-btn :label="lab.locked ? 'Locked' : 'Lock'" size="12px" dense class="q-px-md text-weight-bold"
-                        rounded :style="{ background: lab.locked ? '#D49F8A' : '#7BFF90' }">
+                      <q-btn :label="lab.locked ? 'Locked' : 'Shutdown'" size="10px" dense class="q-px-md text-weight-bold"
+                        rounded :style="{ background: lab.locked ? '#D49F8A' : '#7BFF90' }" @click="shutdown(lab.name)">
                         <q-icon name="lock" size="14px" class="q-pl-sm"></q-icon>
                       </q-btn>
                     </div>
@@ -75,6 +75,11 @@ export default {
               const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
                 window.location.href = baseUrl+"/download/"+vmname;
             },
+    shutdown (vmname){
+      const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+                window.location.href = baseUrl+"/deletevm/"+vmname;
+    },
+    
     showMsg(message, type) {
       this.$q.notify({
         message: message || "Something Went Wrong!",

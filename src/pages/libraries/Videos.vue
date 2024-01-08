@@ -6,24 +6,10 @@
     <fin-portlet-item>
       <div class="row q-pb-lg">
         <div v-for="category in categories" class="col-12 col-sm-4 q-pa-sm">
-          <q-btn :label="category.categoryName" no-caps v-if="!subCategories[category.id]"
+          <q-btn :label="category.categoryName" no-caps
             class="full-width fin-br-8 shadow-2" size="lg"
             :class="selectedCategory?.id == category.id ? 'bg-finvedic text-white' : ''"
             @click="selectCategory(category)" />
-
-          <q-btn-dropdown :label="category.categoryName" no-caps v-if="subCategories[category.id]"
-            class="full-width fin-br-8 shadow-2"
-            :class="{ 'bg-finvedic text-white': selectedCategory?.id === category.id }" size="lg">
-            <q-list>
-              <q-item v-for="subCategory in subCategories[category.id]" clickable v-close-popup
-                @click="selectSubCategory(category, subCategory)"
-                :class="{ 'bg-finvedic text-white': selectedSubCategory?.id == subCategory.id }">
-                <q-item-section>
-                  <q-item-label><b>{{ subCategory.subCategoryName }}</b></q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-btn-dropdown>
         </div>
       </div>
     </fin-portlet-item>
@@ -225,7 +211,7 @@ export default {
           categoryId: this.selectCategory.id
         }
       }
-      this.$api.get(urls.getVideosUrl, request).then(response => {
+      this.$api.get(urls.getVideosUrl,request).then(response => {
         this.loading = false;
         if (response.data.success) {
           this.VideosList = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));
