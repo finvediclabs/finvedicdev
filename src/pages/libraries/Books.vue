@@ -69,8 +69,8 @@
             </div>
           </div>
         </div>
-        <div class="col-1"></div>
-        <div class="col-12 col-md-5" style="border: 2px solid #d3d3d3;border-radius: 15px;">
+        
+        <div class="col-12 col-md-5" style="border: 2px solid #d3d3d3;border-radius: 15px;margin-left: 5%;">
           <div class="row " >
             <div class="col-10 justify-center" style="height: 200px;padding-top: 2%;margin-left: auto;margin-right: auto;">
 

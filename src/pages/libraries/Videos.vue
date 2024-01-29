@@ -1,4 +1,13 @@
 <template>
+  <!--
+  <div class="row q-pa-md">
+    <q-btn-group spread rounded v-for="category in categories" class="col-12 col-sm-4">
+      <q-btn  rounded glossy :label="category.categoryName"  no-caps  
+      :class="selectedCategory?.id == 1 ? 'bg-finvedic text-white' : ''"
+      @click="selectCategory(category)" />
+    </q-btn-group>
+  </div>
+  -->
   <fin-portlet>
     <fin-portlet-header>
       <fin-portlet-heading>Videos</fin-portlet-heading>
@@ -206,12 +215,16 @@ export default {
     },
     getVideosData() {
       this.loading = true;
-      let request = {
+      //let request = {
+       // params: {
+       //   categoryId: this.selectCategory.id
+       // }
+      //}
+      this.$api.get(urls.getVideosUrl,{
         params: {
-          categoryId: this.selectCategory.id
+          categoryId: this.selectedCategory?.id
         }
-      }
-      this.$api.get(urls.getVideosUrl,request).then(response => {
+      }).then(response => {
         this.loading = false;
         if (response.data.success) {
           this.VideosList = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));
