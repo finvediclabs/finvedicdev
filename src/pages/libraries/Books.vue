@@ -43,7 +43,7 @@
     </fin-portlet-item>
     <fin-portlet>
       <div class="row" >
-        <div class="col-12 col-md-6 col-lg-7  q-pr-md">
+        <div class="col-12 col-md-6 col-lg-6  q-pr-md">
           <div class="row" style="border: 2px solid #d3d3d3;border-radius: 15px;">
             <div class="col-1"></div>
             <div class="col-12 col-sm-4 col-md-4 row justify-center" style="padding-top: 2%;padding-bottom: 2%;">
