@@ -35,10 +35,12 @@
 
 
   </fin-portlet>
+  <div class="container" style="width: 80%;margin-left: auto;margin-right: auto;" >
   <fin-portlet-item class="table-scroll">
       <fin-table :columns="header" :data="VMsList" select @reCall="getVMsData()" allowDelete :delete-url="deleteUrl"
         @editFun="editDataFun" :loading="loading" />
     </fin-portlet-item>
+  </div>
 </template>
 <script>
 import FinTable from "src/components/FinTable.vue"
@@ -68,7 +70,7 @@ export default {
       loading: false,
       header: [
         { label: 'Size', key: 'size', align: 'center' },
-        { label: 'OS Type', key: 'osType', align: 'start'},
+        { label: 'OS Type', key: 'type', align: 'start'},
         { label: 'Name', key: 'name', align: 'start'},
         {label: 'Active'}
       ],
