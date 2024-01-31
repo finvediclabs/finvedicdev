@@ -15,7 +15,7 @@
                 <q-card-section class="" style="width: 70%;font-size: 13px;">
                   <div class="column full-width">
                     <div class="col flex items-center">
-                      <span style="font-weight: bold;font-size: ;" >{{ lab.name }}</span>
+                      <span style="font-weight: bold;font-size:;" >{{ lab.name }}</span>
                       <q-space />
                       <q-icon name="more_vert" size="20px" class="cursor-pointer"></q-icon>
                     </div>
@@ -25,10 +25,10 @@
                         {{ lab.size }}
                       </p>
                     </div>
-                    <div class="col flex items-center">
-                      <div class="q-px-md shadow-4 rounded-borders q-pa-xs text-center" style="width:80px" @click="download(lab.name)">{{ lab.type }}</div>
+                    <div class="col flex ">
+                      <div class="q-px-md shadow-4 rounded-borders q-pa-xs text-center" style="width:90px;font-size: x-small;" @click="download(lab.name)">{{ lab.type }}</div>
                       <q-space />
-                      <q-btn :label="lab.locked ? 'Locked' : 'Shutdown'" size="10px" dense class="q-px-md text-weight-bold"
+                      <q-btn :label="lab.locked ? 'Locked' : 'Shutdown'" size="8px" dense class="q-px-md text-weight-bold"
                         rounded :style="{ background: lab.locked ? '#D49F8A' : '#7BFF90' }" @click="shutdown(lab.name)">
                         <q-icon name="lock" size="14px" class="q-pl-sm"></q-icon>
                       </q-btn>
@@ -75,11 +75,19 @@ export default {
               const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
                 window.location.href = baseUrl+"/download/"+vmname;
             },
+            /* 
     shutdown (vmname){
       const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
                 window.location.href = baseUrl+"/deletevm/"+vmname;
-    },
-    
+    },*/
+    async  shutdown (vmname) {
+  try {
+    const response = await fetch('https://fnbackend.finvedic.com/deletevm/'+vmname);
+    console.log('success')
+  } catch (error) {
+    console.error(error);
+  }
+},
     showMsg(message, type) {
       this.$q.notify({
         message: message || "Something Went Wrong!",
