@@ -47,11 +47,19 @@
             <div class="col-12 q-px-sm">
               <label class="form-label">Course</label>
               <q-select v-model="course" class="q-px-md rounded-borders inputBackground" borderless
-                :options="courseOptions" option-label="categoryName" option-value="categoryName" />
+                :options="courseOptions" option-label="courseName" option-value="courseId"  @select="selectCourse(course)"/>
               <div class="errorMsgBox">
                 <span v-if="errors.course && !course">{{ errors.course }}</span>
               </div>
             </div>
+            <div class="col-12 q-px-sm">
+              <label class="form-label">Topic</label>
+              <q-select v-model="topic" class="q-px-md rounded-borders inputBackground" borderless
+                :options="topicOptions" option-label="topicName" option-value="topicName" />
+              <div class="errorMsgBox">
+                <span v-if="errors.topic && !topic">{{ errors.topic }}</span>
+              </div>
+            </div> 
             <div class="col-12 q-px-sm">
               <label class="form-label">Title</label>
               <q-input v-model="title" class="q-px-md rounded-borders inputBackground" borderless />
@@ -90,18 +98,26 @@ import { urls } from "src/pages/dashboard/Urls";
 
 import { useProfileStore } from "src/stores/profile";
 import { storeToRefs } from "pinia";
-import { useCategoryStore } from "src/stores/Categories";
+//import { useCategoryStore } from "src/stores/Categories";
+import { useCouseStore} from "src/stores/courses";
 export default {
   setup() {
     const profileStore = useProfileStore();
     const { profile, user } = storeToRefs(profileStore);
-    const categoryStore = useCategoryStore();
-    const { categories, subCategories } = storeToRefs(categoryStore);
+   // const categoryStore = useCategoryStore();
+    const couseStore = useCouseStore();
+    const { selectCourse } = couseStore;
+    const {courses, topics} = storeToRefs(couseStore);
+    couseStore.fetchCourses();
+   // const { categories, subCategories } = storeToRefs(categoryStore);
     return {
       user,
       profile,
-      categories,
-      subCategories
+      courses,
+      topics,
+      selectCourse,
+    //  categories,
+    //  subCategories
     }
   },
   components: {
@@ -117,6 +133,7 @@ export default {
       startTime: '',
       endTime: '',
       course: '',
+      topic: '',
       title: '',
       link: '',
       errors: {},
@@ -126,16 +143,18 @@ export default {
   computed: {
     courseOptions() {
       var courses = [];
-      this.categories.forEach(item => {
-        if (this.subCategories[item.id]) {
-          this.subCategories[item.id].forEach(item => {
-            courses.push(item.subCategoryName)
-          });
-        } else {
-          courses.push(item.categoryName)
-        }
+      this.courses.forEach(item => {
+          courses.push({"courseName":item.courseDesc,"courseId":item.courseId})
+        
       });
       return courses;
+    },
+    topicOptions() {
+      var topics = [];
+      this.topics.forEach(item => {
+        topics.push(item.topicName)
+      });
+      return topics;
     }
   },
   mounted() {
