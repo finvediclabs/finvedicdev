@@ -70,7 +70,9 @@
     <fin-portlet>
       <div class="row">
             <div class="col-12 col-md-5 q-pt-lg q-px-lg" style="border: 2px solid #d3d3d3;border-radius: 15px;">
+              <div style="text-align: center;">
           <q-img :src="selectedSlide.videoCoverPath" :ratio="16 / 9" class="fin-br-8 shadow-1" style="width:384px; height: 216px;" />
+        </div>
           <fin-portlet-heading class="q-pa-md" small>
             {{ selectedSlide?.heading }}
             <br>
