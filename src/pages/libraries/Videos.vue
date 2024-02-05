@@ -8,11 +8,30 @@
     </q-btn-group>
   </div>
   -->
+  
   <fin-portlet>
     <fin-portlet-header>
+      <!--
       <fin-portlet-heading>Videos</fin-portlet-heading>
+      -->
     </fin-portlet-header>
     <fin-portlet-item>
+      <div class="radio-button-group mts" style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);border-radius: 25px;">
+  <div class="item">
+    <input type="radio" name="button-group" class="radio-button" value="1" id="button1" checked />
+    <label for="button1">Introduction to Banking</label>
+  </div>
+  <div class="item">
+    <input type="radio" name="button-group" class="radio-button" value="2" id="button2" />
+    <label for="button2">Disruptive Technologies</label>
+  </div>
+  <div class="item">
+    <input type="radio" name="button-group" class="radio-button" value="3" id="button3" />
+    <label for="button3">Specializations</label>
+  </div>
+  
+</div>
+<!--
       <div class="row q-pb-lg">
         <div v-for="category in categories" class="col-12 col-sm-4 q-pa-sm">
           <q-btn :label="category.categoryName" no-caps
@@ -21,10 +40,11 @@
             @click="selectCategory(category)" />
         </div>
       </div>
+      -->
     </fin-portlet-item>
     <fin-portlet-item class="q-pb-xl" v-if="VideosList.length">
       <carousel-3d :totalSlides="VideosList.length" :count="VideosList.length" @beforeSlideChange="getCurrentSlide"
-        :controls-visible="true" :width="384" height="216">
+        :controls-visible="true" :width="461" height="259">
         <slide v-for="(slide, i) in VideosList" :key="i" :index="i">
           <q-img :src="slide.videoCoverPath ?? 'dummy'" class="fit" :alt="slide.heading">
             <template v-slot:error>
@@ -42,8 +62,9 @@
 
     <fin-portlet>
       <div class="row">
-        <div class="col-12 col-md-5 q-pt-lg q-px-lg">
-          <q-img :src="selectedSlide.videoCoverPath" :ratio="16 / 9" class="fin-br-8 shadow-1" />
+        
+        <div class="col-12 col-md-5 q-pt-lg q-px-lg" style="border: 2px solid #d3d3d3;border-radius: 15px;">
+          <q-img :src="selectedSlide.videoCoverPath" :ratio="16 / 9" class="fin-br-8 shadow-1" style="width:384px; height: 216px;"    />
           <fin-portlet-heading class="q-pa-md" small>
             {{ selectedSlide?.heading }}
             <br>
@@ -52,10 +73,10 @@
             </p>
           </fin-portlet-heading>
         </div>
-        <div class="col-3"></div>
-        <div class="col-12 col-md-4 column justify-top q-pt-lg items-end">
-          <div class="row full-width ">
-            <div class="col-12 bg-blue" style="height: 300px;">
+        <div class="col-2"></div>
+        <div class="col-12 col-md-5 column justify-top q-pt-lg items-end" style="border: 2px solid #d3d3d3;border-radius: 15px;">
+          <div class="row full-width " >
+            <div class="col-12 bg-blue" style="height: 300px;" >
               <q-carousel swipeable animated v-model="slide" ref="carousel" infinite class="full-height"
                 style="padding-top: 50px;">
 
@@ -299,3 +320,46 @@ export default {
   }
 };
 </script>
+<style>
+.radio-button-group {
+  display: flex;
+}
+.radio-button-group .item {
+  width: 100%;
+}
+.radio-button-group .radio-button {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+.radio-button-group .radio-button + label {
+    padding: 16px 10px;
+    cursor: pointer;
+   
+    margin-right: -2px;
+    color: #555;
+    background-color: #ffffff;
+    display: block;
+    text-align: center;
+}
+.radio-button-group .item:first-of-type .radio-button + label{
+  
+  border-top-left-radius: 25px;
+    border-bottom-left-radius: 25px;
+    margin-right: 2%;
+ 
+}
+.radio-button-group .item:last-of-type .radio-button + label {
+  border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+    margin-left: 2%;
+ 
+  
+}
+.radio-button-group .radio-button:checked + label {
+    background-color: #5479F7;
+    color: #FFF;
+    border-radius: 25px;
+}
+</style>
