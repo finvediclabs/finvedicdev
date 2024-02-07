@@ -62,6 +62,12 @@
           </q-item-section>
         </q-item>
         <q-space />
+        <q-input color="bg-finvedic" rounded outlined v-model="text" label="Search"  >
+          <template v-slot:append>
+          <q-icon name="search" />
+        </template>
+        </q-input>
+
 
         <q-btn icon="notifications_active" round class="bg-white1 text-white q-mx-lg" :size="isMobile ? 'sm' : 'md'">
           <q-menu class="fin-br-8 q-py-md shadow-0" min-width="120px"
