@@ -113,8 +113,17 @@ const routes = [
       {
         path: 'class-room/create',
         component: () => import('pages/dashboard/CalenderEvents/CreateEvent.vue'),
-        meta: { items: 'class-room' }
-      }
+        meta: { items: 'createvent' }
+      }, {
+        path: 'class-room/enrollments/:cycleid',
+        component: () => import('pages/dashboard/CalenderEvents/Enr.vue'),
+        meta: { item: 'enrollments' }
+      },
+      {
+        path: 'class-room/topics/:courseid',
+        component: () => import('pages/dashboard/CalenderEvents/Top.vue'),
+        meta: { item: 'class-room' }
+      },
     ],
   },
 

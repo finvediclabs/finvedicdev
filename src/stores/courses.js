@@ -15,15 +15,16 @@ export const useCouseStore = defineStore('coursesnew', {
   actions: {
     fetchCourses() {
       axios.get(baseUrl + 'api/courss').then(response => {
-        this.courses = response.data;
-        this.fetchTopics();
+        this.courses = response.data.data;
+        this.fetchTopics('1001');
       })
     },
-    fetchTopics() {
-      axios.get(baseUrl + 'api/topics').then(response => {
-        this.alltopics = Object.groupBy(response.data, tp => {
-          return tp.courseid;
-        });
+    fetchTopics(courseid) {
+      axios.get(baseUrl + 'api/topics?courseid='+courseid).then(response => {
+        this.topics = response.data.data;
+        // this.alltopics = Object.groupBy(response.data, tp => {
+        //   return tp.courseid;
+        // });
         
       })
     },

@@ -113,7 +113,7 @@ export default {
         },
         {
           image: eventPng,
-          title: 'Calender Events',
+          title: 'Classrooms',
           description: 'Perfect for learning how the framework works.',
           path: 'class-room',
           background: '#FF9C78',

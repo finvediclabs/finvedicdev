@@ -47,7 +47,7 @@
             <div class="col-12 q-px-sm">
               <label class="form-label">Course</label>
               <q-select v-model="course" class="q-px-md rounded-borders inputBackground" borderless
-                :options="courseOptions" option-label="courseName" option-value="courseId"  @select="selectCourse(course)"/>
+                :options="courseOptions" option-label="courseName" option-value="courseid"  @select="selectCourse(course)"/>
               <div class="errorMsgBox">
                 <span v-if="errors.course && !course">{{ errors.course }}</span>
               </div>
@@ -55,7 +55,7 @@
             <div class="col-12 q-px-sm">
               <label class="form-label">Topic</label>
               <q-select v-model="topic" class="q-px-md rounded-borders inputBackground" borderless
-                :options="topicOptions" option-label="topicName" option-value="topicName" />
+                :options="topicOptions" option-label="topicName" option-value="topicId" />
               <div class="errorMsgBox">
                 <span v-if="errors.topic && !topic">{{ errors.topic }}</span>
               </div>
@@ -168,6 +168,7 @@ export default {
       this.startTime = { hours: startTime[0], minutes: startTime[1] };
       this.endTime = { hours: endTime[0], minutes: endTime[1] };
       this.course = editedEvent.course;
+      this.topic = editedEvent.topic;
       this.title = editedEvent.title;
       this.link = editedEvent.link;
       this.editedEvent = editedEvent;
@@ -207,14 +208,15 @@ export default {
     createEvent() {
       var request = {
         accountId: null,
-        course: this.course,
-        title: this.title,
+        course: this.course.courseName,
+        topic:this.topic,
+        title: this.course.courseName,
         createdBy: this.user.name,
         lastUpdatedBy: this.user.name,
         date: moment(this.date).format('YYYY-MM-DD'),
         start: `${this.getTwoDigits(this.startTime.hours)}:${this.getTwoDigits(this.startTime.minutes)}`,
         end: `${this.getTwoDigits(this.endTime.hours)}:${this.getTwoDigits(this.endTime.minutes)}`,
-        link: this.link,
+        link: 'tewt',
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
