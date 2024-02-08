@@ -105,20 +105,20 @@ export default {
   },
   watch: {
     selectedCategory() {
-      if (this.selectedCategory) {
+    //  if (this.selectedCategory) {
         this.getEventsData();
-      }
+    //  }
     },
     selectedSubCategory() {
-      if (this.selectedCategory) {
+    //  if (this.selectedCategory) {
         this.getEventsData();
-      }
+      //}
     }
   },
   mounted() {
-    if (this.selectedCategory) {
+   // if (this.selectedCategory) {
       this.getEventsData();
-    }
+    //}
   },
   methods: {
     showMsg(message, type) {
@@ -145,9 +145,10 @@ export default {
           let events = response.data.data;
           this.events = events.map(event => (
             {
-              ...event,
+              title: `<a href="${event.link}"  target="_blank">${event.title}</a>`,
               start: `${event.date} ${event.start}`,
               end: `${event.date} ${event.end}`,
+              link: `${event.link}`,
               color: 'white',
               backgroundColor: colorHash.hex(event.title)
             }

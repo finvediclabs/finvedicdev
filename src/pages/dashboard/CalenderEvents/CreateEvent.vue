@@ -61,19 +61,15 @@
               </div>
             </div> 
             <div class="col-12 q-px-sm">
-              <label class="form-label">Title</label>
-              <q-input v-model="title" class="q-px-md rounded-borders inputBackground" borderless />
+              <label class="form-label">Batch</label>
+              <q-select v-model="batch" class="q-px-md rounded-borders inputBackground" borderless
+                :options="batchOptions" option-label="cycleDesc" option-value="cycleid" />
               <div class="errorMsgBox">
-                <span v-if="errors.title && !title">{{ errors.title }}</span>
+                <span v-if="errors.batch && !topic">{{ errors.batch }}</span>
               </div>
-            </div>
-            <div class="col-12 q-px-sm">
-              <label class="form-label">Link</label>
-              <q-input v-model="link" class="q-px-md rounded-borders inputBackground" borderless />
-              <div class="errorMsgBox">
-                <span v-if="errors.link && !link">{{ errors.link }}</span>
-              </div>
-            </div>
+            </div> 
+            
+            
             <div class="col-12 q-px-sm q-pt-xl justify-end row">
               <q-space />
               <q-btn class="shadow-5 q-px-md rounded-borders sub-btn q-px-xl text-white" label="Update" no-caps
@@ -107,7 +103,7 @@ export default {
    // const categoryStore = useCategoryStore();
     const couseStore = useCouseStore();
     const { selectCourse } = couseStore;
-    const {courses, topics} = storeToRefs(couseStore);
+    const {courses, topics, batches} = storeToRefs(couseStore);
     couseStore.fetchCourses();
    // const { categories, subCategories } = storeToRefs(categoryStore);
     return {
@@ -115,6 +111,7 @@ export default {
       profile,
       courses,
       topics,
+      batches,
       selectCourse,
     //  categories,
     //  subCategories
@@ -133,6 +130,7 @@ export default {
       startTime: '',
       endTime: '',
       course: '',
+      batch: '',
       topic: '',
       title: '',
       link: '',
@@ -155,6 +153,13 @@ export default {
         topics.push(item.topicName)
       });
       return topics;
+    },
+    batchOptions() {
+      var batches = [];
+      this.batches.forEach(item => {
+        batches.push(item.cycleDesc)
+      });
+      return batches;
     }
   },
   mounted() {
@@ -170,6 +175,7 @@ export default {
       this.course = editedEvent.course;
       this.topic = editedEvent.topic;
       this.title = editedEvent.title;
+      this.batch = editedEvent.batch;
       this.link = editedEvent.link;
       this.editedEvent = editedEvent;
     }
@@ -192,7 +198,7 @@ export default {
       return `${day} ${month}, ${year}`;
     },
     validateForm() {
-      if (this.date && this.startTime && this.endTime && this.course && this.title && this.link) {
+      if (this.date && this.startTime && this.endTime && this.course) {
         this.editedEvent?.id ? this.updateEvent() : this.createEvent();
       } else {
         this.errors = {
@@ -200,8 +206,7 @@ export default {
           startTime: "Start Time is required",
           endTime: "End Time is required",
           course: "Course is required",
-          title: "Title is required",
-          link: "Link is required"
+       
         }
       }
     },
@@ -210,6 +215,7 @@ export default {
         accountId: null,
         course: this.course.courseName,
         topic:this.topic,
+        batch:this.batch,
         title: this.course.courseName,
         createdBy: this.user.name,
         lastUpdatedBy: this.user.name,

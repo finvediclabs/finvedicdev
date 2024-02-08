@@ -5,6 +5,7 @@ export const useCouseStore = defineStore('coursesnew', {
   state: () => ({
     courses: [],
     topics: [],
+    batches: [],
     alltopics: [],
     selectedCourse: {},
     selectedTopic: {},
@@ -17,11 +18,21 @@ export const useCouseStore = defineStore('coursesnew', {
       axios.get(baseUrl + 'api/courss').then(response => {
         this.courses = response.data.data;
         this.fetchTopics('1001');
+        this.fetchBatches();
       })
     },
     fetchTopics(courseid) {
       axios.get(baseUrl + 'api/topics?courseid='+courseid).then(response => {
         this.topics = response.data.data;
+        // this.alltopics = Object.groupBy(response.data, tp => {
+        //   return tp.courseid;
+        // });
+        
+      })
+    },
+    fetchBatches(courseid) {
+      axios.get(baseUrl + 'api/cycles').then(response => {
+        this.batches = response.data.data;
         // this.alltopics = Object.groupBy(response.data, tp => {
         //   return tp.courseid;
         // });
