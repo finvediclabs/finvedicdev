@@ -200,7 +200,7 @@ export default {
 
       if (this.requiredCategory) {
         request.categoryId = this.selectedCategory?.id;
-        request.subCategory = this.selectedSubCategory?.id;
+        request.subCategoryId = this.selectedSubCategory?.id;
       }
 
       return request;
