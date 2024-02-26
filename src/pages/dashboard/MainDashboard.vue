@@ -61,6 +61,7 @@ export default {
           description: 'Perfect for learning how the framework works.',
           path: 'users',
           background: '#FFCE70',
+        
           enable: true
         },
         {
@@ -70,6 +71,7 @@ export default {
           path: 'roles',
           background: '#CCB4FF',
           enable: true
+          
         },
         {
           image: organizationPng,

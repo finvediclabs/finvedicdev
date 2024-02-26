@@ -58,7 +58,12 @@ const routes = [
       {
         path: 'roles',
         component: () => import('pages/dashboard/Roles.vue'),
-        meta: { item: 'roles' }
+        permissions:[
+  
+        ],
+        meta: { 
+          
+         }
       },
       {
         path: 'organizations',
@@ -199,5 +204,6 @@ const routes = [
     component: () => import('pages/ErrorNotFound.vue')
   }
 ]
+
 
 export default routes

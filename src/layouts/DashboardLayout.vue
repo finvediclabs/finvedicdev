@@ -171,6 +171,8 @@
     <q-page-container>
       <q-page>
         <router-view v-if="token" />
+        
+        <Chatbot />
       </q-page>
     </q-page-container>
   </q-layout>
@@ -181,8 +183,12 @@ import { storeToRefs } from "pinia";
 import { useSessionStore } from "src/stores/session";
 import { setToken } from "src/boot/axios"
 import { useProfileStore } from "src/stores/profile";
-import profileImg from "src/assets/profile.png"
+import profileImg from "src/assets/profile.png";
+import Chatbot from "src/layouts/ChatBot.vue";
 export default {
+  components: {
+    Chatbot
+  },
   name: 'dashboard-layout',
   setup() {
     const session = useSessionStore();
@@ -196,6 +202,7 @@ export default {
       setUserType,
       setSessionToken,
       user
+    
     }
   },
   data() {
@@ -221,20 +228,22 @@ export default {
         { icon: 'summarize', label: 'Reports', value: 'reports' }
       ],
       expand: {},
-      userName: 'Sandeep Perikala',
+      userOwner:'' ,
+      
+      
 
-      adminAccess: ["admin", "labs", "library", "reports"],
-      studentsAccess: ["admin", "labs", "library", "reports"],
-      facultyAccess: [ "labs", "library", "reports"],
+      adminAccess: ["admin", "labs",  "library", "reports"],
+      studentsAccess: [ "admin","labs", "library", "reports"],
+      facultyAccess: ["admin","labs", "library", "reports"],
     }
   },
   computed: {
     widthSVG() { return window.innerWidth > 600 ? 197 : 150 },
     modules() {
       var userAccess = [];
-      if(this.userType == 4) {
+      if(this.user.owner == 'admin') {
         userAccess = this.adminAccess;
-      } else if(this.userType == 6 ) {
+      } else if(this.user.owner == 'faculty' ) {
         userAccess = this.facultyAccess;
       } else {
         userAccess = this.studentsAccess;
@@ -256,6 +265,7 @@ export default {
     if(this.userType) {
 
     }
+    this.getUserData();
 
     this.selectedModule = {
       module: this.$route.meta.module,
@@ -269,8 +279,32 @@ export default {
         this.$router.push('/');
       }
     },
+    user() {
+      this.getUserData();
+    }
   },
   methods: {
+    getUserData() {
+      this.$api.get(`api/users/${this.user.id}`).then(response => {
+        if (response.data.success) {
+          var user = response.data.data;
+          this.profile = {
+            name: user.name,
+            email: user.email,
+            phoneNumber: user.phoneNumber,
+            role: this.user.roles ? this.user.roles[0] : [],
+            owner: user.owner,
+          }
+          this.imageUrl = user.photoPath;
+        } else {
+          this.showMsg(response.data.message, 'negative');
+        }
+      }).catch(error => {
+        this.loading = false;
+        this.showMsg(error.response?.data.message || error.message, 'negative');
+      })
+
+    },
     knowModuleFunction() {
       var filteredModule = this.modulesList.filter(module => module.menu);
       filteredModule.forEach(module => {
