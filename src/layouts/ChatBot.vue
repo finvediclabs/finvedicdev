@@ -5,7 +5,7 @@
       <div class="chat-container">
         <!-- Welcome message -->
         <div v-if="isOpen" class="welcome-message" style="z-index: 999999;">
-          <p >Hi! I'm Dhrona, your AI virtual assistant. How can I assist you today?</p>
+          <p >Hi! I'm Dhrona, your AI virtual assistant. Ask me about Fintech?</p>
         </div>
   
         <!-- Messages -->
