@@ -75,11 +75,11 @@ export default {
         },
         {
           image: organizationPng,
-          title: 'Organizations',
+          title: 'AI Bot Pdf Upload',
           description: 'Perfect for learning how the framework works.',
-          path: 'organizations',
+          path: 'uploadpdfbot',
           background: '#1E90FF90',
-          enable: false
+          enable: true
         },
         {
           image: vmSetupPng,

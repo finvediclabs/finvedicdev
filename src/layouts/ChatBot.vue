@@ -1,10 +1,11 @@
 <template>
     <div class="chatbot" :class="{ open: isOpen }">
       <!-- Chat interface -->
+      
       <div class="chat-container">
         <!-- Welcome message -->
-        <div v-if="isOpen" class="welcome-message">
-          <p>Welcome! I'm Dhruv, your virtual assistant. How can I assist you today?</p>
+        <div v-if="isOpen" class="welcome-message" style="z-index: 999999;">
+          <p >Hi! I'm Dhrona, your AI virtual assistant. How can I assist you today?</p>
         </div>
   
         <!-- Messages -->
@@ -15,8 +16,9 @@
         </div>
   
         <!-- Input field for user to type messages -->
-        <input type="text" v-model="newMessage" @keyup.enter="sendMessage" placeholder="Type a message..." class="input-field" style="float: right;">
-      </div>
+        <input type="text" v-model="newMessage" @keyup.enter="sendMessage" placeholder="Enter your Query..." class="input-field" style="float: right;">
+    
+    </div>
   
       <!-- Button to toggle chatbot visibility -->
       <button class="toggle-button" @click="toggleChatbot">
@@ -86,17 +88,17 @@
   <style scoped>
   .chatbot {
     position: fixed;
-    bottom: 20px;
+    bottom: 70px;
     right: 20px;
     z-index: 9999;
   }
   
-  .chat-container {
+  .chat-container  {
     display: none;
   background-color: #fff;
   border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 10px;
+  border-radius: 10px;
+ 
   max-height: 500px; /* Limit height to enable scrolling */
   overflow-y: auto; /* Enable vertical scrolling */
   width: 300px; /* Fixed width */
@@ -111,34 +113,82 @@
   .welcome-message {
     margin-bottom: 10px;
     text-align: center;
+    background-color: #5479F7;
+    width: 100%;
+    color: #fff;
+    font-weight: 600;
+    position: fixed; /* Position the input field */
+    width:300px ;
+    border-top-right-radius:10px ;
+    border-top-left-radius:10px ;
+
+    
   }
   
   .messages {
     margin-bottom: 10px;
+    margin-top: 75px;
   }
   
   .messages div {
-    margin: 5px 0;
-    padding: 5px 10px;
-    border-radius: 5px;
-  }
-  
-  .messages .incoming {
-    background-color: #f0f0f0; /* Incoming message background color */
-    text-align: left;
-    width: 60%;
-    margin-right: auto;
-     /* Align left for incoming messages */
-  }
-  
-  .messages .outgoing {
-    background-color: #d4e1ff; /* Outgoing message background color */
-    text-align: right;
-    width: 60%;
-    margin-left: auto;
-    
-    /* Align right for outgoing messages */
-  }
+  margin: 5px 0;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.messages .incoming {
+  color: white;
+      padding: 14px 16px;
+      line-height: 18px;
+      font-size: 14px;
+      border-radius: 7px;
+      margin-bottom: 30px;
+      margin-right: auto;
+      width: 90%;
+      position: relative;
+      background: #007bff;
+      
+      &:after {
+        bottom: 100%;
+        left: 7%;
+        border: solid transparent;
+        content: " ";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+        border-bottom-color: #007bff;
+        border-width: 10px;
+        margin-left: -10px;
+      }
+    }
+
+.messages .outgoing {
+      color: white;
+      padding: 14px 18px;
+      line-height: 18px;
+      font-size: 14px;
+      border-radius: 7px;
+      margin-bottom: 30px;
+      margin-left: auto;
+      width: 90%;
+      position: relative;
+      background: #9db1f1;
+      
+      &:after {
+        bottom: 100%;
+        right: 7%;
+        border: solid transparent;
+        content: " ";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+        border-bottom-color: #9db1f1;
+        border-width: 10px;
+        margin-left: -10px;
+      }
+}
   
   .toggle-button {
     position: fixed;
@@ -157,11 +207,19 @@
   }
   
   .input-field {
-    position: absolute; /* Position the input field */
-    width: 100%;
+    position: fixed; /* Position the input field */
+    width:300px ;
   bottom: 0; /* Align to the bottom */
-  width: calc(100% - 20px); /* Adjust width to fit container with padding */
-  margin: 60px 0px; /* Add margin for better spacing */
+  margin: 70px 0px; /* Add margin for better spacing */
+  border: 2px solid #ccc;
+    border-radius: 20px;
+    outline: none;
+    height: 40px;
+    transition: border-color 0.3s ease;
   }
+  .input-field:focus {
+    border-color: #007bff; /* Change border color on focus */
+  }
+
   </style>
   
