@@ -1,7 +1,7 @@
 <template>
   <div class="chatbot" :class="{ open: isOpen }">
     <!-- Chat interface -->
-    <img src="src/assets/monk_new.png" alt="" class="monk-image">
+    <img src="src/assets/monk_new_new.png" alt="" class="monk-image">
     <div class="chat-container">
       <!-- Welcome message -->
 
@@ -21,10 +21,10 @@
     <!-- Button to toggle chatbot visibility -->
     <button class="toggle-button" @click="toggleChatbot">
       <template v-if="isOpen">
-        <img :src="isOpen ? 'src/assets/monk_small.png' : 'src/assets/monk_small_mirrored.png'" alt="Monk Icon" style="background-color: red;">
+        <img :src="isOpen ? 'src/assets/monk_small_new.png' : 'src/assets/monk_small_mirrored_new.png'" alt="Monk Icon" style="background-color: red;">
       </template>
       <template v-else>
-        <img src="src/assets/monk_small.png" alt="Person Icon" style="transform: scaleX(-1);">
+        <img src="src/assets/monk_small_new.png" alt="Person Icon" style="transform: scaleX(-1);">
       </template>
     </button>
   </div>

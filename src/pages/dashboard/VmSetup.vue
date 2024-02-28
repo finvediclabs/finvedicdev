@@ -21,7 +21,7 @@
       class="image-btn"
       @click="selectVersion('Windows')"
     >
-      <img src="src/assets/microsoft.png" alt="Windows" style="width: 100%; height: 100%;" />
+      <img src="src/assets/microsoft_new.png" alt="Windows" style="width: 100%; height: 100%;" />
     </q-btn>
     <q-btn
       v-ripple
@@ -32,7 +32,7 @@
       class="image-btn"
       @click="selectVersion('Linux')"
     >
-      <img src="src/assets/linux.png" alt="Linux" style="width: 100%; height: 100%;" />
+      <img src="src/assets/linux_new.png" alt="Linux" style="width: 100%; height: 100%;" />
     </q-btn>
   </div>
   <div style="text-align: center; padding-top: 20px;">
