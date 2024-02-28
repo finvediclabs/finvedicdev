@@ -13,6 +13,7 @@
         style="display: none;"
         ref="fileInput"
       />
+      
       <div class="btn border-gradient-blue-purple" style="position: absolute; top: 45px;left: 25%;
     transform: translateX(-50%);width: 20%;">
         <span>Drona Training</span>
