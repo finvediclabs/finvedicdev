@@ -16,9 +16,12 @@
         </div>
         <!-- Input field for user to type messages -->
         <div class="input-container">
-          <input type="text" v-model="newMessage" @keyup.enter="sendMessage" placeholder="Enter your Query..." class="input-field">
-          <button @click="sendMessage" class="send-button">Send</button>
-        </div>
+  <input type="text" v-model="newMessage" @keyup.enter="sendMessage" placeholder="Enter your Query..." class="input-field">
+  <button @click="sendMessage" class="send-button">
+    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-send" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 14l11 -11" /><path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5" /></svg>
+  </button>
+</div>
+
       </div>
     </div>
     <!-- Button to toggle chatbot visibility -->
@@ -226,24 +229,34 @@ export default {
 .toggle-button:focus {
   outline: none;
 }
-
 .input-container {
   position: fixed; /* Position the input field */
   width: 298px;
   bottom: 28px; /* Align to the bottom */
   margin: 72px 0px; /* Add margin for better spacing */
+  display: flex; /* Use flexbox for layout */
+}
+
+.input-field {
+  flex: 1; /* Take remaining space */
+  border: 2px solid #5479F7;
   outline: none;
   height: 40px;
   transition: border-color 0.3s ease;
 }
 
-.input-field {
-  border: 2px solid #5479F7;
-  width: 80%;
-  outline: none;
+.send-button {
+  width: 40px; /* Adjust button width */
   height: 40px;
-  transition: border-color 0.3s ease;
+  background-color: #5479F7;
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex; /* Use flexbox for layout */
+  justify-content: center; /* Center icon horizontally */
+  align-items: center; /* Center icon vertically */
 }
+
 
 .chat-container-wrapper {
   /* Space for scrollbar */
@@ -273,14 +286,7 @@ export default {
 }
 
 /* Other styles remain unchanged */
-.send-button {
-  width: 20%;
-  height: 40px;
-  background-color: #5479F7;
-  border: none;
-  color: white;
-  cursor: pointer;
-}
+
 
 .monk-image {
   position: absolute;
