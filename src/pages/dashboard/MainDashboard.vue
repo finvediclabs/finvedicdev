@@ -75,7 +75,7 @@ export default {
         },
         {
           image: organizationPng,
-          title: 'AI Bot Pdf Upload',
+          title: 'AI Training',
           description: 'Perfect for learning how the framework works.',
           path: 'uploadpdfbot',
           background: '#1E90FF90',
