@@ -239,6 +239,7 @@ export default {
   background-color: transparent;
   border: none;
   cursor: pointer;
+  z-index: 9999999;
 }
 
 .toggle-button img {
