@@ -36,7 +36,7 @@
     </q-btn>
   </div>
   <div style="text-align: center; padding-top: 20px;">
-  <p v-if="version" style="color: green;">You selected: {{ version }}</p>
+  <p v-if="version" style="color: green;">You selected: {{ version }} OS</p>
   <p v-else style="color: red;">You didn't select operating system</p>
 </div>
               <div class="errorMsgBox">

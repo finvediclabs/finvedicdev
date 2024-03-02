@@ -16,13 +16,15 @@
       
       <div class="btn border-gradient-blue-purple" style="position: absolute; top: 45px;left: 25%;
     transform: translateX(-50%);width: 20%;">
-        <span>Drona Training</span>
+        <span>
+          <img src="https://gurukul.finvedic.com/images/monk_half.png" alt="Person Icon" style="transform: scaleX(-1);">
+          Drona Training</span>
     </div>
   
       <div style="display: flex; flex-direction: column; align-items: center; padding-top: 60px;">
-  <p style="font-size: 32px; margin-bottom: 20px;">Drag and drop PDF file here, or</p>
+  <p style="font-size: 16px; margin-bottom: 20px;">Drag and drop PDF file here, or</p>
   <button style="font-size: 32px; background: none; border:2px solid grey;border-radius:20px;cursor:pointer" @click="openFilePicker">
-    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-type-pdf" width="120" height="120" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-type-pdf" width="80" height="80" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
   <path d="M14 3v4a1 1 0 0 0 1 1h4" />
   <path d="M5 12v-7a2 2 0 0 1 2 -2h7l5 5v4" />
@@ -37,7 +39,7 @@
 </div>
 
 
-<button style="background-color: #5479F7; border-radius: 20px;font-size:32px;font-weight:600;color:#ffff;padding:0px 30px;margin-top:40px;border:none;cursor:pointer" @click="uploadPDF">Upload</button>
+<button class="upload" style="" @click="uploadPDF">Upload</button>
 
       <div v-if="pdfUrl">
         <h2>Uploaded PDF:</h2>
@@ -113,12 +115,12 @@
 }
 .btn {
 	font-size: 1rem;
-	font-weight: 600;
+	font-weight: 400;
 	border-radius: 999px;
   box-sizing: border-box;
 	color: #1a1a1a;
 	display: inline-block;
-	padding: 4px;
+	padding: 2px;
 	position: relative;
   text-decoration: none;
 	text-transform: uppercase;
@@ -131,7 +133,7 @@
   display: flex;
   justify-content: center;
   transition: background .5s ease;
-  padding: 1rem 2rem;
+  padding: 0.4rem 0.4rem;
 }
 
 .btn:hover > span {
@@ -144,7 +146,7 @@
     margin-top: 80px;
     margin-right: 40px;
     margin-left: 40px;
-    min-height: 400px;
+    min-height: 300px;
     text-align: center;
     border: 3px solid #5479F7; /* Set initial border */
     border-radius: 24px;
@@ -152,6 +154,9 @@
     background-clip: padding-box, border-box; /* Clip gradient to border */
     animation: rotate-color 5s linear infinite; /* Apply rotation animation */
     
+}
+.drop-container:hover{
+  background-color: #c5d3ff;
 }
 
 
@@ -172,6 +177,25 @@
     position: fixed;
     bottom: 60px;
     right: 20px;
+  }
+  .upload{
+    background-color: #5479F7; 
+    border-radius: 30px;
+    font-size:16px;
+    font-weight:600;
+    color:#ffff;
+    padding:12px 30px;
+    margin-top:40px;
+    border:none;cursor:pointer
+  }
+  .old_monk{
+    position: absolute;
+    bottom: 0;
+    
+  }
+  span img{
+    width:60px;
+    border-radius: 50% 50% ;
   }
   </style>
   

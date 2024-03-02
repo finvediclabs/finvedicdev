@@ -1,14 +1,17 @@
 <template>
     <div class="container">
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-1"></div>
+        <div class="col-md-4">
           <!-- Include Drona.vue component here -->
           <DronaTraining />
         </div>
-        <div class="col-md-6">
+        <div class="col-md-2"></div>
+        <div class="col-md-4">
             <VedTraining />
          
         </div>
+        <div class="col-md-1"></div>
       </div>
     </div>
   </template>

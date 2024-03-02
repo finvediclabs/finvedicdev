@@ -1,5 +1,5 @@
 <template>
-  <div class="chatbot" :class="{ open: isOpen }">
+  <div class="chatbot" :class="{ open: isOpen }" >
     <!-- Chat interface -->
     <img src="https://gurukul.finvedic.com/images/monk.png" alt="" class="monk-image">
     <div class="chat-container-wrapper">
@@ -16,16 +16,15 @@
         </div>
         <!-- Input field for user to type messages -->
         <div class="input-container">
-  <input type="text" v-model="newMessage" @keyup.enter="sendMessage" placeholder="Enter your Query..." class="input-field">
-  <button @click="sendMessage" class="send-button">
-    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-send" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 14l11 -11" /><path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5" /></svg>
-  </button>
-</div>
-
+          <input type="text" v-model="newMessage" @keyup.enter="sendMessage" placeholder="Enter your Query..." class="input-field">
+          <button @click="sendMessage" class="send-button">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-send" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 14l11 -11" /><path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5" /></svg>
+          </button>
+        </div>
       </div>
     </div>
     <!-- Button to toggle chatbot visibility -->
-    <button class="toggle-button" @click="toggleChatbot">
+    <button class="toggle-button" @click="toggleChatbot" ref="toggle_button" @mousedown="startDragging">
       <template v-if="isOpen">
         <img :src="isOpen ? 'https://gurukul.finvedic.com/images/monk_half.png' : 'https://gurukul.finvedic.com/images/monk_half_mirrored.png'" alt="Monk Icon" style="background-color: red;">
       </template>
@@ -42,7 +41,10 @@ export default {
     return {
       isOpen: false,
       newMessage: '',
-      messages: []
+      messages: [],
+      isDragging: false,
+      xOffset: 0,
+      yOffset: 0
     };
   },
   methods: {
@@ -50,59 +52,79 @@ export default {
       this.isOpen = !this.isOpen;
     },
     sendMessage() {
-    const message = this.newMessage.trim();
-    if (!message) return; // Don't send empty messages
+      const message = this.newMessage.trim();
+      if (!message) return; // Don't send empty messages
 
-    // Push the outgoing message to the messages array immediately
-    const outgoingMessage = { text: message, type: 'outgoing', id: Date.now() };
-    this.messages.push(outgoingMessage);
-    console.log('Outgoing message:', outgoingMessage); // Log outgoing message
-    this.newMessage = ''; // Clear the input field
+      // Push the outgoing message to the messages array immediately
+      const outgoingMessage = { text: message, type: 'outgoing', id: Date.now() };
+      this.messages.push(outgoingMessage);
+      console.log('Outgoing message:', outgoingMessage); // Log outgoing message
+      this.newMessage = ''; // Clear the input field
 
-    // Send the message to the API
-    const formData = new FormData();
-    formData.append('query', message); // Append the query parameter
-    formData.append('source', 'PORTAL'); // Append the source parameter
-    fetch('https://fnbackend.finvedic.com/api/bot/query', {
-      method: 'POST',
-      body: formData // Send form data
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then(data => {
-      // Handle the response from the API
-      const responseData = data.data; // Extract the 'data' field from the API response
-      const incomingMessage = { text: responseData, type: 'incoming', id: Date.now() };
-      this.messages.push(incomingMessage);
-      console.log('Incoming message:', incomingMessage); // Log incoming message
+      // Send the message to the API
+      const formData = new FormData();
+      formData.append('query', message); // Append the query parameter
+      formData.append('source', 'PORTAL'); // Append the source parameter
+      fetch('https://fnbackend.finvedic.com/api/bot/query', {
+        method: 'POST',
+        body: formData // Send form data
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        // Handle the response from the API
+        const responseData = data.data; // Extract the 'data' field from the API response
+        const incomingMessage = { text: responseData, type: 'incoming', id: Date.now() };
+        this.messages.push(incomingMessage);
+        console.log('Incoming message:', incomingMessage); // Log incoming message
 
-      // Scroll to the bottom of the chat container after receiving a new message
-      this.$nextTick(() => {
-        const chatContainer = this.$el.querySelector('.chat-container');
-        chatContainer.scrollTop = chatContainer.scrollHeight;
+        // Scroll to the bottom of the chat container after receiving a new message
+        this.$nextTick(() => {
+          const chatContainer = this.$el.querySelector('.chat-container');
+          chatContainer.scrollTop = chatContainer.scrollHeight;
+        });
+      })
+      .catch(error => {
+        console.error('There was a problem with the fetch operation:', error);
+        // Optionally, you can add an error message to the messages array
+        const errorMessage = { text: 'Error sending message', type: 'incoming', id: Date.now() };
+        this.messages.push(errorMessage);
+        console.log('Error message:', errorMessage); // Log error message
       });
-    })
-    .catch(error => {
-      console.error('There was a problem with the fetch operation:', error);
-      // Optionally, you can add an error message to the messages array
-      const errorMessage = { text: 'Error sending message', type: 'incoming', id: Date.now() };
-      this.messages.push(errorMessage);
-      console.log('Error message:', errorMessage); // Log error message
-    });
-  }
+    },
+    startDragging(event) {
+      this.isDragging = true;
+      const chatbot = this.$refs.toggle_button;
+      const boundingBox = chatbot.getBoundingClientRect();
+      this.xOffset = event.clientX - boundingBox.left;
+      this.yOffset = event.clientY - boundingBox.top;
+      document.addEventListener('mousemove', this.drag);
+      document.addEventListener('mouseup', this.stopDragging);
+    },
+    drag(event) {
+      if (this.isDragging) {
+        const chatbot = this.$refs.toggle_button;
+        chatbot.style.left = event.clientX - this.xOffset + 'px';
+        chatbot.style.top = event.clientY - this.yOffset + 'px';
+      }
+    },
+    stopDragging() {
+      this.isDragging = false;
+      document.removeEventListener('mousemove', this.drag);
+      document.removeEventListener('mouseup', this.stopDragging);
+    }
   },
   directives: {
-  'v-scroll-bottom': {
-    updated: function(el) {
-      el.scrollTop = el.scrollHeight;
+    'v-scroll-bottom': {
+      updated: function(el) {
+        el.scrollTop = el.scrollHeight;
+      }
     }
   }
-}
-
 };
 </script>
 
