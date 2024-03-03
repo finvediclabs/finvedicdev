@@ -58,12 +58,22 @@ const routes = [
       {
         path: 'roles',
         component: () => import('pages/dashboard/Roles.vue'),
-        meta: { item: 'roles' }
+        permissions:[
+  
+        ],
+        meta: { 
+          
+         }
       },
       {
         path: 'organizations',
         component: () => import('pages/dashboard/organizations/Organizations.vue'),
         meta: { item: 'organizations' }
+      },
+      {
+        path: 'uploadpdfbot',
+        component: () => import('pages/dashboard/ai_upload/ai_upload.vue'),
+        meta: { item: 'uploadpdfbot' }
       },
       {
         path: 'vm-setup',
@@ -173,10 +183,21 @@ const routes = [
     component: () => import('layouts/DashboardLayout.vue'),
     children: [
       {
-        path: '',
-        component: () => import('pages/reports/Index.vue'),
-        meta: { item: '' }
-      }
+        path: 'student',
+        component: () => import('pages/reports/Students.vue'),
+        meta: { item: 'student' }
+      },
+      {
+        path: 'faculty',
+        component: () => import('pages/reports/Faculty.vue'),
+        meta: { item: 'faculty' }
+      },
+      {
+        path: 'cloud',
+        component: () => import('pages/reports/Cloud.vue'),
+        meta: { item: 'faculty' }
+      },
+     
     ]
   },
   {
@@ -208,5 +229,6 @@ const routes = [
     component: () => import('pages/ErrorNotFound.vue')
   }
 ]
+
 
 export default routes

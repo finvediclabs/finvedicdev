@@ -3,7 +3,7 @@ export const urls = {
   booksDataUrl: 'api/books',
   getRolesUrl: 'api/roles',
   createVmsUrl: 'api/labVms/createLabVm',
-  videoDataUrl: 'api/videos?',
+  videoDataUrl: 'api/videos',
   bookChaptersUrl: 'api/bookChapters',
   videoChaptersUrl: 'api/videoChapters',
   presentationsUrl: 'api/presentations',

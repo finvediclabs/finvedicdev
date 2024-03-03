@@ -6,6 +6,7 @@
       -->
     </fin-portlet-header>
     <fin-portlet-item>
+      <!--
       <div class="radio-button-group mts" style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);border-radius: 25px;width: 60%;margin-left: auto;margin-right: auto;">
   <div class="item">
     <input type="radio" name="button-group" class="radio-button" value="1" id="button1" checked />
@@ -21,19 +22,21 @@
   </div>
   
 </div>
+-->
       
       
       
       
-      <!--
-      <div class="row q-pb-lg">
-        <div v-for="category in categories" class="col-12 col-sm-4 q-pa-sm">
-          <q-btn :label="category.categoryName" no-caps v-if="!subCategories[category.id]" class="full-width fin-br-8 shadow-2"
+      
+      <div class="row q-lg">
+        <q-btn-group rounded style="width: 80%;margin-left: auto;margin-right: auto;">
+        <div v-for="category in categories" class="full-width">
+          <q-btn unelevated rounded :label="category.categoryName" no-caps v-if="!subCategories[category.id]" class="full-width"
             size="lg" :class="selectedCategory?.id == category.id ? 'bg-finvedic text-white' : ''"
             @click="selectCategory(category)" />
 
-          <q-btn-dropdown :label="category.categoryName" no-caps v-if="subCategories[category.id]"
-            class="full-width fin-br-8 shadow-2" :class="{ 'bg-finvedic text-white': selectedCategory?.id === category.id }"
+          <q-btn-dropdown unelevated rounded :label="category.categoryName" no-caps v-if="subCategories[category.id]"
+            class="full-width" :class="{ 'bg-finvedic text-white': selectedCategory?.id === category.id }"
             size="lg">
             <q-list>
               <q-item v-for="subCategory in subCategories[category.id]" clickable v-close-popup
@@ -46,8 +49,9 @@
             </q-list>
           </q-btn-dropdown>
         </div>
+      </q-btn-group>
       </div>
-      -->
+    
     </fin-portlet-item>
     <fin-portlet-item class="q-pb-xl" v-if="presentations.length">
       <carousel-3d :totalSlides="presentations.length" :count="presentations.length" @beforeSlideChange="getCurrentSlide"

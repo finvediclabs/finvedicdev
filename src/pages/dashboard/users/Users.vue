@@ -45,8 +45,8 @@
                 :rules="[val => val && val.length > 0 || 'Phone Number Is required']" />
             </div>
             <div class="col-12 q-px-sm q-py-xs">
-              <q-select outlined v-model="user.role" :options="roles" label="Owner *" lazy-rules
-                :rules="[val => val || 'Select option']"  option-label="name"/>
+              <q-select outlined v-model="user.owner" :options="roles_new" label="Owner *" lazy-rules
+                />
             </div>
             <div class="col-12 col-md-6 q-px-sm q-py-xs text-center q-pt-lg"></div>
             <div class="col-12 col-md-6 q-px-sm q-py-xs text-right q-pt-lg">
@@ -97,6 +97,7 @@ export default {
       tab: 'allUsers',
       roleSearch: '',
       roleOptions: ['trine', 'client'],
+      roles_new: ['admin', 'student' , 'faculty'],
       programSearch: '',
       loading: true,
       createUserDialog: false,
@@ -178,7 +179,7 @@ export default {
         name: this.user.name,
         email: this.user.mail,
         phoneNumber: this.user.Number,
-        role: this.user.role,
+        owner: this.user.owner,
         password: "Welcome@123",
       };
       this.$api.post(urls.usersUrl, request).then(response => {
@@ -202,7 +203,7 @@ export default {
         name: this.user.name,
         email: this.user.mail,
         phoneNumber: this.user.Number,
-        role: this.user.role,
+        owner: this.user.owner,
         id: this.user.id,
         password: this.user.password,
       };
@@ -230,7 +231,7 @@ export default {
         lName: val.lastName,
         mail: val.email,
         Number: val.phoneNumber,
-        role: val.owner,
+        owner: val.owner,
         id: val.id,
         password: val.password
       };

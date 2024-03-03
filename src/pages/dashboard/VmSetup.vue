@@ -4,26 +4,61 @@
       <fin-portlet-heading :loading="loading" backArrow>Vm Setup</fin-portlet-heading>
     </fin-portlet-header>
     <fin-portlet-item class="full-width items-center justify-center">
-      <div style="max-width: 1100px;">
+      <div style=" margin-left: auto;margin-right: auto;">
         <q-form @submit="validateFields">
-          <div class="row">
-            <div class="col-12 col-md-1 q-pa-sm "></div>
-            <div class="col-12 col-md-5 q-pa-sm">
-              <q-select v-model="version" :options="['Windows', 'Linux']" borderless label="VM Type"
-                class="shadow-3 fin-br-8 q-px-md bg-grey-1" />
+          <div class="row" >
+            
+            <div class="col-12 col-md-5 q-pa-sm" style=" margin-left: auto;margin-right: auto;">
+              <p style="text-align: center;font-size: 24px;font-weight: 600;">Select The Operating System</p>
+              <div class="image-btn-container">
+    
+    <q-btn
+      v-ripple
+      v-model="version"
+      toggle
+      :flat="version !== 'Windows'"
+      :color="version === 'Windows' ? 'green' : 'white'"
+      class="image-btn"
+      @click="selectVersion('Windows')"
+    >
+      <img src="https://gurukul.finvedic.com/images/microsoft.png" alt="Windows" style="width: 100%; height: 100%;" />
+    </q-btn>
+    <q-btn
+      v-ripple
+      v-model="version"
+      toggle
+      :flat="version !== 'Linux'"
+      :color="version === 'Linux' ? 'green' : 'white'"
+      class="image-btn"
+      @click="selectVersion('Linux')"
+    >
+      <img src="https://gurukul.finvedic.com/images/LinuxOS.png" alt="Linux" style="width: 100%; height: 100%;" />
+    </q-btn>
+  </div>
+  <div style="text-align: center; padding-top: 20px;">
+  <p v-if="version" style="color: green;">You selected: {{ version }} OS</p>
+  <p v-else style="color: red;">You didn't select operating system</p>
+</div>
               <div class="errorMsgBox">
                 <span v-if="!version">{{ errors.version }}</span>
               </div>
-            </div>
-            <div class="col-12 col-md-1 q-pa-sm "></div>
-            <div class="col-12 col-md-5 q-pa-sm ">
-              <q-input v-model="nos" type="number" borderless label="No Of VM's" class="shadow-3 fin-br-8 q-px-md bg-grey-1" />
+              <div class="input-container" style="display: flex; align-items: center;">
+                <div>
+                  <q-btn class="shadow-3 fin-br-8 q-px-md bg-grey-1" @click="decrementNoOfVMs" icon="remove" style="margin-right: 10px;" />
+                </div>
+                <q-input v-model="nos" type="number" borderless label="No Of VM's" class="shadow-3 fin-br-8 q-px-md bg-grey-1" style="flex: 1; margin-right: 10px;" />
+                
+                  <div>
+                  <q-btn class="shadow-3 fin-br-8 q-px-md bg-grey-1" @click="incrementNoOfVMs" icon="add" />
+                </div>
+              </div>
               <div class="errorMsgBox">
                 <span  v-if="!nos">{{ errors.nos }}</span>
               </div>
             </div>
+
           </div>
-          <fin-portlet-item class="q-pa-sm text-right q-mt-xl">
+          <fin-portlet-item class="q-pa-sm text-center q-xl">
             <q-btn color="primary" no-caps class="sub-btn q-ml-sm fin-br-8" style="min-width:150px" label="Create VM" type="submit"
               :disable="loader">
               <q-spinner-ios color="white" class="q-pl-sm" v-if="loader" />
@@ -32,16 +67,15 @@
         </q-form>
       </div>
     </fin-portlet-item>
-
-
   </fin-portlet>
   <div class="container" style="width: 80%;margin-left: auto;margin-right: auto;" >
-  <fin-portlet-item class="table-scroll">
+    <fin-portlet-item class="table-scroll">
       <fin-table :columns="header" :data="VMsList" select @reCall="getVMsData()" allowDelete :delete-url="deleteUrl"
         @editFun="editDataFun" :loading="loading" />
     </fin-portlet-item>
   </div>
 </template>
+
 <script>
 import FinTable from "src/components/FinTable.vue"
 import FinPortlet from "src/components/Portlets/FinPortlet.vue";
@@ -61,7 +95,7 @@ export default {
   data() {
     return {
       version: "",
-      nos: '',
+      nos: 0,
       instance: "Standard_D2s_v3=3",
       region: "East US",
       loader: false,
@@ -95,9 +129,8 @@ export default {
       this.loading = true;
       this.$api.get(urls.getAzureVmsUrl).then(response => {
         this.loading = false;
-        // if (response.data.success) {
-          this.VMsList = response.data.data;
-        }).catch(error => {
+        this.VMsList = response.data.data;
+      }).catch(error => {
         this.loading = false;
         this.showMsg(error.response?.data.message || error.message, 'negative');
       })
@@ -123,20 +156,40 @@ export default {
           region: this.region
         }).then(response => {
           this.loader = false;
-          // if (response.data.success) {
           this.showMsg(response.data?.message || 'Vms created Successfully', 'positive');
-          // } else {
-          //   this.showMsg(response.data?.message, 'negative');
-          // }
         }).catch(error => {
           this.loader = false;
           this.showMsg(error.response?.data.message || error.message, 'negative');
         })
       }
-
-
+    },
+    selectVersion(selectedVersion) {
+      this.version = selectedVersion;
+      this.errors.version = ''; // Clear error message when a version is selected
+    },
+    incrementNoOfVMs() {
+      this.nos++;
+    },
+    decrementNoOfVMs() {
+      if (this.nos > 0) {
+        this.nos--;
+      }
     }
   }
 }
 </script>
+<style>
+.image-btn-container {
+  display: flex;
+  justify-content: center;
+}
+
+.image-btn {
+  width: 180px;
+  height: 180px;
+  margin: 0 10px; /* Adjust as needed */
+}
+</style>
+
+
 ./Urls

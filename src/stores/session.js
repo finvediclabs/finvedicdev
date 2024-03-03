@@ -8,6 +8,7 @@ export const useSessionStore = defineStore('session', {
   state: () => ({
     token: sessionStorage.getItem('accessToken') || null,
     userType: sessionStorage.getItem('userType') || null,
+    userRole : sessionStorage.getItem('userRole') || null,
   }),
   getters: {
 

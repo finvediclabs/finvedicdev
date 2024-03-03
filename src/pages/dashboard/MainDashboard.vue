@@ -61,6 +61,7 @@ export default {
           description: 'Perfect for learning how the framework works.',
           path: 'users',
           background: '#FFCE70',
+        
           enable: true
         },
         {
@@ -70,14 +71,15 @@ export default {
           path: 'roles',
           background: '#CCB4FF',
           enable: true
+          
         },
         {
           image: organizationPng,
-          title: 'Organizations',
+          title: 'AI Training',
           description: 'Perfect for learning how the framework works.',
-          path: 'organizations',
+          path: 'uploadpdfbot',
           background: '#1E90FF90',
-          enable: false
+          enable: true
         },
         {
           image: vmSetupPng,
