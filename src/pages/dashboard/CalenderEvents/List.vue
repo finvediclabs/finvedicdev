@@ -14,7 +14,10 @@
         @editFun="editDataFun" :loading="loading"  />
     </fin-portlet-item>
   </fin-portlet>
-  <fin-portlet>
+  
+  <div class="row">
+  <div class="col-7">
+    <fin-portlet>
     <fin-portlet-header>
       <fin-portlet-heading :loading="loading">Courses</fin-portlet-heading>
       <fin-portlet-item>
@@ -27,8 +30,10 @@
         @editFun="editCourseDataFun" :loading="loading"   showChapters @showChapters="showTopics"/>
     </fin-portlet-item>
   </fin-portlet>
-
-  <fin-portlet>
+ </div>
+  <div class="col-5">
+   
+    <fin-portlet>
     <fin-portlet-header>
       <fin-portlet-heading :loading="loading">Batches</fin-portlet-heading>
       <fin-portlet-item>
@@ -41,6 +46,9 @@
         @editFun="editDataFun" :loading="loading" showChapters @showChapters="showEnrollments"/>
     </fin-portlet-item>
   </fin-portlet>
+  </div>
+</div>
+  
 </template>
 <script>
 import FinTable from "src/components/FinTable.vue"
