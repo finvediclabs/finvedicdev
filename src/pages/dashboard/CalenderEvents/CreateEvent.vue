@@ -222,7 +222,7 @@ export default {
         date: moment(this.date).format('YYYY-MM-DD'),
         start: `${this.getTwoDigits(this.startTime.hours)}:${this.getTwoDigits(this.startTime.minutes)}`,
         end: `${this.getTwoDigits(this.endTime.hours)}:${this.getTwoDigits(this.endTime.minutes)}`,
-        link: 'tewt',
+        link: 'https://meet.google.com/dsj-nhpc-msz',
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
