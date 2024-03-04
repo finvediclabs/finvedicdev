@@ -75,8 +75,8 @@ export default {
       loading: false,
       header: [
         { label: 'S.No', key: 'index', align: 'center' },
-        { label: 'Title', key: 'title', align: 'start' },
         { label: 'Course', key: 'course', align: 'start' },
+        { label: 'Topic', key: 'topic', align: 'start' },
         { label: 'Date', key: 'date', align: 'start' },
         { label: 'Start Time', key: 'start', align: 'start' },
         { label: 'End Time', key: 'end', align: 'start' },

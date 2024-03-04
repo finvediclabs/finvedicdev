@@ -21,8 +21,8 @@ export const useCouseStore = defineStore('coursesnew', {
         this.fetchBatches();
       })
     },
-    fetchTopics(courseid) {
-      axios.get(baseUrl + 'api/topics?courseid='+courseid).then(response => {
+    fetchTopics(courseId) {
+      axios.get(baseUrl + `api/topics/${courseId}`).then(response => {
         this.topics = response.data.data;
         // this.alltopics = Object.groupBy(response.data, tp => {
         //   return tp.courseid;
