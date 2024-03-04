@@ -21,8 +21,9 @@
       class="image-btn"
       @click="selectVersion('Windows')"
     >
-      <img src="https://gurukul.finvedic.com/images/microsoft.png" alt="Windows" style="width: 100%; height: 100%;" />
+      <img src="https://gurukul.finvedic.com/images/Windows.png" alt="Windows" style="width: 100%; height: 100%;" />
     </q-btn>
+    <div class="divider"></div>
     <q-btn
       v-ripple
       v-model="version"
@@ -188,6 +189,13 @@ export default {
   width: 180px;
   height: 180px;
   margin: 0 10px; /* Adjust as needed */
+}
+.divider {
+    width: 4px;
+    border-radius: 2px;
+    height: 180px; /* Adjust height as needed */
+    background-color: #5479F7; /* Or any other color you prefer */
+    margin: 0 10px; /* Adjust spacing between buttons and divider */
 }
 </style>
 

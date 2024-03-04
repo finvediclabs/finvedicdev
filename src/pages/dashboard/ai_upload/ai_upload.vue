@@ -6,12 +6,18 @@
           <!-- Include Drona.vue component here -->
           <DronaTraining />
         </div>
-        <div class="col-md-2"></div>
-        <div class="col-md-4">
+        <div class="col-md-2">
+          <div class="divider"></div>
+        </div>
+        <d
+import autoplay from 'src/components/carousel-3d/mixins/autoplay';
+iv class="col-md-4">
             <VedTraining />
          
         </div>
-        <div class="col-md-1"></div>
+        <div class="col-md-1">
+          
+        </div>
       </div>
     </div>
   </template>
@@ -34,5 +40,14 @@
   .container {
     margin-top: 20px;
   }
+  .divider {
+    width: 4px;
+    border-radius: 2px;
+    height: 80vh; /* Adjust height as needed */
+    background-color: #5479F7; /* Or any other color you prefer */
+    margin-left:auto;
+    margin-right: auto; /* Adjust spacing between buttons and divider */
+    
+}
   </style>
   
