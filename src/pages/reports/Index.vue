@@ -1,4 +1,68 @@
 <template>
+  <div class="row q-lg" style="margin-top: 2%;">
+    <q-btn-group rounded style="width: 80%; margin-left: auto; margin-right: auto;">
+  <div v-for="category in categories" :key="category" class="full-width">
+    <q-btn
+      unelevated
+      rounded
+      :label="category"
+      no-caps
+      class="full-width"
+      size="lg"
+      :class="{ 'bg-finvedic text-white': selectedCategory === category, 'rounded-all': selectedCategory === category }"
+      @click="selectCategory(category)"
+    />
+  </div>
+</q-btn-group>
+
+
+  </div>
+  <div class="container">
+    <!-- Conditionally render student.vue component -->
+    <student v-if="selectedCategory === 'Student'" />
+    <Faculty v-if="selectedCategory === 'Faculty'" />
+    <Cloud v-if="selectedCategory === 'Cloud'" />
+  </div>
+</template>
+
+<script>
+import Student from './Students.vue';
+
+import Faculty from './Faculty.vue';
+
+import Cloud from './Cloud.vue'; 
+
+export default {
+  components: {
+    Student,
+    Faculty,
+    Cloud // Register Student component
+  },
+  data() {
+    return {
+      selectedCategory: 'Student',// Assuming you have this in your data
+    categories: ['Student', 'Faculty', 'Cloud']
+    };
+  },
+  methods: {
+    selectCategory(category) {
+      this.selectedCategory = category;
+    }
+  }
+};
+</script>
+
+<style scoped>
+.rounded-all {
+  border-radius: 40px; /* Adjust this value to change the border radius */
+}
+.row{
+  margin-top: 20px;
+}
+</style>
+
+
+<!-- <template>
   <fin-portlet>
     <fin-portlet-header class="q-px-sm">
       <fin-portlet-heading>Reports</fin-portlet-heading>
@@ -173,4 +237,4 @@ export default {
     }
   }
 }
-</script>
+</script> -->
