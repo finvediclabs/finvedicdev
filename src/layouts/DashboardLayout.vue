@@ -226,12 +226,7 @@ export default {
           ]
         },
         {
-           icon: 'summarize', label: 'Reports', value: 'reports', menu: [
-           { label: "Student", value: "student", icon: 'school' },
-            { label: "Faculty", value: "faculty", icon: 'work' },
-            { label: "Cloud", value: "cloud", icon: 'cloud' },
-
-           ]
+           icon: 'summarize', label: 'Reports', value: 'reports', 
        }
       ],
       expand: {},

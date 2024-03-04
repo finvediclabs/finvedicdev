@@ -19,7 +19,7 @@ export const useSessionStore = defineStore('session', {
       this.token = val;
       const profile = useProfileStore();
       profile.fetchProfile();
-
+      
       const rolesStore = useRolesStore();
       rolesStore.fetchRoles();
 

@@ -1,12 +1,22 @@
 <template>
-  <div class="chatbot" :class="{ open: isOpen }" >
-    <!-- Chat interface -->
+ <div class="chatbot" :class="{ open: isOpen, maximized: isMaximized }" >
+    <!-- Title bar -->
+    <div class="title-bar">
+      <div class="title">Chatbot</div>
+      <div class="buttons">
+        <button @click="minimizeChatbot">-</button>
+        <button @click="toggleMaximize">{{ maximizeIcon }}</button>
+        <button @click="closeChatbot">x</button>
+      </div>
+    </div>
+
+    
     <img src="https://gurukul.finvedic.com/images/monk.png" alt="" class="monk-image">
     <div class="chat-container-wrapper">
       <div class="chat-container" v-scroll-bottom> <!-- Use v-scroll-bottom directive -->
         <!-- Welcome message -->
         <div v-if="isOpen" class="welcome-message" style="z-index: 999999;">
-          <p>Hi! I'm Drona, your AI virtual assistant.<br> Ask me about Fintech?</p>
+          <p>Hi! I'm Drona, your AI virtual assistant. Ask me about Fintech?</p>
         </div>
         <!-- Messages -->
         <div class="messages">
@@ -41,6 +51,7 @@ export default {
     return {
       isOpen: false,
       newMessage: '',
+      maximizeIcon: '□',
       messages: [],
       isDragging: false,
       xOffset: 0,
@@ -50,7 +61,21 @@ export default {
   methods: {
     toggleChatbot() {
       this.isOpen = !this.isOpen;
+      
     },
+    minimizeChatbot() {
+      this.isOpen = false;
+    },
+    toggleMaximize() {
+      this.isMaximized = !this.isMaximized;
+      this.maximizeIcon = this.isMaximized ? '▢' : '□'; // Change icon based on maximize state
+    },
+
+    closeChatbot() {
+  this.isOpen = false;
+  this.messages = []; // Clear all messages
+  
+},
     sendMessage() {
       const message = this.newMessage.trim();
       if (!message) return; // Don't send empty messages
@@ -129,19 +154,84 @@ export default {
 </script>
 
 <style scoped>
-.chatbot {
-  position: fixed;
-  bottom: 100px;
-  right: 20px;
-  z-index: 9999;
+.title-bar {
+  background-color:#5479f7;
+  color: #fff;
+  display: none;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0px 0px;
+}
+.title {
+  display: none;
+}
+.chatbot.open.maximized .title-bar{
+  background-color: #5479f7;
+}
+.chatbot.open.maximized .buttons button {
+  background-color: #5479f7;
+  border: none;
+  color: #ffff;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 8px;
+}
+.buttons button {
+  background-color: transparent;
+  border: none;
+  color: #ffff;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 8px;
 }
 
+.buttons button:hover {
+  opacity: 0.8;
+}
+.chatbot {
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
+  z-index: 9999;
+}
+.chatbot.open.maximized {
+  width: 100vw;
+  height: 100vh;
+  bottom: 0;
+  right: 0;
+}
+.chatbot.open.maximized .chat-container{
+  min-width: 100vw;
+  min-height: 100vh;
+}
+.chatbot.open.maximized .welcome-message {
+  padding-top: 0px;
+  margin-bottom: 0px;
+  text-align: center;
+  background-color: #5479f7;
+  color: #fff;
+  font-weight: 600;
+  position: fixed; /* Position the input field */
+  width: 100vw;
+  font-size: 32px;
+}
+
+.chatbot.open .title-bar{
+  display: flex;
+  
+  padding: 2px 4px;
+}
+.chatbot.open .toggle-button{
+  display: none;
+}
 .chat-container {
   background-color: #fff;
   border: 2px solid #5479f7;;
   display: none;
   max-height: 400px;
-  height: 400px; /* Limit height to enable scrolling */
+  height: 500px; /* Limit height to enable scrolling */
   overflow-y: auto; /* Enable vertical scrolling */
   width: 300px; /* Fixed width */
   position: relative; /* Establish positioning context */
@@ -155,7 +245,7 @@ export default {
 }
 
 .welcome-message {
-  padding-top: 10px;
+  padding-top: 0px;
   margin-bottom: 10px;
   text-align: center;
   background-color: #5479f7;
@@ -252,11 +342,25 @@ export default {
 .toggle-button:focus {
   outline: none;
 }
+.chatbot.open.maximized  .input-container{
+  bottom: 0px; 
+  width: 100vw;
+  margin: 0px 0px; 
+  
+  
+}
+.chatbot.open.maximized .input-field{
+  margin-left: 1%;
+}
+
+.chatbot.open.maximized .monk-image{
+  display: none;
+}
 .input-container {
   position: fixed; /* Position the input field */
   width: 298px;
-  bottom: 28px; /* Align to the bottom */
-  margin: 72px 0px; /* Add margin for better spacing */
+  bottom: 0; /* Align to the bottom */
+  margin: 0px 0px; /* Add margin for better spacing */
   display: flex; /* Use flexbox for layout */
 }
 
