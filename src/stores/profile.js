@@ -20,5 +20,4 @@ export const useProfileStore = defineStore('profile', {
       this.user = user;
     }
   },
-  
 });

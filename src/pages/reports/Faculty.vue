@@ -1,131 +1,94 @@
 <template>
-  <div class="row">
-    <div class="col-6 grid-container" style="width: 50%; margin-right: auto;">
-      <div class="button-grid">
-        <div class="btn_container">
-        <q-btn
-          unelevated
-          squared
-          no-caps
-          class="full-width"
-          size="lg"
-          :class="{ 'bg-finvedic text-white': selectedCategory === 'Button1' }"
-          @click="selectCategory('Button1')"
-        >
-        
-        <img src="https://gurukul.finvedic.com/images/faculty_attendance.png" alt="Attendance" style="width: 100%; height: 100%;" />
+    <div class="container">
+      <q-btn-dropdown
+        :label="selectedOption ? selectedOption.label : 'Select an option'"
+        color="primary"
+        class="full-width bg-finvedic text-white"
+        v-close-popup
+        style="margin-left: auto !important;margin-right: auto !important;"
+      >
+          <q-list link v-if="options.length">
+            <q-item
+              v-for="(option, index) in options"
+              :key="index"
+              clickable
+              v-close-popup
+              @click="selectOption(option)"
+              class="custom-item"
+            >
+              <q-item-section>{{ option.label }}</q-item-section>
+            </q-item>
+          </q-list>
+     
+      </q-btn-dropdown>
+    </div>
+    <div class="Chart_container">
+      <!-- Conditionally render DummyBar.vue based on selected option -->
+      <FacultyBar v-if="selectedOption && selectedOption.value === 'option1'" />
+      <ClassReports v-if="selectedOption && selectedOption.value === 'option2'" />
+      <ProgressBar v-if="selectedOption && selectedOption.value === 'option3'" />
+      <CourseHoursBar v-if="selectedOption && selectedOption.value === 'option4'" />
+    </div>
+  </template>
   
-      </q-btn>
-      
-     <div class="button-label">Attendance</div>
-    </div>
-
-    <div class="btn_container">
-        <q-btn
-          unelevated
-          squared
-          no-caps
-          class="full-width"
-          size="lg"
-          :class="{ 'bg-finvedic text-white': selectedCategory === 'Button2' }"
-          @click="selectCategory('Button2')"
-        >  
-        <img src="https://gurukul.finvedic.com/images/classroom_icon.png" alt="ClassRoom" style="width: 100%; height: 100%;" />
-    
-      </q-btn>
-      <div class="button-label">Class Room Reports</div>
-    </div>
-    <div class="btn_container">
-        <q-btn
-          unelevated
-          squared
-          no-caps
-          class="full-width"
-          size="lg"
-          :class="{ 'bg-finvedic text-white': selectedCategory === 'Button3' }"
-          @click="selectCategory('Button3')"
-        >
-        <img src="https://gurukul.finvedic.com/images/course_progress.png" alt="CourseProgress" style="width: 100%; height: 100%;" />
-    
-      </q-btn>
-      <div class="button-label">Course Progress</div>
-    </div>
-    
-    <div class="btn_container">
-        <q-btn
-          unelevated
-          squared
-          no-caps
-          class="full-width"
-          size="lg"
-          :class="{ 'bg-finvedic text-white': selectedCategory === 'Button4' }"
-          @click="selectCategory('Button4')"
-        >
-        <img src="https://gurukul.finvedic.com/images/course_hour.png" alt="CourseProgress" style="width: 100%; height: 100%;" />
-    
-      </q-btn>
-      <div class="button-label">Course Hours</div>
-      </div>
-      </div>
-    </div>
-    <div class="col-6 right-container" style="width: 50%; margin-left: auto;">
-      <!-- Add the component you want to display when Button1 is selected -->
-      <DummyFacultyAttendence v-if="selectedCategory === 'Button1'" />
-      <DummyClassReports v-if="selectedCategory === 'Button2'" />
-      <CourseProgressReports v-if="selectedCategory === 'Button3'" />
-      <CourseHours v-if ="selectedCategory === 'Button4'" />
-      
-    </div>
-  </div> 
-</template>
-
-<script>
-import DummyFacultyAttendence from './components/Dummy/DummyFacultyAttendance.vue';
-import DummyClassReports from './components/Dummy/DummyClassReports.vue';
-import CourseProgressReports from './components/Dummy/CourseProgressReports.vue';
-import CourseHours from './components/Dummy/CourseHours.vue';
-
-export default {
-  components: {
-    DummyFacultyAttendence,
-    DummyClassReports,
-    CourseProgressReports,
-    CourseHours
-  },
-  data() {
-    return {
-      selectedCategory: 'Button1', // Button1 is initially selected
-    };
-  },
-  methods: {
-    selectCategory(category) {
-      this.selectedCategory = category;
-      // Add your logic for category selection
+  <script>
+  import FacultyBar from './components/Dummy/DummyFacultyAttendance.vue';
+  import ClassReports from './components/Dummy/DummyClassReports.vue';
+  import CourseHoursBar from './components/Dummy/CourseHours.vue';
+  import ProgressBar from './components/Dummy/CourseProgressReports.vue';
+ 
+  
+  export default {
+    components: {
+      FacultyBar,
+      ClassReports,
+      ProgressBar,
+      CourseHoursBar,
+     
+    },
+    data() {
+      return {
+        selectedOption: { label: 'Attendance Reports', value: 'option1' },
+        options: [
+          { label: 'Attendance Reports', value: 'option1' },
+          { label: 'Class Reports', value: 'option2' },
+          { label: 'Course Progress Reports', value: 'option3' },
+          { label: 'Course Hours Reports', value: 'option4' },
+        ]
+      };
+    },
+    methods: {
+      selectOption(option) {
+        this.selectedOption = option;
+        this.$refs.menu.hide();
+      }
     }
+  };
+  </script>
+  
+  <style scoped>
+  .Chart_container {
+    width: 80%;
+    height: 100% !important;
+    margin-left: auto;
+    margin-right: auto;
   }
-};
-</script>
+  .full-width {
+    width: 360px!important;
+    height: 60px !important;
+    border-radius: 40px;
+  }
+  .container {
+    position: relative;
+    margin-top: 2%;
+    margin-bottom: 2%;
+    display: flex; /* Use flexbox */
+    align-items: center; /* Center vertically */
 
-<style scoped>
-.grid-container {
-  display: block;
-}
-
-.button-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  margin-left: 10%;
-  gap: 10px; /* Adjust gap between buttons */
-}
-
-.q-btn {
-  width: 150px !important;
-  height: 150px!important;
-}
-.button-label {
-  text-align: center;
-  transform: translateX(-20%);
-  font-weight: 600;
-  font-size: 24px;
-}
-</style>
+  }
+  
+  .custom-item {
+    width: 360px;
+  }
+  </style>
+  

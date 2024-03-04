@@ -182,12 +182,22 @@ const routes = [
     meta: { title: 'Reports', module: 'reports' },
     component: () => import('layouts/DashboardLayout.vue'),
     children: [
-      
       {
-        path: '',
-        component: () => import('pages/reports/Index.vue'),
-        meta: { item: '' }
-      }
+        path: 'student',
+        component: () => import('pages/reports/Students.vue'),
+        meta: { item: 'student' }
+      },
+      {
+        path: 'faculty',
+        component: () => import('pages/reports/Faculty.vue'),
+        meta: { item: 'faculty' }
+      },
+      {
+        path: 'cloud',
+        component: () => import('pages/reports/Cloud.vue'),
+        meta: { item: 'faculty' }
+      },
+     
     ]
   },
   {
