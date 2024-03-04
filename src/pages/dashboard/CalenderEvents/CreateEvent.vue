@@ -195,7 +195,7 @@ export default {
       const day = date.getDate();
       const month = new Date(date).toLocaleDateString('en-US', { month: 'short' });
       const year = date.getFullYear();
-      return `${day} ${month}, ${year}`;
+      return `${month} ${day}, ${year}`;
     },
     validateForm() {
       if (this.date && this.startTime && this.endTime && this.course) {

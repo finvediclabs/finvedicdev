@@ -69,7 +69,7 @@ export default {
     getChaptersData() {
       if (this.$route.params.cycleid) {
         this.loading = true;
-        this.$api.get(urls.getEnrollments, {
+        this.$api.get(urls.getEnrollments+"/"+this.$route.params.cycleid, {
           params: {
             cycleid: this.$route.params.cycleid
           }
