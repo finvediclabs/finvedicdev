@@ -9,9 +9,7 @@
         <div class="col-md-2">
           <div class="divider"></div>
         </div>
-        <d
-import autoplay from 'src/components/carousel-3d/mixins/autoplay';
-iv class="col-md-4">
+        <div class="col-md-4">
             <VedTraining />
          
         </div>
