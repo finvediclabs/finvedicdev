@@ -36,7 +36,7 @@ export default {
         { label: 'S.No', key: 'index', align: 'center' },
         { label: 'Batch Id', key: 'cycleid', align: 'start', width: '50px' },
         { label: 'Student', key: 'username', align: 'start', width: '150px' },
-        { label: 'Enrollment Date', key: 'enrollmentDate', align: 'start', width: '150px' },
+        { label: 'Enrollment Date', key: 'enrollmentDateStr', align: 'start', width: '150px' },
       ],
       chaptersList: [],
       loading: true,
