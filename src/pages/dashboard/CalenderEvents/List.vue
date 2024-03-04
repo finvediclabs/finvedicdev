@@ -92,8 +92,8 @@ export default {
       batchheader: [
       { label: 'S.No', key: 'index', align: 'center' },
         { label: 'Batch Name', key: 'cycleDesc', align: 'start' },
-        { label: 'Start Date', key: 'cycleEndDate', align: 'start' },
-        { label: 'End Date', key: 'cycleStartDate', align: 'start' },
+        { label: 'Start Date', key: 'cycleEndDateStr', align: 'start' },
+        { label: 'End Date', key: 'cycleStartDateStr', align: 'start' },
       ],
       batchList: [],
     }
