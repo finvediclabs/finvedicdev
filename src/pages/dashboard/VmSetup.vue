@@ -23,7 +23,9 @@
     >
       <img src="https://gurukul.finvedic.com/images/Windows.png" alt="Windows" style="width: 100%; height: 100%;" />
     </q-btn>
-    <div class="divider"></div>
+    <div class="outer">
+  <div class="inner"></div>
+</div>
     <q-btn
       v-ripple
       v-model="version"
@@ -190,12 +192,20 @@ export default {
   height: 180px;
   margin: 0 10px; /* Adjust as needed */
 }
-.divider {
-    width: 4px;
-    border-radius: 2px;
-    height: 180px; /* Adjust height as needed */
-    background-color: #5479F7; /* Or any other color you prefer */
-    margin: 0 10px; /* Adjust spacing between buttons and divider */
+.outer {
+  width: 1px;
+  height: 180px;
+  margin: auto;
+  position: relative;
+  overflow: hidden;
+}
+.inner {
+  position: absolute;
+  width:100%;
+  height: 40%;
+  background: #5479F7;
+  top: 30%;
+  box-shadow: 0px 0px 30px 20px #5479F7;
 }
 </style>
 

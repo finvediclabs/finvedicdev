@@ -7,7 +7,9 @@
           <DronaTraining />
         </div>
         <div class="col-md-2">
-          <div class="divider"></div>
+          <div class="outer">
+  <div class="inner"></div>
+</div>
         </div>
         <div class="col-md-4">
             <VedTraining />
@@ -38,14 +40,20 @@
   .container {
     margin-top: 20px;
   }
-  .divider {
-    width: 4px;
-    border-radius: 2px;
-    height: 80vh; /* Adjust height as needed */
-    background-color: #5479F7; /* Or any other color you prefer */
-    margin-left:auto;
-    margin-right: auto; /* Adjust spacing between buttons and divider */
-    
+.outer {
+  width: 1px;
+  height: 60vh;
+  margin: auto;
+  position: relative;
+  overflow: hidden;
+}
+.inner {
+  position: absolute;
+  width:100%;
+  height: 60%;
+  background: #5479F7;
+  top: 30%;
+  box-shadow: 0px 0px 30px 20px #5479F7;
 }
   </style>
   
