@@ -10,7 +10,7 @@
 
             <q-card-section class="row justify-between">
               <div>
-                <div>{{ extractTitle(nextEventTitle) }}</div>
+                <div>Next Class : {{ extractTitle(nextEventTitle) }}</div>
                 <br>
                 <div class="text-h5 text-weight-bolder">Start :{{ nextEventStart }}<br>End :{{ nextEventEnd }}</div>
               </div>
