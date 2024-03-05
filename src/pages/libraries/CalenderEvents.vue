@@ -4,23 +4,24 @@
       <div class="row full-width">
         <div class="col-1"></div>
         <div class="col-12 col-md-6 " :class="{ 'q-mt-xl': !isMobile }">
-        <!-- v-for="(event, index) in events" :key="event.id" -->
-        
-          <q-card class="my-card full-width text-white full-height" style="background: #2FCB89;">
-            <q-card-section class="row justify-between" >
+          <!-- v-for="(event, index) in events" :key="event.id" -->
+          <q-card v-if="upcomingEvents.length > 0" class="my-card full-width text-white full-height" style="background: #2FCB89;">
+          
+
+            <q-card-section class="row justify-between">
               <div>
-                <div>Schedule</div>
+                <div>{{ extractTitle(nextEventTitle) }}</div>
                 <br>
-                <div class="text-h4 text-weight-bolder">Title</div>
+                <div class="text-h5 text-weight-bolder">Start :{{ nextEventStart }}<br>End :{{ nextEventEnd }}</div>
               </div>
               <q-img :src="classRoom" class="classRoomImg" v-if="!isMobile" />
             </q-card-section>
             <q-card-section class="row justify-between">
               <div class="items-center">
-                <q-btn label="Banking" no-caps outline rounded color="white" />
-                <span class="q-pl-sm text-body1">12:30 - 01:30</span>
+                <q-btn :label="extractTitle(nextEventTitle)" :href="extractLink(nextEventTitle)" no-caps outline rounded color="white" />
+                
               </div>
-              <q-btn label="Connect" class="text-black bg-white q-px-lg fin-br-8" no-caps />
+              <q-btn label="Connect" class="text-black bg-white q-px-lg fin-br-8" no-caps :href="extractLink(nextEventTitle)" @click="redirectToNextEventLink" />
             </q-card-section>
           </q-card>
         </div>
@@ -115,12 +116,78 @@ export default {
       //}
     }
   },
+  computed: {
+    // Filter upcoming events
+    upcomingEvents() {
+      const now = new Date();
+      return this.events.filter(event => new Date(event.start) > now);
+    },
+    // Compute next upcoming event
+    nextEvent() {
+      const upcomingEvents = this.upcomingEvents;
+      if (upcomingEvents.length > 0) {
+        return upcomingEvents.reduce((next, current) => {
+          if (!next || new Date(current.start) < new Date(next.start)) {
+            return current;
+          }
+          return next;
+        });
+      }
+      return null;
+    },
+    // Compute next event title
+    nextEventTitle() {
+      
+    return this.nextEvent ? this.nextEvent.title : '';
+    
+    
+    },
+    // Compute next event start time
+    nextEventStart() {
+    return this.nextEvent ? this.formatDateTime(this.nextEvent.start) : '';
+  },
+  // Compute next event end time
+  nextEventEnd() {
+    return this.nextEvent ? this.formatDateTime(this.nextEvent.end) : '';
+  },
+  // Compute next event time
+  nextEventTime() {
+    return this.nextEvent ? `${this.nextEventStart} - ${this.nextEventEnd}` : '';
+  }
+  
+},
   mounted() {
    // if (this.selectedCategory) {
       this.getEventsData();
     //}
   },
   methods: {
+    extractTitle(title) {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = title;
+    const anchorElement = tempDiv.querySelector('a');
+    return anchorElement ? anchorElement.textContent : '';
+  },
+  extractLink(title) {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = title;
+    const anchorElement = tempDiv.querySelector('a');
+    return anchorElement ? anchorElement.getAttribute('href') : '';
+  },
+    formatDateTime(dateTime) {
+    const date = new Date(dateTime);
+    const formattedDate = date.toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
+    const formattedTime = date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
+    return `${formattedDate} ${formattedTime}`;
+  },
     showMsg(message, type) {
       this.$q.notify({
         message: message || "Something Went Wrong!",
@@ -131,6 +198,7 @@ export default {
         ]
       });
     },
+    
     getEventsData() {
       var request = {
         categoryId: this.selectedCategory?.id,
@@ -163,6 +231,7 @@ export default {
     }
   }
 }
+
 </script>
 <style>
 .classRoomImg {
