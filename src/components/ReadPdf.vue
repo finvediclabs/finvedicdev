@@ -38,7 +38,14 @@ export default {
             
           }
         },
-        secondaryToolbar: false,
+        secondaryToolbar: {
+          presentationMode: true,
+          secondaryOpenFile: false,
+          secondaryPrint: false,
+          secondaryDownload: false,
+          secondaryViewBookmark: false,
+          
+        },
       }
     }
   },
@@ -70,11 +77,6 @@ export default {
   border-radius: 10%;
 }
 
-@media (max-width: 700px){
-.pdf-app #outerContainer .visibleMediumView {
-    display: none !important;
-}
-}
 
 .pdf #thumbnailView::-webkit-scrollbar-track {
   background: #f1f1f1;
