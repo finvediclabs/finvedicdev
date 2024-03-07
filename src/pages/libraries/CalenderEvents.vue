@@ -29,7 +29,7 @@
   </q-card-section>
   <q-card-section class="row justify-between">
     <div class="items-center">
-      <q-btn :href="nextEvent ? extractLink(nextEventTitle) : lastEvent ? extractLink(lastEventTitle) : ''" no-caps outline rounded color="white">
+      <q-btn :href="nextEvent ? extractLink(nextEventTitle) : lastEvent ? extractLink(lastEventTitle) : ''" target="_blank" no-caps outline rounded color="white">
         Topic: {{ nextEvent ? nextEventTopic : lastEvent ? lastEventTopic : '' }}
       </q-btn>
     </div>
