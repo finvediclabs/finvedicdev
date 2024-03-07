@@ -21,6 +21,7 @@ export default {
       pdfPath: '',
       numPages: 0,
       theme: 'light',
+
       config: {
         sidebar: {
           viewThumbnail: true,
@@ -34,8 +35,10 @@ export default {
             print: false,
             download: false,
             viewBookmark: false
+            
           }
-        }
+        },
+        secondaryToolbar: false,
       }
     }
   },
@@ -66,9 +69,7 @@ export default {
   height: 0px;
   border-radius: 10%;
 }
-.secondary-toolbar-toggle{
-  display: none;
-}
+
 @media (max-width: 700px){
 .pdf-app #outerContainer .visibleMediumView {
     display: none !important;
@@ -87,4 +88,5 @@ export default {
   background: #555;
   border-radius: 10px;
 }
+
 </style>
