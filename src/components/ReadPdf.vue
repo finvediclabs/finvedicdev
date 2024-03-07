@@ -66,6 +66,9 @@ export default {
   height: 0px;
   border-radius: 10%;
 }
+.secondary-toolbar-toggle{
+  display: none;
+}
 @media (max-width: 700px){
 .pdf-app #outerContainer .visibleMediumView {
     display: none !important;
