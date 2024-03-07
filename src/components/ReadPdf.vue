@@ -66,6 +66,11 @@ export default {
   height: 0px;
   border-radius: 10%;
 }
+ .download-button,
+ .print-button,
+ .bookmark-button {
+  display: none !important;
+ }
 
 .pdf #thumbnailView::-webkit-scrollbar-track {
   background: #f1f1f1;
