@@ -5,25 +5,38 @@
         <div class="col-1"></div>
         <div class="col-12 col-md-6 " :class="{ 'q-mt-xl': !isMobile }">
           <!-- v-for="(event, index) in events" :key="event.id" -->
-          <q-card v-if="upcomingEvents.length > 0" class="my-card full-width text-white full-height" style="background: #2FCB89;">
-          
+          <q-card v-if="upcomingEvents.length > 0 || events.length > 0" class="my-card full-width text-white full-height" style="background: #2FCB89;">
+  <q-card-section class="row justify-between">
+    <div v-if="nextEvent">
+      <div>Next Class : {{ extractTitle(nextEventTitle) }}</div>
+      <br>
+      <div class="text-h5 text-weight-bolder">
+        Date: {{ nextEventDate }}<br>
+        Start: {{ nextEventStartTime }}<br>
+        End: {{ nextEventEndTime }}
+      </div>
+    </div>
+    <div v-else-if="lastEvent">
+      <div>Last Class : {{ extractTitle(lastEventTitle) }}</div>
+      <br>
+      <div class="text-h5 text-weight-bolder">
+        Date: {{ lastEventDate }}<br>
+        Start: {{ lastEventStartTime }}<br>
+        End: {{ lastEventEndTime }}
+      </div>
+    </div>
+    <q-img :src="classRoom" class="classRoomImg" v-if="!isMobile" />
+  </q-card-section>
+  <q-card-section class="row justify-between">
+    <div class="items-center">
+      <q-btn :href="nextEvent ? extractLink(nextEventTitle) : lastEvent ? extractLink(lastEventTitle) : ''" no-caps outline rounded color="white">
+        Topic: {{ nextEvent ? nextEventTopic : lastEvent ? lastEventTopic : '' }}
+      </q-btn>
+    </div>
+    <q-btn label="Connect" class="text-black bg-white q-px-lg fin-br-8" no-caps :href="nextEvent ? extractLink(nextEventTitle) : lastEvent ? extractLink(lastEventTitle) : ''" target="_blank" />
+  </q-card-section>
+</q-card>
 
-            <q-card-section class="row justify-between">
-              <div>
-                <div>Next Class : {{ extractTitle(nextEventTitle) }}</div>
-                <br>
-                <div class="text-h5 text-weight-bolder">Start :{{ nextEventStart }}<br>End :{{ nextEventEnd }}</div>
-              </div>
-              <q-img :src="classRoom" class="classRoomImg" v-if="!isMobile" />
-            </q-card-section>
-            <q-card-section class="row justify-between">
-              <div class="items-center">
-                <q-btn :label="extractTitle(nextEventTitle)" :href="extractLink(nextEventTitle)" no-caps outline rounded color="white" />
-                
-              </div>
-              <q-btn label="Connect" class="text-black bg-white q-px-lg fin-br-8" no-caps :href="extractLink(nextEventTitle)" @click="redirectToNextEventLink" />
-            </q-card-section>
-          </q-card>
         </div>
         <div class="col-12 col-md-4 q-my-auto q-mx-auto">
           <template v-for="category in categories">
@@ -91,9 +104,9 @@ export default {
       calendar: '',
       template: {
         time(event) {
-        const { start, end, title } = event;
-        return `<span style="color: white;">${title} ${start}~${(end)} </span>`;
-        },
+        const { title, topic } = event;
+        return `<span style="color: white;">${title}</span>`;
+    },
         allday: (event) => {
           return `<span style="color: gray;">${event}</span>`;
         },
@@ -117,10 +130,54 @@ export default {
     }
   },
   computed: {
+    pastEvents() {
+    const now = new Date();
+    return this.events.filter(event => new Date(event.end) < now);
+  },
+  lastEvent() {
+    if (this.pastEvents.length > 0) {
+      return this.pastEvents.reduce((prev, current) => {
+        if (!prev || new Date(current.end) > new Date(prev.end)) {
+          return current;
+        }
+        return prev;
+      });
+    }
+    return null;
+  },
+  lastEventTitle() {
+    return this.lastEvent ? this.lastEvent.title : '';
+  },
+  // Compute last event start time
+  lastEventStart() {
+    return this.lastEvent ? this.formatDateTime(this.lastEvent.start) : '';
+  },
+  // Compute last event end time
+  lastEventEnd() {
+    return this.lastEvent ? this.formatDateTime(this.lastEvent.end) : '';
+  },
+  // Compute last event time
+  lastEventTime() {
+    return this.lastEvent ? `${this.lastEventStart} - ${this.lastEventEnd}` : '';
+  },
+  lastEventDate() {
+    return this.lastEvent ? this.formatDate(this.lastEvent.start) : '';
+  },
+  // Compute last event start time
+  lastEventStartTime() {
+    return this.lastEvent ? this.formatTime(this.lastEvent.start) : '';
+  },
+  // Compute last event end time
+  lastEventEndTime() {
+    return this.lastEvent ? this.formatTime(this.lastEvent.end) : '';
+  },
     // Filter upcoming events
     upcomingEvents() {
       const now = new Date();
       return this.events.filter(event => new Date(event.start) > now);
+    },
+    nextEventTopic() {
+      return this.nextEvent ? this.nextEvent.topic : '';
     },
     // Compute next upcoming event
     nextEvent() {
@@ -153,8 +210,50 @@ export default {
   // Compute next event time
   nextEventTime() {
     return this.nextEvent ? `${this.nextEventStart} - ${this.nextEventEnd}` : '';
-  }
-  
+  },
+  nextEventDate() {
+  return this.nextEvent ? this.formatDate(this.nextEvent.start) : '';
+},
+// Compute next event start time
+nextEventStartTime() {
+  return this.nextEvent ? this.formatTime(this.nextEvent.start) : '';
+},
+// Compute next event end time
+nextEventEndTime() {
+  return this.nextEvent ? this.formatTime(this.nextEvent.end) : '';
+},
+upcomingEvents() {
+    const now = new Date();
+    return this.events.filter(event => new Date(event.start) > now);
+  },
+  lastEventTopic() {
+    return this.lastEvent ? this.lastEvent.topic : '';
+  },
+  lastEventTitle() {
+    return this.lastEvent ? this.lastEvent.title : '';
+  },
+  lastEventDate() {
+    return this.lastEvent ? this.formatDate(this.lastEvent.start) : '';
+  },
+  lastEventStartTime() {
+    return this.lastEvent ? this.formatTime(this.lastEvent.start) : '';
+  },
+  lastEventEndTime() {
+    return this.lastEvent ? this.formatTime(this.lastEvent.end) : '';
+  },
+  // Compute last event
+  lastEvent() {
+    const events = this.events;
+    if (events.length > 0) {
+      return events.reduce((last, current) => {
+        if (!last || new Date(current.start) > new Date(last.start)) {
+          return current;
+        }
+        return last;
+      });
+    }
+    return null;
+  },
 },
   mounted() {
    // if (this.selectedCategory) {
@@ -188,6 +287,15 @@ export default {
     });
     return `${formattedDate} ${formattedTime}`;
   },
+  formatDate(dateTime) {
+    const date = new Date(dateTime);
+    return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  },
+  // Format time
+  formatTime(dateTime) {
+    const date = new Date(dateTime);
+    return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  },
     showMsg(message, type) {
       this.$q.notify({
         message: message || "Something Went Wrong!",
@@ -200,35 +308,39 @@ export default {
     },
     
     getEventsData() {
-      var request = {
-        categoryId: this.selectedCategory?.id,
-        subCategoryId: this.selectedSubCategory?.id
-      };
-      this.loading = true;
-      this.$api.get(urls.getEvents, {
-        params: request
-      }).then(response => {
-        this.loading = false;
-        if (response.data.success) {
-          let events = response.data.data;
-          this.events = events.map(event => (
-            {
-              title: `<a href="${event.link}"  target="_blank">${event.title}</a>`,
-              start: `${event.date} ${event.start}`,
-              end: `${event.date} ${event.end}`,
-              link: `${event.link}`,
-              color: 'white',
-              backgroundColor: colorHash.hex(event.title)
-            }
-          ));
-        } else {
-          this.showMsg(response.data?.message, 'negative');
+  var request = {
+    categoryId: this.selectedCategory?.id,
+    subCategoryId: this.selectedSubCategory?.id
+  };
+  this.loading = true;
+  this.$api.get(urls.getEvents, {
+    params: request
+  }).then(response => {
+    this.loading = false;
+    if (response.data.success) {
+      let events = response.data.data;
+      this.events = events.map(event => (
+        {
+          title: `<a href="${event.link}"  target="_blank">${event.title}</a><br>${event.topic}`,
+          start: `${event.date} ${event.start}`,
+          end: `${event.date} ${event.end}`,
+          link: `${event.link}`,
+          topic: `${event.topic}`,
+          color: 'white',
+          backgroundColor: colorHash.hex(event.title),
+          width: '100%', // Set width to '100%'
+          height: '50px'
         }
-      }).catch(error => {
-        this.loading = false;
-        this.showMsg(error.response?.data.message || error.message, 'negative');
-      })
+      ));
+    } else {
+      this.showMsg(response.data?.message, 'negative');
     }
+  }).catch(error => {
+    this.loading = false;
+    this.showMsg(error.response?.data.message || error.message, 'negative');
+  })
+}
+
   }
 }
 

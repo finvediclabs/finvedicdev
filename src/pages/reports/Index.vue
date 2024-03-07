@@ -59,6 +59,7 @@ export default {
 .row{
   margin-top: 20px;
 }
+
 </style>
 
 

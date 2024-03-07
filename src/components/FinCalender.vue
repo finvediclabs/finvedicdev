@@ -5,7 +5,7 @@
     <span class="date-range text-body1">{{ dateRangeText }}</span>
   </fin-portlet-item>
   <fin-portlet-item>
-    <div ref="container" class="toastui-vue-calendar" style="min-height:500px ;height: calc((100vh - 220px))" />
+    <div ref="container" class="toastui-vue-calendar" style="min-height:500px ;height: 100vh" />
   </fin-portlet-item>
 </template>
 <script>
@@ -31,7 +31,7 @@ export default {
     },
     useFormPopup: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     useDetailPopup: {
       type: Boolean,
@@ -111,9 +111,9 @@ export default {
     isReadOnly() {
       this.calendarInstance.setOptions({ isReadOnly: this.isReadOnly });
     },
-    // eventFilter() {
-    //   this.calendarInstance.setOptions({ eventFilter: this.eventFilter });
-    // },
+    eventFilter() {
+      this.calendarInstance.setOptions({ eventFilter: this.eventFilter });
+    },
     week() {
       this.calendarInstance.setOptions({ week: this.week });
     },
@@ -208,7 +208,11 @@ export default {
 </script>
 <style>
 .toastui-calendar-week-view .toastui-calendar-panel:not(.toastui-calendar-time) {
+  width: 100%;
   overflow-y: hidden;
+}
+.toastui-calendar-panel.toastui-calendar-time {
+  height: 1080px !important; /* Adjust the height as needed */
 }
 
 .toastui-calendar-day-name__date {
@@ -216,17 +220,18 @@ export default {
 }
 
 .toastui-calendar-panel.toastui-calendar-time::-webkit-scrollbar {
-  width: 2px;
+  width: 12px;
   border-radius: 10%;
 }
 
 .toastui-calendar-panel.toastui-calendar-time::-webkit-scrollbar-track {
   background: #f1f1f1;
+
 }
 
 .toastui-calendar-panel.toastui-calendar-time::-webkit-scrollbar-thumb {
   background: #888;
-}
+  }
 
 .toastui-calendar-panel.toastui-calendar-time::-webkit-scrollbar-thumb:hover {
   background: #555;
@@ -240,10 +245,20 @@ export default {
 .toastui-calendar-column {
   border: inherit !important;
 }
-/*
 .toastui-calendar-allday {
   display: none
-} */
+}
+.toastui-calendar-event-time{
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  min-height: 60px !important;
+}
 
 .toastui-calendar-panel-resizer {
   border: inherit !important;
@@ -253,4 +268,5 @@ export default {
 .toastui-calendar-week-view-day-names {
   border: none !important;
 }
+
 </style>
