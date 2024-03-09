@@ -35,8 +35,11 @@
       
     </div>
   </div>
-  
-  <div v-if="isTyping" class="typing-preloader typemessage">Typing...</div>
+  <div v-if="isTyping" class="typing-preloader">
+    <template v-if="isTyping" class="monk_icon" >
+        <img src="https://gurukul.finvedic.com/images/monk_half.png" alt="" style="width: 30px !important; background-color: #5479F7; border-radius: 50%;">
+      </template>
+    Typing...</div>
 </div>
       </div>
     </div>
@@ -345,33 +348,7 @@
    padding: 5px 10px;
    border-radius: 5px;
  }
- .typemessage{
-  color: white;
-   padding: 14px 16px;
-   line-height: 18px;
-   font-size: 14px;
-   height:30px;
-   border-radius: 7px;
-   margin-bottom: 30px;
-   margin-right: auto;
-   width: 90%;
-   position: relative;
-   margin-left: 4%;
-   background: #007bff;
-   &:after {
-     bottom: 100%;
-     left: 7%;
-     border: solid transparent;
-     content: " ";
-     height: 0;
-     width: 0;
-     position: absolute;
-     pointer-events: none;
-     border-bottom-color: #007bff;
-     border-width: 10px;
-     margin-left: -10px;
-   }
- }
+ 
  .messages .incoming {
    color: white;
    padding: 14px 16px;
@@ -400,10 +377,11 @@
  }
  
  .messages .outgoing {
-   color: white;
+   color: #2a324b;
    padding: 14px 18px;
    line-height: 18px;
    font-size: 14px;
+   font-weight: 500;
    border-radius: 7px;
    margin-bottom: 30px;
    margin-left: auto;
@@ -486,10 +464,37 @@
    border-bottom-right-radius: 20px;
  }
  .typing-preloader {
-  text-align: center;
+  text-align: left;
   font-style: italic;
+  min-height: 80px;
   color: #aaa; /* Adjust color */
   margin-bottom: 10px;
+  color: white;
+   padding: 14px 16px;
+   line-height: 18px;
+   font-size: 14px;
+   border-radius: 7px;
+   margin-bottom: 30px;
+   margin-right: auto;
+   width: 90%;
+   position: relative;
+   margin-left: 4%;
+   background: #007bff;
+   display: flex;
+  align-items: center;
+   &:after {
+     bottom: 100%;
+     left: 7%;
+     border: solid transparent;
+     content: " ";
+     height: 0;
+     width: 0;
+     position: absolute;
+     pointer-events: none;
+     border-bottom-color: #007bff;
+     border-width: 10px;
+     margin-left: -10px;
+   }
 }
  .input-field {
    flex: 1; /* Take remaining space */
