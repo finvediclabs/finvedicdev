@@ -105,15 +105,21 @@
    
  },
      sendMessage() {
-      this.isTyping = true;
+    
        const message = this.newMessage.trim();
-       if (!message) return; // Don't send empty messages
- 
+       if (!message) return;
+        // Don't send empty messages
+ // Check if message is empty before setting isTyping to true
+ this.isTyping = message.length > 0;
        // Push the outgoing message to the messages array immediately
        const outgoingMessage = { text: message, type: 'outgoing', id: Date.now() };
        this.messages.push(outgoingMessage);
        console.log('Outgoing message:', outgoingMessage); // Log outgoing message
        this.newMessage = ''; // Clear the input field
+       this.$nextTick(() => {
+        const chatContainer = this.$el.querySelector('.chat-container');
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    });
  
        // Send the message to the API
        const formData = new FormData();
