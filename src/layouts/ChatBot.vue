@@ -1,49 +1,63 @@
 <template>
-  <div class="chatbot" :class="{ open: isOpen, maximized: isMaximized }" >
-     <!-- Title bar -->
-     <div class="title-bar">
-       <div class="title">Chatbot</div>
-       <div class="buttons">
-         <button @click="minimizeChatbot">-</button>
-         <button @click="toggleMaximize">{{ maximizeIcon }}</button>
-         <button @click="closeChatbot">x</button>
-       </div>
-     </div>
- 
+  <div class="chatbot" :class="{ open: isOpen, maximized: isMaximized }">
+    <!-- Title bar -->
+    <div class="title-bar">
+      <div class="title">Chatbot</div>
+      <div class="buttons">
+        <button @click="minimizeChatbot">-</button>
+        <button @click="toggleMaximize">{{ maximizeIcon }}</button>
+        <button @click="closeChatbot">x</button>
+      </div>
+    </div>
+    <div class="welcome-message" ref="welcomeMessage">
+      Hi! I am Drona, your AI virtual assistant.<br>Ask me about Fintech?
+    </div>
+    <img src="https://gurukul.finvedic.com/images/monk.png" alt="" class="monk-image">
+    <div class="chat-container-wrapper">
+      <div class="chat-container" v-scroll-bottom>
+        <!-- Messages -->
+        <div class="messages">
+  <div v-for="message in messages" :key="message.id" :class="message.type">
+    <div class="message-container">
+      <template v-if="message.type === 'incoming'" class="monk_icon">
+        <img src="https://gurukul.finvedic.com/images/monk_half.png" alt="" style="width: 30px !important; background-color: #5479F7; border-radius: 50%;">
+      </template>
      
-     <img src="https://gurukul.finvedic.com/images/monk.png" alt="" class="monk-image">
-     <div class="chat-container-wrapper">
-       <div class="chat-container" v-scroll-bottom> <!-- Use v-scroll-bottom directive -->
-         <!-- Welcome message -->
-         <div v-if="isOpen" class="welcome-message" style="z-index: 999999;">
-           <p>Hi! I'm Drona, your AI virtual assistant. Ask me about Fintech?</p>
-         </div>
-         <!-- Messages -->
-         <div class="messages">
-           <div v-for="message in messages" :key="message.id" :class="message.type">
-             {{ message.text }}
-           </div>
-         </div>
-         <!-- Input field for user to type messages -->
-         <div class="input-container">
-           <input type="text" v-model="newMessage" @keyup.enter="sendMessage" placeholder="Enter your Query..." class="input-field">
-           <button @click="sendMessage" class="send-button">
-             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-send" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 14l11 -11" /><path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5" /></svg>
-           </button>
-         </div>
-       </div>
-     </div>
-     <!-- Button to toggle chatbot visibility -->
-     <button class="toggle-button" @click="toggleChatbot" ref="toggle_button" @mousedown="startDragging">
-       <template v-if="isOpen">
-         <img :src="isOpen ? 'https://gurukul.finvedic.com/images/monk_half.png' : 'https://gurukul.finvedic.com/images/monk_half_mirrored.png'" alt="Monk Icon" style="background-color: red;">
-       </template>
-       <template v-else>
-         <img src="https://gurukul.finvedic.com/images/monk_half.png" alt="Person Icon" style="transform: scaleX(-1);">
-       </template>
-     </button>
-   </div>
- </template>
+      {{ message.text }}
+      <!-- <template v-if="message.type === 'outgoing'" class="user_icon">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-heart user-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-left: auto;">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
+          <path d="M6 21v-2a4 4 0 0 1 4 -4h.5" />
+          <path d="M18 22l3.35 -3.284a2.143 2.143 0 0 0 .005 -3.071a2.242 2.242 0 0 0 -3.129 -.006l-.224 .22l-.223 -.22a2.242 2.242 0 0 0 -3.128 -.006a2.143 2.143 0 0 0 -.006 3.071l3.355 3.296z" />
+        </svg>
+      </template> -->
+      
+    </div>
+  </div>
+  
+  <div v-if="isTyping" class="typing-preloader typemessage">Typing...</div>
+</div>
+      </div>
+    </div>
+    <!-- Input field for user to type messages -->
+    <div class="input-container">
+      <input type="text" v-model="newMessage" @keyup.enter="sendMessage" placeholder="Enter your Query..." class="input-field">
+      <button @click="sendMessage" class="send-button">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-send" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 14l11 -11" /><path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5" /></svg>
+      </button>
+    </div>
+    <!-- Button to toggle chatbot visibility -->
+    <button class="toggle-button" @click="toggleChatbot" ref="toggle_button" @mousedown="startDragging">
+      <template v-if="isOpen">
+        <img :src="isOpen ? 'https://gurukul.finvedic.com/images/monk_half.png' : 'https://gurukul.finvedic.com/images/monk_half_mirrored.png'" alt="Monk Icon" style="background-color: red;">
+      </template>
+      <template v-else>
+        <img src="https://gurukul.finvedic.com/images/monk_half.png" alt="Person Icon" style="transform: scaleX(-1);">
+      </template>
+    </button>
+  </div>
+</template>
  
  <script>
  export default {
@@ -55,7 +69,10 @@
        messages: [],
        isDragging: false,
        xOffset: 0,
-       yOffset: 0
+       yOffset: 0,
+       isTyping: false,
+       originalWelcomeMessage: "Hi! I am Drona, your AI virtual assistant.<br>Ask me about Fintech?"
+  
      };
    },
    methods: {
@@ -69,6 +86,14 @@
      toggleMaximize() {
        this.isMaximized = !this.isMaximized;
        this.maximizeIcon = this.isMaximized ? '▢' : '□'; // Change icon based on maximize state
+       if (this.isMaximized) {
+    const welcomeMessage = this.$refs.welcomeMessage;
+    welcomeMessage.innerHTML = "Hi! I am Drona, your AI virtual assistant. Ask me about Fintech?";
+  }
+  else {
+        const welcomeMessage = this.$refs.welcomeMessage;
+        welcomeMessage.innerHTML = this.originalWelcomeMessage;
+      }
      },
  
      closeChatbot() {
@@ -77,6 +102,7 @@
    
  },
      sendMessage() {
+      this.isTyping = true;
        const message = this.newMessage.trim();
        if (!message) return; // Don't send empty messages
  
@@ -106,6 +132,7 @@
          const incomingMessage = { text: responseData, type: 'incoming', id: Date.now() };
          this.messages.push(incomingMessage);
          console.log('Incoming message:', incomingMessage); // Log incoming message
+         this.isTyping = false; 
  
          // Scroll to the bottom of the chat container after receiving a new message
          this.$nextTick(() => {
@@ -119,6 +146,7 @@
          const errorMessage = { text: 'Error sending message', type: 'incoming', id: Date.now() };
          this.messages.push(errorMessage);
          console.log('Error message:', errorMessage); // Log error message
+         this.isTyping = false;
        });
      },
      startDragging(event) {
@@ -154,6 +182,15 @@
  </script>
  
  <style scoped>
+ .message-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px; /* Adjust margin as needed */
+}
+
+.message-container img, .message-container svg {
+  margin-right: 10px; /* Adjust margin between icon and text */
+}
  .title-bar {
    background-color:#5479f7;
    color: #fff;
@@ -161,6 +198,8 @@
    justify-content: flex-end;
    align-items: center;
    padding: 0px 0px;
+   border-top-left-radius: 20px;
+   border-top-right-radius: 20px;
  }
  .title {
    display: none;
@@ -206,17 +245,17 @@
    min-width: 100vw;
    min-height: 100vh;
  }
- .chatbot.open.maximized .welcome-message {
+ /* .chatbot.open.maximized .welcome-message {
    padding-top: 0px;
    margin-bottom: 0px;
    text-align: center;
    background-color: #5479f7;
    color: #fff;
    font-weight: 600;
-   position: fixed; /* Position the input field */
+   position: fixed; 
    width: 100vw;
    font-size: 32px;
- }
+ } */
  
  .chatbot.open .title-bar{
    display: flex;
@@ -243,29 +282,96 @@
  .chatbot.open .monk-image{
    display: block;
  }
- 
+ .chatbot.open  .welcome-message{
+  display: block;
+ }
+ .chatbot.open .input-container{
+  display: flex;
+ }
+ .welcome-message {
+  font-size: 14px;
+  text-align: center;
+  font-weight: 600;
+  background-color: #5479f7;
+  color: #ffff;
+  padding: 2%;
+  display: none;
+}
+/*  
  .welcome-message {
    padding-top: 0px;
-   margin-bottom: 10px;
    text-align: center;
    background-color: #5479f7;
    color: #fff;
    font-weight: 600;
-   position: fixed; /* Position the input field */
-   width: 298px;
+   display: block; 
+   width: 300px;
  }
- 
+  */
  .messages {
    margin-bottom: 10px;
-   margin-top: 75px;
+   margin-top: 10px;
  }
- 
+ .message-content {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.user-icon img {
+  width: 30px; /* Adjust size as needed */
+  height: 30px; /* Adjust size as needed */
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.text {
+  flex: 1;
+   /* Adjust as needed */
+}
+
+.monk-icon img {
+  width: 30px; /* Adjust size as needed */
+  height: 30px; /* Adjust size as needed */
+  border-radius: 50%;
+  margin-left: 10px;
+}
+
+/* Adjustments for maximized screen */
+.chatbot.open.maximized .text {
+  max-width: calc(100% - 150px); /* Adjust as needed based on the width of user icon and monk icon */
+}
  .messages div {
    margin: 5px 0;
    padding: 5px 10px;
    border-radius: 5px;
  }
- 
+ .typemessage{
+  color: white;
+   padding: 14px 16px;
+   line-height: 18px;
+   font-size: 14px;
+   height:30px;
+   border-radius: 7px;
+   margin-bottom: 30px;
+   margin-right: auto;
+   width: 90%;
+   position: relative;
+   margin-left: 4%;
+   background: #007bff;
+   &:after {
+     bottom: 100%;
+     left: 7%;
+     border: solid transparent;
+     content: " ";
+     height: 0;
+     width: 0;
+     position: absolute;
+     pointer-events: none;
+     border-bottom-color: #007bff;
+     border-width: 10px;
+     margin-left: -10px;
+   }
+ }
  .messages .incoming {
    color: white;
    padding: 14px 16px;
@@ -343,33 +449,55 @@
    outline: none;
  }
  .chatbot.open.maximized  .input-container{
-   bottom: 0px; 
-   width: 100vw;
-   margin: 0px 0px; 
+    
+   min-width: 100%;
+   margin: 0px 0px;
+   display: flex;
+   position: fixed;
+   margin-left: 1.1%;
    
    
  }
  .chatbot.open.maximized .input-field{
-   margin-left: 1%;
+  
+   border-radius: 0px;
+  
+
  }
- 
+ .chatbot.open.maximized .welcome-message{
+  font-size: 32px;
+  padding: 1%;
+ }
+
+ .chatbot.open.maximized .send-button{
+  border-radius: 0px;
+
+ }
  .chatbot.open.maximized .monk-image{
    display: none;
  }
  .input-container {
-   position: fixed; /* Position the input field */
-   width: 298px;
+  
+   width: 300px;
    bottom: 0; /* Align to the bottom */
    margin: 0px 0px; /* Add margin for better spacing */
-   display: flex; /* Use flexbox for layout */
+   display: none; /* Use flexbox for layout */
+   border-bottom-left-radius: 20px;
+   border-bottom-right-radius: 20px;
  }
- 
+ .typing-preloader {
+  text-align: center;
+  font-style: italic;
+  color: #aaa; /* Adjust color */
+  margin-bottom: 10px;
+}
  .input-field {
    flex: 1; /* Take remaining space */
    border: 2px solid #5479F7;
    outline: none;
    height: 40px;
    transition: border-color 0.3s ease;
+   border-bottom-left-radius: 20px;
  }
  
  .send-button {
@@ -382,6 +510,7 @@
    display: flex; /* Use flexbox for layout */
    justify-content: center; /* Center icon horizontally */
    align-items: center; /* Center icon vertically */
+   border-bottom-right-radius: 20px;
  }
  
  
@@ -400,6 +529,14 @@
    background: #f1f1f1; /* Color of the track */
    border-radius: 20px; /* Rounded corners */
  }
+ .user-icon{
+  background-color: #5479F7;
+  border-radius: 50%;
+  color: #9db1f1; 
+  width: 30px;
+  height:30px;
+ }
+ 
  
  /* Handle */
  .chat-container::-webkit-scrollbar-thumb {
@@ -426,5 +563,6 @@
    z-index: 3;
    /* Ensure the image is above other content */
  }
+ 
  </style>
  
