@@ -109,7 +109,7 @@ export default {
         { label: 'Size', key: 'size', align: 'center' },
         { label: 'OS Type', key: 'type', align: 'start'},
         { label: 'Name', key: 'name', align: 'start'},
-        {label: 'Active'}
+        {label: 'Active' ,key: 'provisioningState', align: 'start'}
       ],
       VMsList: []
     }
