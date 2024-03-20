@@ -99,7 +99,7 @@ export default {
   }
 
   try {
-    const response = await fetch('http://localhost:8083/deletevm/' + lab.name);
+    const response = await fetch('https://fnbackend.finvedic.com/deletevm/' + lab.name);
     console.log('success');
     // Update lab state to locked
     lab.locked = true;
