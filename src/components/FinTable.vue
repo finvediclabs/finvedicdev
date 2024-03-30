@@ -7,6 +7,7 @@
           <th v-for="(column, j) in columns" :key="column" :style="{ 'text-align': column.align }"
             class="vertical-middle">
             {{ column.label }}
+
           </th>
           <th v-if="showActions"></th>
         </tr>

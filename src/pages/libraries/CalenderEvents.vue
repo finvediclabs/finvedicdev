@@ -63,11 +63,17 @@
           </template>
         </div>
       </div>
+      
     </fin-portlet-header>
-    <fin-portlet-item>
-      <fin-calender isReadOnly :events="events" :template="template" :view="isMobile ? 'day' : 'week'" />
+    
+    <fin-portlet-item >
+      <fin-calender  isReadOnly :events="events" :template="template" :view="isMobile ? 'day' : 'week'"  />
+      <!-- <div  v-if="showDiv" class="hiddendiv">SANDEEP</div> -->
+
     </fin-portlet-item>
   </fin-portlet>
+  
+ 
 </template>
 <script>
 import FinPortlet from 'src/components/Portlets/FinPortlet.vue';
@@ -102,13 +108,16 @@ export default {
       classRoom: classRoom,
       classCardImg: classCardImg,
       calendar: '',
+      showDiv: false,
       template: {
         time(event) {
-        const { title, topic } = event;
-        return `<span style="color: white;">${title}</span>`;
-    },
+          const { title, topic } = event;
+          return `<div class="event-container "><span style="color: white;">${title}</span></div>
+         
+          `;
+        },
         allday: (event) => {
-          return `<span style="color: gray;">${event}</span>`;
+          return `<span style="color: ;">${event}</span>`;
         },
         // allday(event) {
         //   return `<span style="color: gray;">${event}</span>`;
@@ -306,6 +315,9 @@ upcomingEvents() {
         ]
       });
     },
+    //  showHiddenDiv() {
+    //   this.showDiv = !this.showDiv; // Toggle the showDiv property
+    // },
     
     getEventsData() {
   var request = {
@@ -321,7 +333,7 @@ upcomingEvents() {
       let events = response.data.data;
       this.events = events.map(event => (
         {
-          title: `<a href="${event.link}"  target="_blank">${event.title}</a><br>${event.topic}`,
+          title: `Title: <a href="${event.link}"  target="_blank">${event.title}</a><br>Topic: ${event.topic}`,
           start: `${event.date} ${event.start}`,
           end: `${event.date} ${event.end}`,
           link: `${event.link}`,
@@ -359,4 +371,71 @@ upcomingEvents() {
   background: linear-gradient(to right, rgba(47, 203, 137) 2%, rgba(47, 203, 137, 0.53) 1px);
   color: black;
 }
+/* New hover effect */
+.event-container:hover {
+  background-color:  rgba(47, 203, 137);
+  cursor:pointer;
+  /* Adjust other styles as needed */
+}
+/* .hiddendiv{
+display:block;
+min-height:200px !important;
+width :360px !important;
+background-color:gray;
+border:2px solid red;
+position: absolute;
+overflow: visible !important;
+z-index: 99999 !important;
+} */
+
+/* .event-container:hover .hiddendiv{
+  display:none
+} */
+
+/* .toastui-calendar-event-time-content:hover .hiddendiv{
+  display: none;
+  overflow: visible !important;
+} */
+.toastui-calendar-template-popupDetailDate::before{
+  content: "Date & Time: \A "!important;
+  white-space: pre !important;
+}
+/* .toastui-calendar-template-popupDetailTitle::before{
+  content: "Title & Topic: \A ";
+  white-space: pre;
+} */
+.toastui-calendar-template-popupDetailTitle{
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
+.toastui-calendar-template-popupDetailTitle::after{
+  content: "\A"!important;
+  white-space:  pre !important;
+}
+.toastui-calendar-template-popupDetailDate{
+  
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  
+}
+
+.toastui-calendar-event-time-content:hover {
+  background-color:  rgba(47, 203, 137) !important;
+  /* Adjust other styles as needed */
+}
+.toastui-calendar-popup-container{
+  background-color: white !important;
+  color: #5479F7 !important;
+
+}
+.toastui-calendar-popup-arrow-border{
+  display: none !important;
+}
+.toastui-calendar-detail-container{
+  background-color: white !important;
+  min-height: 25vh !important;
+
+}
+.toastui-calendar-section-button { display: none!important; }
+.toastui-calendar-section-detail {display: none !important;}
 </style>

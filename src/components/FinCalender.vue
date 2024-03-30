@@ -24,6 +24,7 @@ export default {
     FinPortletHeading,
     FinPortletItem,
   },
+
   props: {
     view: {
       type: String,
@@ -31,7 +32,7 @@ export default {
     },
     useFormPopup: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     useDetailPopup: {
       type: Boolean,
@@ -163,12 +164,20 @@ export default {
   beforeDestroy() {
     this.calendarInstance.off();
     this.calendarInstance.destroy();
+    var calendarElement = document.querySelector('.toastui-vue-calendar');
+    calendarElement.removeEventListener('click', this.hideButtons);
   },
   methods: {
     addEventListeners() {
       // Object.keys(this.$listeners).forEach((eventName) => {
       //   this.calendarInstance.on(eventName, (...args) => this.$emit(eventName, ...args));
       // });
+    },
+    hideButtons() {
+      var buttons = document.querySelector('.tui-full-calendar-section-button');
+      if (buttons) {
+        buttons.style.display = 'none';
+      }
     },
     getRootElement() {
       return this.$refs.container;
@@ -205,6 +214,7 @@ export default {
     },
   }
 }
+
 </script>
 <style>
 .toastui-calendar-week-view .toastui-calendar-panel:not(.toastui-calendar-time) {
@@ -236,6 +246,9 @@ export default {
 .toastui-calendar-panel.toastui-calendar-time::-webkit-scrollbar-thumb:hover {
   background: #555;
   border-radius: 10px;
+}
+.tui-full-calendar-popup-delete{
+  display: none!important;
 }
 
 .toastui-calendar-day-names,
