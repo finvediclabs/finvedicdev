@@ -45,6 +45,11 @@
                 :rules="[val => val && val.length > 0 || 'Phone Number Is required']" />
             </div>
             <div class="col-12 q-px-sm q-py-xs">
+    <!-- Change q-input to q-select and provide options 'y' and 'n' -->
+    <q-select v-model="user.isActive" :options="isActiveOptions" label="Is Active *" outlined lazy-rules
+      :rules="[val => val && val.length > 0 || 'Is Active Is required']" />
+  </div>
+            <div class="col-12 q-px-sm q-py-xs">
               <q-select outlined v-model="user.owner" :options="roles_new" label="Owner *" lazy-rules
                 />
             </div>
@@ -93,6 +98,7 @@ export default {
   },
   data() {
     return {
+      isActiveOptions: ['Y', 'N'],
       deleteUrl: urls.usersUrl,
       tab: 'allUsers',
       roleSearch: '',
@@ -109,6 +115,7 @@ export default {
         { label: 'Email Address', key: 'email', align: 'center' },
         { label: 'Role', key: 'owner', align: 'center' },
         { label: 'Date Added', key: 'createdAt', align: 'center' },
+        { label: 'Is Active', key: 'isActive', align: 'center' },
       ],
       usersList: [],
       submitLoading: false,
@@ -180,6 +187,7 @@ export default {
         email: this.user.mail,
         phoneNumber: this.user.Number,
         owner: this.user.owner,
+        isActive: this.isActive,
         password: "Welcome@123",
       };
       this.$api.post(urls.usersUrl, request).then(response => {
@@ -203,6 +211,7 @@ export default {
         name: this.user.name,
         email: this.user.mail,
         phoneNumber: this.user.Number,
+        isActive:this.user.isActive,
         owner: this.user.owner,
         id: this.user.id,
         password: this.user.password,
@@ -233,6 +242,7 @@ export default {
         Number: val.phoneNumber,
         owner: val.owner,
         id: val.id,
+        isActive: val.isActive,
         password: val.password
       };
       this.createUserDialog = true;
