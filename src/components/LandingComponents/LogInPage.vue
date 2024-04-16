@@ -115,8 +115,11 @@ export default {
           this.setUserType( user.roles?.length ? user.roles[0].id : '' );
 
         }).catch(error => {
-          this.loading = false;
-          this.showMsg(error.response?.data.message || error.message, 'negative');
+          let errorMessage = error.response?.data.message || error.message;
+      if (errorMessage.includes('properties of undefined')) {
+        errorMessage = "You are not authorized to login";
+      }
+      this.showMsg(errorMessage, 'negative');
         });
       }
 
