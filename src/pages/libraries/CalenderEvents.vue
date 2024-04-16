@@ -177,4 +177,82 @@ export default {
   background: linear-gradient(to right, rgba(47, 203, 137) 2%, rgba(47, 203, 137, 0.53) 1px);
   color: black;
 }
+/* <<<<<<< Updated upstream
+======= */
+/* New hover effect */
+.event-container:hover {
+  background-color:  rgba(47, 203, 137);
+  cursor:pointer;
+  /* Adjust other styles as needed */
+}
+/* .hiddendiv{
+display:block;
+min-height:200px !important;
+width :360px !important;
+background-color:gray;
+border:2px solid red;
+position: absolute;
+overflow: visible !important;
+z-index: 99999 !important;
+} */
+
+/* .event-container:hover .hiddendiv{
+  display:none
+} */
+
+/* .toastui-calendar-event-time-content:hover .hiddendiv{
+  display: none;
+  overflow: visible !important;
+} */
+.toastui-calendar-popup-container {
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+}
+.toastui-calendar-template-popupDetailDate::before{
+  content: "Date & Time: \A "!important;
+  white-space: pre !important;
+}
+/* .toastui-calendar-template-popupDetailTitle::before{
+  content: "Title & Topic: \A ";
+  white-space: pre;
+} */
+.toastui-calendar-template-popupDetailTitle{
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
+.toastui-calendar-template-popupDetailTitle::after{
+  content: "\A"!important;
+  white-space:  pre !important;
+}
+.toastui-calendar-template-popupDetailDate{
+  
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  
+}
+
+.toastui-calendar-event-time-content:hover {
+  background-color:  rgba(47, 203, 137) !important;
+  /* Adjust other styles as needed */
+}
+.toastui-calendar-popup-container{
+  background-color: white !important;
+  color: #5479F7 !important;
+
+}
+.toastui-calendar-popup-arrow-border{
+  display: none !important;
+}
+.toastui-calendar-detail-container{
+  background-color: white !important;
+  min-height: 25vh !important;
+
+}
+.toastui-calendar-section-button { display: none!important; }
+.toastui-calendar-section-detail {display: none !important;}
+/* >>>>>>> Stashed changes */
 </style>

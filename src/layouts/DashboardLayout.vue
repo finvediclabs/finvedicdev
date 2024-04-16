@@ -171,8 +171,7 @@
     <q-page-container>
       <q-page>
         <router-view v-if="token" />
-        
-        <Chatbot />
+        <chatbot />
       </q-page>
     </q-page-container>
   </q-layout>

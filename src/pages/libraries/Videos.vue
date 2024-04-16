@@ -169,6 +169,7 @@ import { Carousel3d, Slide } from "src/components/carousel-3d";
 import { urls } from "./Urls"
 import { storeToRefs } from "pinia";
 import { useCategoryStore } from "src/stores/Categories";
+import axios from 'axios';
 import DummyBook from "src/assets/dummyBook.jpg"
 import moment from "moment"
 import CryptoJS from 'crypto-js'
@@ -254,62 +255,108 @@ export default {
     getCurrentSlide(index) {
       this.selectedSlide = this.VideosList[index];
     },
-    getVideosData() {
-      this.loading = true;
-      let request = {
-        params: {
-          categoryId: this.selectedCategory.id
+    getVideosData() {  this.loading = true;
+  let request = {
+    params: {
+      categoryId: this.selectedCategory.id
+    }
+  }
+  if (this.selectedSubCategory && this.selectedCategory?.id == this.selectedSubCategory?.categoryCode) {
+    request.params.subCategoryId = this.selectedSubCategory.id;
+  }
+
+  this.$api.get(urls.getVideosUrl, request).then(response => {
+    this.loading = false;
+    console.log('Data from getbooksurl:', response.data);
+    if (response.data.success) {
+      this.VideosList = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));
+      
+      // Loop through each book and fetch imagePath for it
+      this.VideosList.forEach(video => {
+        // Fetch imagePath and send it to download URL for each book
+        if (video.videoCoverPath) {
+          const imagePathWithoutPrefix = video.videoCoverPath.replace('https://fnbackend.finvedic.com/fs/download/', '');
+          const formData = new FormData();
+          formData.append('filename', imagePathWithoutPrefix);
+          
+          axios.post('https://fnbackend.finvedic.com/fs/download', formData, { responseType: 'blob' })
+            .then(downloadResponse => {
+              // Handle download success, e.g., open or save the downloaded file
+              const blob = new Blob([downloadResponse.data]);
+              const url = window.URL.createObjectURL(blob);
+             video.videoCoverPath = url; // Update imagePath with the received image URL
+            })
+            .then(() => {
+              console.log('Post request successful'); // Log successful post request
+            })
+            .catch(error => {
+              console.error('Error in post request:', error); // Log error in post request
+              this.showMsg(error.response?.data.message || error.message, 'negative');
+            });
         }
-      }
-      if (this.selectedSubCategory && this.selectedCategory?.id == this.selectedSubCategory?.categoryCode) {
-        request.params.subCategoryId = this.selectedSubCategory.id;
-      }
-      this.$api.get(urls.getVideosUrl, request).then(response => {
-        this.loading = false;
-        if (response.data.success) {
-          this.VideosList = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));
-          this.selectedSlide = this.VideosList.length ? this.VideosList[0] : {};
-        } else {
-          this.showMsg(response.data?.message, 'negative');
-        }
-      }).catch(error => {
-        this.loading = false;
-        this.showMsg(error.message, 'negative');
       });
+
+      this.selectedSlide = this.VideosList.length ? this.VideosList[0] : {};
+    } else {
+      this.showMsg(response.data?.message, 'negative');
+    }
+  }).catch(error => {
+    this.loading = false;
+    this.showMsg(error.message, 'negative');
+  });
     },
-    getChaptersData() {
-      this.chaptersLoader = true;
-      this.$api.get(urls.getVideoChaptersUrl, {
-        params: {
-          videoId: this.selectedSlide?.id
-        }
-      }).then(response => {
-        this.chaptersLoader = false;
-        if (response.data.success) {
-          this.chapters = response.data.data.map((item, index) => {
-            return {
+  getChaptersData() {
+  this.chaptersLoader = true;
+  const formData = new FormData();
+  formData.append('videoId', this.selectedSlide?.id);
+
+  this.$api.post(urls.getVideoChaptersUrl, formData)
+    .then(response => {
+      this.chaptersLoader = false;
+      if (response.data.success) {
+        this.chapters = response.data.data.map((item, index) => ({
+          index: index + 1,
+          id: item.id,
+          videoId: item.videoId,
+          accountId: item.accountId,
+          description: item.description,
+          chapterTitle: item.chapterTitle,
+          videoCoverPath: item.videoCoverPath,
+          videoFilePath: item.videoFilePath,
+          createdAt: moment(item.createdAt).format('YYYY-MM-DD'),
+          updatedAt: moment(item.updatedAt).format('YYYY-MM-DD'),
+          deletedAt: moment(item.deletedAt).format('YYYY-MM-DD')
+        }));
+                // Fetch imagePath and send it to download URL
+        this.chapters.forEach(chapter => {
+          if (chapter.videoCoverPath) {
+            const imagePathWithoutPrefix = chapter.videoCoverPath.replace('https://fnbackend.finvedic.com/fs/download/', '');
+            const formData = new FormData();
+            formData.append('filename', imagePathWithoutPrefix);
             
-              index: index + 1,
-              id: item.id,
-              videoId: item.videoId,
-              accountId: item.accountId,
-              description: item.description,
-              chapterTitle: item.chapterTitle,
-              videoCoverPath: item.videoCoverPath,
-              videoFilePath: item.videoFilePath,
-              createdAt: moment(item.createdAt).format('YYYY-MM-DD'),
-              updatedAt: moment(item.updatedAt).format('YYYY-MM-DD'),
-              deletedAt: moment(item.deletedAt).format('YYYY-MM-DD')
-            }
-          }); this.getDummyChapters(this.chapters);
-        } else {
-          this.showMsg(response.data?.message, 'negative');
-        }
-      }).catch(error => {
-        this.chaptersLoader = false;
-        this.showMsg(error.response?.data.message || error.message, 'negative');
-      })
-    },
+            axios.post('https://fnbackend.finvedic.com/fs/download', formData, { responseType: 'blob' })
+              .then(downloadResponse => {
+                const blob = new Blob([downloadResponse.data]);
+                const url = window.URL.createObjectURL(blob);
+                chapter.videoCoverPath = url; // Update imagePath with the received image URL
+              })
+              .catch(error => {
+                console.error('Error in post request for imagePath:', error);
+                this.showMsg(error.response?.data.message || error.message, 'negative');
+              });
+          }
+        });
+
+        this.getDummyChapters(this.chapters);
+      } else {
+        this.showMsg(response.data?.message, 'negative');
+      }
+    })
+    .catch(error => {
+      this.chaptersLoader = false;
+      this.showMsg(error.response?.data.message || error.message, 'negative');
+    });
+},
     getDummyChapters(chapter) {
       let index = 0;
       let slide = [];
@@ -328,7 +375,7 @@ export default {
       if(ext == 'pptx' ) { url = '/watch-ppt'; }
       else if(ext == 'mp4') { url = '/watch-video'; }
       else if(ext == 'pdf') { url = '/read-pdf'; }
-      let item = chapter.description;
+      let item = chapter.videoFilePath;
       this.$router.push({
         path: url,
         query: {

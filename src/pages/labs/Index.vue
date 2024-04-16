@@ -7,15 +7,16 @@
       <fin-portlet-item>
         <div class="row">
           <div class="col-12 col-sm-4 col-md-4 col-lg-4 q-pa-md" v-for="(lab, index) in labsData" :key="lab.id">
-            <q-card class="shadow-8" style="border-radius: 10px!important;">
-              <q-card-section horizontal :style="{ border: lab.locked ? '2px solid #FF7F50' : '2px solid #00C520' }">
-                <q-card-section class="q-pa-md lab-img flex items-center">
-                  <q-img :src="labImg" class="full-width"/>
+            <q-card v-if="lab.provisioningState !== 'Deleted'" class="shadow-8" :style="{ border: getBorderColor(lab.provisioningState, lab.locked), height: '100%' }">
+              <q-card-section horizontal>
+                <q-card-section class="q-pa-md lab-img flex items-center" >
+                  <q-img src="https://gurukul.finvedic.com/images/Windows.png" class="full-width" />
+
                 </q-card-section>
                 <q-card-section class="" style="width: 70%;font-size: 13px;">
                   <div class="column full-width">
                     <div class="col flex items-center">
-                      <span style="font-weight: bold;font-size:;" >{{ lab.name }}</span>
+                      <span style="font-weight: bold;" >{{ lab.name }}</span>
                       <q-space />
                       <q-icon name="more_vert" size="20px" class="cursor-pointer"></q-icon>
                     </div>
@@ -84,6 +85,12 @@ export default {
   try {
     const response = await fetch('https://fnbackend.finvedic.com/deletevm/'+vmname);
     console.log('success')
+
+    // const response = await fetch('http://localhost:8083/deletevm/' + lab.name);
+    // console.log('success');
+    // Update lab state to locked
+    lab.locked = true;
+    this.saveLockedStates(); // Save locked states to local storage
   } catch (error) {
     console.error(error);
   }

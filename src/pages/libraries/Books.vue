@@ -2,28 +2,6 @@
   <fin-portlet>
     <fin-portlet-header>
     </fin-portlet-header>
-    <!-- <fin-portlet-item>
-      <div class="row q-pb-lg">
-        <q-btn :label="category.categoryName" no-caps v-if="!subCategories[category.id]" class="full-width fin-br-8 shadow-2"
-            size="lg" :class="selectedCategory?.id == category.id ? 'bg-finvedic text-white' : ''"
-            @click="selectCategory(category)" />
-
-          <q-btn-dropdown :label="category.categoryName" no-caps v-if="subCategories[category.id]"
-            class="full-width fin-br-8 shadow-2" :class="{ 'bg-finvedic text-white': selectedCategory?.id === category.id }"
-            size="lg">
-            <q-list>
-              <q-item v-for="subCategory in subCategories[category.id]" clickable v-close-popup
-                @click="selectSubCategory(category, subCategory)"
-                :class="{ 'bg-finvedic text-white': selectedSubCategory?.id == subCategory.id }">
-                <q-item-section>
-                  <q-item-label><b>{{ subCategory.subCategoryName }}</b></q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-btn-dropdown>
-        </div>
-      </div>
-    </fin-portlet-item> -->
     <fin-portlet-item class="q-pb-xl" v-if="booksData.length">
       <carousel-3d :totalSlides="booksData.length" :count="booksData.length" @beforeSlideChange="getCurrentSlide"
         :controls-visible="true" width="235" height="325" display="9" >
@@ -145,6 +123,7 @@ import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 import { Carousel3d, Slide } from "src/components/carousel-3d";
+import axios from 'axios';
 import { urls } from "./Urls"
 import { storeToRefs } from "pinia";
 import moment from "moment"
@@ -217,61 +196,114 @@ export default {
       this.selectedSlide = this.booksData[index];
     },
     getBooksData() {
-      this.loading = true;
-       let request = {
-        params: {
-          categoryId: this.selectedCategory.id
-         }
-       }
-       if (this.selectedSubCategory && this.selectedCategory?.id == this.selectedSubCategory?.categoryCode) {
-         request.params.subCategoryId = this.selectedSubCategory.id;
-       }
-      this.$api.get(urls.getBooksDataUrl).then(response => {
-        this.loading = false;
-        if (response.data.success) {
-          this.booksData = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));
-          this.selectedSlide = this.booksData.length ? this.booksData[0] : {};
-        } else {
-          this.showMsg(response.data?.message, 'negative');
+  this.loading = true;
+  let request = {
+    params: {
+      categoryId: this.selectedCategory.id
+    }
+  }
+  if (this.selectedSubCategory && this.selectedCategory?.id == this.selectedSubCategory?.categoryCode) {
+    request.params.subCategoryId = this.selectedSubCategory.id;
+  }
+
+  this.$api.get(urls.getBooksDataUrl, request).then(response => {
+    this.loading = false;
+    console.log('Data from getbooksurl:', response.data);
+    if (response.data.success) {
+      this.booksData = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));
+      
+      // Loop through each book and fetch imagePath for it
+      this.booksData.forEach(book => {
+        // Fetch imagePath and send it to download URL for each book
+        if (book.imagePath) {
+          const imagePathWithoutPrefix = book.imagePath.replace('https://fnbackend.finvedic.com/fs/download/', '');
+          const formData = new FormData();
+          formData.append('filename', imagePathWithoutPrefix);
+          
+          axios.post('https://fnbackend.finvedic.com/fs/download', formData, { responseType: 'blob' })
+            .then(downloadResponse => {
+              // Handle download success, e.g., open or save the downloaded file
+              const blob = new Blob([downloadResponse.data]);
+              const url = window.URL.createObjectURL(blob);
+              book.imagePath = url; // Update imagePath with the received image URL
+            })
+            .then(() => {
+              console.log('Post request successful'); // Log successful post request
+            })
+            .catch(error => {
+              // console.error('Error in post request:', error); // Log error in post request
+              // this.showMsg(error.response?.data.message || error.message, 'negative');
+            });
         }
-      }).catch(error => {
-        this.loading = false;
-        this.showMsg(error.message, 'negative');
       });
-    },
-    getChaptersData() {
-      this.chaptersLoader = true;
-      this.$api.get(urls.getBookChapterUrl, {
-        params: {
-          bookId: this.selectedSlide?.id
-        }
-      }).then(response => {
-        this.chaptersLoader = false;
-        if (response.data.success) {
-          this.chaptersData = response.data.data.map((chapter, index) => {
-            return {
-              index: index + 1,
-              id: chapter.id,
-              bookId: chapter.bookId,
-              accountId: chapter.accountId,
-              description: chapter.description,
-              chapterTitle: chapter.chapterTitle,
-              chapterImagePath: chapter.chapterImagePath,
-              chapterFilePath: chapter.chapterFilePath,
-              createdAt: moment(chapter.createdAt).format('YYYY-MM-DD'),
-              updatedAt: moment(chapter.updatedAt).format('YYYY-MM-DD'),
-              deletedAt: moment(chapter.deletedAt).format('YYYY-MM-DD')
-            }
-          });
-          this.getDummyChapters(this.chaptersData);
-        } else {
-          this.showMsg(response.data?.message, 'negative');
-        }
-      }).catch(error => {
-        this.chaptersLoader = false;
-        this.showMsg(error.response?.data.message || error.message, 'negative');
-      })
-    },
+
+      this.selectedSlide = this.booksData.length ? this.booksData[0] : {};
+    } else {
+      this.showMsg(response.data?.message, 'negative');
+    }
+  }).catch(error => {
+    this.loading = false;
+    this.showMsg(error.message, 'negative');
+  });
+},
+
+
+getChaptersData() {
+  this.chaptersLoader = true;
+  const formData = new FormData();
+  formData.append('bookId', this.selectedSlide?.id); // Add bookId to form data
+
+  axios.post('https://fnbackend.finvedic.com/api/bookChapters/getBookChaptersByBookId', formData)
+    .then(response => {
+      this.chaptersLoader = false;
+      if (response.data.success) {
+        this.chaptersData = response.data.data.map((chapter, index) => {
+          return {
+            index: index + 1,
+            id: chapter.id,
+            bookId: chapter.bookId,
+            accountId: chapter.accountId,
+            description: chapter.description,
+            chapterTitle: chapter.chapterTitle,
+            chapterImagePath: chapter.chapterImagePath,
+            chapterFilePath: chapter.chapterFilePath,
+            createdAt: moment(chapter.createdAt).format('YYYY-MM-DD'),
+            updatedAt: moment(chapter.updatedAt).format('YYYY-MM-DD'),
+            deletedAt: moment(chapter.deletedAt).format('YYYY-MM-DD')
+          };
+        });
+
+        // Fetch imagePath and send it to download URL
+        this.chaptersData.forEach(chapter => {
+          if (chapter.chapterImagePath) {
+            const imagePathWithoutPrefix = chapter.chapterImagePath.replace('https://fnbackend.finvedic.com/fs/download/', '');
+            const formData = new FormData();
+            formData.append('filename', imagePathWithoutPrefix);
+            
+            axios.post('https://fnbackend.finvedic.com/fs/download', formData, { responseType: 'blob' })
+              .then(downloadResponse => {
+                const blob = new Blob([downloadResponse.data]);
+                const url = window.URL.createObjectURL(blob);
+                chapter.chapterImagePath = url; // Update imagePath with the received image URL
+              })
+              .catch(error => {
+                console.error('Error in post request for imagePath:', error);
+                this.showMsg(error.response?.data.message || error.message, 'negative');
+              });
+          }
+        });
+
+        this.getDummyChapters(this.chaptersData);
+      } else {
+        this.showMsg(response.data?.message, 'negative');
+      }
+    })
+    .catch(error => {
+      this.chaptersLoader = false;
+      this.showMsg(error.response?.data.message || error.message, 'negative');
+    });
+},
+
     getDummyChapters(chapter) {
       let index = 0;
       let slide = [];
@@ -284,20 +316,33 @@ export default {
         }
       }
     },
+    
     visitChapter(chapter) {
-      var ext = chapter.chapterFilePath?.substr(chapter.chapterFilePath.lastIndexOf('.') + 1);
-      let url = '/read-pdf';
-      if(ext == 'pptx' ) { url = '/watch-ppt'; }
-      else if(ext == 'mp4') { url = '/watch-video'; }
-      else if(ext == 'pdf') { url = '/read-pdf'; }
-      let item =chapter.chapterFilePath;
-      this.$router.push({
-        path: url,
-        query: {
-          item:  CryptoJS.AES.encrypt(item, 'fileData').toString()
-        }
-      })
-    }
+  console.log('Chapter File Path:', chapter.chapterFilePath); // Log the chapter file path
+  
+  var ext = chapter.chapterFilePath?.substr(chapter.chapterFilePath.lastIndexOf('.') + 1);
+  let url = '/read-pdf';
+  if(ext == 'pptx' ) { url = '/watch-ppt'; }
+  else if(ext == 'mp4') { url = '/watch-video'; }
+  else if(ext == 'pdf') { url = '/read-pdf'; }
+  let item = chapter.chapterFilePath;
+
+  if (item) {
+    console.log(item); // Log the item here
+
+    this.$router.push({
+      path: url,
+      query: {
+        item: CryptoJS.AES.encrypt(item, 'fileData').toString()
+      }
+    });
+  } else {
+    console.error('Failed to get chapter file path');
+    // You can also show a notification or handle the failure in a different way
+  }
+}
+
+
   }
 };
 </script>

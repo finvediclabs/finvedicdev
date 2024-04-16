@@ -14,7 +14,9 @@
   </fin-portlet>
 </template>
 <script>
-import FinTable from "src/components/FinTable.vue"
+
+import FinTable from "src/components/FinTable.vue";
+import axios from 'axios';
 import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
@@ -36,7 +38,7 @@ export default {
       loading: false,
       header: [
         { label: 'S.No', key: 'index', align: 'center' },
-        { label: 'Cover', key: 'imagePath', align: 'start', type: 'image' },
+        { label: 'Cover', key: 'imageDownload', align: 'start', type: 'image' },
         { label: 'Title', key: 'heading', align: 'start', width: '150px' },
         { label: 'Description', key: 'description', align: 'start', width: '250px' },
       ],
@@ -57,22 +59,49 @@ export default {
         ]
       });
     },
-    getBooksData() {
-      if (!this.loading) {
-        this.loading = true;
-        this.$api.get(urls.booksDataUrl).then(response => {
-          this.loading = false;
-          if (response.data.success) {
-            this.booksList = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));
-          } else {
-            this.showMsg(response.data?.message, 'negative');
+    async getBooksData() {
+  if (!this.loading) {
+    this.loading = true;
+    try {
+      const response = await this.$api.get(urls.booksDataUrl);
+      this.loading = false;
+      if (response.data.success) {
+        this.booksList = response.data.data.map((item, index) => ({
+          ...item,
+          index: index + 1,
+          imageDownload: item.imagePath.replace('https://fnbackend.finvedic.com/fs/download/', ''),
+        }));
+        
+        // Log the imageDownload of each item in booksList
+        this.booksList.forEach(async item => {
+          const image = item.imageDownload;
+          console.log(image);
+          // Check if image exists
+          if (image) {
+            // Create form data
+            const formData = new FormData();
+            formData.append('filename', image);
+            
+            // Send form data to http://localhost:8083/fs/download
+            const downloadResponse = await axios.post('https://fnbackend.finvedic.com/fs/download', formData, {
+              responseType: 'blob' // Set response type to blob
+            });
+            
+            // Handle the blob response as needed
+            item.imageDownload = URL.createObjectURL(downloadResponse.data);
+            console.log(downloadResponse); // Log or process the blob response
           }
-        }).catch(error => {
-          this.loading = false;
-          this.showMsg(error.response?.data.message || error.message, 'negative');
         });
+      } else {
+        this.showMsg(response.data?.message, 'negative');
       }
-    },
+    } catch (error) {
+      this.loading = false;
+      this.showMsg(error.response?.data.message || error.message, 'negative');
+    }
+  }
+},
+
     editDataFun(val) {
       let item = {
         title: val.heading,

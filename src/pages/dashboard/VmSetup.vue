@@ -126,15 +126,16 @@ export default {
       });
     },
     getVMsData() {
-      this.loading = true;
-      this.$api.get(urls.getAzureVmsUrl).then(response => {
-        this.loading = false;
-        this.VMsList = response.data.data;
-      }).catch(error => {
-        this.loading = false;
-        this.showMsg(error.response?.data.message || error.message, 'negative');
-      })
-    },
+  this.loading = true;
+  this.$api.get(urls.getAzureVmsUrl).then(response => {
+    this.loading = false;
+    // Filter out VMs with the provisioningState as "deleted"
+    this.VMsList = response.data.data.filter(vm => vm.provisioningState !== 'Deleted');
+  }).catch(error => {
+    this.loading = false;
+    this.showMsg(error.response?.data.message || error.message, 'negative');
+  });
+},
     validateFields() {
       if (this.version && this.nos > 0) {
         this.createVms()
@@ -156,7 +157,7 @@ export default {
           region: this.region
         }).then(response => {
           this.loader = false;
-          this.showMsg(response.data?.message || 'Vms created Successfully', 'positive');
+          this.showMsg(response.data?.message || 'Start Spinning VM Successfully', 'positive');
         }).catch(error => {
           this.loader = false;
           this.showMsg(error.response?.data.message || error.message, 'negative');
