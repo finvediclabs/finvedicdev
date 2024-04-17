@@ -21,8 +21,11 @@
       class="image-btn"
       @click="selectVersion('Windows')"
     >
-      <img src="https://gurukul.finvedic.com/images/microsoft.png" alt="Windows" style="width: 100%; height: 100%;" />
+      <img src="https://gurukul.finvedic.com/images/Windows.png" alt="Windows" style="width: 100%; height: 100%;" />
     </q-btn>
+    <div class="outer">
+  <div class="inner"></div>
+</div>
     <q-btn
       v-ripple
       v-model="version"
@@ -106,7 +109,7 @@ export default {
         { label: 'Size', key: 'size', align: 'center' },
         { label: 'OS Type', key: 'type', align: 'start'},
         { label: 'Name', key: 'name', align: 'start'},
-        {label: 'Active'}
+        {label: 'Active' ,key: 'provisioningState', align: 'start'}
       ],
       VMsList: []
     }
@@ -157,7 +160,7 @@ export default {
           region: this.region
         }).then(response => {
           this.loader = false;
-          this.showMsg(response.data?.message || 'Start Spinning VM Successfully', 'positive');
+          this.showMsg(response.data?.message || 'Vms created Successfully', 'positive');
         }).catch(error => {
           this.loader = false;
           this.showMsg(error.response?.data.message || error.message, 'negative');
@@ -189,6 +192,21 @@ export default {
   width: 180px;
   height: 180px;
   margin: 0 10px; /* Adjust as needed */
+}
+.outer {
+  width: 1px;
+  height: 180px;
+  margin: auto;
+  position: relative;
+  overflow: hidden;
+}
+.inner {
+  position: absolute;
+  width:100%;
+  height: 40%;
+  background: #5479F7;
+  top: 30%;
+  box-shadow: 0px 0px 30px 20px #5479F7;
 }
 </style>
 
