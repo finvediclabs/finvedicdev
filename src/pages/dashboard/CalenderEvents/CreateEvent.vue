@@ -47,25 +47,29 @@
             <div class="col-12 q-px-sm">
               <label class="form-label">Course</label>
               <q-select v-model="course" class="q-px-md rounded-borders inputBackground" borderless
-                :options="courseOptions" option-label="categoryName" option-value="categoryName" />
+                :options="courseOptions" option-label="courseName" option-value="courseid"  @select="selectCourse(course)"/>
               <div class="errorMsgBox">
                 <span v-if="errors.course && !course">{{ errors.course }}</span>
               </div>
             </div>
             <div class="col-12 q-px-sm">
-              <label class="form-label">Title</label>
-              <q-input v-model="title" class="q-px-md rounded-borders inputBackground" borderless />
+              <label class="form-label">Topic</label>
+              <q-select v-model="topic" class="q-px-md rounded-borders inputBackground" borderless
+                :options="topicOptions" option-label="topicName" option-value="topicId" />
               <div class="errorMsgBox">
-                <span v-if="errors.title && !title">{{ errors.title }}</span>
+                <span v-if="errors.topic && !topic">{{ errors.topic }}</span>
               </div>
-            </div>
+            </div> 
             <div class="col-12 q-px-sm">
-              <label class="form-label">Link</label>
-              <q-input v-model="link" class="q-px-md rounded-borders inputBackground" borderless />
+              <label class="form-label">Batch</label>
+              <q-select v-model="batch" class="q-px-md rounded-borders inputBackground" borderless
+                :options="batchOptions" option-label="cycleDesc" option-value="cycleid" />
               <div class="errorMsgBox">
-                <span v-if="errors.link && !link">{{ errors.link }}</span>
+                <span v-if="errors.batch && !topic">{{ errors.batch }}</span>
               </div>
-            </div>
+            </div> 
+            
+            
             <div class="col-12 q-px-sm q-pt-xl justify-end row">
               <q-space />
               <q-btn class="shadow-5 q-px-md rounded-borders sub-btn q-px-xl text-white" label="Update" no-caps
@@ -90,18 +94,27 @@ import { urls } from "src/pages/dashboard/Urls";
 
 import { useProfileStore } from "src/stores/profile";
 import { storeToRefs } from "pinia";
-import { useCategoryStore } from "src/stores/Categories";
+//import { useCategoryStore } from "src/stores/Categories";
+import { useCouseStore} from "src/stores/courses";
 export default {
   setup() {
     const profileStore = useProfileStore();
     const { profile, user } = storeToRefs(profileStore);
-    const categoryStore = useCategoryStore();
-    const { categories, subCategories } = storeToRefs(categoryStore);
+   // const categoryStore = useCategoryStore();
+    const couseStore = useCouseStore();
+    const { selectCourse } = couseStore;
+    const {courses, topics, batches} = storeToRefs(couseStore);
+    couseStore.fetchCourses();
+   // const { categories, subCategories } = storeToRefs(categoryStore);
     return {
       user,
       profile,
-      categories,
-      subCategories
+      courses,
+      topics,
+      batches,
+      selectCourse,
+    //  categories,
+    //  subCategories
     }
   },
   components: {
@@ -117,6 +130,8 @@ export default {
       startTime: '',
       endTime: '',
       course: '',
+      batch: '',
+      topic: '',
       title: '',
       link: '',
       errors: {},
@@ -126,16 +141,25 @@ export default {
   computed: {
     courseOptions() {
       var courses = [];
-      this.categories.forEach(item => {
-        if (this.subCategories[item.id]) {
-          this.subCategories[item.id].forEach(item => {
-            courses.push(item.subCategoryName)
-          });
-        } else {
-          courses.push(item.categoryName)
-        }
+      this.courses.forEach(item => {
+          courses.push({"courseName":item.courseDesc,"courseId":item.courseId})
+        
       });
       return courses;
+    },
+    topicOptions() {
+      var topics = [];
+      this.topics.forEach(item => {
+        topics.push(item.topicName)
+      });
+      return topics;
+    },
+    batchOptions() {
+      var batches = [];
+      this.batches.forEach(item => {
+        batches.push(item.cycleDesc)
+      });
+      return batches;
     }
   },
   mounted() {
@@ -149,7 +173,9 @@ export default {
       this.startTime = { hours: startTime[0], minutes: startTime[1] };
       this.endTime = { hours: endTime[0], minutes: endTime[1] };
       this.course = editedEvent.course;
+      this.topic = editedEvent.topic;
       this.title = editedEvent.title;
+      this.batch = editedEvent.batch;
       this.link = editedEvent.link;
       this.editedEvent = editedEvent;
     }
@@ -169,10 +195,10 @@ export default {
       const day = date.getDate();
       const month = new Date(date).toLocaleDateString('en-US', { month: 'short' });
       const year = date.getFullYear();
-      return `${day} ${month}, ${year}`;
+      return `${month} ${day}, ${year}`;
     },
     validateForm() {
-      if (this.date && this.startTime && this.endTime && this.course && this.title && this.link) {
+      if (this.date && this.startTime && this.endTime && this.course) {
         this.editedEvent?.id ? this.updateEvent() : this.createEvent();
       } else {
         this.errors = {
@@ -180,22 +206,23 @@ export default {
           startTime: "Start Time is required",
           endTime: "End Time is required",
           course: "Course is required",
-          title: "Title is required",
-          link: "Link is required"
+       
         }
       }
     },
     createEvent() {
       var request = {
         accountId: null,
-        course: this.course,
-        title: this.title,
+        course: this.course.courseName,
+        topic:this.topic,
+        batch:this.batch,
+        title: this.course.courseName,
         createdBy: this.user.name,
         lastUpdatedBy: this.user.name,
         date: moment(this.date).format('YYYY-MM-DD'),
         start: `${this.getTwoDigits(this.startTime.hours)}:${this.getTwoDigits(this.startTime.minutes)}`,
         end: `${this.getTwoDigits(this.endTime.hours)}:${this.getTwoDigits(this.endTime.minutes)}`,
-        link: this.link,
+        link: 'https://meet.google.com/dsj-nhpc-msz',
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
