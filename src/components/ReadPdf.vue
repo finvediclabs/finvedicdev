@@ -37,7 +37,15 @@ export default {
             download: false,
             viewBookmark: false
           }
-        }
+        },
+        secondaryToolbar: {
+          presentationMode: true,
+          secondaryOpenFile: false,
+          secondaryPrint: false,
+          secondaryDownload: false,
+          secondaryViewBookmark: false,
+          
+        },
       }
     }
   },
