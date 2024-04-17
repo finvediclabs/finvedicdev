@@ -62,7 +62,7 @@
 
           </div>
           <fin-portlet-item class="q-pa-sm text-center q-xl">
-            <q-btn color="primary" no-caps class="sub-btn q-ml-sm fin-br-8" style="min-width:150px" label="Create VM" type="submit"
+            <q-btn color="primary" no-caps class="sub-btn q-ml-sm fin-br-8" style="min-width:150px" label="Spin VM" type="submit"
               :disable="loader">
               <q-spinner-ios color="white" class="q-pl-sm" v-if="loader" />
             </q-btn>
@@ -160,7 +160,7 @@ export default {
           region: this.region
         }).then(response => {
           this.loader = false;
-          this.showMsg(response.data?.message || 'Vms created Successfully', 'positive');
+          this.showMsg(response.data?.message || 'Start Spinning VM Successfully', 'positive');
         }).catch(error => {
           this.loader = false;
           this.showMsg(error.response?.data.message || error.message, 'negative');
