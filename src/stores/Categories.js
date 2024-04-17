@@ -23,7 +23,8 @@ export const useCategoryStore = defineStore('categories', {
         this.subCategories = Object.groupBy(response.data, product => {
           return product.categoryCode;
         });
-        if (this.subCategories[this.categories[0].id]) {
+
+        if (this.categories.length > 0 && this.subCategories[this.categories[0].id]) {
           this.selectedCategory = this.categories[0];
           this.selectedSubCategory = this.subCategories[this.categories[0].id][0];
         } else {
