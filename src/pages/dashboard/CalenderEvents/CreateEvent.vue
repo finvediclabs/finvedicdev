@@ -126,6 +126,7 @@ export default {
   },
   data() {
     return {
+      deleteUrl: urls.getEvents,
       date: '',
       startTime: '',
       endTime: '',

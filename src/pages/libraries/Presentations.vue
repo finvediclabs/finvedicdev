@@ -165,6 +165,7 @@ export default {
   },
   data() {
     return {
+      
       DummyBook: DummyBook,
       presentations: [],
       selectedSlide: {},
@@ -211,7 +212,7 @@ export default {
       });
     },
     getCurrentSlide(index) {
-      this.selectedSlide = this.presentations[index];
+      this.selectedSlide = this.presentation[index];
     },
     getPresentations() {
   this.loading = true;
@@ -267,7 +268,7 @@ export default {
 getChaptersData() {
   this.chaptersLoader = true;
   const formData = new FormData();
-  formData.append('presentationsId', this.selectedSlide?.id); // Add presentationId to form data
+  formData.append('presentationId', this.selectedSlide?.id); // Add presentationId to form data
   console.log('Selected Slide ID:', this.selectedSlide?.id);
   axios.post('https://fnbackend.finvedic.com/api/presentationChapters/findPresentationChapter', formData)
     .then(response => {

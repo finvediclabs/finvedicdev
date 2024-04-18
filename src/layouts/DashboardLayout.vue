@@ -140,14 +140,15 @@
               <q-item class="module-select q-my-xs" :class="getActiveModuleClass(module)" :clickable="!module.menu"
                 :v-ripple="!module.menu" @click="changeLocation(module)">
 
-                <span class="flex" v-if="!module.menu">
+                <span class="flex" v-if="!module.menu" >
                   <q-item-section avatar>
-                    <q-icon :name="module.icon" />
+                    <q-icon  :name="module.icon" />
                   </q-item-section>
                   <q-item-section class="text-body2">
                     {{ module.label }}
                   </q-item-section>
                 </span>
+                
 
                 <q-expansion-item v-if="module.menu" class="q-pa-none full-width module-select" :content-inset-level="0.2"
                   expand-icon-class="text-white" v-model="expand[module.value]" :icon="module.icon" :label="module.label">
@@ -306,6 +307,7 @@ export default {
       })
 
     },
+    
     knowModuleFunction() {
       var filteredModule = this.modulesList.filter(module => module.menu);
       filteredModule.forEach(module => {

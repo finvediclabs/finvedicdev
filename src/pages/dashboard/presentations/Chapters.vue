@@ -1,7 +1,7 @@
 <template>
   <fin-portlet>
     <fin-portlet-header>
-      <fin-portlet-heading :loading="loading" backArrow>Chapters List : {{ presentationId }}</fin-portlet-heading>
+      <fin-portlet-heading :loading="loading" backArrow>Chapters List</fin-portlet-heading>
       <fin-portlet-item>
         <q-btn label="Add Chapter" dense color="blue-15" class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder"
           no-caps @click="createFile()" />
