@@ -123,8 +123,17 @@ const routes = [
       {
         path: 'class-room/create',
         component: () => import('pages/dashboard/CalenderEvents/CreateEvent.vue'),
-        meta: { items: 'class-room' }
-      }
+        meta: { items: 'createvent' }
+      }, {
+        path: 'class-room/enrollments/:cycleid',
+        component: () => import('pages/dashboard/CalenderEvents/Enr.vue'),
+        meta: { item: 'enrollments' }
+      },
+      {
+        path: 'class-room/topics/:courseid',
+        component: () => import('pages/dashboard/CalenderEvents/Top.vue'),
+        meta: { item: 'class-room' }
+      },
     ],
   },
 
@@ -173,22 +182,12 @@ const routes = [
     meta: { title: 'Reports', module: 'reports' },
     component: () => import('layouts/DashboardLayout.vue'),
     children: [
+      
       {
-        path: 'student',
-        component: () => import('pages/reports/Students.vue'),
-        meta: { item: 'student' }
-      },
-      {
-        path: 'faculty',
-        component: () => import('pages/reports/Faculty.vue'),
-        meta: { item: 'faculty' }
-      },
-      {
-        path: 'cloud',
-        component: () => import('pages/reports/Cloud.vue'),
-        meta: { item: 'faculty' }
-      },
-     
+        path: '',
+        component: () => import('pages/reports/Index.vue'),
+        meta: { item: '' }
+      }
     ]
   },
   {
