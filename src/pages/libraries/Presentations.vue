@@ -1,10 +1,28 @@
 <template>
   <fin-portlet>
     <fin-portlet-header>
-     
+      <!--
+      <fin-portlet-heading :loading="loading">Presentations</fin-portlet-heading>
+      -->
     </fin-portlet-header>
     <fin-portlet-item>
-     
+      <!--
+      <div class="radio-button-group mts" style=" box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);border-radius: 25px;width: 60%;margin-left: auto;margin-right: auto;">
+  <div class="item">
+    <input type="radio" name="button-group" class="radio-button" value="1" id="button1" checked />
+    <label for="button1">Introduction to Banking</label>
+  </div>
+  <div class="item">
+    <input type="radio" name="button-group" class="radio-button" value="2" id="button2" />
+    <label for="button2">Disruptive Technologies</label>
+  </div>
+  <div class="item">
+    <input type="radio" name="button-group" class="radio-button" value="3" id="button3" />
+    <label for="button3">Specializations</label>
+  </div>
+  
+</div>
+-->
       
       
       
@@ -140,12 +158,12 @@ import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
+import axios from 'axios';
 import { Carousel3d, Slide } from "src/components/carousel-3d";
 import { urls } from "./Urls"
 import { storeToRefs } from "pinia";
 import { useCategoryStore } from "src/stores/Categories";
 import moment from "moment";
-import axios from 'axios';
 import DummyBook from "src/assets/dummyBook.jpg"
 import CryptoJS from 'crypto-js'
 export default {
@@ -165,7 +183,6 @@ export default {
   },
   data() {
     return {
-      
       DummyBook: DummyBook,
       presentations: [],
       selectedSlide: {},
@@ -212,7 +229,7 @@ export default {
       });
     },
     getCurrentSlide(index) {
-      this.selectedSlide = this.presentation[index];
+      this.selectedSlide = this.presentations[index];
     },
     getPresentations() {
   this.loading = true;
