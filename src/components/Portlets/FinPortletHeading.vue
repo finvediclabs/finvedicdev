@@ -1,7 +1,7 @@
 <template>
   <div class="col">
     <p :class="headingType" class="page-heading text-weight-bolder" style="white-space: no-wrap !important;">
-      <q-icon name="arrow_back" style="font-weight: bold;" class="cursor-pointer" @click="$router.go(-1)"
+      <q-icon name="arrow_back" style="font-weight: bold; color: #5479F7;" class="cursor-pointer" @click="$router.go(-1)"
         v-if="backArrow" />
       <slot></slot>
       <q-spinner-ios v-if="loading" color="black" size="0.6em" class="q-ml-sm"/>

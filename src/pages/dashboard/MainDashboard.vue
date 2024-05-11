@@ -1,8 +1,8 @@
 <template>
-  <q-page class=" flex justify-center">
+  <q-page class=" flex justify-center"  >
     <fin-portlet>
-      <fin-portlet-item>
-        <div class="row" style="max-width: 1100px">
+      <fin-portlet-item  >
+        <div class="row" style="max-width: 1100px;" >
           <div class="col-12 col-md-6 q-py-lg q-my-sm bg-white card-space" v-for="tab in tabsList">
             <router-link class="btn" :to="`admin/${tab.path}`" style="text-decoration: none;" :class="{ disable: !tab.enable }">
               <q-card class="my-card card-link fin-card shadow-5" :style="{ background: tab.background }">
@@ -130,6 +130,11 @@ export default {
 .fin-card {
   height: 173px
 }
+.TopBG{
+  background-color:rgba(255, 255, 255, 0);
+  margin-top: 2%;
+  /* background-color: red; */
+}
 
 .card-img {
   margin-top: -40px;
@@ -137,7 +142,11 @@ export default {
   /* height: 213px; */
   width: 40% !important;
 }
-
+/* .backgroundStyle{
+  background: #D0DFFA;
+  background-repeat: no-repeat;
+  background-size: 100vw 65vh; 
+} */
 .card-space {
   padding-left: 1.725rem;
   padding-right: 1.725rem;

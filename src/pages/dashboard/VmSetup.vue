@@ -1,7 +1,7 @@
 <template>
-  <fin-portlet>
-    <fin-portlet-header>
-      <fin-portlet-heading :loading="loading" backArrow>Vm Setup</fin-portlet-heading>
+  <fin-portlet style="background-color: transparent">
+    <fin-portlet-header style="margin-bottom: 0px;">
+      <fin-portlet-heading :loading="loading" backArrow><span class="User_heading" >VM Setup</span></fin-portlet-heading>
     </fin-portlet-header>
     <fin-portlet-item class="full-width items-center justify-center">
       <div style=" margin-left: auto;margin-right: auto;">
@@ -9,7 +9,7 @@
           <div class="row" >
             
             <div class="col-12 col-md-5 q-pa-sm" style=" margin-left: auto;margin-right: auto;">
-              <p style="text-align: center;font-size: 24px;font-weight: 600;">Select The Operating System</p>
+              <p style="text-align: center;font-size: 24px;font-weight: 600;color: #5479F7;">Select The Operating System</p>
               <div class="image-btn-container">
     
     <q-btn
@@ -47,12 +47,12 @@
               </div>
               <div class="input-container" style="display: flex; align-items: center;">
                 <div>
-                  <q-btn class="shadow-3 fin-br-8 q-px-md bg-grey-1" @click="decrementNoOfVMs" icon="remove" style="margin-right: 10px;" />
+                  <q-btn class="shadow-3 fin-br-8 q-px-md bg-grey-1 custom-btn" @click="decrementNoOfVMs" icon="remove" style="margin-right: 10px;" />
                 </div>
-                <q-input v-model="nos" type="number" borderless label="No Of VM's" class="shadow-3 fin-br-8 q-px-md bg-grey-1" style="flex: 1; margin-right: 10px;" />
+                <q-input v-model="nos" type="number" borderless label="No Of VM's" class="shadow-3 fin-br-8 q-px-md bg-grey-1 custom-input" style="flex: 1; margin-right: 10px;"  />
                 
                   <div>
-                  <q-btn class="shadow-3 fin-br-8 q-px-md bg-grey-1" @click="incrementNoOfVMs" icon="add" />
+                  <q-btn class="shadow-3 fin-br-8 q-px-md bg-grey-1 custom-btn" @click="incrementNoOfVMs" icon="add" />
                 </div>
               </div>
               <div class="errorMsgBox">
@@ -183,6 +183,15 @@ export default {
 }
 </script>
 <style>
+.custom-btn,
+.custom-input {
+  height: 50px; /* Adjust as needed */
+  color: #5479F7;
+  font-weight: 600;
+}
+.q-field__label {
+  color: #5479F7 !important;
+}
 .image-btn-container {
   display: flex;
   justify-content: center;
@@ -208,6 +217,15 @@ export default {
   top: 30%;
   box-shadow: 0px 0px 30px 20px #5479F7;
 }
+.User_heading{
+  color:#5479F7;
+  margin-left:4%;
+}
+.bg-green {
+    background: #b2ccfc !important;
+    border-radius: 20px;
+}
+
 </style>
 
 

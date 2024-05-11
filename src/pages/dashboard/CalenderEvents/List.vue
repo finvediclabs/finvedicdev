@@ -1,7 +1,7 @@
 <template>
-  <fin-portlet>
+  <fin-portlet style="background-color: transparent">
     <fin-portlet-header>
-      <fin-portlet-heading :loading="loading" backArrow>Classrooms</fin-portlet-heading>
+      <fin-portlet-heading :loading="loading" backArrow><span class="User_heading" >Classrooms</span></fin-portlet-heading>
       <fin-portlet-item>
         <router-link :to="{ path: 'class-room/create' }">
           <q-btn label="Add Class" dense color="blue-15" class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder"
@@ -16,29 +16,32 @@
   </fin-portlet>
   
   <div class="row">
-  <div class="col-7">
-    <fin-portlet>
+  <div class="col-6">
+    <fin-portlet style="background-color: transparent">
     <fin-portlet-header>
-      <fin-portlet-heading :loading="loading">Courses</fin-portlet-heading>
+      <fin-portlet-heading :loading="loading"><span class="User_heading" >Courses</span></fin-portlet-heading>
       <fin-portlet-item>
+        <!-- <router-link :to="{ path: 'class-room/topics/:courseid' }"> -->
           <q-btn label="Add Course" dense color="blue-15" class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder"
-            no-caps />
+          no-caps @click="openAddCourseDialog" />
+          <!-- </router-link> -->
       </fin-portlet-item>
     </fin-portlet-header>
-    <fin-portlet-item class="table-scroll">
-      <fin-table :columns="courseheader" :data="courseList" select @reCall="getCoursesData()" allowDelete :delete-url="courseDeleteUrl"
+    <fin-portlet-item class="table-scroll" >
+      <fin-table :columns="courseheader" :data="courseList" select @reCall="getCoursesData()" allowCourseDelete :delete-url="courseDeleteUrl"
         @editFun="editCourseDataFun" :loading="loading"   showChapters @showChapters="showTopics"/>
     </fin-portlet-item>
   </fin-portlet>
  </div>
-  <div class="col-5">
+  <div class="col-6">
    
-    <fin-portlet>
+    <fin-portlet style="background-color: transparent">
     <fin-portlet-header>
-      <fin-portlet-heading :loading="loading">Batches</fin-portlet-heading>
+      <fin-portlet-heading :loading="loading"><span class="User_heading" >Batches</span></fin-portlet-heading>
       <fin-portlet-item>
+        <!-- <router-link :to="{ path: 'class-room/enrollments/::cycleid' }"> -->
           <q-btn label="Add Batch" dense color="blue-15" class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder"
-            no-caps />
+      no-caps @click="openAddBatchDialog" />
       </fin-portlet-item>
     </fin-portlet-header>
     <fin-portlet-item class="table-scroll">
@@ -48,13 +51,66 @@
   </fin-portlet>
   </div>
 </div>
+<q-dialog v-model="addCourseDialog">
+    <fin-portlet style="min-width: 400px; max-width: 600px;">
+      <fin-portlet-header bordered>
+        <fin-portlet-heading small>Add Course</fin-portlet-heading>
+      </fin-portlet-header>
+      <fin-portlet-item class="w-100 addCourseDialog">
+        <!-- Form fields for adding a new course -->
+        <q-form @submit="submitCourseForm" class="formContent" ref="courseForm">
+          <!-- Add your form fields here -->
+          <q-input outlined v-model="courseData.courseid" label="Course ID" />
+          <q-input outlined v-model="courseData.abstractt" label="Course Description" />
+          <q-input outlined v-model="courseData.bibilography" label="Bibliography" />
+          <q-input outlined v-model="courseData.courseDesc" label="Description" />
+          <!-- Add more form fields as needed -->
+
+          <div class="row justify-center">
+            <div class="col-12 q-px-sm q-py-xs text-right q-pt-lg">
+              <q-btn label="Close" v-close-popup type="reset" color="primary" flat class="q-mr-sm" no-caps />
+              <q-btn label="Submit" type="submit" color="primary" :disable="submitLoading" no-caps>
+                <q-spinner-ios size="xs" class="q-ml-sm" v-if="submitLoading" />
+              </q-btn>
+            </div>
+          </div>
+        </q-form>
+      </fin-portlet-item>
+    </fin-portlet>
+  </q-dialog>
   
+<q-dialog v-model="addBatchDialog">
+  <fin-portlet style="min-width: 400px; max-width: 600px;">
+    <fin-portlet-header bordered>
+      <fin-portlet-heading small>Add Batch</fin-portlet-heading>
+    </fin-portlet-header>
+    <fin-portlet-item class="w-100 addBatchDialog">
+      <q-form @submit="submitBatchForm" class="formContent" ref="batchForm">
+        <q-input outlined v-model="batchData.batchId" label="Batch ID" /> <!-- Add your form fields for adding a new batch -->
+        <q-input outlined v-model="batchData.batchName" label="Batch Name" />
+        <q-input outlined v-model="batchData.startDate" label="Start Date" type="date" />
+        <q-input outlined v-model="batchData.endDate" label="End Date" type="date" />
+        <!-- Add more form fields as needed -->
+
+        <div class="row justify-center">
+          <div class="col-12 q-px-sm q-py-xs text-right q-pt-lg">
+            <q-btn label="Close" v-close-popup type="reset" color="primary" flat class="q-mr-sm" no-caps />
+            <q-btn label="Submit" type="submit" color="primary" :disable="submitBatchLoading" no-caps>
+              <q-spinner-ios size="xs" class="q-ml-sm" v-if="submitBatchLoading" />
+            </q-btn>
+          </div>
+        </div>
+      </q-form>
+    </fin-portlet-item>
+  </fin-portlet>
+</q-dialog>
 </template>
 <script>
 import FinTable from "src/components/FinTable.vue"
 import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
+import axios from 'axios';
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 import { urls } from "../Urls"
 import CryptoJS from 'crypto-js'
@@ -72,7 +128,31 @@ export default {
       deleteUrl: urls.getEvents,
       courseDeleteUrl:urls.getCourses,
       batchDeleteUrl:urls.getBatches,
-      loading: false,
+      loading:false,
+      addCourseDialog: false,
+      submitLoading: false,
+      courseData: {
+        courseid: '',
+        abstractt: '',
+        bibliography: '',
+        courseDesc: '',
+        // Add more fields as needed
+      },
+      addBatchDialog: false,
+    submitBatchLoading: false,
+    batchData: {
+      batchId: '',
+      batchName: '',
+      startDate: '',
+      endDate: '',
+      cycleid: '',
+      cycleDesc: '',
+      cycleStartDate: '',
+      cycleEndDate: '',
+      cycleStartDateStr: '',
+      cycleEndDateStr: '',
+      // Add more fields as needed
+    },
       header: [
         { label: 'S.No', key: 'index', align: 'center' },
         { label: 'Course', key: 'course', align: 'start' },
@@ -91,6 +171,7 @@ export default {
       courseList: [], 
       batchheader: [
       { label: 'S.No', key: 'index', align: 'center' },
+      { label: 'Batch Id', key: 'cycleid', align: 'center' },
         { label: 'Batch Name', key: 'cycleDesc', align: 'start' },
         { label: 'Start Date', key: 'cycleEndDateStr', align: 'start' },
         { label: 'End Date', key: 'cycleStartDateStr', align: 'start' },
@@ -103,6 +184,10 @@ export default {
     
   },
   methods: {
+    formatDate(dateString) {
+    const [year, month, day] = dateString.split('-');
+    return `${month}/${day}/${year}`;
+  },
     showMsg(message, type) {
       this.$q.notify({
         message: message || "Something Went Wrong!",
@@ -113,6 +198,55 @@ export default {
         ]
       });
     },
+    openAddCourseDialog() {
+      this.addCourseDialog = true;
+    },
+    openAddBatchDialog() {
+    this.addBatchDialog = true;
+  },
+  submitBatchForm() {
+    console.log('Batch Data Input:', this.batchData);
+  this.submitBatchLoading = true;
+  
+
+  const startDateArr = this.batchData.startDate.split('-').map(Number);
+  const endDateArr = this.batchData.endDate.split('-').map(Number);
+  // Prepare the batch data with user-filled fields
+  const batchData = {
+    cycleid: this.batchData.batchId,
+    cycleDesc: this.batchData.batchName,
+    startDate: this.batchData.startDate,
+    endDate: this.batchData.endDate,
+    cycleStartDate: startDateArr,
+    cycleEndDate: endDateArr,
+    cycleStartDateStr: this.formatDate(this.batchData.startDate),
+    cycleEndDateStr: this.formatDate(this.batchData.endDate),
+    lastUpdatedBy: "admin",
+    // Add more fields as needed
+  };
+
+  // Example Axios POST request to add batch
+  axios.post('https://fnbackend.finvedic.com/api/cycles', batchData)
+    .then(response => {
+      this.submitBatchLoading = false;
+      if (response.status === 201) {
+        // Batch added successfully
+        this.showMsg("Batch added successfully.", 'positive');
+        this.getBatchesData(); // Refresh batch data list
+        this.addBatchDialog = false; // Close the dialog
+        // Reset form data if needed
+        // this.$refs.batchForm.reset();
+      } else {
+        // Handle other status codes if needed
+        this.showMsg("Failed to add batch.", 'negative');
+      }
+    })
+    .catch(error => {
+      this.submitBatchLoading = false;
+      // Handle Axios errors
+      this.showMsg(error.response?.data.message || error.message, 'negative');
+    });
+},
     getEventsData() {
       if (!this.loading) {
         this.loading = true;
@@ -123,12 +257,46 @@ export default {
           } else {
             this.showMsg(response.data?.message, 'negative');
           }
-          this.getCourseData();
+          this.getCoursesData();
         }).catch(error => {
           this.loading = false;
           this.showMsg(error.response?.data.message || error.message, 'negative');
         });
       }
+    },
+    submitCourseForm() {
+      this.submitLoading = true;
+
+      // Prepare the course data with user-filled fields
+      const courseData = {
+        courseid: this.courseData.courseid,
+        abstractt: this.courseData.abstractt,
+        bibilography: this.courseData.bibilography,
+        courseDesc:this.courseData.courseDesc,
+        // Add more fields as needed
+      };
+
+      // Example Axios POST request to add course
+      axios.post('https://fnbackend.finvedic.com/api/courss', courseData)
+  .then(response => {
+    this.submitLoading = false;
+    if (response.status === 201) {
+      // Course added successfully
+      this.showMsg("Course added successfully.", 'positive');
+      this.getCoursesData();
+      this.addCourseDialog = false; // Close the dialog
+      // Reset form data if needed
+      // this.$refs.courseForm.reset();
+    } else {
+      // Handle other status codes if needed
+      this.showMsg("Failed to add course.", 'negative');
+    }
+  })
+  .catch(error => {
+    this.submitLoading = false;
+    // Handle Axios errors
+    this.showMsg(error.response?.data.message || error.message, 'negative');
+  });
     },
     editDataFun(val) {
       let params = JSON.stringify(val);
@@ -140,7 +308,7 @@ export default {
         },
       })
     },
-    getCourseData() {
+    getCoursesData() {
       if (!this.loading) {
         this.loading = true;
         this.$api.get(urls.getCourses).then(response => {
@@ -203,7 +371,12 @@ export default {
   },
 }
 </script>
-
+<style>
+.User_heading{
+  color:#5479F7;
+  margin-left:4%;
+}
+</style>
 <!--
 <template>
   <fin-portlet>

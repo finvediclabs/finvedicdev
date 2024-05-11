@@ -1,13 +1,14 @@
 <template>
   <q-page>
-    <fin-portlet>
+    <fin-portlet style="background-color: transparent;">
       <fin-portlet-header>
-        <fin-portlet-heading>Labs</fin-portlet-heading>
+        <fin-portlet-heading><span class="User_heading" >Labs</span></fin-portlet-heading>
       </fin-portlet-header>
-      <fin-portlet-item>
-        <div class="row">
-          <div class="col-12 col-sm-4 col-md-4 col-lg-4 q-pa-md" v-for="(lab, index) in labsData" :key="lab.id">
-            <q-card v-if="lab.provisioningState !== 'Deleted'" class="shadow-8" :style="{ border: getBorderColor(lab.provisioningState, lab.locked), height: '100%' }">
+      <fin-portlet-item >
+        <div class="scroll_on">
+        <div class="row" style="width: 100%;margin-left: auto;margin-right: auto;">
+          <div class="col-12 col-sm-6 col-md-6 col-lg-6 q-pa-lg" v-for="(lab, index) in labsData" :key="lab.id"  style="padding-top: 0;">
+            <q-card class="shadow-8" :style="{ border: getBorderColor(lab.provisioningState, lab.locked), height: '100%' }" style="background-color: #5479F7">
               <q-card-section horizontal>
                 <q-card-section class="q-pa-md lab-img flex items-center" >
                   <q-img :src="labImg" class="full-width" />
@@ -15,11 +16,11 @@
                 <q-card-section class="" style="width: 70%;font-size: 13px;">
                   <div class="column full-width">
                     <div class="col flex items-center">
-                      <span style="font-weight: bold;" >{{ lab.name }}</span>
+                      <span style="font-weight: bold;color: white;" >{{ lab.name }}</span>
                       <q-space />
                       <q-img v-if="lab.provisioningState === 'Creating'" src="https://gurukul.finvedic.com/images/loader.gif" style="width: 30px; height: 30px;" />
                     </div>
-                    <div class="flex">
+                    <div class="flex" style="color: white;">
                       <p>
                         <strong>Instance : </strong>
                         {{ lab.size }}
@@ -27,7 +28,7 @@
                     </div>
                     <div class="col flex ">
                       <div class="q-px-md shadow-4 rounded-borders q-pa-xs text-center"
-  style="width:90px;font-size: 8px;"
+  style="width:90px;font-size: 8px;background-color: white;"
   @click="lab.provisioningState !== 'Deleting' && lab.provisioningState !== 'Deleted' ? download(lab.name) : null"
   :class="{ 'pointer-events-none': lab.locked }">
   {{ lab.provisioningState === 'Deleting' || lab.provisioningState === 'Deleted' ? lab.provisioningState : lab.type }}
@@ -45,6 +46,7 @@
               </q-card-section>
             </q-card>
           </div>
+        </div>
         </div>
       </fin-portlet-item>
     </fin-portlet>
@@ -72,7 +74,7 @@ export default {
   data() {
     return {
       labsData: [],
-      labImg: labImg
+      labImg: "https://gurukul.finvedic.com/images/Windows.png",
     }
   },
   mounted() {
@@ -82,7 +84,7 @@ export default {
   computed: {
     getBorderColor() {
       return function(provisioningState, locked) {
-        return locked ? '2px solid #FF7F50' : (provisioningState === 'Succeeded' ? '2px solid #00C520' : '2px solid #FF7F50');
+        return locked ? '0px solid #FF7F50' : (provisioningState === 'Succeeded' ? '0px solid #FF7F50' : '0px solid #FF7F50');
       };
     }
   },
@@ -154,12 +156,43 @@ export default {
 </script>
 
 <style>
+
 .lab-img {
   width: 30%;
   box-shadow: 0px 0px 10px 0px #bbbbbb inset !important;
+  background-color: #81D265;
 }
 
 .q-btn:before {
   box-shadow: none !important;
+}
+.scroll_on{
+  height: 62vh;
+  /* border: 2px solid red; */
+  overflow-y: auto;
+  margin-left: auto;
+  margin-right: auto;
+  width: 60vw;
+}
+.scroll_on::-webkit-scrollbar {
+        width: 10px;
+         /* Width of the scrollbar */
+    }
+
+    .scroll_on::-webkit-scrollbar-track {
+        background-color: white;
+        /* margin-top: 18px;  */
+        border-radius: 5px;
+        /* Color of the track */
+    }
+
+    .scroll_on::-webkit-scrollbar-thumb {
+        background-color: #5479F7; /* Color of the thumb */
+        border-radius: 5px;
+        height: 3%;/* Rounded corners for the thumb */
+    }
+    .User_heading{
+  color:#5479F7;
+  margin-left:4%;
 }
 </style>

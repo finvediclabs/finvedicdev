@@ -1,7 +1,7 @@
 <template>
   <fin-portlet>
     <fin-portlet-header>
-      <fin-portlet-heading backArrow :loading="loading">Presentations</fin-portlet-heading>
+      <fin-portlet-heading backArrow :loading="loading"><span class="User_heading" >Presentations</span></fin-portlet-heading>
       <fin-portlet-item>
         <q-btn label="Add New" dense color="blue-15" class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder" no-caps
           @click="createFile()" />
@@ -128,3 +128,9 @@ export default {
   }
 }
 </script>
+<style>
+.User_heading{
+  color:#5479F7;
+  margin-left:4%;
+}
+</style>

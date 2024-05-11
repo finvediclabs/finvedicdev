@@ -1,7 +1,7 @@
 <template>
-  <fin-portlet-item class=" items-center q-pl-xl q-pa-md">
-    <q-btn icon="navigate_before" dense color="grey-2" class="text-black" round @click="onClickMoveButton(-1)" />
-    <q-btn icon="chevron_right" dense color="grey-2" class="text-black q-mx-md" round @click="onClickMoveButton(1)" />
+  <fin-portlet-item class=" items-center q-pl-xl q-pa-lg" style="padding-top: 12vh !important">
+    <q-btn icon="navigate_before" dense color="grey-2" class="text-blue1" round @click="onClickMoveButton(-1)" />
+    <q-btn icon="chevron_right" dense color="grey-2" class="text-blue1 q-mx-md" round @click="onClickMoveButton(1)" />
     <span class="date-range text-body1">{{ dateRangeText }}</span>
   </fin-portlet-item>
   <fin-portlet-item>
@@ -240,11 +240,18 @@ export default {
 }
 
 .toastui-calendar-panel.toastui-calendar-time::-webkit-scrollbar-thumb {
-  background: #888;
+  background: #93BAFF;
   }
-
+.toastui-calendar-panel-resizer{
+  background-color: #5479F7 !important;
+  border-top: 1px #5479F7 !important;
+  border-bottom: 1px #5479F7 !important;
+}
+.toastui-calendar-template-timegridDisplayPrimaryTime{
+  color: #5479F7 !important;
+}
 .toastui-calendar-panel.toastui-calendar-time::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: #93BAFF;
   border-radius: 10px;
 }
 .tui-full-calendar-popup-delete{
@@ -280,6 +287,22 @@ export default {
 
 .toastui-calendar-week-view-day-names {
   border: none !important;
+}
+.text-blue1{
+  background-color: #5479F7 !important;
+  color: white !important;
+}
+.toastui-calendar-day-name__date{
+  color: #D0DFFA;
+}
+.toastui-calendar-day-name__name{
+  color: #D0DFFA;
+}
+.toastui-calendar-holiday-sun  .toastui-calendar-day-name__date{
+  color: #5479F7 !important;
+}
+.toastui-calendar-holiday-sun  .toastui-calendar-day-name__name{
+  color: #5479F7 !important;
 }
 
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="full-width fin-table shadow-6 q-my-md fin-br-8" :class="{ singleData: data.length == 1 }">
+  <div class="full-width fin-table shadow-6 fin-br-8" :class="{ singleData: data.length == 1 }" style="max-height:40vh">
     <table class="table full-width rounded-borders" borders="0">
       <thead style="white-space: nowrap;">
         <tr>
@@ -66,6 +66,11 @@
                           <q-item-label>Delete</q-item-label>
                         </q-item-section>
                       </q-item>
+                      <q-item clickable v-close-popup @click="deleteCourseItem(item)" v-if="allowCourseDelete">
+                        <q-item-section>
+                          <q-item-label>Delete</q-item-label>
+                        </q-item-section>
+                      </q-item>
                     </q-list>
                   </div>
                 </div>
@@ -121,6 +126,10 @@ export default {
     allowDelete: {
       type: Boolean,
       default: false
+    },
+    allowCourseDelete:{
+      type: Boolean,
+      default: false,
     }
   },
   data() {
@@ -176,6 +185,34 @@ export default {
         });
       });
     },
+    deleteCourseItem(item) {
+      this.$q.dialog({
+        title: 'Confirm',
+        message: `Are You sure want to delete ${item.name}`,
+        persistent: true,
+        cancel: {
+          label: 'No',
+          color: 'black',
+          flat: true
+        },
+        ok: {
+          label: 'Yes',
+          color: 'red',
+        },
+      }).onOk(() => {
+        this.$api.delete(this.deleteUrl + '/' + item.courseid).then(response => {
+          if (response.data.success) {
+            this.showMsg(response.data.message, 'positive');
+            this.$emit('reCall');
+          } else {
+            this.showMsg(response?.data.message, 'negative');
+           
+          }
+        }).catch(error => {
+          this.showMsg(error.response?.data.message || error.message, 'negative');
+        });
+      });
+    },
     showChaptersList(item) {
       this.$emit('show-chapters', item)
     }
@@ -185,12 +222,41 @@ export default {
 <style>
 .fin-table {
   min-height: 400px;
-  background-color: #F5F5F5;
+  background-color: #FFFF;
+  
+  /* scrollbar-width: thin; */
+  scrollbar-color: blue transparent;
+}
+.table-scroll{
+  
+  border-top-left-radius: 15px;
+border-top-right-radius: 10px;
+border-bottom-left-radius: 15px;
+border-bottom-right-radius: 10px;
+}
+.table-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.table-scroll::-webkit-scrollbar-track {
+  background: linear-gradient(to bottom, #5479F7 0px, #5479F7 10.2%, #E7F0FF 40px); 
+  border-top-left-radius: 0px;
+  border-top-right-radius: 15px;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 15px;
+}
+.table-scroll::-webkit-scrollbar-thumb {
+  background-color: #5479F7;
+  /* padding-top:10px; */
+  border-top-left-radius: 0px;
+border-top-right-radius: 30px;
+border-bottom-left-radius: 0px;
+border-bottom-right-radius: 30px;
 }
 
 .fin-table .table thead {
   position: sticky !important;
   top: 0;
+  z-index:2;
 }
 
 .table {
@@ -215,6 +281,7 @@ table {
 
 .table thead {
   overflow: hidden;
+  
 }
 
 .table>thead {
@@ -226,7 +293,7 @@ tr {
   border-color: inherit;
   border-style: solid;
   border-width: 0;
-  border-radius: 10px;
+  border-radius:0px;
 }
 
 thead {
@@ -268,7 +335,7 @@ tbody {
   display: table-row-group;
   vertical-align: middle;
   border-color: inherit;
-  background-color: #F5F5F5;
+  background-color: #FFFF;
 }
 
 .table thead {
@@ -277,36 +344,39 @@ tbody {
 }
 
 .table thead tr th:first-child {
-  border-radius: 10px 0px 0px 0px;
+  border-radius: 0px 0px 0px 0px;
   overflow: hidden;
 }
 
 .table thead tr th:last-child {
-  border-radius: 0px 10px 0px 0px;
+  border-radius: 0px 0px 0px 0px;
   overflow: hidden;
 }
 
 .singleData .table tbody tr:first-child td:first-child {
-  border-radius: 0px 0px 0px 10px;
+  border-radius: 0px 0px 0px 0px;
   overflow: hidden;
+}
+.table tbody tr:nth-child(even) {
+  background-color: #E7F0FF; /* Alternate row background color */
 }
 
 .singleData .table tbody tr:first-child td:last-child {
-  border-radius: 0px 10px 10px 0px;
+  border-radius: 0px 0px 0px 0px;
   overflow: hidden;
 }
 
 .table tbody tr:last-child td:first-child {
-  border-radius: 0px 0px 0px 10px;
+  border-radius: 0px 0px 0px 0px;
   overflow: hidden;
 }
 
 .table tbody tr:last-child td:last-child {
-  border-radius: 0px 0px 10px 0px;
+  border-radius: 0px 0px 0px 0px;
   overflow: hidden;
 }
 
 .radius-10 {
-  border-radius: 10px !important;
+  border-radius: 0px !important;
 }
 </style>

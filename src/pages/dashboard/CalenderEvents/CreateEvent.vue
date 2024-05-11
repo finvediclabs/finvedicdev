@@ -47,16 +47,28 @@
             <div class="col-12 q-px-sm">
               <label class="form-label">Course</label>
               <q-select v-model="course" class="q-px-md rounded-borders inputBackground" borderless
-                :options="courseOptions" option-label="courseName" option-value="courseid"  @select="selectCourse(course)"/>
+  :options="courses" option-label="courseDesc" option-value="courseid"
+  @select="onCourseSelect" />
+
+              
               <div class="errorMsgBox">
                 <span v-if="errors.course && !course">{{ errors.course }}</span>
               </div>
             </div>
             <div class="col-12 q-px-sm">
               <label class="form-label">Topic</label>
-              <q-select v-model="topic" class="q-px-md rounded-borders inputBackground" borderless
-                :options="topicOptions" option-label="topicName" option-value="topicId" />
-              <div class="errorMsgBox">
+              
+             <q-select
+    v-model="filteredTopic"
+    class="q-px-md rounded-borders inputBackground"
+    borderless
+    :options="filteredTopics"
+    option-label="topicName"
+    option-value="topicId"
+    @select="selectTopic(filteredTopic)"
+  />
+              
+                <div class="errorMsgBox">
                 <span v-if="errors.topic && !topic">{{ errors.topic }}</span>
               </div>
             </div> 
@@ -86,6 +98,7 @@ import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
+
 import DatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 import moment from "moment";
@@ -102,9 +115,14 @@ export default {
     const { profile, user } = storeToRefs(profileStore);
    // const categoryStore = useCategoryStore();
     const couseStore = useCouseStore();
-    const { selectCourse } = couseStore;
-    const {courses, topics, batches} = storeToRefs(couseStore);
+    const { selectCourse, selectTopic } = couseStore;
+    
+    
+    const {courses, topics, batches, selectedCourse, selectedTopic} = storeToRefs(couseStore);
+    // const {selectCourse,selectedTopic} = couseStore;
     couseStore.fetchCourses();
+    couseStore.fetchTopics();
+    
    // const { categories, subCategories } = storeToRefs(categoryStore);
     return {
       user,
@@ -113,6 +131,9 @@ export default {
       topics,
       batches,
       selectCourse,
+      selectTopic,
+      selectedCourse,
+      selectedTopic
     //  categories,
     //  subCategories
     }
@@ -140,27 +161,17 @@ export default {
     }
   },
   computed: {
-    courseOptions() {
-      var courses = [];
-      this.courses.forEach(item => {
-          courses.push({"courseName":item.courseDesc,"courseId":item.courseId})
-        
-      });
-      return courses;
-    },
-    topicOptions() {
-      var topics = [];
-      this.topics.forEach(item => {
-        topics.push(item.topicName)
-      });
-      return topics;
-    },
+    
     batchOptions() {
       var batches = [];
       this.batches.forEach(item => {
         batches.push(item.cycleDesc)
       });
       return batches;
+    },
+    filteredTopics() {
+      if (!this.course || !this.topics) return [];
+      return this.topics.filter(topic => topic.courseId === this.course.courseid);
     }
   },
   mounted() {
@@ -180,6 +191,7 @@ export default {
       this.link = editedEvent.link;
       this.editedEvent = editedEvent;
     }
+    
   },
   methods: {
     showMsg(message, type) {
@@ -191,6 +203,11 @@ export default {
           { icon: 'close', color: 'white', handler: () => { } }
         ]
       });
+    },
+    onCourseSelect(course) {
+      this.course = course; // Update the selected course
+      // Optionally, you can perform additional actions when the course is selected
+      this.fetchTopicsByCourse(course.courseid);
     },
     format(date) {
       const day = date.getDate();
@@ -211,13 +228,14 @@ export default {
         }
       }
     },
+    
     createEvent() {
       var request = {
         accountId: null,
-        course: this.course.courseName,
-        topic:this.topic,
+        course: this.course.courseDesc,
+        topic:this.filteredTopic.topicName,
         batch:this.batch,
-        title: this.course.courseName,
+        title: this.course.courseDesc,
         createdBy: this.user.name,
         lastUpdatedBy: this.user.name,
         date: moment(this.date).format('YYYY-MM-DD'),
@@ -228,7 +246,7 @@ export default {
         updatedAt: new Date(),
         deletedAt: null,
       }
-
+      console.log('Create Event Request:', request); 
       this.$api.post(urls.getEvents, request).then(response => {
         this.loading = false;
         if (response.data.success) {
@@ -283,6 +301,9 @@ export default {
         minimumIntegerDigits: 2,
         useGrouping: false
       })
+    },
+    selectTopic(topic) {
+      this.filteredTopic = topic;
     },
     clearData() {
       this.date = "";

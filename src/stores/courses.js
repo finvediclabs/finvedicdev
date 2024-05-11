@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia';
 import axios from 'axios'
+
 const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+
 export const useCouseStore = defineStore('coursesnew', {
   state: () => ({
     courses: [],
@@ -10,40 +12,36 @@ export const useCouseStore = defineStore('coursesnew', {
     selectedCourse: {},
     selectedTopic: {},
   }),
-  getters: {
-
-  },
   actions: {
     fetchCourses() {
       axios.get(baseUrl + 'api/courss').then(response => {
         this.courses = response.data.data;
-        this.fetchTopics('1001');
         this.fetchBatches();
-      })
+        this.courses.forEach(course => {
+          console.log(course.courseDesc);
+        });
+      });
     },
-    fetchTopics(courseId) {
-      axios.get(baseUrl + `api/topics/${courseId}`).then(response => {
+    fetchTopics() {
+      axios.get(baseUrl + `api/topics`).then(response => {
         this.topics = response.data.data;
-        // this.alltopics = Object.groupBy(response.data, tp => {
-        //   return tp.courseid;
-        // });
-        
-      })
+        this.topics.forEach(topic=>{
+          console.log('Fetched topics:', topic.topicName);
+        });
+      });
     },
     fetchBatches(courseid) {
       axios.get(baseUrl + 'api/cycles').then(response => {
         this.batches = response.data.data;
-        // this.alltopics = Object.groupBy(response.data, tp => {
-        //   return tp.courseid;
-        // });
-        
-      })
+      });
     },
-    selectCourse(courseId) {
-      this.selectedCourse = this.courses[courseId];
-      this.topics = this.alltopics[courseId];
-      //this.selectedTopic = {};
+    selectCourse(course) {
+      this.selectedCourse = course;
+      this.selectedTopic = {};
+    },
+    selectTopic(course, topic) {
+      this.selectedCourse = course;
+      this.selectedTopic = topic;
     }
-    
   },
 });

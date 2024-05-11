@@ -90,7 +90,7 @@
                 const z = !this.parent.disable3d ? parseInt(this.parent.inverseScaling) + ((i + 1) * 100) : 0
                 const y = !this.parent.disable3d ? parseInt(this.parent.perspective) : 0
                 const leftRemain = (this.parent.space === 'auto')
-                    ? parseInt((i + 1) * (this.parent.width / 1.5), 10)
+                    ? parseInt((i + 1) * (this.parent.width / 2), 10)
                     : parseInt((i + 1) * (this.parent.space), 10)
                 const transform = (positive)
                     ? 'translateX(' + (leftRemain) + 'px) translateZ(-' + z + 'px) ' +

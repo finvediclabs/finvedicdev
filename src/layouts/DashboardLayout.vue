@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hHh Lpr fFf">
+  <q-layout view="hHh Lpr fFf  " :class="backgroundStyle" >
     <q-header>
       <q-toolbar class=" text-black q-pa-sm q-pr-lg mainHeader" >
         <q-item>
@@ -62,14 +62,14 @@
           </q-item-section>
         </q-item>
         <q-space />
-        <q-input color="bg-finvedic" rounded outlined v-model="text" label="Search"  >
+        <q-input  color="bg-finvedic" rounded outlined v-model="text" label="Search"  >
           <template v-slot:append>
           <q-icon name="search" />
         </template>
         </q-input>
 
 
-        <q-btn icon="notifications_active" round class="bg-white1 text-white q-mx-lg" :size="isMobile ? 'sm' : 'md'">
+        <q-btn icon="notifications_active" round class="bg-white2 text-white q-mx-lg" :size="isMobile ? 'sm' : 'md'">
           <q-menu class="fin-br-8 q-py-md shadow-0" min-width="120px"
             style="width:230px;background: transparent!important;" :offset="[-0, 10]" transition-show="flip-right"
             transition-hide="rotate">
@@ -169,9 +169,9 @@
         </q-list>
       </q-scroll-area>
     </q-drawer>
-    <q-page-container>
-      <q-page>
-        <router-view v-if="token" />
+    <q-page-container >
+      <q-page >
+        <router-view style="background-color: rgba(255, 255, 255, 0); " v-if="token" />
         <chatbot />
       </q-page>
     </q-page-container>
@@ -207,6 +207,7 @@ export default {
   },
   data() {
     return {
+      backgroundStyle: '',
       profileImg: profileImg,
       profileMenu: false,
       CurrentDate: new Date().toDateString(),
@@ -240,6 +241,14 @@ export default {
     }
   },
   computed: {
+    // backgroundStyle() {
+    //   // Check if the current route is 'library/books'
+    //   if (this.$route.name === 'library-books') {
+    //     return 'backgroundStyle'; // Apply the background style
+    //   } else {
+    //     return ''; // Do not apply any background style
+    //   }
+    // },
     widthSVG() { return window.innerWidth > 600 ? 197 : 150 },
     modules() {
       var userAccess = [];
@@ -273,6 +282,7 @@ export default {
       module: this.$route.meta.module,
       item: this.$route.meta.item
     }
+    this.updateBackgroundStyle();
     this.knowModuleFunction();
   },
   watch: {
@@ -283,9 +293,61 @@ export default {
     },
     user() {
       this.getUserData();
-    }
+    },
+    '$route': 'updateBackgroundStyle',
   },
   methods: {
+    updateBackgroundStyle() {
+      // Check if the current route is '/library/books'
+      if (this.$route.path === '/library/books') {
+        this.backgroundStyle = 'booksBackgroundStyle'; // Apply the background style class
+      } 
+      else if (this.$route.path === '/library/videos') {
+        this.backgroundStyle = 'booksBackgroundStyle'; // Apply the background style class
+      } 
+      else if (this.$route.path === '/library/presentations') {
+        this.backgroundStyle = 'booksBackgroundStyle'; // Apply the background style class
+      } 
+      else if (this.$route.path === '/library/class-room') {
+        this.backgroundStyle = 'Lib_CL_Room_BackgroundStyle'; // Apply the background style class
+      } 
+      else if (this.$route.path === '/admin/uploadpdfbot') {
+        this.backgroundStyle = 'AI_Setup_BackgroundStyle'; // Apply the background style class
+      } 
+      
+      else if (this.$route.path === '/admin/users') {
+        this.backgroundStyle = 'Users_BackgroundStyle'; // Apply the background style class
+      } 
+      
+      else if (this.$route.path === '/admin/books') {
+        this.backgroundStyle = 'Users_BackgroundStyle'; // Apply the background style class
+      } 
+      else if (this.$route.path === '/admin/videos') {
+        this.backgroundStyle = 'Users_BackgroundStyle'; // Apply the background style class
+      } 
+      else if (this.$route.path === '/labs') {
+        this.backgroundStyle = 'Users_BackgroundStyle'; // Apply the background style class
+      } 
+      else if (this.$route.path === '/admin/roles') {
+        this.backgroundStyle = 'Users_BackgroundStyle'; // Apply the background style class
+      } 
+      
+      else if (this.$route.path === '/admin/presentations') {
+        this.backgroundStyle = 'Users_BackgroundStyle'; // Apply the background style class
+      } 
+      else if (this.$route.path === '/admin/presentations') {
+        this.backgroundStyle = 'Users_BackgroundStyle'; // Apply the background style class
+      } 
+      else if(this.$route.path === '/admin/vm-setup'){
+        this.backgroundStyle = 'Classroom_BackgroundStyle';
+      }
+      else if(this.$route.path === '/admin/class-room'){
+        this.backgroundStyle = 'Classroom_BackgroundStyle';
+      }
+      else {
+        this.backgroundStyle = ''; // Do not apply any background style
+      }
+    },
     getUserData() {
       this.$api.get(`api/users/${this.user.id}`).then(response => {
         if (response.data.success) {
@@ -377,12 +439,43 @@ export default {
 .module-select {
   border-radius: 10px 0px 0px 10px;
 }
-
+.booksBackgroundStyle {
+  background-image: url('/src/assets/BG_New.png');
+  background-repeat: no-repeat;
+  background-size: 100vw 60vh;
+  /* background-color: #f0f0f0; */
+  /* Add any other background styles */
+}
+.Lib_CL_Room_BackgroundStyle{
+  background-image: url('/src/assets/BG_New.png');
+  background-repeat: no-repeat;
+  background-size: 100vw 35%;
+}
 .module-select-active {
   background: #fff;
   color: #5479F7;
 }
-
+.bg-white2{
+  background-color: #0A004B;
+}
+.AI_Setup_BackgroundStyle{
+  background-image: url('/src/assets/AI_setup_bg.png');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  margin-top:3%;
+}
+.Users_BackgroundStyle{
+  background-image: url('/src/assets/AI_setup_bg.png');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  margin-top:3%;
+}
+.Classroom_BackgroundStyle{
+  background-image: url('/src/assets/classroom_bg.png');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  margin-top:3%;
+}
 .menu-class {
   padding: 0px 0px !important;
 }
@@ -394,7 +487,9 @@ export default {
 .profileImg {
   background: #FF7F50;
 }
-
+.adminBackgroundStyle{
+  background-color: #D0DFFA;
+}
 
 .left-drawer {
   min-height: 300px;
@@ -409,7 +504,11 @@ export default {
   /* padding-top: 40px; */
   background: transparent!important;
 }
+.q-field--outlined.q-field--rounded .q-field__control {
+    /* border-radius: 28px; */
+    background-color: white;
 
+}
 .q-drawer {
   background-color: transparent;
 }

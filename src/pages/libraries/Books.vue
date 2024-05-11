@@ -1,94 +1,88 @@
+
 <template>
-  <fin-portlet>
-    <fin-portlet-header>
-    </fin-portlet-header>
-    <fin-portlet-item class="q-pb-xl" v-if="booksData.length">
+  <fin-portlet style="background-color: transparent">
+    <div class="row col-12 TopBG">
+      <div class="col-5">
+        <fin-portlet-heading class="q-md">
+          <div class="heading_class">
+                <h4>{{ selectedSlide?.heading }}</h4>
+              </div>
+              </fin-portlet-heading>
+
+      </div>
+<div class="right_side col-7" style="margin-top: 0px;">
+    <fin-portlet-item  v-if="booksData.length">
       <carousel-3d :totalSlides="booksData.length" :count="booksData.length" @beforeSlideChange="getCurrentSlide"
-        :controls-visible="true" width="235" height="325" display="9" >
-        <slide v-for="(slide, i) in booksData" :key="i" :index="i">
-          <q-img :src="slide.imagePath ?? 'dummy'" class="fin-br-8 fit" :alt="slide.heading" >
+        :controls-visible="true" width="170" height="300" display="7" >
+        <slide v-for="(slide, i) in booksData" :key="i" :index="i" style="max-height: 80%" >
+          <q-img :src="slide.imagePath ?? 'dummy'" class="fin-br-8 fit" :alt="slide.heading"  >
             <template v-slot:error>
-              <q-img :src="DummyBook" class="full-width full-height" />
+              <q-img :src="DummyBook" class="full-width" />
             </template>
           </q-img>
         </slide>
       </carousel-3d>
     </fin-portlet-item>
-    <fin-portlet-item v-else style="height: 272px" class="q-pb-xl">
-      <div class="full-width full-height flex flex-center">
-        <q-spinner-ios color="blue-9" size="3.5em" />
-      </div>
-    </fin-portlet-item>
-    <fin-portlet>
-      <div class="row" >
-        <div class="col-12 col-md-6 col-lg-6  q-pr-md">
-          <div class="row" style="border: 2px solid #d3d3d3;border-radius: 15px;">
-            <div class="col-1"></div>
-            <div class="col-12 col-sm-4 col-md-4 row justify-center" style="padding-top: 2%;padding-bottom: 2%;">
-              
-              <q-avatar style="width:186px; height: 262px" square>
-                <q-img :src="selectedSlide?.imagePath ?? 'dummy'" class="fin-br-8 fit" style="border:1px solid #00000030"
+  </div>
+</div>
+
+<div class="row col-12 bottom_div">
+  <div class="col-6 single_book">
+    <q-avatar style="width: 19vw; height: 56vh; margin-left:10%;" square>
+                <q-img :src="selectedSlide?.imagePath ?? 'dummy'" class="fin-br-8" style="border:1px solid #00000030"
                   :alt="selectedSlide?.heading" >
                   <template v-slot:error>
                     <q-img :src="DummyBook" class="fit" />
                   </template>
                 </q-img>
               </q-avatar>
-            </div>
-      
-            <div class="col-12 col-sm-7 col-md-7" style="padding-left: 5%;">
-              <fin-portlet-heading class="q-pa-md" small>
-                {{ selectedSlide?.heading }}
-                <br>
-                <p style="font-size: 14px;font-weight: 300;">
+              <p class="single_book_desc">
                   {{ selectedSlide?.description }}
                 </p>
-              </fin-portlet-heading>
-            </div>
-          </div>
-        </div>
-        
-        <div class="col-12 col-md-5" style="border: 2px solid #d3d3d3;border-radius: 15px;margin-left: 5%;">
-          <div class="row " >
-            <div class="col-10 justify-center" style="height: 200px;padding-top: 2%;margin-left: auto;margin-right: auto;">
-
-              <q-carousel swipeable animated v-model="slide" ref="carousel" infinite class="full-height"
-                style="padding-top: 60px;">
-
-                <template v-slot:control>
-                  <q-carousel-control position="top-left" :offset="[25, 10]" class="text-black">
-                    <span>More Chapters</span>
-                  </q-carousel-control>
-                  <q-carousel-control position="top-right" :offset="[20, 10]" class="q-gutter-xs">
-                    <q-btn round dense class="shadow-2" text-color="black" icon="chevron_left"
-                      @click="$refs.carousel.previous()" />
-                    <q-btn round dense class="shadow-2" text-color="black" icon="chevron_right"
-                      @click="$refs.carousel.next()" />
-                  </q-carousel-control>
-                </template>
-
+  </div>
+  <div class="col-4"></div>
+  <div class="right_side_chapters col-8">
+    
+    <q-carousel swipeable animated v-model="slide" ref="carousel" infinite class="full-height"
+               >
+                
                 <template v-if="chaptersLoader">
+                  
                   <q-carousel-slide :name="0" class="rounded-borders text-italic">
-                    <div class="row full-height">
-                      <div class="col-4 q-px-sm full-height" v-for="item in 3">
+                    <div class="row full-height" >
+                      <div class="col-6 q-px-sm full-height" v-for="item in 3">
                         <q-skeleton class="full-width full-height" style="background-color: #F5F5F5;" />
                       </div>
                     </div>
                   </q-carousel-slide>
                 </template>
 
-                <template v-if="!chaptersLoader">
-                  <template v-if="chaptersData.length">
-                    <q-carousel-slide v-for="(slider, i) in allSlides" :name="i" class="items-end q-pa-none">
-                      <div class="row full-height">
-                        <div class="col-4 q-px-sm full-height" v-for="chapter in slider">
+                <template v-if="!chaptersLoader" >
+                  
+                  <template v-if="chaptersData.length"  >
+                    
+                    <q-carousel-slide v-for="(slider, i) in allSlides" :name="i" class="items-end q-pa-none chapters_loader">
+                      <div class="row chapter_right">
+                        <div class="col-1" style="display: flex; justify-content: center; align-items: center;" >
+                          <q-carousel-control class="q-gutter-xs"   style="position: relative;">
+                    <q-btn position="top-left"  round dense class="shadow-2" text-color="white" icon="chevron_left"
+                      @click="$refs.carousel.previous()" style="background-color: #5479F7;"/>
+                      </q-carousel-control>
+                        </div>
+                        <div class="col-3 q-px-sm full-height" v-for="chapter in slider" style="margin-left:auto;margin-right: auto;">
                           <q-img class="full-height rounded-borders shadow-2 cursor-pointer"
-                            :src="chapter.chapterImagePath ?? 'dummy'" @click="visitChapter(chapter)">
+                            :src="chapter.chapterImagePath ?? 'dummy'" @click="visitChapter(chapter)" style="border-radius:20px">
                             <template v-slot:error>
                               <q-img :src="chapter.chapterImagePath" class="fit" />
                             </template>
                           </q-img>
                         </div>
+                        <div class="col-1" style="display: flex; justify-content: center; align-items: center;">
+                           <q-carousel-control class="q-gutter-xs"  style="position: relative;">
+                            <q-btn round dense class="shadow-2" text-color="white" icon="chevron_right" @click="$refs.carousel.next()" style="background-color: #5479F7;"/>
+                             </q-carousel-control>
+                          </div>
+
                       </div>
                     </q-carousel-slide>
                   </template>
@@ -96,25 +90,23 @@
                   <template v-if="!chaptersData.length">
                     <q-carousel-slide :name="0" class="rounded-borders text-italic">
                       <div class="row full-height">
-                        <div class="col-12 q-px-sm full-height">
+                        <div class="col-3"></div>
+                        <div class="col-6 q-px-sm full-height">
                           <div square class="full-width full-height q-pa-md rounded-borders"
-                            style="background-color: #F5F5F5;">
+                            style="background-color: transparent;text-align: center;">
                             No Chapters Found
                           </div>
                         </div>
+                        <div class="col-3"></div>
                       </div>
                     </q-carousel-slide>
                   </template>
                 </template>
 
               </q-carousel>
+  </div>
 
-            </div>
-            
-          </div>
-        </div>
-      </div>
-    </fin-portlet>
+</div>
   </fin-portlet>
 </template>
 <script>
@@ -346,3 +338,103 @@ getChaptersData() {
   }
 };
 </script>
+<style>
+.TopBG{
+  /* background-color:rgba(255, 255, 255, 0); */
+
+  /* background-color: ; */
+  /* background-image: url('/src/assets/Background_new_crop.png'); */
+  background-repeat: no-repeat;
+  background-size: 100vw 65vh
+  /* background-color: red; */
+}
+.bottom_div{
+  position:relative; 
+  background-color: #ffff !important;
+  margin-top: 10vh;
+
+  padding-bottom: 4vh;
+
+  /* border: 2px solid grey; */
+}
+/* .backgroundStyle{
+  background-image: url('/src/assets/Background_new_crop.png');
+  background-repeat: no-repeat;
+  background-size: 100vw 65vh;
+} */
+.single_book{
+  position: absolute;
+  top: -46vh;
+  /* border: 2px solid green; */
+  /* margin-top: -30%; */
+  /* padding-bottom: 2%; */
+}
+.right_side{
+  z-index: 2;
+}
+.single_book_desc{
+  font-family: 'Manrope';
+  font-size:16px;
+  width: 46%;
+  /* border:2px solid red; */
+  margin-left:10%;
+  margin-top: 2%;
+  line-height: 20px;
+  color: #5479F7;
+  
+}
+.heading_class{
+  /* border: 2px solid green; */
+ width:80%
+}
+h4{
+  color: #032390;
+  font-family: 'Playfair Display SC', serif;
+  font-weight: 700;
+  text-align: center;
+  width: 80%;
+  margin-left:auto;
+  margin-right:auto;
+  line-height:140%;
+  /* margin-top: -0.75%; */
+  text-transform: uppercase;
+  margin-top: auto;
+  margin-bottom: auto;
+  font-size: 20px;
+  
+}
+.chapter_text{
+  margin-right: auto;
+  margin-left: auto; 
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
+  font-family: 'Manrope';
+  /* padding-top: 2%; */
+  padding-bottom: 2%;
+}
+.right_side_chapters{
+  position:relative;
+  /* margin-top: 2%; */
+  /* border: 2px solid red; */
+}
+.chapter_right{
+  max-height: 70%;
+  max-width: 80%;
+  margin-left: auto;
+  /* border:2px solid red; */
+  margin-right: 4.6%;
+  /* max-width: 100%; */
+  /* border: 2px solid green; */
+}
+.q-carousel{
+  background: transparent;
+}
+
+@media screen and (min-width: 1367px) and (max-width: 1920px) {
+    /* Your CSS styles for this screen width range */
+    .bottom_div{
+      margin-top:14%;
+    }
+}
+</style>

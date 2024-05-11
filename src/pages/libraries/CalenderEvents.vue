@@ -5,7 +5,7 @@
         <div class="col-1"></div>
         <div class="col-12 col-md-6 " :class="{ 'q-mt-xl': !isMobile }">
           <!-- v-for="(event, index) in events" :key="event.id" -->
-          <q-card v-if="upcomingEvents.length > 0 || events.length > 0" class="my-card full-width text-white full-height" style="background: #2FCB89;">
+          <q-card v-if="upcomingEvents.length > 0 || events.length > 0" class="my-card full-width text-white full-height" style="background: #5479F7;">
   <q-card-section class="row justify-between">
     <div v-if="nextEvent">
       <div>Next Class : {{ extractTitle(nextEventTitle) }}</div>
@@ -33,22 +33,26 @@
         Topic: {{ nextEvent ? nextEventTopic : lastEvent ? lastEventTopic : '' }}
       </q-btn>
     </div>
-    <q-btn label="Connect" class="text-black bg-white q-px-lg fin-br-8" no-caps :href="nextEvent ? extractLink(nextEventTitle) : lastEvent ? extractLink(lastEventTitle) : ''" target="_blank" />
+    <q-btn label="Connect" class="text-blue bg-white q-px-lg fin-br-8" no-caps :href="nextEvent ? extractLink(nextEventTitle) : lastEvent ? extractLink(lastEventTitle) : ''" target="_blank" />
   </q-card-section>
 </q-card>
 
         </div>
-        <div class="col-12 col-md-4 q-my-auto q-mx-auto">
-          <template v-for="category in categories">
+        <div class="col-12 col-md-4  q-mx-auto q-mt-xl"  style="display: flex; flex-direction: column;" >
+          <template v-for="category in categories"  >
 
-            <q-btn :label="category.categoryName" no-caps v-if="!subCategories[category.id]" size="lg"
-              class="full-width q-my-sm fin-br-8 categoryClass"
+            <q-btn :label="category.categoryName" no-caps v-if="!subCategories[category.id]" size="md"
+              class="full-width fin-br-8 q-pa-md  categoryClass"
               :class="{ 'active-categoryClass': selectedCategory?.id == category.id }"
-              @click="selectCategory(category)" />
+              @click="selectCategory(category)" 
+              style="margin-top: auto;margin-bottom: auto;"
+              />
 
-            <q-btn-dropdown :label="category.categoryName" no-caps v-if="subCategories[category.id]" size="lg"
-              class="full-width q-my-sm fin-br-8 categoryClass"
-              :class="{ 'active-categoryClass': selectedCategory?.id === category.id }">
+            <q-btn-dropdown :label="category.categoryName" no-caps v-if="subCategories[category.id]" size="md"
+              class="full-width fin-br-8 q-pa-md categoryClass"
+              :class="{ 'active-categoryClass': selectedCategory?.id === category.id }"
+              style="margin-top: auto;margin-bottom: auto;"
+              >
               <q-list>
                 <q-item v-for="subCategory in subCategories[category.id]" clickable v-close-popup
                   @click="selectSubCategory(category, subCategory)" :active="selectedSubCategory?.id == subCategory.id"
@@ -359,17 +363,21 @@ upcomingEvents() {
 </script>
 <style>
 .classRoomImg {
-  width: 35%;
+  width: 38%;
   margin-top: -50px;
 }
-
+.text-body1{
+  color:#5479F7 !important;
+}
 .categoryClass {
-  background-color: #D6D6D6;
+  background-color: #FFFFFF;
+  color: #93BAFF;
+  /* border: 2px solid black */
 }
 
 .active-categoryClass {
-  background: linear-gradient(to right, rgba(47, 203, 137) 2%, rgba(47, 203, 137, 0.53) 1px);
-  color: black;
+  background: linear-gradient(to right, rgba(84, 121, 247, 0.8) 4%, rgba(147, 186, 255, 0.8) 1px);
+  color: #FFFFFF;
 }
 /* New hover effect */
 .event-container:hover {

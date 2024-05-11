@@ -14,17 +14,20 @@
         ref="fileInput"
       />
       
-      <div class="btn border-gradient-blue-purple" style="position: absolute; top: 45px;left: 25%;
-    transform: translateX(-50%);width: 20%;">
+      <div class="btn border-gradient-blue-purple" style="position: absolute; top: 65px;left: 26%;
+    transform: translateX(-50%);">
         <span>
-          <img src="https://gurukul.finvedic.com/images/monk_half.png" alt="Person Icon" style="transform: scaleX(-1);">
-          Drona Training</span>
+          <img src="https://gurukul.finvedic.com/images/monk_half.png" alt="Person Icon">
+        </span>
     </div>
   
-      <div style="display: flex; flex-direction: column; align-items: center; padding-top: 60px;">
-  <p style="font-size: 16px; margin-bottom: 20px;">Drag and drop PDF file here, or</p>
-  <button style="font-size: 32px; background: none; border:2px solid grey;border-radius:20px;cursor:pointer" @click="openFilePicker">
-    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-type-pdf" width="80" height="80" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <div style="display: flex; flex-direction: column; align-items: center; padding-top: 70px;">
+        <div>
+          <span class="training_text">DRONA TRAINING</span>
+        </div>
+  <p style="font-size: 14px; margin-bottom: 16px;margin-top:20px;color:white;">Drag and drop<br>PDF file here, or</p>
+  <button style="font-size: 18px; background: none; border:1px solid white;border-radius:10px;cursor:pointer" @click="openFilePicker">
+    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-type-pdf" width="60" height="60" viewBox="0 0 24 24" stroke-width="1" stroke="white" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
   <path d="M14 3v4a1 1 0 0 0 1 1h4" />
   <path d="M5 12v-7a2 2 0 0 1 2 -2h7l5 5v4" />
@@ -111,7 +114,18 @@
   <style scoped>
   
 .border-gradient-blue-purple {
-	background-image: linear-gradient(120deg, #33ccff 0%, #841eeb 100%);
+	/* background-image: linear-gradient(120deg, #33ccff 0%, #841eeb 100%); */
+}
+.training_text {
+  /* background: linear-gradient(80deg, #0740FF, #C04BE2); */
+  background-color:white;
+  color:#5479F7;
+  /* border: 2px solid green; */
+  border-radius:20px;
+  /* color: white; */
+  /* top:10px; */
+  width:100%;
+  padding:10px 24px;
 }
 .btn {
 	font-size: 1rem;
@@ -133,30 +147,35 @@
   display: flex;
   justify-content: center;
   transition: background .5s ease;
-  padding: 0.4rem 0.4rem;
+  padding: 0.1rem 0.1rem;
 }
 
-.btn:hover > span {
+/* .btn:hover > span {
 	background: transparent;
-}
+} */
 .btn:hover {
 	color: #fff;
 }
 .drop-container {
-    margin-top: 80px;
+    margin-top: 20px;
     margin-right: 40px;
     margin-left: 40px;
-    min-height: 300px;
+    min-height: 100%;
+    min-width: 86%;
     text-align: center;
-    border: 3px solid #5479F7; /* Set initial border */
+    /* border: 3px solid #5479F7; Set initial border */
     border-radius: 24px;
-    background: #ececec ;/* Define gradient colors */
+    background-image:url('/src/assets/Drona_BG.png');
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    /* background: #ececec Define gradient colors */
     background-clip: padding-box, border-box; /* Clip gradient to border */
     animation: rotate-color 5s linear infinite; /* Apply rotation animation */
     
 }
-.drop-container:hover{
-  background-color: #c5d3ff;
+.drop-container:hover .training_text {
+  background: linear-gradient(80deg, #0740FF, #C04BE2);
+  color:white;
 }
 
 
@@ -166,7 +185,7 @@
   }
   
   .drop-container button {
-    margin-top: 10px;
+    /* margin-top: 10px; */
   }
   
   .notification {
@@ -179,13 +198,13 @@
     right: 20px;
   }
   .upload{
-    background-color: #5479F7; 
+    background-color: #ffff; 
     border-radius: 30px;
-    font-size:16px;
-    font-weight:600;
-    color:#ffff;
-    padding:12px 30px;
-    margin-top:40px;
+    font-size:18px;
+    font-weight:500;
+    color:#5479F7;
+    padding:8px 40px;
+    margin-top:20px;
     border:none;cursor:pointer
   }
   .old_monk{
@@ -194,7 +213,7 @@
     
   }
   span img{
-    width:60px;
+    width:80px;
     border-radius: 50% 50% ;
   }
   </style>
