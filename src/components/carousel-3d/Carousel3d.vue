@@ -5,6 +5,15 @@
     </div>
     <controls v-if="controlsVisible" :next-html="controlsNextHtml" :prev-html="controlsPrevHtml"
               :width="controlsWidth" :height="controlsHeight"></controls>
+    <div class="carousel-dots">
+      <span
+        v-for="(slide, index) in totalSlides"
+        :key="index"
+        :class="{ active: index === currentIndex }"
+        @click="goToSlide(index)"
+        class="carousel-dot"
+      ></span>
+    </div>
   </div>
 </template>
 
@@ -247,6 +256,7 @@ export default {
         this.isLastSlide ? this.goSlide(0) : this.goSlide(this.currentIndex + 1)
       }
     },
+
     /**
      * Go to previous slide
      */
@@ -317,6 +327,10 @@ export default {
       this.mousedown = false
       this.dragOffsetX = 0
       this.dragOffsetY = 0
+    },
+    goToSlide(index) {
+      this.currentIndex = index;
+      this.animationEnd(); // You may need to adjust this method call based on your logic
     },
     /**
      * Trigger actions when mouse is pressed
@@ -470,10 +484,45 @@ export default {
   position: relative;
   z-index: 0;
   overflow: hidden;
-  margin: 20px auto;
+  margin-top: 0px;
+  margin-right: auto;
+  margin-bottom: 0px;
+  margin-left: auto;
   box-sizing: border-box;
+
+  
+  
+  /* border: 2px solid green; */
+}
+.carousel-dots {
+  position: absolute;
+  bottom: 6%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
 }
 
+.carousel-dot {
+  width: 10px;
+  height: 10px;
+  background-color: #ffff;
+  border-radius: 50%;
+  margin-top: 10px;
+  margin-right: 5px;
+  margin-bottom: 10px;
+  margin-left: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  pointer-events: none;
+  
+}
+
+.carousel-dot.active {
+  background-color: #E3A6E2;
+  border: 2px solid #7B90FE;
+  
+}
 .carousel-3d-slider {
   position: relative;
   margin: 0 auto;

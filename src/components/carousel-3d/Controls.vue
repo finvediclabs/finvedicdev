@@ -61,7 +61,7 @@ export default {
   position: absolute;
   top: 50%;
   height: 0;
-  margin-top: -30px;
+  margin-top: -60px;
   left: 0;
   width: 100%;
   z-index: 1000;
@@ -73,8 +73,9 @@ export default {
   z-index: 1010;
   font-size: 60px;
   height: 60px;
-  line-height: 60px;
-  color: #333;
+  opacity: 0.7;
+  line-height: 70px !important;
+  color: #7B90FE;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -85,16 +86,16 @@ export default {
 
 .next:hover, .prev:hover {
   cursor: pointer;
-  opacity: 0.7;
+  opacity: 1;
 }
 
 .prev {
-  left: 10px;
+  left: 5%;
   text-align: left;
 }
 
 .next {
-  right: 10px;
+  right: 5%;
   text-align: right;
 }
 

@@ -1,17 +1,21 @@
 <template>
-  <fin-portlet>
+  <fin-portlet style="background-color:transparent;margin-bottom:0px;max-height:100vh;">
     <fin-portlet-header>
-      <fin-portlet-heading :loading="loading" backArrow>Users</fin-portlet-heading>
-      <fin-portlet-item>
-        <q-select v-model="roleSearch" :options="roleOptions" label="Roles" outlined class="fin-input" dense />
+      <fin-portlet-heading :loading="loading" backArrow ><span class="User_heading" >Users</span></fin-portlet-heading>
+      <fin-portlet-item class="role_search">
+        <q-select  v-model="roleSearch" :options="roleOptions"  label="Roles" outlined class="fin-input" dense />
+      </fin-portlet-item>
+      <fin-portlet-item class="program_search">
+        <q-select  v-model="programSearch" :options="['trine', 'client']" outlined label="Programs" class="fin-input" 
+          dense label-color="white" />
       </fin-portlet-item>
       <fin-portlet-item>
-        <q-select v-model="programSearch" :options="['trine', 'client']" outlined label="Programs" class="fin-input"
-          dense />
-      </fin-portlet-item>
-      <fin-portlet-item>
-        <q-btn label="Add User" dense color="blue-15" class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder" no-caps
-          @click="createUser()" />
+        <!-- <q-btn class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder" no-caps @click="createUser()">
+</q-btn> -->
+<q-btn @click="createUser()" >
+  <img src="/src/assets/User_icon.png" alt="User Icon" style="width: 32px; height: 32px;" />
+</q-btn>
+
       </fin-portlet-item>
     </fin-portlet-header>
     <fin-portlet-item class="table-scroll">
@@ -44,6 +48,11 @@
               <q-input outlined v-model="user.Number" type="number" label="Phone Number *" lazy-rules
                 :rules="[val => val && val.length > 0 || 'Phone Number Is required']" />
             </div>
+            <div class="col-12 q-px-sm q-py-xs">
+    <!-- Change q-input to q-select and provide options 'y' and 'n' -->
+    <q-select v-model="user.isActive" :options="isActiveOptions" label="Is Active *" outlined lazy-rules
+      :rules="[val => val && val.length > 0 || 'Is Active Is required']" />
+  </div>
             <div class="col-12 q-px-sm q-py-xs">
               <q-select outlined v-model="user.owner" :options="roles_new" label="Owner *" lazy-rules
                 />
@@ -93,11 +102,12 @@ export default {
   },
   data() {
     return {
+      isActiveOptions: ['Y', 'N'],
       deleteUrl: urls.usersUrl,
       tab: 'allUsers',
       roleSearch: '',
       roleOptions: ['trine', 'client'],
-      roles_new: ['admin', 'student' , 'faculty'],
+      roles_new: ['admin', 'student' , 'faculty', ''],
       programSearch: '',
       loading: true,
       createUserDialog: false,
@@ -109,6 +119,7 @@ export default {
         { label: 'Email Address', key: 'email', align: 'center' },
         { label: 'Role', key: 'owner', align: 'center' },
         { label: 'Date Added', key: 'createdAt', align: 'center' },
+        { label: 'Is Active', key: 'isActive', align: 'center' },
       ],
       usersList: [],
       submitLoading: false,
@@ -125,6 +136,14 @@ export default {
   },
   mounted() {
     this.getUsersData();
+    const labels = document.querySelectorAll('.q-field__label');
+
+    labels.forEach(label => {
+      if (label.textContent.trim() === 'Programs') {
+        label.style.color = 'white';
+      }
+    });
+
   },
   watch: {
     roleSearch() {
@@ -180,6 +199,7 @@ export default {
         email: this.user.mail,
         phoneNumber: this.user.Number,
         owner: this.user.owner,
+        isActive: this.isActive,
         password: "Welcome@123",
       };
       this.$api.post(urls.usersUrl, request).then(response => {
@@ -203,6 +223,7 @@ export default {
         name: this.user.name,
         email: this.user.mail,
         phoneNumber: this.user.Number,
+        isActive:this.user.isActive,
         owner: this.user.owner,
         id: this.user.id,
         password: this.user.password,
@@ -233,6 +254,7 @@ export default {
         Number: val.phoneNumber,
         owner: val.owner,
         id: val.id,
+        isActive: val.isActive,
         password: val.password
       };
       this.createUserDialog = true;
@@ -248,10 +270,25 @@ export default {
   background-position: center;
   background-size: 100% 100%;
 }
-
+.User_heading{
+  color:#5479F7;
+  margin-left:4%;
+}
 .formContent {
   background: #ffffff;
   opacity: 0.9;
+}
+.role_search{
+  background-color:#ffff;
+  border-radius:4px;
+}
+.program_search{
+  background-color:#5479F7;
+  /* color:white !important; */
+  border-radius:4px;
+}
+.q-btn:before{
+  box-shadow: none !important;
 }
 </style>
 src/pages/dashboard/Urls

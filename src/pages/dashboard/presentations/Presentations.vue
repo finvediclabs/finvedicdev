@@ -1,7 +1,7 @@
 <template>
   <fin-portlet>
     <fin-portlet-header>
-      <fin-portlet-heading backArrow :loading="loading">Presentations</fin-portlet-heading>
+      <fin-portlet-heading backArrow :loading="loading"><span class="User_heading" >Presentations</span></fin-portlet-heading>
       <fin-portlet-item>
         <q-btn label="Add New" dense color="blue-15" class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder" no-caps
           @click="createFile()" />
@@ -15,6 +15,7 @@
 </template>
 <script>
 import FinPortlet from "src/components/Portlets/FinPortlet.vue";
+import axios from 'axios';
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
@@ -35,7 +36,7 @@ export default {
       loading: false,
       header: [
         { label: 'S.No', key: 'index', align: 'center' },
-        { label: 'Cover', key: 'videoCoverPath', align: 'start', type: 'image' },
+        { label: 'Cover', key: 'imageDownload', align: 'start', type: 'image' },
         { label: 'Title', key: 'heading', align: 'start', width: '150px' },
         { label: 'Description', key: 'description', align: 'start', width: '250px' },
       ],
@@ -57,19 +58,44 @@ export default {
       });
     },
     getPresentationsData() {
-      this.loading = true;
-      this.$api.get(urls.presentationsUrl).then(response => {
+  if (!this.loading) {
+    this.loading = true;
+    this.$api.get(urls.presentationsUrl)
+      .then(async response => {
         this.loading = false;
         if (response.data.success) {
-          this.presentations = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));
+          // this.presentations = response.data.data.map((item, index) => ({ ...item, index: index + 1,imageDownload: item.videoCoverPath.replace('http://localhost:8083/fs/download/', '') }) }));
+          this.presentations  = response.data.data.map((item, index) => ({ ...item, index: index + 1, imageDownload: item.videoCoverPath.replace('https://fnbackend.finvedic.com/fs/download/', '') }));
+          // Log the imageDownload of each item in presentations
+          this.presentations.forEach(async item => {
+            const image = item.imageDownload;
+            console.log(image);
+            // Check if image exists
+            if (image) {
+              // Create form data
+              const formData = new FormData();
+              formData.append('filename', image);
+              
+              // Send form data to http://localhost:8083/fs/download
+              const downloadResponse = await axios.post('https://fnbackend.finvedic.com/fs/download', formData, {
+                responseType: 'blob' // Set response type to blob
+              });
+              
+              // Handle the blob response as needed
+              item.imageDownload = URL.createObjectURL(downloadResponse.data);
+              console.log(downloadResponse); // Log or process the blob response
+            }
+          });
         } else {
           this.showMsg(response.data?.message, 'negative');
         }
-      }).catch(error => {
+      })
+      .catch(error => {
         this.loading = false;
         this.showMsg(error.response?.data.message || error.message, 'negative');
       });
-    },
+  }
+},
     editDataFun(val) {
       let item = {
         title: val.heading,
@@ -102,3 +128,9 @@ export default {
   }
 }
 </script>
+<style>
+.User_heading{
+  color:#5479F7;
+  margin-left:4%;
+}
+</style>

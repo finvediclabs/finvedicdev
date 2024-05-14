@@ -1,11 +1,11 @@
 <template>
-  <fin-portlet-item class=" items-center q-pl-xl q-pa-md">
-    <q-btn icon="navigate_before" dense color="grey-2" class="text-black" round @click="onClickMoveButton(-1)" />
-    <q-btn icon="chevron_right" dense color="grey-2" class="text-black q-mx-md" round @click="onClickMoveButton(1)" />
+  <fin-portlet-item class=" items-center q-pl-xl q-pa-lg" style="padding-top: 12vh !important">
+    <q-btn icon="navigate_before" dense color="grey-2" class="text-blue1" round @click="onClickMoveButton(-1)" />
+    <q-btn icon="chevron_right" dense color="grey-2" class="text-blue1 q-mx-md" round @click="onClickMoveButton(1)" />
     <span class="date-range text-body1">{{ dateRangeText }}</span>
   </fin-portlet-item>
   <fin-portlet-item>
-    <div ref="container" class="toastui-vue-calendar" style="min-height:500px ;height: calc((100vh - 220px))" />
+    <div ref="container" class="toastui-vue-calendar" style="min-height:500px ;height: 100vh" />
   </fin-portlet-item>
 </template>
 <script>
@@ -24,6 +24,7 @@ export default {
     FinPortletHeading,
     FinPortletItem,
   },
+
   props: {
     view: {
       type: String,
@@ -111,9 +112,9 @@ export default {
     isReadOnly() {
       this.calendarInstance.setOptions({ isReadOnly: this.isReadOnly });
     },
-    // eventFilter() {
-    //   this.calendarInstance.setOptions({ eventFilter: this.eventFilter });
-    // },
+    eventFilter() {
+      this.calendarInstance.setOptions({ eventFilter: this.eventFilter });
+    },
     week() {
       this.calendarInstance.setOptions({ week: this.week });
     },
@@ -163,12 +164,20 @@ export default {
   beforeDestroy() {
     this.calendarInstance.off();
     this.calendarInstance.destroy();
+    var calendarElement = document.querySelector('.toastui-vue-calendar');
+    calendarElement.removeEventListener('click', this.hideButtons);
   },
   methods: {
     addEventListeners() {
       // Object.keys(this.$listeners).forEach((eventName) => {
       //   this.calendarInstance.on(eventName, (...args) => this.$emit(eventName, ...args));
       // });
+    },
+    hideButtons() {
+      var buttons = document.querySelector('.tui-full-calendar-section-button');
+      if (buttons) {
+        buttons.style.display = 'none';
+      }
     },
     getRootElement() {
       return this.$refs.container;
@@ -205,10 +214,15 @@ export default {
     },
   }
 }
+
 </script>
 <style>
 .toastui-calendar-week-view .toastui-calendar-panel:not(.toastui-calendar-time) {
+  width: 100%;
   overflow-y: hidden;
+}
+.toastui-calendar-panel.toastui-calendar-time {
+  height: 1080px !important; /* Adjust the height as needed */
 }
 
 .toastui-calendar-day-name__date {
@@ -216,21 +230,32 @@ export default {
 }
 
 .toastui-calendar-panel.toastui-calendar-time::-webkit-scrollbar {
-  width: 2px;
+  width: 12px;
   border-radius: 10%;
 }
 
 .toastui-calendar-panel.toastui-calendar-time::-webkit-scrollbar-track {
   background: #f1f1f1;
+
 }
 
 .toastui-calendar-panel.toastui-calendar-time::-webkit-scrollbar-thumb {
-  background: #888;
+  background: #93BAFF;
+  }
+.toastui-calendar-panel-resizer{
+  background-color: #5479F7 !important;
+  border-top: 1px #5479F7 !important;
+  border-bottom: 1px #5479F7 !important;
 }
-
+.toastui-calendar-template-timegridDisplayPrimaryTime{
+  color: #5479F7 !important;
+}
 .toastui-calendar-panel.toastui-calendar-time::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: #93BAFF;
   border-radius: 10px;
+}
+.tui-full-calendar-popup-delete{
+  display: none!important;
 }
 
 .toastui-calendar-day-names,
@@ -240,10 +265,20 @@ export default {
 .toastui-calendar-column {
   border: inherit !important;
 }
-/*
 .toastui-calendar-allday {
   display: none
-} */
+}
+.toastui-calendar-event-time{
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  min-height: 60px !important;
+}
 
 .toastui-calendar-panel-resizer {
   border: inherit !important;
@@ -253,4 +288,21 @@ export default {
 .toastui-calendar-week-view-day-names {
   border: none !important;
 }
+.text-blue1{
+  background-color: #5479F7 !important;
+  color: white !important;
+}
+.toastui-calendar-day-name__date{
+  color: #D0DFFA;
+}
+.toastui-calendar-day-name__name{
+  color: #D0DFFA;
+}
+.toastui-calendar-holiday-sun  .toastui-calendar-day-name__date{
+  color: #5479F7 !important;
+}
+.toastui-calendar-holiday-sun  .toastui-calendar-day-name__name{
+  color: #5479F7 !important;
+}
+
 </style>

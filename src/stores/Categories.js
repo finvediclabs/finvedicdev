@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia';
 import axios from 'axios'
+
 const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+
 export const useCategoryStore = defineStore('categories', {
   state: () => ({
     categories: [],
@@ -8,13 +10,16 @@ export const useCategoryStore = defineStore('categories', {
     selectedCategory: {},
     selectedSubCategory: {},
   }),
-  getters: {
-
-  },
   actions: {
     fetchCategories() {
       axios.get(baseUrl + 'api/chapterCategoriess').then(response => {
-        this.categories = response.data;
+        const categories = response.data.map(category => {
+          if (category.categoryCode === "INTR_TO_BANK") {
+            category.categoryName = "Fintech And Financial Services Landscape";
+          }
+          return category;
+        });
+        this.categories = categories;
         this.fetchSubCategories();
       })
     },
@@ -23,7 +28,8 @@ export const useCategoryStore = defineStore('categories', {
         this.subCategories = Object.groupBy(response.data, product => {
           return product.categoryCode;
         });
-        if (this.subCategories[this.categories[0].id]) {
+
+        if (this.categories.length > 0 && this.subCategories[this.categories[0].id]) {
           this.selectedCategory = this.categories[0];
           this.selectedSubCategory = this.subCategories[this.categories[0].id][0];
         } else {

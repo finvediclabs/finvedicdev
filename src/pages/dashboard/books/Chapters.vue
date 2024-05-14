@@ -1,7 +1,7 @@
 <template>
   <fin-portlet>
     <fin-portlet-header>
-      <fin-portlet-heading :loading="loading" backArrow>Chapters List : {{ bookId }}</fin-portlet-heading>
+      <fin-portlet-heading :loading="loading" backArrow>Chapters List</fin-portlet-heading>
       <fin-portlet-item>
         <q-btn label="Add Chapter" dense color="blue-15" class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder"
           no-caps @click="createFile()" />
@@ -14,7 +14,8 @@
   </fin-portlet>
 </template>
 <script>
-import FinTable from "src/components/FinTable.vue"
+import FinTable from "src/components/FinTable.vue";
+import axios from 'axios';
 import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
@@ -34,7 +35,7 @@ export default {
       deleteUrl: urls.bookChaptersUrl,
       header: [
         { label: 'S.No', key: 'index', align: 'center' },
-        { label: 'Cover', key: 'chapterImagePath', align: 'start', type: 'image' },
+        { label: 'Cover', key: 'imageDownload', align: 'start', type: 'image' },
         { label: 'Title', key: 'chapterTitle', align: 'start', width: '150px' },
         { label: 'Description', key: 'description', align: 'start', width: '250px' },
       ],
@@ -66,7 +67,7 @@ export default {
         ]
       });
     },
-    getChaptersData() {
+    async getChaptersData() {
       if (this.bookId) {
         this.loading = true;
         this.$api.get(urls.bookChaptersUrl, {
@@ -76,7 +77,31 @@ export default {
         }).then(response => {
           this.loading = false;
           if (response.data.success) {
-            this.chaptersList = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));
+            this.chaptersList = response.data.data.map((item, index) => ({
+               ...item,
+              index: index + 1,
+              imageDownload: item.chapterImagePath.replace('https://fnbackend.finvedic.com/fs/download/', ''),
+            }));
+            this.chaptersList.forEach(async item => {
+          const image = item.imageDownload;
+          console.log(image);
+          // Check if image exists
+          if (image) {
+            // Create form data
+            const formData = new FormData();
+            formData.append('filename', image);
+            
+            // Send form data to http://localhost:8083/fs/download
+            const downloadResponse = await axios.post('https://fnbackend.finvedic.com/fs/download', formData, {
+              responseType: 'blob' // Set response type to blob
+            });
+            
+            // Handle the blob response as needed
+            item.imageDownload = URL.createObjectURL(downloadResponse.data);
+            console.log(downloadResponse); // Log or process the blob response
+          }
+        });
+            
           } else {
             this.showMsg(response.data?.message, 'negative');
           }

@@ -47,25 +47,41 @@
             <div class="col-12 q-px-sm">
               <label class="form-label">Course</label>
               <q-select v-model="course" class="q-px-md rounded-borders inputBackground" borderless
-                :options="courseOptions" option-label="categoryName" option-value="categoryName" />
+  :options="courses" option-label="courseDesc" option-value="courseid"
+  @select="onCourseSelect" />
+
+              
               <div class="errorMsgBox">
                 <span v-if="errors.course && !course">{{ errors.course }}</span>
               </div>
             </div>
             <div class="col-12 q-px-sm">
-              <label class="form-label">Title</label>
-              <q-input v-model="title" class="q-px-md rounded-borders inputBackground" borderless />
-              <div class="errorMsgBox">
-                <span v-if="errors.title && !title">{{ errors.title }}</span>
+              <label class="form-label">Topic</label>
+              
+             <q-select
+    v-model="filteredTopic"
+    class="q-px-md rounded-borders inputBackground"
+    borderless
+    :options="filteredTopics"
+    option-label="topicName"
+    option-value="topicId"
+    @select="selectTopic(filteredTopic)"
+  />
+              
+                <div class="errorMsgBox">
+                <span v-if="errors.topic && !topic">{{ errors.topic }}</span>
               </div>
-            </div>
+            </div> 
             <div class="col-12 q-px-sm">
-              <label class="form-label">Link</label>
-              <q-input v-model="link" class="q-px-md rounded-borders inputBackground" borderless />
+              <label class="form-label">Batch</label>
+              <q-select v-model="batch" class="q-px-md rounded-borders inputBackground" borderless
+                :options="batchOptions" option-label="cycleDesc" option-value="cycleid" />
               <div class="errorMsgBox">
-                <span v-if="errors.link && !link">{{ errors.link }}</span>
+                <span v-if="errors.batch && !topic">{{ errors.batch }}</span>
               </div>
-            </div>
+            </div> 
+            
+            
             <div class="col-12 q-px-sm q-pt-xl justify-end row">
               <q-space />
               <q-btn class="shadow-5 q-px-md rounded-borders sub-btn q-px-xl text-white" label="Update" no-caps
@@ -82,6 +98,7 @@ import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
+
 import DatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 import moment from "moment";
@@ -90,18 +107,35 @@ import { urls } from "src/pages/dashboard/Urls";
 
 import { useProfileStore } from "src/stores/profile";
 import { storeToRefs } from "pinia";
-import { useCategoryStore } from "src/stores/Categories";
+//import { useCategoryStore } from "src/stores/Categories";
+import { useCouseStore} from "src/stores/courses";
 export default {
   setup() {
     const profileStore = useProfileStore();
     const { profile, user } = storeToRefs(profileStore);
-    const categoryStore = useCategoryStore();
-    const { categories, subCategories } = storeToRefs(categoryStore);
+   // const categoryStore = useCategoryStore();
+    const couseStore = useCouseStore();
+    const { selectCourse, selectTopic } = couseStore;
+    
+    
+    const {courses, topics, batches, selectedCourse, selectedTopic} = storeToRefs(couseStore);
+    // const {selectCourse,selectedTopic} = couseStore;
+    couseStore.fetchCourses();
+    couseStore.fetchTopics();
+    
+   // const { categories, subCategories } = storeToRefs(categoryStore);
     return {
       user,
       profile,
-      categories,
-      subCategories
+      courses,
+      topics,
+      batches,
+      selectCourse,
+      selectTopic,
+      selectedCourse,
+      selectedTopic
+    //  categories,
+    //  subCategories
     }
   },
   components: {
@@ -113,10 +147,13 @@ export default {
   },
   data() {
     return {
+      deleteUrl: urls.getEvents,
       date: '',
       startTime: '',
       endTime: '',
       course: '',
+      batch: '',
+      topic: '',
       title: '',
       link: '',
       errors: {},
@@ -124,18 +161,17 @@ export default {
     }
   },
   computed: {
-    courseOptions() {
-      var courses = [];
-      this.categories.forEach(item => {
-        if (this.subCategories[item.id]) {
-          this.subCategories[item.id].forEach(item => {
-            courses.push(item.subCategoryName)
-          });
-        } else {
-          courses.push(item.categoryName)
-        }
+    
+    batchOptions() {
+      var batches = [];
+      this.batches.forEach(item => {
+        batches.push(item.cycleDesc)
       });
-      return courses;
+      return batches;
+    },
+    filteredTopics() {
+      if (!this.course || !this.topics) return [];
+      return this.topics.filter(topic => topic.courseId === this.course.courseid);
     }
   },
   mounted() {
@@ -149,10 +185,13 @@ export default {
       this.startTime = { hours: startTime[0], minutes: startTime[1] };
       this.endTime = { hours: endTime[0], minutes: endTime[1] };
       this.course = editedEvent.course;
+      this.topic = editedEvent.topic;
       this.title = editedEvent.title;
+      this.batch = editedEvent.batch;
       this.link = editedEvent.link;
       this.editedEvent = editedEvent;
     }
+    
   },
   methods: {
     showMsg(message, type) {
@@ -165,14 +204,19 @@ export default {
         ]
       });
     },
+    onCourseSelect(course) {
+      this.course = course; // Update the selected course
+      // Optionally, you can perform additional actions when the course is selected
+      this.fetchTopicsByCourse(course.courseid);
+    },
     format(date) {
       const day = date.getDate();
       const month = new Date(date).toLocaleDateString('en-US', { month: 'short' });
       const year = date.getFullYear();
-      return `${day} ${month}, ${year}`;
+      return `${month} ${day}, ${year}`;
     },
     validateForm() {
-      if (this.date && this.startTime && this.endTime && this.course && this.title && this.link) {
+      if (this.date && this.startTime && this.endTime && this.course) {
         this.editedEvent?.id ? this.updateEvent() : this.createEvent();
       } else {
         this.errors = {
@@ -180,27 +224,29 @@ export default {
           startTime: "Start Time is required",
           endTime: "End Time is required",
           course: "Course is required",
-          title: "Title is required",
-          link: "Link is required"
+       
         }
       }
     },
+    
     createEvent() {
       var request = {
         accountId: null,
-        course: this.course,
-        title: this.title,
+        course: this.course.courseDesc,
+        topic:this.filteredTopic.topicName,
+        batch:this.batch,
+        title: this.course.courseDesc,
         createdBy: this.user.name,
         lastUpdatedBy: this.user.name,
         date: moment(this.date).format('YYYY-MM-DD'),
         start: `${this.getTwoDigits(this.startTime.hours)}:${this.getTwoDigits(this.startTime.minutes)}`,
         end: `${this.getTwoDigits(this.endTime.hours)}:${this.getTwoDigits(this.endTime.minutes)}`,
-        link: this.link,
+        link: 'https://meet.google.com/hvz-zusp-jrv',
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
       }
-
+      console.log('Create Event Request:', request); 
       this.$api.post(urls.getEvents, request).then(response => {
         this.loading = false;
         if (response.data.success) {
@@ -255,6 +301,9 @@ export default {
         minimumIntegerDigits: 2,
         useGrouping: false
       })
+    },
+    selectTopic(topic) {
+      this.filteredTopic = topic;
     },
     clearData() {
       this.date = "";

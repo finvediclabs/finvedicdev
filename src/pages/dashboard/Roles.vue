@@ -1,7 +1,7 @@
 <template>
   <fin-portlet>
     <fin-portlet-header>
-      <fin-portlet-heading :loading="loading" backArrow>Roles</fin-portlet-heading>
+      <fin-portlet-heading :loading="loading" backArrow><span class="User_heading" >Roles</span></fin-portlet-heading>
     </fin-portlet-header>
     <fin-portlet-item class="table-scroll" style="white-space: nowrap;">
       <fin-table :columns="header" :data="rolesList" select @reCall="getRolesData()" allowDelete delete-url=""
@@ -88,3 +88,9 @@ export default {
   }
 }
 </script>
+<style>
+.User_heading{
+  color:#5479F7;
+  margin-left:4%;
+}
+</style>

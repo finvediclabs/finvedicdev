@@ -1,16 +1,17 @@
 <template>
   <div class="chart-container">
-    <div class="chart-item">
-      <canvas ref="barChart" class="chart-canvas"></canvas>
+    <div class="chart-row">
+      <div class="chart-item">
+        <canvas ref="barChart" class="chart-canvas"></canvas>
+      </div>
     </div>
-    <div class="chart-item">
-      <canvas ref="pieChart" class="chart-canvas"></canvas>
-    </div>
-    <div class="chart-item">
-      <canvas ref="stackedBarChart" class="chart-canvas"></canvas>
-    </div>
-    <div class="chart-item">
-      <canvas ref="lineChart" class="chart-canvas"></canvas>
+    <div class="chart-row">
+      <div class="chart-item">
+        <canvas ref="stackedBarChart" class="chart-canvas"></canvas>
+      </div>
+      <div class="chart-item">
+        <canvas ref="lineChart" class="chart-canvas"></canvas>
+      </div>
     </div>
   </div>
 </template>
@@ -24,8 +25,7 @@ export default {
   },
   methods: {
     renderCharts() {
-      this.renderChart(this.$refs.barChart, 'bar', 'Student Attendence');
-      this.renderPieChart(this.$refs.pieChart);
+      this.renderChart(this.$refs.barChart, 'bar', 'Student Attendance');
       this.renderStackedBarChart(this.$refs.stackedBarChart, 'Stacked Bar Chart');
       this.renderChart(this.$refs.lineChart, 'line', 'Line Chart');
     },
@@ -68,37 +68,6 @@ export default {
         options: options
       });
     },
-    renderPieChart(canvasRef) {
-      var ctx = canvasRef.getContext('2d');
-      new Chart(ctx, {
-        type: 'pie',
-        data: {
-          labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-          datasets: [{
-            label: 'Pie Chart',
-            data: [30, 35, 28, 32, 37],
-            backgroundColor: [
-              'rgba(255, 99, 132, 0.6)',
-              'rgba(54, 162, 235, 0.6)',
-              'rgba(255, 206, 86, 0.6)',
-              'rgba(75, 192, 192, 0.6)',
-              'rgba(153, 102, 255, 0.6)'
-            ]
-          }]
-        },
-        options: {
-          plugins: {
-            legend: {
-              labels: {
-                generateLabels: function(chart) {
-                  return [];
-                }
-              }
-            }
-          }
-        }
-      });
-    },
     renderStackedBarChart(canvasRef, chartLabel) {
       var ctx = canvasRef.getContext('2d');
       new Chart(ctx, {
@@ -137,19 +106,23 @@ export default {
 
 <style scoped>
 .chart-container {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-auto-rows: minmax(0, 1fr); /* Ensure all rows take up equal height */
-  gap: 20px; /* Adjust gap between items */
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Adjust gap between rows */
   height: 600px; /* Fixed height for the container */
 }
 
+.chart-row {
+  display: flex;
+  gap: 20px; /* Adjust gap between items in a row */
+}
+
 .chart-item {
-  width: 100%;
+  flex: 1; /* Each chart item takes up equal space */
 }
 
 .chart-canvas {
-  height: 100%; /* Each chart takes up 50% of the container's height */
+  height: 100%; /* Each chart takes up 100% of the container's height */
   width: 100%;
 }
 </style>

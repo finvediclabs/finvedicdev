@@ -1,7 +1,7 @@
 <template>
-  <fin-portlet>
-    <fin-portlet-header>
-      <fin-portlet-heading :loading="loading" backArrow>Vm Setup</fin-portlet-heading>
+  <fin-portlet style="background-color: transparent">
+    <fin-portlet-header style="margin-bottom: 0px;">
+      <fin-portlet-heading :loading="loading" backArrow><span class="User_heading" >VM Setup</span></fin-portlet-heading>
     </fin-portlet-header>
     <fin-portlet-item class="full-width items-center justify-center">
       <div style=" margin-left: auto;margin-right: auto;">
@@ -9,7 +9,7 @@
           <div class="row" >
             
             <div class="col-12 col-md-5 q-pa-sm" style=" margin-left: auto;margin-right: auto;">
-              <p style="text-align: center;font-size: 24px;font-weight: 600;">Select The Operating System</p>
+              <p style="text-align: center;font-size: 24px;font-weight: 600;color: #5479F7;">Select The Operating System</p>
               <div class="image-btn-container">
     
     <q-btn
@@ -21,8 +21,11 @@
       class="image-btn"
       @click="selectVersion('Windows')"
     >
-      <img src="https://gurukul.finvedic.com/images/microsoft.png" alt="Windows" style="width: 100%; height: 100%;" />
+      <img src="https://gurukul.finvedic.com/images/Windows.png" alt="Windows" style="width: 100%; height: 100%;" />
     </q-btn>
+    <div class="outer">
+  <div class="inner"></div>
+</div>
     <q-btn
       v-ripple
       v-model="version"
@@ -44,12 +47,12 @@
               </div>
               <div class="input-container" style="display: flex; align-items: center;">
                 <div>
-                  <q-btn class="shadow-3 fin-br-8 q-px-md bg-grey-1" @click="decrementNoOfVMs" icon="remove" style="margin-right: 10px;" />
+                  <q-btn class="shadow-3 fin-br-8 q-px-md bg-grey-1 custom-btn" @click="decrementNoOfVMs" icon="remove" style="margin-right: 10px;" />
                 </div>
-                <q-input v-model="nos" type="number" borderless label="No Of VM's" class="shadow-3 fin-br-8 q-px-md bg-grey-1" style="flex: 1; margin-right: 10px;" />
+                <q-input v-model="nos" type="number" borderless label="No Of VM's" class="shadow-3 fin-br-8 q-px-md bg-grey-1 custom-input" style="flex: 1; margin-right: 10px;"  />
                 
                   <div>
-                  <q-btn class="shadow-3 fin-br-8 q-px-md bg-grey-1" @click="incrementNoOfVMs" icon="add" />
+                  <q-btn class="shadow-3 fin-br-8 q-px-md bg-grey-1 custom-btn" @click="incrementNoOfVMs" icon="add" />
                 </div>
               </div>
               <div class="errorMsgBox">
@@ -59,7 +62,7 @@
 
           </div>
           <fin-portlet-item class="q-pa-sm text-center q-xl">
-            <q-btn color="primary" no-caps class="sub-btn q-ml-sm fin-br-8" style="min-width:150px" label="Create VM" type="submit"
+            <q-btn color="primary" no-caps class="sub-btn q-ml-sm fin-br-8" style="min-width:150px" label="Spin VM" type="submit"
               :disable="loader">
               <q-spinner-ios color="white" class="q-pl-sm" v-if="loader" />
             </q-btn>
@@ -106,7 +109,7 @@ export default {
         { label: 'Size', key: 'size', align: 'center' },
         { label: 'OS Type', key: 'type', align: 'start'},
         { label: 'Name', key: 'name', align: 'start'},
-        {label: 'Active'}
+        {label: 'Active' ,key: 'provisioningState', align: 'start'}
       ],
       VMsList: []
     }
@@ -126,15 +129,16 @@ export default {
       });
     },
     getVMsData() {
-      this.loading = true;
-      this.$api.get(urls.getAzureVmsUrl).then(response => {
-        this.loading = false;
-        this.VMsList = response.data.data;
-      }).catch(error => {
-        this.loading = false;
-        this.showMsg(error.response?.data.message || error.message, 'negative');
-      })
-    },
+  this.loading = true;
+  this.$api.get(urls.getAzureVmsUrl).then(response => {
+    this.loading = false;
+    // Filter out VMs with the provisioningState as "deleted"
+    this.VMsList = response.data.data.filter(vm => vm.provisioningState !== 'Deleted');
+  }).catch(error => {
+    this.loading = false;
+    this.showMsg(error.response?.data.message || error.message, 'negative');
+  });
+},
     validateFields() {
       if (this.version && this.nos > 0) {
         this.createVms()
@@ -156,7 +160,7 @@ export default {
           region: this.region
         }).then(response => {
           this.loader = false;
-          this.showMsg(response.data?.message || 'Vms created Successfully', 'positive');
+          this.showMsg(response.data?.message || 'Start Spinning VM Successfully', 'positive');
         }).catch(error => {
           this.loader = false;
           this.showMsg(error.response?.data.message || error.message, 'negative');
@@ -179,6 +183,15 @@ export default {
 }
 </script>
 <style>
+.custom-btn,
+.custom-input {
+  height: 50px; /* Adjust as needed */
+  color: #5479F7;
+  font-weight: 600;
+}
+.q-field__label {
+  color: #5479F7 !important;
+}
 .image-btn-container {
   display: flex;
   justify-content: center;
@@ -189,6 +202,30 @@ export default {
   height: 180px;
   margin: 0 10px; /* Adjust as needed */
 }
+.outer {
+  width: 1px;
+  height: 180px;
+  margin: auto;
+  position: relative;
+  overflow: hidden;
+}
+.inner {
+  position: absolute;
+  width:100%;
+  height: 40%;
+  background: #5479F7;
+  top: 30%;
+  box-shadow: 0px 0px 30px 20px #5479F7;
+}
+.User_heading{
+  color:#5479F7;
+  margin-left:4%;
+}
+.bg-green {
+    background: #b2ccfc !important;
+    border-radius: 20px;
+}
+
 </style>
 
 

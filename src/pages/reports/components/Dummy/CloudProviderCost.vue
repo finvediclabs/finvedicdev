@@ -1,16 +1,16 @@
 <template>
     <div class="chart-container">
       <div class="chart-item">
-        <canvas ref="barChart" class="chart-canvas"></canvas>
+        <canvas ref="barChart" class="chart-canvas" style="height: 100%;"></canvas>
       </div>
       <div class="chart-item">
-        <canvas ref="pieChart" class="chart-canvas"></canvas>
+        <canvas ref="pieChart" class="chart-canvas" ></canvas>
       </div>
       <div class="chart-item">
-        <canvas ref="stackedBarChart" class="chart-canvas"></canvas>
+        <canvas ref="stackedBarChart" class="chart-canvas" style="height: 100%;"></canvas>
       </div>
       <div class="chart-item">
-        <canvas ref="lineChart" class="chart-canvas"></canvas>
+        <canvas ref="lineChart" class="chart-canvas" style="height: 100%;"></canvas>
       </div>
     </div>
   </template>
