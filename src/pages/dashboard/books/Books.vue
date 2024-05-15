@@ -83,7 +83,7 @@ export default {
             formData.append('filename', image);
             
             // Send form data to http://localhost:8083/fs/download
-            const downloadResponse = await axios.post('https://fnbackend.finvedic.com/fs/download', formData, {
+            const downloadResponse = await axios.post('https://fnbackendprod.finvedic.com/fs/download', formData, {
               responseType: 'blob' // Set response type to blob
             });
             

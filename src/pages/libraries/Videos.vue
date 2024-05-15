@@ -346,8 +346,9 @@ export default {
           const imagePathWithoutPrefix = video.videoCoverPath.replace('https://fnbackend.finvedic.com/fs/download/', '');
           const formData = new FormData();
           formData.append('filename', imagePathWithoutPrefix);
-          
-          axios.post('https://fnbackend.finvedic.com/fs/download', formData, { responseType: 'blob' })
+          const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+          const getImagesUrl = baseUrl + 'fs/download';
+          axios.post(getImagesUrl, formData, { responseType: 'blob' })
             .then(downloadResponse => {
               // Handle download success, e.g., open or save the downloaded file
               const blob = new Blob([downloadResponse.data]);
@@ -400,9 +401,11 @@ export default {
           if (chapter.videoCoverPath) {
             const imagePathWithoutPrefix = chapter.videoCoverPath.replace('https://fnbackend.finvedic.com/fs/download/', '');
             const formData = new FormData();
+            const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+          const getImagesUrl = baseUrl + 'fs/download';
             formData.append('filename', imagePathWithoutPrefix);
             
-            axios.post('https://fnbackend.finvedic.com/fs/download', formData, { responseType: 'blob' })
+            axios.post(getImagesUrl, formData, { responseType: 'blob' })
               .then(downloadResponse => {
                 const blob = new Blob([downloadResponse.data]);
                 const url = window.URL.createObjectURL(blob);

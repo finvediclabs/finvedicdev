@@ -78,7 +78,9 @@ export default {
               formData.append('filename', image);
               
               // Send form data to http://localhost:8083/fs/download
-              const downloadResponse = await axios.post('https://fnbackend.finvedic.com/fs/download', formData, {
+              const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+          const getImagesUrl = baseUrl + 'fs/download';
+              const downloadResponse = await axios.post(getImagesUrl, formData, {
                 responseType: 'blob' // Set response type to blob
               });
               

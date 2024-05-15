@@ -40,9 +40,11 @@ export default {
       // console.log('Formatted URL:', this.formattedUrl); // Console log for formatted URL
 
       const formData = new FormData();
+      const baseUrls = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+          const getVideoUrl = baseUrls + 'fs/download';
       formData.append('filename', this.formattedUrl);
 
-      fetch('https://fnbackend.finvedic.com/fs/download', {
+      fetch(getVideoUrl, {
         method: 'POST',
         body: formData
       })

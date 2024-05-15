@@ -68,11 +68,12 @@ export default {
     try {
       // Remove the prefix from this.pdfPath
       const filePathWithoutPrefix = this.pdfPath.replace('https://fnbackend.finvedic.com/fs/download/', '');
-
+      const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+          const getPdfUrl = baseUrl + 'fs/download';
       const formData = new FormData();
       formData.append('filename', filePathWithoutPrefix); // Use the modified filePathWithoutPrefix
 
-      const response = await Axios.post('https://fnbackend.finvedic.com/fs/download', formData, { responseType: 'blob' });
+      const response = await Axios.post(getPdfUrl, formData, { responseType: 'blob' });
 
       if (response.status === 200) {
         const blob = new Blob([response.data]);
