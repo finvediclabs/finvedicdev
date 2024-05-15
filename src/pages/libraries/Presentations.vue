@@ -242,11 +242,13 @@ export default {
       this.presentations.forEach(presentation => {
         // Fetch videoCoverPath and send it to download URL for each presentation
         if (presentation.videoCoverPath) {
+          
           const videoCoverPathWithoutPrefix = presentation.videoCoverPath.replace('https://fnbackend.finvedic.com/fs/download/', '');
           const formData = new FormData();
           formData.append('filename', videoCoverPathWithoutPrefix);
-
-          axios.post('https://fnbackend.finvedic.com/fs/download', formData, { responseType: 'blob' })
+          const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+          const getImagesUrl = baseUrl + 'fs/download';
+          axios.post(getImagesUrl, formData, { responseType: 'blob' })
             .then(downloadResponse => {
               // Handle download success, e.g., open or save the downloaded file
               const blob = new Blob([downloadResponse.data]);
@@ -277,7 +279,9 @@ getChaptersData() {
   const formData = new FormData();
   formData.append('presentationId', this.selectedSlide?.id); // Add presentationId to form data
   console.log('Selected Slide ID:', this.selectedSlide?.id);
-  axios.post('https://fnbackend.finvedic.com/api/presentationChapters/findPresentationChapter', formData)
+  const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+          const getChaptersUrl = baseUrl + 'api/presentationChapters/findPresentationChapter';
+  axios.post(getChaptersUrl, formData)
     .then(response => {
       this.chaptersLoader = false;
       if (response.data.success) {
@@ -303,8 +307,9 @@ getChaptersData() {
             const imagePathWithoutPrefix = chapter.presentationCoverPath.replace('https://fnbackend.finvedic.com/fs/download/', '');
             const formData = new FormData();
             formData.append('filename', imagePathWithoutPrefix);
-            
-            axios.post('https://fnbackend.finvedic.com/fs/download', formData, { responseType: 'blob' })
+            const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+          const getImagesUrl = baseUrl + 'fs/download';
+            axios.post(getImagesUrl, formData, { responseType: 'blob' })
               .then(downloadResponse => {
                 const blob = new Blob([downloadResponse.data]);
                 const url = window.URL.createObjectURL(blob);
