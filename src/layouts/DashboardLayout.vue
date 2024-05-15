@@ -442,7 +442,7 @@ export default {
 .booksBackgroundStyle {
   background-image: url('/src/assets/BG_New.png');
   background-repeat: no-repeat;
-  background-size: 100vw 60vh;
+  background-size: 100vw 64vh;
   /* background-color: #f0f0f0; */
   /* Add any other background styles */
 }
