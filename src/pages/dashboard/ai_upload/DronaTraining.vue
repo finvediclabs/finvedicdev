@@ -90,7 +90,7 @@
         formData.append("source", "portal");
   
         try {
-          const response = await axios.post("https://fnbackend.finvedic.com/api/bot", formData, {
+          const response = await axios.post("https://fnbackendprod.finvedic.com/api/bot", formData, {
             headers: {
               'Content-Type': 'multipart/form-data'
             }

@@ -80,7 +80,7 @@ export default {
         this.chaptersList = response.data.data.map((item, index) => ({
           ...item,
           index: index + 1,
-          imageDownload: item.videoCoverPath.replace('https://fnbackend.finvedic.com/fs/download/', ''),
+          imageDownload: item.videoCoverPath.replace('https://fnbackendprod.finvedic.com/fs/download/', ''),
         }));
 
         // Log the imageDownload of each item in chaptersList

@@ -35,7 +35,7 @@ export default {
   },
   methods: {
     formatUrlAndSend() {
-      const baseUrl = 'https://fnbackend.finvedic.com/fs/download/';
+      const baseUrl = 'https://fnbackendprod.finvedic.com/fs/download/';
       this.formattedUrl = this.decryptedString.replace(baseUrl, ''); 
       // console.log('Formatted URL:', this.formattedUrl); // Console log for formatted URL
 

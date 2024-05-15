@@ -125,7 +125,7 @@
        const formData = new FormData();
        formData.append('query', message); // Append the query parameter
        formData.append('source', 'PORTAL'); // Append the source parameter
-       fetch('https://fnbackend.finvedic.com/api/bot/query', {
+       fetch('https://fnbackendprod.finvedic.com/api/bot/query', {
          method: 'POST',
          body: formData // Send form data
        })

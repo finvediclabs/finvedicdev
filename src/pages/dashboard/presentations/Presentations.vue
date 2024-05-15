@@ -65,7 +65,7 @@ export default {
         this.loading = false;
         if (response.data.success) {
           // this.presentations = response.data.data.map((item, index) => ({ ...item, index: index + 1,imageDownload: item.videoCoverPath.replace('http://localhost:8083/fs/download/', '') }) }));
-          this.presentations  = response.data.data.map((item, index) => ({ ...item, index: index + 1, imageDownload: item.videoCoverPath.replace('https://fnbackend.finvedic.com/fs/download/', '') }));
+          this.presentations  = response.data.data.map((item, index) => ({ ...item, index: index + 1, imageDownload: item.videoCoverPath.replace('https://fnbackendprod.finvedic.com/fs/download/', '') }));
           // Log the imageDownload of each item in presentations
           this.presentations.forEach(async item => {
             const image = item.imageDownload;

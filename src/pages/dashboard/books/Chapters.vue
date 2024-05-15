@@ -80,7 +80,7 @@ export default {
             this.chaptersList = response.data.data.map((item, index) => ({
                ...item,
               index: index + 1,
-              imageDownload: item.chapterImagePath.replace('https://fnbackend.finvedic.com/fs/download/', ''),
+              imageDownload: item.chapterImagePath.replace('https://fnbackendprod.finvedic.com/fs/download/', ''),
             }));
             this.chaptersList.forEach(async item => {
           const image = item.imageDownload;

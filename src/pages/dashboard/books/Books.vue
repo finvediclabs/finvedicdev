@@ -69,7 +69,7 @@ export default {
         this.booksList = response.data.data.map((item, index) => ({
           ...item,
           index: index + 1,
-          imageDownload: item.imagePath.replace('https://fnbackend.finvedic.com/fs/download/', ''),
+          imageDownload: item.imagePath.replace('https://fnbackendprod.finvedic.com/fs/download/', ''),
         }));
         
         // Log the imageDownload of each item in booksList
