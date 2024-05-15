@@ -224,9 +224,10 @@ export default {
     lastUpdatedBy: "admin",
     // Add more fields as needed
   };
-
+  const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+          const getCyclesUrl = baseUrl + 'api/cycles';
   // Example Axios POST request to add batch
-  axios.post('https://fnbackend.finvedic.com/api/cycles', batchData)
+  axios.post(getCyclesUrl, batchData)
     .then(response => {
       this.submitBatchLoading = false;
       if (response.status === 201) {
@@ -275,9 +276,10 @@ export default {
         courseDesc:this.courseData.courseDesc,
         // Add more fields as needed
       };
-
+      const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+          const getCourseUrl = baseUrl + 'api/courss';
       // Example Axios POST request to add course
-      axios.post('https://fnbackend.finvedic.com/api/courss', courseData)
+      axios.post(getCourseUrl, courseData)
   .then(response => {
     this.submitLoading = false;
     if (response.status === 201) {

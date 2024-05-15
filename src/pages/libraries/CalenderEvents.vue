@@ -363,7 +363,9 @@ upcomingEvents() {
 </script>
 <style>
 .classRoomImg {
-  width: 38%;
+  width: 34%;
+  position: absolute;
+  right: 0;
   margin-top: -50px;
 }
 .text-body1{

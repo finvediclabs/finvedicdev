@@ -129,7 +129,9 @@ export default {
     },
     async fetchUserOptions() {
       try {
-        const response = await axios.get('https://fnbackend.finvedic.com/api/users');
+        const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+          const getUsersUrl = baseUrl + 'api/users';
+        const response = await axios.get(getUsersUrl );
         console.log('Response from user options request:', response);
         if (response.status === 200) {
       this.userOptions = response.data.data.map(user => {
@@ -224,7 +226,9 @@ export default {
 
   try {
     // Example Axios POST request to add enrollment
-    const response = await axios.post('https://fnbackend.finvedic.com/api/enrollments', enrollmentData);
+    const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+          const getEnrollmentsUrl = baseUrl + 'api/enrollments';
+    const response = await axios.post(getEnrollmentsUrl, enrollmentData);
 
     if (response.status === 201) {
       // Enrollment created successfully
