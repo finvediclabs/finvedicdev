@@ -208,11 +208,14 @@ export default {
       this.booksData.forEach(book => {
         // Fetch imagePath and send it to download URL for each book
         if (book.imagePath) {
-          const imagePathWithoutPrefix = book.imagePath.replace('https://fnbackend.finvedic.com/fs/download/', '');
+          const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+          const removeImagePath = baseUrl + 'fs/download/';
+          const imagePath = baseUrl + 'fs/download'
+          const imagePathWithoutPrefix = book.imagePath.replace(removeImagePath, '');
           const formData = new FormData();
           formData.append('filename', imagePathWithoutPrefix);
           
-          axios.post('https://fnbackend.finvedic.com/fs/download', formData, { responseType: 'blob' })
+          axios.post(imagePath, formData, { responseType: 'blob' })
             .then(downloadResponse => {
               // Handle download success, e.g., open or save the downloaded file
               const blob = new Blob([downloadResponse.data]);
@@ -244,8 +247,9 @@ getChaptersData() {
   this.chaptersLoader = true;
   const formData = new FormData();
   formData.append('bookId', this.selectedSlide?.id); // Add bookId to form data
-
-  axios.post('https://fnbackend.finvedic.com/api/bookChapters/getBookChaptersByBookId', formData)
+  const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+const getChaptersUrl = baseUrl + 'api/bookChapters/getBookChaptersByBookId'
+  axios.post(getChaptersUrl, formData)
     .then(response => {
       this.chaptersLoader = false;
       if (response.data.success) {
@@ -268,11 +272,14 @@ getChaptersData() {
         // Fetch imagePath and send it to download URL
         this.chaptersData.forEach(chapter => {
           if (chapter.chapterImagePath) {
-            const imagePathWithoutPrefix = chapter.chapterImagePath.replace('https://fnbackend.finvedic.com/fs/download/', '');
+            const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+            const removeImagePath = baseUrl + 'fs/download/';
+          const imagePath = baseUrl + 'fs/download'
+            const imagePathWithoutPrefix = chapter.chapterImagePath.replace(removeImagePath , '');
             const formData = new FormData();
             formData.append('filename', imagePathWithoutPrefix);
             
-            axios.post('https://fnbackend.finvedic.com/fs/download', formData, { responseType: 'blob' })
+            axios.post(imagePath, formData, { responseType: 'blob' })
               .then(downloadResponse => {
                 const blob = new Blob([downloadResponse.data]);
                 const url = window.URL.createObjectURL(blob);

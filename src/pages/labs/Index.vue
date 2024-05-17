@@ -101,7 +101,9 @@ export default {
   }
 
   try {
-    const response = await fetch('https://fnbackend.finvedic.com/deletevm/' + lab.name);
+    const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+            const deleteUrl = baseUrl + 'deletevm';
+    const response = await fetch(deleteUrl + lab.name);
     console.log('success');
     // Update lab state to locked
     lab.locked = true;

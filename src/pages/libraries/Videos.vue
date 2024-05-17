@@ -343,11 +343,14 @@ export default {
       this.VideosList.forEach(video => {
         // Fetch imagePath and send it to download URL for each book
         if (video.videoCoverPath) {
-          const imagePathWithoutPrefix = video.videoCoverPath.replace('https://fnbackend.finvedic.com/fs/download/', '');
+          const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+            const removeImagePath = baseUrl + 'fs/download/';
+          const imagePath = baseUrl + 'fs/download'
+          const imagePathWithoutPrefix = video.videoCoverPath.replace(removeImagePath, '');
           const formData = new FormData();
           formData.append('filename', imagePathWithoutPrefix);
           
-          axios.post('https://fnbackend.finvedic.com/fs/download', formData, { responseType: 'blob' })
+          axios.post(imagePath, formData, { responseType: 'blob' })
             .then(downloadResponse => {
               // Handle download success, e.g., open or save the downloaded file
               const blob = new Blob([downloadResponse.data]);
@@ -398,11 +401,14 @@ export default {
                 // Fetch imagePath and send it to download URL
         this.chapters.forEach(chapter => {
           if (chapter.videoCoverPath) {
-            const imagePathWithoutPrefix = chapter.videoCoverPath.replace('https://fnbackend.finvedic.com/fs/download/', '');
+            const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+            const removeImagePath = baseUrl + 'fs/download/';
+          const imagePath = baseUrl + 'fs/download'
+            const imagePathWithoutPrefix = chapter.videoCoverPath.replace(removeImagePath, '');
             const formData = new FormData();
             formData.append('filename', imagePathWithoutPrefix);
             
-            axios.post('https://fnbackend.finvedic.com/fs/download', formData, { responseType: 'blob' })
+            axios.post(imagePath, formData, { responseType: 'blob' })
               .then(downloadResponse => {
                 const blob = new Blob([downloadResponse.data]);
                 const url = window.URL.createObjectURL(blob);

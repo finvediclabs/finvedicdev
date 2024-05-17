@@ -123,9 +123,11 @@
  
        // Send the message to the API
        const formData = new FormData();
+       const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+            const chatBotUrl = baseUrl + 'api/bot/query';
        formData.append('query', message); // Append the query parameter
        formData.append('source', 'PORTAL'); // Append the source parameter
-       fetch('https://fnbackend.finvedic.com/api/bot/query', {
+       fetch(chatBotUrl, {
          method: 'POST',
          body: formData // Send form data
        })

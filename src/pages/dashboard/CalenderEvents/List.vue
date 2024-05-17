@@ -211,6 +211,9 @@ export default {
 
   const startDateArr = this.batchData.startDate.split('-').map(Number);
   const endDateArr = this.batchData.endDate.split('-').map(Number);
+  const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+            const cycleUrl = baseUrl + 'api/cycles';
+  
   // Prepare the batch data with user-filled fields
   const batchData = {
     cycleid: this.batchData.batchId,
@@ -226,7 +229,7 @@ export default {
   };
 
   // Example Axios POST request to add batch
-  axios.post('https://fnbackend.finvedic.com/api/cycles', batchData)
+  axios.post(cycleUrl, batchData)
     .then(response => {
       this.submitBatchLoading = false;
       if (response.status === 201) {
@@ -266,7 +269,8 @@ export default {
     },
     submitCourseForm() {
       this.submitLoading = true;
-
+      const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+            const courseUrl = baseUrl + 'api/courss';
       // Prepare the course data with user-filled fields
       const courseData = {
         courseid: this.courseData.courseid,
@@ -277,7 +281,7 @@ export default {
       };
 
       // Example Axios POST request to add course
-      axios.post('https://fnbackend.finvedic.com/api/courss', courseData)
+      axios.post(courseUrl, courseData)
   .then(response => {
     this.submitLoading = false;
     if (response.status === 201) {

@@ -69,6 +69,9 @@ export default {
     },
     async getChaptersData() {
       if (this.bookId) {
+        const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+            const removeImagePath = baseUrl + 'fs/download/';
+          const imagePath = baseUrl + 'fs/download'
         this.loading = true;
         this.$api.get(urls.bookChaptersUrl, {
           params: {
@@ -80,7 +83,7 @@ export default {
             this.chaptersList = response.data.data.map((item, index) => ({
                ...item,
               index: index + 1,
-              imageDownload: item.chapterImagePath.replace('https://fnbackend.finvedic.com/fs/download/', ''),
+              imageDownload: item.chapterImagePath.replace(removeImagePath, ''),
             }));
             this.chaptersList.forEach(async item => {
           const image = item.imageDownload;
@@ -92,7 +95,7 @@ export default {
             formData.append('filename', image);
             
             // Send form data to http://localhost:8083/fs/download
-            const downloadResponse = await axios.post('https://fnbackend.finvedic.com/fs/download', formData, {
+            const downloadResponse = await axios.post(imagePath, formData, {
               responseType: 'blob' // Set response type to blob
             });
             

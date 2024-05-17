@@ -103,7 +103,8 @@
     },
     async submitTopicForm() {
       this.submitLoading = true;
-
+      const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+            const topicsUrl = baseUrl + 'api/topics';
       // Prepare the topic data with user-filled fields
       const topicData = {
         courseId: this.courseid,
@@ -114,7 +115,7 @@
       console.log('Topic Data:', topicData);
       try {
         // Example Axios POST request to add topic
-        const response = await axios.post("https://fnbackend.finvedic.com/api/topics", topicData);
+        const response = await axios.post(topicsUrl, topicData);
 
         if (response.status === 200) {
           // Topic created successfully
