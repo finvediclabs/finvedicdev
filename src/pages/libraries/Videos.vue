@@ -343,11 +343,13 @@ export default {
       this.VideosList.forEach(video => {
         // Fetch imagePath and send it to download URL for each book
         if (video.videoCoverPath) {
-          const imagePathWithoutPrefix = video.videoCoverPath.replace('https://fnbackendprod.finvedic.com/fs/download/', '');
-          const formData = new FormData();
-          formData.append('filename', imagePathWithoutPrefix);
           const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
           const getImagesUrl = baseUrl + 'fs/download';
+          const removeImagePath = baseUrl +'fs/download/'
+          const imagePathWithoutPrefix = video.videoCoverPath.replace(removeImagePath, '');
+          const formData = new FormData();
+          formData.append('filename', imagePathWithoutPrefix);
+        
           axios.post(getImagesUrl, formData, { responseType: 'blob' })
             .then(downloadResponse => {
               // Handle download success, e.g., open or save the downloaded file
@@ -399,10 +401,12 @@ export default {
                 // Fetch imagePath and send it to download URL
         this.chapters.forEach(chapter => {
           if (chapter.videoCoverPath) {
-            const imagePathWithoutPrefix = chapter.videoCoverPath.replace('https://fnbackendprod.finvedic.com/fs/download/', '');
-            const formData = new FormData();
             const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
           const getImagesUrl = baseUrl + 'fs/download';
+            const removeImagePath = baseUrl +'fs/download/'
+            const imagePathWithoutPrefix = chapter.videoCoverPath.replace(removeImagePath, '');
+            const formData = new FormData();
+         
             formData.append('filename', imagePathWithoutPrefix);
             
             axios.post(getImagesUrl, formData, { responseType: 'blob' })

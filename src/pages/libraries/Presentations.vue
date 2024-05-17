@@ -242,12 +242,13 @@ export default {
       this.presentations.forEach(presentation => {
         // Fetch videoCoverPath and send it to download URL for each presentation
         if (presentation.videoCoverPath) {
-          
-          const videoCoverPathWithoutPrefix = presentation.videoCoverPath.replace('https://fnbackendprod.finvedic.com/fs/download/', '');
-          const formData = new FormData();
-          formData.append('filename', videoCoverPathWithoutPrefix);
           const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
           const getImagesUrl = baseUrl + 'fs/download';
+          const removeImagePath = baseUrl +'fs/download/'
+          const videoCoverPathWithoutPrefix = presentation.videoCoverPath.replace(removeImagePath, '');
+          const formData = new FormData();
+          formData.append('filename', videoCoverPathWithoutPrefix);
+        
           axios.post(getImagesUrl, formData, { responseType: 'blob' })
             .then(downloadResponse => {
               // Handle download success, e.g., open or save the downloaded file
@@ -304,11 +305,13 @@ getChaptersData() {
         // Fetch presentationCoverPath and send it to download URL
         this.chapters.forEach(chapter => {
           if (chapter.presentationCoverPath) {
-            const imagePathWithoutPrefix = chapter.presentationCoverPath.replace('https://fnbackendprod.finvedic.com/fs/download/', '');
-            const formData = new FormData();
-            formData.append('filename', imagePathWithoutPrefix);
             const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
           const getImagesUrl = baseUrl + 'fs/download';
+            const removeImagePath = baseUrl +'fs/download/'
+            const imagePathWithoutPrefix = chapter.presentationCoverPath.replace(removeImagePath, '');
+            const formData = new FormData();
+            formData.append('filename', imagePathWithoutPrefix);
+          
             axios.post(getImagesUrl, formData, { responseType: 'blob' })
               .then(downloadResponse => {
                 const blob = new Blob([downloadResponse.data]);

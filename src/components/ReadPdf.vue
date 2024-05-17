@@ -67,9 +67,11 @@ export default {
     async sendPostRequest() {
     try {
       // Remove the prefix from this.pdfPath
-      const filePathWithoutPrefix = this.pdfPath.replace('https://fnbackendprod.finvedic.com/fs/download/', '');
       const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
           const getPdfUrl = baseUrl + 'fs/download';
+          const removeImagePath = baseUrl +'fs/download/'
+      const filePathWithoutPrefix = this.pdfPath.replace(removeImagePath, '');
+     
       const formData = new FormData();
       formData.append('filename', filePathWithoutPrefix); // Use the modified filePathWithoutPrefix
 

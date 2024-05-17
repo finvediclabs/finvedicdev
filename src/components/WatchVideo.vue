@@ -35,12 +35,13 @@ export default {
   },
   methods: {
     formatUrlAndSend() {
-      const baseUrl = 'https://fnbackendprod.finvedic.com/fs/download/';
-      this.formattedUrl = this.decryptedString.replace(baseUrl, ''); 
+      const baseUrls = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+      const basedUrl = baseUrls + 'fs/download/';
+      this.formattedUrl = this.decryptedString.replace(basedUrl, ''); 
       // console.log('Formatted URL:', this.formattedUrl); // Console log for formatted URL
 
       const formData = new FormData();
-      const baseUrls = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+      
           const getVideoUrl = baseUrls + 'fs/download';
       formData.append('filename', this.formattedUrl);
 

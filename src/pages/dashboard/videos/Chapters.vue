@@ -69,6 +69,9 @@ export default {
     },
     async getChaptersData() {
   if (this.videoId) {
+    const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+          const getImagesUrl = baseUrl + 'fs/download';
+          const removeImagePath = baseUrl +'fs/download/'
     this.loading = true;
     try {
       const formData = new FormData();
@@ -80,7 +83,7 @@ export default {
         this.chaptersList = response.data.data.map((item, index) => ({
           ...item,
           index: index + 1,
-          imageDownload: item.videoCoverPath.replace('https://fnbackendprod.finvedic.com/fs/download/', ''),
+          imageDownload: item.videoCoverPath.replace(removeImagePath, ''),
         }));
 
         // Log the imageDownload of each item in chaptersList
@@ -91,8 +94,7 @@ export default {
           if (image) {
             // Create form data
             const formData = new FormData();
-            const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-          const getImagesUrl = baseUrl + 'fs/download';
+            
             formData.append('filename', image);
 
             // Send form data to http://localhost:8083/fs/download

@@ -60,12 +60,15 @@ export default {
     },
     getVideosData() {
   if (!this.loading) {
+    const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+          const getImagesUrl = baseUrl + 'fs/download';
+          const removeImagePath = baseUrl +'fs/download/'
     this.loading = true;
     this.$api.get(urls.videoDataUrl)
       .then(async response => {
         this.loading = false;
         if (response.data.success) {
-          this.videosList = response.data.data.map((item, index) => ({ ...item, index: index + 1, imageDownload: item.videoCoverPath.replace('https://fnbackendprod.finvedic.com/fs/download/', '') }));
+          this.videosList = response.data.data.map((item, index) => ({ ...item, index: index + 1, imageDownload: item.videoCoverPath.replace(removeImagePath, '') }));
           
           // Log the imageDownload of each item in videosList
           this.videosList.forEach(async item => {
@@ -78,8 +81,7 @@ export default {
               formData.append('filename', image);
               
               // Send form data to http://localhost:8083/fs/download
-              const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-          const getImagesUrl = baseUrl + 'fs/download';
+             
               const downloadResponse = await axios.post(getImagesUrl, formData, {
                 responseType: 'blob' // Set response type to blob
               });

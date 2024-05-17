@@ -64,8 +64,11 @@ export default {
       .then(async response => {
         this.loading = false;
         if (response.data.success) {
+          const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+          const removeImagePath = baseUrl +'fs/download/'
+
           // this.presentations = response.data.data.map((item, index) => ({ ...item, index: index + 1,imageDownload: item.videoCoverPath.replace('http://localhost:8083/fs/download/', '') }) }));
-          this.presentations  = response.data.data.map((item, index) => ({ ...item, index: index + 1, imageDownload: item.videoCoverPath.replace('https://fnbackendprod.finvedic.com/fs/download/', '') }));
+          this.presentations  = response.data.data.map((item, index) => ({ ...item, index: index + 1, imageDownload: item.videoCoverPath.replace(removeImagePath, '') }));
           // Log the imageDownload of each item in presentations
           this.presentations.forEach(async item => {
             const image = item.imageDownload;
@@ -75,7 +78,7 @@ export default {
               // Create form data
               const formData = new FormData();
               formData.append('filename', image);
-              const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+             
           const getImagesUrl = baseUrl + 'fs/download';
               // Send form data to http://localhost:8083/fs/download
               const downloadResponse = await axios.post(getImagesUrl, formData, {
