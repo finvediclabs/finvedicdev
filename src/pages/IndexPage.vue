@@ -23,7 +23,7 @@ export default {
         if (this.userType == 1) {
           this.$router.push({ path: '/admin' });
         } else {
-          this.$router.push({ path: '/labs' });
+          this.$router.push({ path: '/library/books' });
         }
       } else {
         this.$router.push('/login')
