@@ -458,13 +458,13 @@ export default {
   background-color: #0A004B;
 }
 .AI_Setup_BackgroundStyle{
-  background-image: url('/src/assets/AI_setup_bg.png');
+  background-image: url('/src/assets/ai_set_bg.jpg');
   background-repeat: no-repeat;
   background-size: 100% 100%;
   margin-top:3%;
 }
 .Users_BackgroundStyle{
-  background-image: url('/src/assets/AI_setup_bg.png');
+  background-image: url('/src/assets/ai_set_bg.jpg');
   background-repeat: no-repeat;
   background-size: 100% 100%;
   margin-top:3%;
