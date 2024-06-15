@@ -2,8 +2,8 @@
   <fin-portlet>
     <fin-portlet-header>
     </fin-portlet-header>
-    <div class="row">
-      <div class="col-3">
+    <div class="row totalView">
+      <div class="col-3 topView">
         <fin-portlet-item>
       <div class="row q-lg">
         <q-btn-group style="width: 100%; margin: 0 auto; display: flex; flex-direction: column;">
@@ -31,10 +31,10 @@
     </fin-portlet-item>
       </div>
     
-    <div class="col-9 right_side">
+    <div class="col-9 right_side topView">
       <fin-portlet-item class="q-pb-xl" v-if="presentations.length">
       <carousel-3d :totalSlides="presentations.length" :count="presentations.length" @beforeSlideChange="getCurrentSlide"
-        :controls-visible="true" :width="330" height="240">
+        :controls-visible="true" :width="responsiveWidth" :height="responsiveHeight">
         <slide v-for="(slide, i) in presentations" :key="i" :index="i" style="max-height:80% ">
           <q-img :src="slide.videoCoverPath ?? 'dummy'" class="fit" :alt="slide.heading">
             <template v-slot:error>
@@ -64,10 +64,10 @@
             </p>
       </div> 
     </div>
-    <div class="col-6"></div>
-    <div class="col-6">
+    
+    <div class="col-6" style="position: sticky;top: 10%;align-self: flex-start">
       <q-carousel swipeable animated v-model="slide" ref="carousel" infinite class="full-height"
-                style="padding-top: 50px;">
+                style="padding-top: 20px;">
                 
                 <!-- <template v-slot:control>
                   <q-carousel-control position="top-left" :offset="[20, 8]" class="text-black">
@@ -80,7 +80,7 @@
                       @click="$refs.carousel.next()" />
                   </q-carousel-control>
                 </template> -->
-                <template v-if="chaptersLoader">
+                <template v-if="chaptersLoader|| !presentations.length">
                   <q-carousel-slide :name="0" class="rounded-borders text-italic">
                     <div class="row full-height">
                       <div class="col-6 q-px-sm fin-br-8" style="height:100px" v-for="item in 4">
@@ -102,7 +102,7 @@
                         </div>
                         <div class="col-8">
   <div class="row">
-    <div class="col-6 col-lg-3 mb-4" v-for="item in slider">
+    <div class="col-6 col-lg-6 mb-4" v-for="item in slider">
       <div class="fin-br-8" style="height: 100%;padding-bottom: 10px;padding-top: 10px;width: 90%;margin-left: auto;margin-right: auto">
         <q-img class="full-height fin-br-8 shadow-2 cursor-pointer" :src="item.presentationCoverPath ?? 'dummy'" @click="visitChapter(item)">
           <template v-slot:error>
@@ -182,8 +182,17 @@ export default {
       allSlides: [],
       chaptersLoader: false,
       loading: false,
+      responsiveHeight: '40vh',
+      responsiveWidth: '80vw',
       slideWidth: window.innerWidth < 470 ? window.innerWidth - 30 : 450,
     }
+  },
+  created() {
+    this.updateCarouselDimensions();
+    window.addEventListener('resize', this.updateCarouselDimensions);
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.updateCarouselDimensions);
   },
   watch: {
     selectedSlide() {
@@ -217,6 +226,19 @@ export default {
           { icon: 'close', color: 'white', handler: () => { } }
         ]
       });
+    },
+    updateCarouselDimensions() {
+      const screenWidth = window.innerWidth;
+      if (screenWidth < 600) {
+        this.responsiveHeight = '30vh'; // Height for small screens
+        this.responsiveWidth = '90vw'; // Width for small screens
+      } else if (screenWidth >= 600 && screenWidth < 1367) {
+        this.responsiveHeight = '220vh'; // Height for medium screens
+        this.responsiveWidth = '340'; // Width for medium screens
+      } else {
+        this.responsiveHeight = '320vh'; // Height for large screens
+        this.responsiveWidth = '480'; // Width for large screens
+      }
     },
     getCurrentSlide(index) {
       this.selectedSlide = this.presentations[index];
@@ -430,13 +452,17 @@ getChaptersData() {
 .bottom_div1{
   position:relative; 
   background-color: #ffff !important;
-  margin-top: 4vh;
+  /* margin-top: 4vh; */
+  margin-top: 2vh;
+  display: flex;
+  align-items: end;
+  justify-content: center;
   /* border: 2px solid grey; */
 }
 .single_video{
-  /* margin-top: -16vh; */
+  margin-top: -14vh;
   /* border:2px solid red; */
-  position: absolute;
+  /* position: absolute; */
   top: -12vh;
 }
 .heading{
@@ -456,6 +482,17 @@ getChaptersData() {
 .padding_zero{
     padding: 5% 0px;
   }
-  
+  .totalView{
+height: 50vh;
+}
+@media screen and (min-width: 1920px) {
+    /* Your CSS styles for this screen width range */
+    .totalView{
+height: 54vh;
+}
+.topView{
+  padding-top: 4%;
+}
+}
 </style>
 ./Urls

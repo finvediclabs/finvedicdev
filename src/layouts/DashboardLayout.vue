@@ -7,7 +7,7 @@
           <q-btn flat @click="toggleFunction" color="white" round dense icon="menu" v-if="showDrawer"/>
           <q-icon name="arrow_back" style="font-weight: bold;" class="cursor-pointer" @click="$router.go(-1)" v-if="!showDrawer" />
           </q-item-section>
-          <q-item-section class="text-h5 text-weight-bolder">
+          <q-item-section class="text-h5 text-weight-bolder logo">
             <svg xmlns="http://www.w3.org/2000/svg" :width="widthSVG" height="30" viewBox="0 0 197 30" fill="none">
               <path d="M197 25.0071H174.011V0.961853H185.507L185.532 13.5971H197V25.0071Z" fill="#ffff" />
               <path
@@ -442,9 +442,8 @@ export default {
 .booksBackgroundStyle {
   background-image: url('/src/assets/BG_New.png');
   background-repeat: no-repeat;
-  background-size: 100vw 64vh;
-  /* background-color: #f0f0f0; */
-  /* Add any other background styles */
+  background-size: 100vw 66vh;
+ 
 }
 .Lib_CL_Room_BackgroundStyle{
   background-image: url('/src/assets/BG_New.png');
@@ -520,5 +519,18 @@ export default {
 
 .q-item__section--avatar {
   min-width: inherit !important;
+}
+@media only screen and (max-width:576px){
+  .logo{
+    display: none !important;
+  }
+}
+@media screen and (min-width: 1920px){
+  .booksBackgroundStyle {
+  background-image: url('/src/assets/BG_New.png');
+  background-repeat: no-repeat;
+  background-size: 100vw 60%;
+ 
+}
 }
 </style>

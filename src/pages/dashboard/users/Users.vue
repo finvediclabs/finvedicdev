@@ -13,7 +13,7 @@
         <!-- <q-btn class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder" no-caps @click="createUser()">
 </q-btn> -->
 <q-btn @click="createUser()" >
-  <img src="/src/assets/User_icon.png" alt="User Icon" style="width: 32px; height: 32px;" />
+  <q-img :src="usersIcon" alt="User Icon" style="width: 32px; height: 32px;" />
 </q-btn>
 
       </fin-portlet-item>
@@ -80,7 +80,8 @@ import { urls } from "src/pages/dashboard/Urls";
 import moment from "moment"
 import { useProfileStore } from "src/stores/profile";
 import { storeToRefs } from "pinia";
-import { useRolesStore } from "src/stores/roles"
+import { useRolesStore } from "src/stores/roles";
+import usersIcon from "../../../../src/assets/User_icon.png"
 
 export default {
   setup() {
@@ -105,6 +106,7 @@ export default {
       isActiveOptions: ['Y', 'N'],
       deleteUrl: urls.usersUrl,
       tab: 'allUsers',
+      usersIcon: usersIcon,
       roleSearch: '',
       roleOptions: ['trine', 'client'],
       roles_new: ['admin', 'student' , 'faculty', ''],
