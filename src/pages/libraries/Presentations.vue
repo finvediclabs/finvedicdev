@@ -235,6 +235,9 @@ export default {
       } else if (screenWidth >= 600 && screenWidth < 1367) {
         this.responsiveHeight = '220vh'; // Height for medium screens
         this.responsiveWidth = '340'; // Width for medium screens
+      } else if (screenWidth >=1400 && screenWidth < 1602) {
+        this.responsiveHeight = '300vh'; // Height for medium screens
+        this.responsiveWidth = '400'; // Width for medium screens
       } else {
         this.responsiveHeight = '320vh'; // Height for large screens
         this.responsiveWidth = '480'; // Width for large screens
@@ -489,6 +492,14 @@ height: 50vh;
     /* Your CSS styles for this screen width range */
     .totalView{
 height: 54vh;
+}
+.topView{
+  padding-top: 4%;
+}
+}
+@media screen and (min-width: 1400px) and (max-width: 1602px) {
+  .totalView{
+    height: 52vh;
 }
 .topView{
   padding-top: 4%;

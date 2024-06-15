@@ -203,7 +203,10 @@ export default {
       } else if (screenWidth >= 600 && screenWidth < 1367) {
         this.responsiveHeight = '300'; // Height for medium screens
         this.responsiveWidth = '170'; // Width for medium screens
-      } else {
+      } else if (screenWidth >=1400 && screenWidth < 1602) {
+        this.responsiveHeight = '400'; // Height for medium screens
+        this.responsiveWidth = '230'; // Width for medium screens
+      }  else {
         this.responsiveHeight = '520'; // Height for large screens
         this.responsiveWidth = '280'; // Width for large screens
       }
@@ -571,5 +574,13 @@ flex-direction: column;
   color: #5479F7;
   
 }
+}
+@media screen and (min-width: 1400px) and (max-width: 1602px) {
+  .single_book{
+  margin-top: -30%;
+  display: flex; justify-content: center;
+flex-direction: column;  
+  /* border:2px solid green */
+} /* CSS rules here apply when the screen width is between 1920px and 2560px */
 }
 </style>
