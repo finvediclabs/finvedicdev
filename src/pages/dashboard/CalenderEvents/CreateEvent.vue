@@ -5,8 +5,10 @@
     </fin-portlet-header>
     <fin-portlet-item class="justify-center row">
       <div class="row" style="max-width: 1000px">
-        <div class="col-12 col-md-5 q-px-sm">
-          <label class="form-label">Date</label>
+        <div class="col-12 col-md-5 q-px-sm radio_1">
+          <label v-if="selectedRadio !== 'other'" class="form-label">Date</label>
+          <label v-if="selectedRadio == 'other'" class="form-label">Start Date</label>
+          
           <date-picker v-model="date" auto-apply :enable-time-picker="false" :format="format" placeholder="Select Date"
             class="full-width rounded-borders datePicker eventClass" :clearable="false" :inline="{ input: true }">
             <template #input-icon>
@@ -17,6 +19,23 @@
             <span v-if="errors.date && !date">{{ errors.date }}</span>
           </div>
         </div>
+        <div class="col-12 col-md-5 q-px-sm form-label" v-if="selectedRadio !== 'other'">
+            
+            <input type="radio" v-model="selectedRadio" value="other" > For Multiple Days
+          </div>
+        <div v-if="selectedRadio === 'other'" class="col-12 col-md-5 q-px-sm radio_2">
+          <label class="form-label">End Date</label>
+          <date-picker v-model="endDate" auto-apply :enable-time-picker="false" :format="format" placeholder="Select End Date"
+            class="full-width rounded-borders datePicker eventClass" :clearable="false" :inline="{ input: true }">
+            <template #input-icon>
+              <q-icon name="calendar_month" class="q-my-auto q-pb-lg q-px-sm" size="sm" />
+            </template>
+          </date-picker>
+          <div class="errorMsgBox">
+            <span v-if="errors.endDate && !endDate">{{ errors.endDate }}</span>
+          </div>
+        </div>
+
         <div class="col-1"></div>
         <div class="col-12 col-lg-6">
           <div class="row">
@@ -47,28 +66,18 @@
             <div class="col-12 q-px-sm">
               <label class="form-label">Course</label>
               <q-select v-model="course" class="q-px-md rounded-borders inputBackground" borderless
-  :options="courses" option-label="courseDesc" option-value="courseid"
-  @select="onCourseSelect" />
-
-              
+                :options="courses" option-label="courseDesc" option-value="courseid"
+                @select="onCourseSelect" />
               <div class="errorMsgBox">
                 <span v-if="errors.course && !course">{{ errors.course }}</span>
               </div>
             </div>
             <div class="col-12 q-px-sm">
               <label class="form-label">Topic</label>
-              
-             <q-select
-    v-model="filteredTopic"
-    class="q-px-md rounded-borders inputBackground"
-    borderless
-    :options="filteredTopics"
-    option-label="topicName"
-    option-value="topicId"
-    @select="selectTopic(filteredTopic)"
-  />
-              
-                <div class="errorMsgBox">
+              <q-select v-model="filteredTopic" class="q-px-md rounded-borders inputBackground" borderless
+                :options="filteredTopics" option-label="topicName" option-value="topicId"
+                @select="selectTopic(filteredTopic)" />
+              <div class="errorMsgBox">
                 <span v-if="errors.topic && !topic">{{ errors.topic }}</span>
               </div>
             </div> 
@@ -80,8 +89,6 @@
                 <span v-if="errors.batch && !topic">{{ errors.batch }}</span>
               </div>
             </div> 
-            
-            
             <div class="col-12 q-px-sm q-pt-xl justify-end row">
               <q-space />
               <q-btn class="shadow-5 q-px-md rounded-borders sub-btn q-px-xl text-white" label="Update" no-caps
@@ -107,23 +114,19 @@ import { urls } from "src/pages/dashboard/Urls";
 
 import { useProfileStore } from "src/stores/profile";
 import { storeToRefs } from "pinia";
-//import { useCategoryStore } from "src/stores/Categories";
 import { useCouseStore} from "src/stores/courses";
+
 export default {
   setup() {
     const profileStore = useProfileStore();
     const { profile, user } = storeToRefs(profileStore);
-   // const categoryStore = useCategoryStore();
     const couseStore = useCouseStore();
     const { selectCourse, selectTopic } = couseStore;
     
-    
     const {courses, topics, batches, selectedCourse, selectedTopic} = storeToRefs(couseStore);
-    // const {selectCourse,selectedTopic} = couseStore;
     couseStore.fetchCourses();
     couseStore.fetchTopics();
     
-   // const { categories, subCategories } = storeToRefs(categoryStore);
     return {
       user,
       profile,
@@ -134,8 +137,6 @@ export default {
       selectTopic,
       selectedCourse,
       selectedTopic
-    //  categories,
-    //  subCategories
     }
   },
   components: {
@@ -149,6 +150,7 @@ export default {
     return {
       deleteUrl: urls.getEvents,
       date: '',
+      endDate: '',
       startTime: '',
       endTime: '',
       course: '',
@@ -157,11 +159,12 @@ export default {
       title: '',
       link: '',
       errors: {},
-      editedEvent: {}
+      editedEvent: {},
+      selectedRadio: '', // To store the selected radio option
+      additionalInput: '' // Example additional input
     }
   },
   computed: {
-    
     batchOptions() {
       var batches = [];
       this.batches.forEach(item => {
@@ -182,6 +185,7 @@ export default {
       let startTime = editedEvent.start.split(":");
       let endTime = editedEvent.end.split(":");
       this.date = editedEvent.date;
+      this.endDate = editedEvent.endDate;
       this.startTime = { hours: startTime[0], minutes: startTime[1] };
       this.endTime = { hours: endTime[0], minutes: endTime[1] };
       this.course = editedEvent.course;
@@ -191,7 +195,6 @@ export default {
       this.link = editedEvent.link;
       this.editedEvent = editedEvent;
     }
-    
   },
   methods: {
     showMsg(message, type) {
@@ -205,8 +208,7 @@ export default {
       });
     },
     onCourseSelect(course) {
-      this.course = course; // Update the selected course
-      // Optionally, you can perform additional actions when the course is selected
+      this.course = course;
       this.fetchTopicsByCourse(course.courseid);
     },
     format(date) {
@@ -217,58 +219,64 @@ export default {
     },
     validateForm() {
       if (this.date && this.startTime && this.endTime && this.course) {
-        this.editedEvent?.id ? this.updateEvent() : this.createEvent();
+        this.editedEvent?.id ? this.updateEvent() : this.createEvents();
       } else {
         this.errors = {
           date: "Date is required",
           startTime: "Start Time is required",
           endTime: "End Time is required",
           course: "Course is required",
-       
         }
       }
     },
-    
-    createEvent() {
-      var request = {
-        accountId: null,
-        course: this.course.courseDesc,
-        topic:this.filteredTopic.topicName,
-        batch:this.batch,
-        title: this.course.courseDesc,
-        createdBy: this.user.name,
-        lastUpdatedBy: this.user.name,
-        date: moment(this.date).format('YYYY-MM-DD'),
-        start: `${this.getTwoDigits(this.startTime.hours)}:${this.getTwoDigits(this.startTime.minutes)}`,
-        end: `${this.getTwoDigits(this.endTime.hours)}:${this.getTwoDigits(this.endTime.minutes)}`,
-        link: 'https://meet.google.com/hvz-zusp-jrv',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deletedAt: null,
-      }
-      console.log('Create Event Request:', request); 
-      this.$api.post(urls.getEvents, request).then(response => {
-        this.loading = false;
-        if (response.data.success) {
-          this.showMsg(response.data?.message || 'Event Created Successfully', 'positive');
-          this.clearData();
-          this.$router.go(-1);
-        } else {
-          this.showMsg(response.data?.message, 'negative');
-        }
-      }).catch(error => {
-        this.loading = false;
-        var message = error.response?.data.message || error.response?.data.message || 'Something went wrong!';
-        this.showMsg(message || error.message, 'negative');
-      });
-    },
+    async createEvents() {
+      const startDate = moment(this.date);
+      const endDate = this.endDate ? moment(this.endDate) : moment(this.date); // Use startDate if endDate is not provided
+      const diffDays = endDate.diff(startDate, 'days');
 
-    updateEvent() {
+      for (let i = 0; i <= diffDays; i++) {
+        const eventDate = moment(startDate).add(i, 'days');
+        var request = {
+          accountId: null,
+          course: this.course.courseDesc,
+          topic: this.filteredTopic.topicName,
+          batch: this.batch,
+          title: this.course.courseDesc,
+          createdBy: this.user.name,
+          lastUpdatedBy: this.user.name,
+          date: eventDate.format('YYYY-MM-DD'),
+          start: `${this.getTwoDigits(this.startTime.hours)}:${this.getTwoDigits(this.startTime.minutes)}`,
+          end: `${this.getTwoDigits(this.endTime.hours)}:${this.getTwoDigits(this.endTime.minutes)}`,
+          link: 'https://meet.google.com/hvz-zusp-jrv',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          deletedAt: null,
+        }
+        
+        try {
+          console.log('Create Event Request:', request);
+          let response = await this.$api.post(urls.getEvents, request);
+          if (response.data.success) {
+            this.showMsg(response.data?.message || 'Event Created Successfully', 'positive');
+          } else {
+            this.showMsg(response.data?.message, 'negative');
+          }
+        } catch (error) {
+          var message = error.response?.data.message || error.response?.data.message || 'Something went wrong!';
+          this.showMsg(message || error.message, 'negative');
+        }
+      }
+      this.clearData();
+      this.$router.go(-1);
+    },
+   updateEvent() {
       var request = {
         id: this.editedEvent.id,
         accountId: null,
-        course: this.course,
+          topic: this.filteredTopic.topicName,
+        course: this.course.courseDesc,
         title: this.title,
+        batch: this.batch,
         createdBy: this.editedEvent.createdBy,
         lastUpdatedBy: this.user.name,
         date: moment(this.date).format('YYYY-MM-DD'),
@@ -295,7 +303,6 @@ export default {
         this.showMsg(message || error.message, 'negative');
       });
     },
-
     getTwoDigits(myNumber) {
       return myNumber.toLocaleString('en-US', {
         minimumIntegerDigits: 2,
@@ -307,6 +314,7 @@ export default {
     },
     clearData() {
       this.date = "";
+      this.endDate = "";
       this.startTime = "";
       this.endTime = "";
       this.course = "";
@@ -316,6 +324,7 @@ export default {
   }
 }
 </script>
+
 <style>
 .eventClass .dp__input_focus {
   padding-top: 15px;
