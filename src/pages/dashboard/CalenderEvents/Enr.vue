@@ -29,7 +29,7 @@
           label="Student"
           :options="userOptions"
           option-value="id" 
-          option-label="name"
+          option-label="displayname"
           @input="logSelectedOption"
         />
         <q-input outlined v-model="enrollmentData.enrollmentDateStr" label="Enrollment Date (MM/DD/YYYY)" />
@@ -138,7 +138,8 @@ export default {
         console.log('User ID:', user.id);
         return {
           id: user.id,
-          name: user.name,
+          displayname: user.name + '-' + user.email,
+          name: user.name
         };
       });
         } else {
