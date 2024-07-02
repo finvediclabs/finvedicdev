@@ -20,7 +20,7 @@ export default {
   methods: {
     verifyToken() {
       if (this.token) {
-        if (this.userType == 1) {
+        if (this.userType == 'Admin') {
           this.$router.push({ path: '/admin' });
         } else {
           this.$router.push({ path: '/library/books' });

@@ -196,6 +196,7 @@ export default {
     const { setUserType, setSessionToken } = session;
     const profileStore = useProfileStore();
     const { user } = storeToRefs(profileStore);
+  
     return {
       token,
       userType,
@@ -236,7 +237,7 @@ export default {
       
 
       adminAccess: ["admin", "labs",  "library", "reports"],
-      studentsAccess: [ "admin","labs", "library", "reports"],
+      studentsAccess: [ "labs", "library"],
       facultyAccess: ["admin","labs", "library", "reports"],
     }
   },
@@ -251,10 +252,13 @@ export default {
     // },
     widthSVG() { return window.innerWidth > 600 ? 197 : 150 },
     modules() {
+      if (this.userType == 'Student') {
+       this.$router.push({ path: '/library/books' });
+    }
       var userAccess = [];
-      if(this.user.owner == 'admin') {
+      if(this.userType == 'Admin') {
         userAccess = this.adminAccess;
-      } else if(this.user.owner == 'faculty' ) {
+      } else if(this.userType == 'Faculty' ) {
         userAccess = this.facultyAccess;
       } else {
         userAccess = this.studentsAccess;
@@ -269,13 +273,11 @@ export default {
     }
   },
   mounted() {
-    if (!this.token) {
+    if (!this.token) {  
       this.$router.push('/');
     }
 
-    if(this.userType) {
-
-    }
+   
     this.getUserData();
 
     this.selectedModule = {
