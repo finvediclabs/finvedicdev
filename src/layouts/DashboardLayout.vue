@@ -241,7 +241,7 @@ export default {
       facultyAccess: ["admin","labs", "library", "reports"],
       defaultPath: "/library/books",
       userAccess: [ "labs", "library"],
-      allAccess:["watch-video","watch-pdf","watch-ppt","profile"]
+      allAccess:["watch-video","read-pdf","watch-ppt","profile"]
     }
    
   },
