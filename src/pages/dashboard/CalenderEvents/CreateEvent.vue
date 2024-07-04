@@ -21,7 +21,7 @@
         </div>
         <div class="col-12 col-md-5 q-px-sm form-label" v-if="selectedRadio !== 'other'">
             
-            <input type="radio" v-model="selectedRadio" value="other" > For Multiple Days
+            <input type="radio" v-model="selectedRadio" value="other" > Repeat
           </div>
         <div v-if="selectedRadio === 'other'" class="col-12 col-md-5 q-px-sm radio_2">
           <label class="form-label">End Date</label>

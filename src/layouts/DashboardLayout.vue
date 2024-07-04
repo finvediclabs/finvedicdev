@@ -240,7 +240,8 @@ export default {
       studentsAccess: [ "labs", "library"],
       facultyAccess: ["admin","labs", "library", "reports"],
       defaultPath: "/library/books",
-      userAccess: [ "labs", "library"]
+      userAccess: [ "labs", "library"],
+      allAccess:["watch-video","watch-pdf","watch-ppt","profile"]
     }
    
   },
@@ -264,6 +265,7 @@ export default {
         userAccess = this.studentsAccess;
       }
       this.userAccess = userAccess;
+      this.userAccess.push(...this.allAccess);
       return this.modulesList.filter(mode => userAccess.includes(mode.value) );
       //return  this.modulesList ;
     }
