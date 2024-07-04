@@ -77,6 +77,7 @@ import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 import { urls } from "src/pages/dashboard/Urls";
+import { useSessionStore } from "src/stores/session";
 import moment from "moment"
 import { useProfileStore } from "src/stores/profile";
 import { storeToRefs } from "pinia";
@@ -90,9 +91,13 @@ export default {
     const { profile } = storeToRefs(profileStore);
     const rolesStore = useRolesStore();
     const { roles } = storeToRefs(rolesStore);
+    
+    const session = useSessionStore();
+    const { userType } = storeToRefs(session);
     return {
       profile,
-      roles
+      roles,
+      userType
     }
   },
   components: {
@@ -140,6 +145,7 @@ export default {
     }
   },
   mounted() {
+   
     this.getUsersData();
     const labels = document.querySelectorAll('.q-field__label');
 

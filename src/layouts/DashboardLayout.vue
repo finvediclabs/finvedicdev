@@ -239,7 +239,10 @@ export default {
       adminAccess: ["admin", "labs",  "library", "reports"],
       studentsAccess: [ "labs", "library"],
       facultyAccess: ["admin","labs", "library", "reports"],
+      defaultPath: "/library/books",
+      userAccess: [ "labs", "library"]
     }
+   
   },
   computed: {
     // backgroundStyle() {
@@ -252,9 +255,6 @@ export default {
     // },
     widthSVG() { return window.innerWidth > 600 ? 197 : 150 },
     modules() {
-      if (this.userType == 'Student') {
-       this.$router.push({ path: '/library/books' });
-    }
       var userAccess = [];
       if(this.userType == 'Admin') {
         userAccess = this.adminAccess;
@@ -263,7 +263,9 @@ export default {
       } else {
         userAccess = this.studentsAccess;
       }
+      this.userAccess = userAccess;
       return this.modulesList.filter(mode => userAccess.includes(mode.value) );
+      //return  this.modulesList ;
     }
   },
   props: {
@@ -276,16 +278,15 @@ export default {
     if (!this.token) {  
       this.$router.push('/');
     }
-
    
     this.getUserData();
-
     this.selectedModule = {
       module: this.$route.meta.module,
       item: this.$route.meta.item
     }
     this.updateBackgroundStyle();
     this.knowModuleFunction();
+    this.checkAccess();
   },
   watch: {
     token() {
@@ -297,8 +298,19 @@ export default {
       this.getUserData();
     },
     '$route': 'updateBackgroundStyle',
+    $route (to, from){
+      this.checkAccess();
+    },
   },
   methods: {
+    checkAccess() {
+       let path = this.$route.path;
+       let access = this.userAccess.filter(value => path.startsWith("/"+value));
+       if( access && access.length == 0) {
+          this.$router.push({path:this.defaultPath});
+       }
+       
+    },
     updateBackgroundStyle() {
       // Check if the current route is '/library/books'
       if (this.$route.path === '/library/books') {
