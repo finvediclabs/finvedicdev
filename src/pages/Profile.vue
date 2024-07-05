@@ -6,6 +6,9 @@
         <q-btn label="Edit" no-caps class="text-white sub-btn fin-br-8 q-px-xl" @click="disableEdit = false"
           v-if="disableEdit" />
       </fin-portlet-item>
+      <fin-portlet-item>
+        <q-btn label="Reset Password" no-caps class="text-white sub-btn fin-br-8 q-px-xl" @click="showResetPasswordDialog" v-if="disableEdit" />
+      </fin-portlet-item>
     </fin-portlet-header>
     <fin-portlet-item class="q-py-xl">
       <div class="row justify-center ">
@@ -65,7 +68,7 @@
                 </div>
               </div>
 
-              <div class="q-pa-sm col-12 text-right" style="min-height:70px">
+              <div class="q-pa-sm col-12 text-right " style="min-height:70px">
                 <q-btn label="Cancel" no-caps color="red" class="fin-br-8" @click="cancelEdit()" size="md" v-if="!disableEdit" />
                 <q-btn color="primary" no-caps class="fin-br-8 q-ml-sm" size="md" style="min-width:150px" label="Update"
                   type="submit" :disable="loading" v-if="!disableEdit">
@@ -77,6 +80,26 @@
         </div>
       </div>
     </fin-portlet-item>
+     <!-- Reset Password Dialog -->
+     <q-dialog v-model="showResetPassword" class="custom-dialog">
+  <q-card class="custom-card">
+    <q-card-section>
+      <div class="text-h6">Reset Password</div>
+    </q-card-section>
+
+    <q-card-section>
+      <q-input class="shadow-3 q-px-md fin-br-8 q-ma-md" v-model="resetPasswordForm.oldPassword" type="password" label="Enter Old Password" />
+      <q-input class="shadow-3 q-px-md fin-br-8 q-ma-md" v-model="resetPasswordForm.newPassword" type="password" label="Enter New Password" />
+      <q-input class="shadow-3 q-px-md fin-br-8 q-ma-md" v-model="resetPasswordForm.confirmNewPassword" type="password" label="Confirm New Password" />
+    </q-card-section>
+
+    <q-card-actions align="right">
+      <q-btn flat label="Cancel" class="custom-button " v-close-popup />
+      <q-btn flat label="Submit" class="custom-button" @click="resetPassword" />
+    </q-card-actions>
+  </q-card>
+</q-dialog>
+
   </fin-portlet>
 </template>
 <script>
@@ -88,7 +111,7 @@ import profileImg from "src/assets/profile.png";
 import { urls } from "src/pages/dashboard/Urls";
 import { useProfileStore } from "src/stores/profile";
 import { storeToRefs } from "pinia";
-import { useRolesStore } from "src/stores/roles"
+import { useRolesStore } from "src/stores/roles";
 
 export default {
   name: 'profile',
@@ -108,13 +131,12 @@ export default {
       roles,
       user,
       setUserData
-    }
+    };
   },
   data() {
     return {
       profile: {},
       error: {},
-
       loading: false,
       disableEdit: true,
       profileData: {},
@@ -128,11 +150,17 @@ export default {
       options: [
         'Admin',
         'Faculty',
-        'Student'//
+        'Student',
       ],
       imageUrl: '',
       getUserUrl: '',
-    }
+      showResetPassword: false,
+      resetPasswordForm: {
+        oldPassword: '',
+        newPassword: '',
+        confirmNewPassword: '',
+      },
+    };
   },
   mounted() {
     this.getUserData();
@@ -162,7 +190,7 @@ export default {
             email: user.email,
             phoneNumber: user.phoneNumber,
             role: this.user.roles ? this.user.roles[0] : [],
-          }
+          };
           this.imageUrl = user.photoPath;
         } else {
           this.showMsg(response.data.message, 'negative');
@@ -170,8 +198,7 @@ export default {
       }).catch(error => {
         this.loading = false;
         this.showMsg(error.response?.data.message || error.message, 'negative');
-      })
-
+      });
     },
     verifyData() {
       var errorCount = 0;
@@ -185,9 +212,9 @@ export default {
         this.error = {
           name: "Name is required",
           email: "Email is required",
-          phoneNumber: "phone Number is required",
+          phoneNumber: "Phone Number is required",
           role: "Role is required",
-        }
+        };
       }
     },
     uploadImg() {
@@ -200,10 +227,9 @@ export default {
           this.updateProfile();
         }).catch(error => {
           this.showMsg(error.response?.data.message || error.message, 'negative');
-        })
+        });
       }
     },
-
     updateProfile() {
       var user = this.user;
       var request = {
@@ -216,14 +242,14 @@ export default {
       };
       this.$api.put(`api/users/${this.user.id}`, request).then(response => {
         if (response.data.success) {
-          this.cancelEdit()
+          this.cancelEdit();
         } else {
           this.showMsg(response.data.message, 'negative');
         }
       }).catch(error => {
         this.loading = false;
         this.showMsg(error.response?.data.message || error.message, 'negative');
-      })
+      });
     },
     cancelEdit() {
       this.getUserData();
@@ -236,10 +262,39 @@ export default {
         this.imageUrl = fileSrc;
       }
     },
-  },
+    showResetPasswordDialog() {
+      this.showResetPassword = true;
+    },
+    resetPassword() {
+        if (this.resetPasswordForm.newPassword !== this.resetPasswordForm.confirmNewPassword) {
+            this.showMsg("New passwords do not match", 'negative');
+            return;
+        }
 
-}
+        this.loading = true;
+        const request = {
+            userId: this.user.id,
+            oldPassword: this.resetPasswordForm.oldPassword,
+            newPassword: this.resetPasswordForm.newPassword,
+        };
+
+        this.$api.put('api/users/reset-password', request).then(response => {
+            this.loading = false;
+            if (response.data.success) {
+                this.showMsg("Your password is updated successfully", 'positive');
+                this.showResetPassword = false;
+            } else {
+                this.showMsg(response.data.message, 'negative');
+            }
+        }).catch(error => {
+            this.loading = false;
+            this.showMsg(error.response?.data.message || error.message, 'negative');
+        });
+    },
+  }
+};
 </script>
+
 <style>
 .hidden-input {
   opacity: 0;
@@ -255,5 +310,18 @@ export default {
   color: #5479F7;
   font-weight: bold;
   padding: 8px 16px;
+}
+.custom-dialog .q-card {
+  width: 500px;
+  max-width: 90vw; 
+}
+
+.custom-button {
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.custom-button:hover {
+  background-color: #5479F7; 
+  color: white; 
 }
 </style>
