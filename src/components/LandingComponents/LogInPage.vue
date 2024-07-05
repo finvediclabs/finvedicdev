@@ -116,6 +116,7 @@ export default {
           this.setUserType( user.roles?.length ? user.roles[0].name : 'Student' );
 
         }).catch(error => {
+          this.loading = false;
           let errorMessage = error.response?.data.message || error.message;
       if (errorMessage.includes('properties of undefined')) {
         errorMessage = "You are not authorized to login";
