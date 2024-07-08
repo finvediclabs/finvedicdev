@@ -55,6 +55,15 @@
                   <q-btn class="shadow-3 fin-br-8 q-px-md bg-grey-1 custom-btn" @click="incrementNoOfVMs" icon="add" />
                 </div>
               </div>
+
+              <div class="input-container" style="display: flex; align-items: center;padding-top: 4%;">
+                
+                <q-select v-model="username" class="shadow-3 fin-br-8 q-px-md bg-grey-1 custom-input" borderless
+  :options="usernameOptions" label="Select Username" option-label="label" option-value="value"
+  style="width: 100%" @input="selectUserNames" />
+                 
+              </div>
+
               <div class="errorMsgBox">
                 <span  v-if="!nos">{{ errors.nos }}</span>
               </div>
@@ -111,10 +120,13 @@ export default {
         { label: 'Name', key: 'name', align: 'start'},
         {label: 'Active' ,key: 'provisioningState', align: 'start'}
       ],
-      VMsList: []
+      VMsList: [],
+      usernameOptions: [] ,
+      username: "" ,
     }
   },
   mounted() {
+    this.fetchUsernames();
     this.getVMsData();
   },
   methods: {
@@ -152,12 +164,23 @@ export default {
     createVms() {
       if (!this.loader) {
         this.loader = true;
+        const userNameValue = this.username.value; 
+        const requestData = {
+      nos: this.nos,
+      version: this.version,
+      type: this.version, // Assuming 'type' is the same as 'version'
+      instance: this.instance,
+      region: this.region,
+      username: userNameValue
+    };
+    console.log('Request Data:', requestData);
         this.$api.post(urls.createVmsUrl, {
           nos: this.nos,
           version: this.version,
           type: this.version,
           instance: this.instance,
-          region: this.region
+          region: this.region,
+          userName:  userNameValue
         }).then(response => {
           this.loader = false;
           this.showMsg(response.data?.message || 'Start Spinning VM Successfully', 'positive');
@@ -167,6 +190,28 @@ export default {
         })
       }
     },
+    fetchUsernames() {
+      const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+          const requestVMsUrl = baseUrl + 'api/request-vms';
+  axios.get(requestVMsUrl)
+    .then(response => {
+      if (Array.isArray(response.data.data)) {
+        this.usernameOptions = response.data.data.map(user => ({
+          label: user.username, // Use username as the label
+          value: user.username // Use username as the value
+        }));
+      } else {
+        console.error('Error: Response data.data is not an array');
+        // Handle the case where response data.data is not an array, e.g., show an error message
+        this.usernameOptions = []; // Reset options or handle as per your application's requirements
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching usernames:', error);
+      // Handle fetch error, e.g., show an error message to the user
+      this.usernameOptions = []; // Reset options or handle as per your application's requirements
+    });
+},
     selectVersion(selectedVersion) {
       this.version = selectedVersion;
       this.errors.version = ''; // Clear error message when a version is selected
