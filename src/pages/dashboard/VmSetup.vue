@@ -171,7 +171,8 @@ export default {
       type: this.version, // Assuming 'type' is the same as 'version'
       instance: this.instance,
       region: this.region,
-      username: userNameValue
+      username: userNameValue,
+      
     };
     console.log('Request Data:', requestData);
         this.$api.post(urls.createVmsUrl, {
@@ -192,26 +193,30 @@ export default {
     },
     fetchUsernames() {
       const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-          const requestVMsUrl = baseUrl + 'api/request-vms';
-  axios.get(requestVMsUrl)
-    .then(response => {
-      if (Array.isArray(response.data.data)) {
-        this.usernameOptions = response.data.data.map(user => ({
-          label: user.username, // Use username as the label
-          value: user.username // Use username as the value
-        }));
-      } else {
-        console.error('Error: Response data.data is not an array');
-        // Handle the case where response data.data is not an array, e.g., show an error message
-        this.usernameOptions = []; // Reset options or handle as per your application's requirements
-      }
-    })
-    .catch(error => {
-      console.error('Error fetching usernames:', error);
-      // Handle fetch error, e.g., show an error message to the user
-      this.usernameOptions = []; // Reset options or handle as per your application's requirements
-    });
-},
+      const requestVMsUrl = baseUrl + 'api/request-vms';
+      
+      axios.get(requestVMsUrl)
+        .then(response => {
+          if (Array.isArray(response.data.data)) {
+            // Filter usernames where status is "requested"
+            this.usernameOptions = response.data.data
+              .filter(user => user.status === 'Requested')
+              .map(user => ({
+                label: user.username,
+                value: user.username
+              }));
+          } else {
+            console.error('Error: Response data.data is not an array');
+            // Handle the case where response data.data is not an array, e.g., show an error message
+            this.usernameOptions = []; // Reset options or handle as per your application's requirements
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching usernames:', error);
+          // Handle fetch error, e.g., show an error message to the user
+          this.usernameOptions = []; // Reset options or handle as per your application's requirements
+        });
+    },
     selectVersion(selectedVersion) {
       this.version = selectedVersion;
       this.errors.version = ''; // Clear error message when a version is selected

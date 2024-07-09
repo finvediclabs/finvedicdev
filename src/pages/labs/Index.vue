@@ -101,11 +101,16 @@ export default {
       };
     },
     filteredLabs() {
-    const profileStore = useProfileStore();
-    const profileUsername = profileStore.user.username;
+  const profileStore = useProfileStore();
+  const profileUsername = profileStore.user.username;
+  const isAdmin = profileStore.user.roles.some(role => role.name === 'Admin');
 
+  if (isAdmin) {
+    return this.labsData;
+  } else {
     return this.labsData.filter(lab => lab.userName === profileUsername);
-  },
+  }
+},
   isUserExistsInLabs() {
     const profileStore = useProfileStore();
     const profileUsername = profileStore.user.username;
@@ -176,38 +181,42 @@ export default {
     this.showMsg(error.response?.data.message || error.message, 'negative');
   });
 },
-    async requestForVM() {
-      const profileStore = useProfileStore();
-      const user = profileStore.user;
+async requestForVM() {
+  const profileStore = useProfileStore();
+  const user = profileStore.user;
 
-      // Ensure createdAt is set, if available
-      const createdAt = user.createdAt ? user.createdAt : new Date().toISOString();
+  // Ensure createdAt is set, if available
+  const createdAt = user.createdAt ? user.createdAt : new Date().toISOString();
 
-      // Prepare data to send
-      const requestData = {
-        userId: user.id,
-        accountId: user.accountId,
-        name: user.name,
-        username: user.username,
-        email: user.email,
-        createdAt: createdAt, // Include createdAt
-        timestamp: new Date().toISOString(), // Current timestamp
-      };
+  // Prepare data to send
+  const requestData = {
+    userId: user.id,
+    accountId: user.accountId,
+    name: user.name,
+    username: user.username,
+    email: user.email,
+    createdAt: createdAt, // Include createdAt
+    timestamp: new Date().toISOString(), // Current timestamp
+    status: "Requested",
+  };
 
-      try {
-        // Send POST request
-        const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-          const requestVMsUrl = baseUrl + 'api/request-vms';
-          
-        const response = await axios.post(requestVMsUrl, requestData);
-        // console.log('Request sent successfully:', response.data);
-        
-        // Add any further logic based on the response if needed
-      } catch (error) {
-        console.error('Error sending request:', error);
-        // Handle error as needed
-      }
-    },
+  try {
+    // Send POST request
+    const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+    const requestVMsUrl = baseUrl + 'api/request-vms';
+    const response = await axios.post(requestVMsUrl, requestData);
+
+    // Handle success response
+    const successMessage = response.data.message;
+    this.showMsg(successMessage, 'positive');
+  } catch (error) {
+    console.error('Error sending request:', error);
+
+    // Handle error response
+    const errorMessage = error.response?.data?.message || 'Something went wrong!';
+    this.showMsg(errorMessage, 'negative');
+  }
+}
   }
 }
 </script>
