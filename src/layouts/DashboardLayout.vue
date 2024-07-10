@@ -360,6 +360,9 @@ export default {
       else if(this.$route.path === '/admin/class-room'){
         this.backgroundStyle = 'Classroom_BackgroundStyle';
       }
+      else if(this.$route.path === '/admin/forms'){
+        this.backgroundStyle = 'Classroom_BackgroundStyle';
+      }
       else {
         this.backgroundStyle = ''; // Do not apply any background style
       }
