@@ -14,11 +14,7 @@
                         <div class="col text-h6 q-pb-sm text-weight-bolder">{{ tab.title }}</div>
                         <div class="col">{{ tab.description }}</div>
                       </div>
-                      <!-- <div class="col no-padding" style="flex: none">
-                      <router-link class="btn" :to="`admin/${tab.path}`">
-                        <q-btn label="Create" no-caps flat dense class="q-px-md rounded-borders shadow-5 bg-white text-dark" />
-                      </router-link>
-                    </div> -->
+                      
                     </div>
                   </q-card-section>
                 </q-card-section>
@@ -35,7 +31,6 @@ import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
-
 import usersPng from "src/assets/users.png";
 import rolesPng from "src/assets/roles.png";
 import organizationPng from "src/assets/Saly-15.png";
@@ -81,6 +76,7 @@ export default {
           background: '#1E90FF90',
           enable: true
         },
+        
         {
           image: vmSetupPng,
           title: 'VM Setup',
@@ -120,10 +116,18 @@ export default {
           path: 'class-room',
           background: '#FF9C78',
           enable: true
-        }
+        },
+        {
+          image: organizationPng,
+          title: 'Forms',
+          description: 'Perfect for learning how the framework works.',
+          path: 'forms',
+          background: '#1E90FF90',
+          enable: true
+        },
       ]
     }
-  },
+  }
 };
 </script>
 <style>
