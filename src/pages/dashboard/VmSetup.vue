@@ -50,15 +50,16 @@
                   <q-btn class="shadow-3 fin-br-8 q-px-md bg-grey-1 custom-btn" @click="decrementNoOfVMs" icon="remove" style="margin-right: 10px;" />
                 </div>
                 <q-input v-model="nos" type="number" borderless label="No Of VM's" class="shadow-3 fin-br-8 q-px-md bg-grey-1 custom-input" style="flex: 1; margin-right: 10px;"  />
-                
+               
                   <div>
                   <q-btn class="shadow-3 fin-br-8 q-px-md bg-grey-1 custom-btn" @click="incrementNoOfVMs" icon="add" />
                 </div>
               </div>
-
+              <q-radio v-model="hideUsernameSelect" val="false" label="Admin VMs" class="custom-radio"  @input="logProfile" />
+             
               <div class="input-container" style="display: flex; align-items: center;padding-top: 4%;">
                 
-                <q-select v-model="username" class="shadow-3 fin-br-8 q-px-md bg-grey-1 custom-input" borderless
+                <q-select v-model="username"  v-if="!hideUsernameSelect" class="shadow-3 fin-br-8 q-px-md bg-grey-1 custom-input" borderless
   :options="usernameOptions" label="Select Username" option-label="label" option-value="value"
   style="width: 100%" @input="selectUserNames" />
                  
@@ -89,6 +90,7 @@
 </template>
 
 <script>
+import { useProfileStore } from "src/stores/profile";
 import FinTable from "src/components/FinTable.vue"
 import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
@@ -123,13 +125,22 @@ export default {
       VMsList: [],
       usernameOptions: [] ,
       username: "" ,
+      hideUsernameSelect: false
     }
   },
   mounted() {
     this.fetchUsernames();
     this.getVMsData();
+    this.  logProfile();
+    console.log(useProfileStore);
   },
   methods: {
+    logProfile(){
+      const profileStore = useProfileStore();
+      const userNameAdmin = profileStore.user.username; 
+      const userRoleAdmin = profileStore.user.roles.length >= 0 ? profileStore.user.roles[0].name : "";
+      console.log(userNameAdmin, userRoleAdmin);
+    },
     showMsg(message, type) {
       this.$q.notify({
         message: message || "Something Went Wrong!",
@@ -164,7 +175,17 @@ export default {
     createVms() {
       if (!this.loader) {
         this.loader = true;
-        const userNameValue = this.username.value; 
+        let userNameValue = '';
+    let userRoleValue = '';
+    if (this.hideUsernameSelect) {
+      const profileStore = useProfileStore();
+      userNameValue = profileStore.user.username;
+      userRoleValue = profileStore.user.roles.length > 0 ? profileStore.user.roles[0].name : '';
+    }  else {
+      userNameValue = this.username.value;
+      userRoleValue = this.username.role;
+    }
+        
         const requestData = {
       nos: this.nos,
       version: this.version,
@@ -172,6 +193,7 @@ export default {
       instance: this.instance,
       region: this.region,
       username: userNameValue,
+      userRole: userRoleValue,
       
     };
     console.log('Request Data:', requestData);
@@ -181,7 +203,8 @@ export default {
           type: this.version,
           instance: this.instance,
           region: this.region,
-          userName:  userNameValue
+          userName:  userNameValue,
+          userRole: userRoleValue,
         }).then(response => {
           this.loader = false;
           this.showMsg(response.data?.message || 'Start Spinning VM Successfully', 'positive');
@@ -202,8 +225,9 @@ export default {
             this.usernameOptions = response.data.data
               .filter(user => user.status === 'Requested')
               .map(user => ({
-                label: user.username,
-                value: user.username
+                label: `${user.username} (${user.userRole})`,
+                value: user.username,
+            role: user.userRole
               }));
           } else {
             console.error('Error: Response data.data is not an array');

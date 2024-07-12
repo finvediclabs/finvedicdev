@@ -91,6 +91,7 @@ export default {
     }
   },
   mounted() {
+    console.log(useProfileStore);
     this.getAzureVmsData();
     this.loadLockedStates(); // Load locked states from local storage
   },
@@ -108,7 +109,7 @@ export default {
   if (isAdmin) {
     return this.labsData;
   } else {
-    return this.labsData.filter(lab => lab.userName === profileUsername);
+    return this.labsData.filter(lab => lab.userName === profileUsername || lab.userRole === 'Admin');
   }
 },
   isUserExistsInLabs() {
@@ -184,21 +185,25 @@ export default {
 async requestForVM() {
   const profileStore = useProfileStore();
   const user = profileStore.user;
-
+  console.log(user.roles[0].name);
   // Ensure createdAt is set, if available
   const createdAt = user.createdAt ? user.createdAt : new Date().toISOString();
 
-  // Prepare data to send
-  const requestData = {
-    userId: user.id,
-    accountId: user.accountId,
-    name: user.name,
-    username: user.username,
-    email: user.email,
-    createdAt: createdAt, // Include createdAt
-    timestamp: new Date().toISOString(), // Current timestamp
-    status: "Requested",
-  };
+  const userRole = user.roles.length >= 0 ? user.roles[0].name : "";
+  console.log(userRole);
+
+// Prepare data to send
+const requestData = {
+  userId: user.id,
+  accountId: user.accountId,
+  name: user.name,
+  username: user.username,
+  email: user.email,
+  userRole: userRole, // Set userRole here
+  createdAt: createdAt, // Include createdAt
+  timestamp: new Date().toISOString(), // Current timestamp
+  status: "Requested",
+};
 
   try {
     // Send POST request
