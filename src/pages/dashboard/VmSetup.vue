@@ -173,47 +173,55 @@ export default {
       }
     },
     createVms() {
-      if (!this.loader) {
-        this.loader = true;
-        let userNameValue = '';
+  if (!this.loader) {
+    this.loader = true;
+    let userNameValue = '';
     let userRoleValue = '';
+    
     if (this.hideUsernameSelect) {
       const profileStore = useProfileStore();
       userNameValue = profileStore.user.username;
       userRoleValue = profileStore.user.roles.length > 0 ? profileStore.user.roles[0].name : '';
-    }  else {
+    } else {
       userNameValue = this.username.value;
       userRoleValue = this.username.role;
     }
-        
-        const requestData = {
-      nos: this.nos,
-      version: this.version,
-      type: this.version, // Assuming 'type' is the same as 'version'
-      instance: this.instance,
-      region: this.region,
-      username: userNameValue,
-      userRole: userRoleValue,
-      
+
+    // Function to handle the creation of single VM
+    const createSingleVm = () => {
+      return this.$api.post(urls.createVmsUrl, {
+        nos: 1,  // Always create one VM per request
+        version: this.version,
+        type: this.version,
+        instance: this.instance,
+        region: this.region,
+        userName: userNameValue,
+        userRole: userRoleValue,
+      });
     };
-    console.log('Request Data:', requestData);
-        this.$api.post(urls.createVmsUrl, {
-          nos: this.nos,
-          version: this.version,
-          type: this.version,
-          instance: this.instance,
-          region: this.region,
-          userName:  userNameValue,
-          userRole: userRoleValue,
-        }).then(response => {
-          this.loader = false;
+
+    // Array to store promises for multiple VM creations
+    const createVmPromises = [];
+
+    // Loop to create multiple VMs
+    for (let i = 0; i < this.nos; i++) {
+      createVmPromises.push(createSingleVm());
+    }
+
+    // Execute all promises and handle responses
+    Promise.all(createVmPromises)
+      .then(responses => {
+        this.loader = false;
+        responses.forEach(response => {
           this.showMsg(response.data?.message || 'Start Spinning VM Successfully', 'positive');
-        }).catch(error => {
-          this.loader = false;
-          this.showMsg(error.response?.data.message || error.message, 'negative');
-        })
-      }
-    },
+        });
+      })
+      .catch(error => {
+        this.loader = false;
+        this.showMsg(error.response?.data.message || error.message, 'negative');
+      });
+  }
+},
     fetchUsernames() {
       const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
       const requestVMsUrl = baseUrl + 'api/request-vms';
