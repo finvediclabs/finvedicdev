@@ -229,7 +229,13 @@ export default {
         },
         {
            icon: 'summarize', label: 'Reports', value: 'reports', 
+         
+       },
+        {
+           icon: 'help', label: 'Help', value: 'help', 
+         
        }
+    
       ],
       expand: {},
       userOwner:'' ,
@@ -241,7 +247,7 @@ export default {
       facultyAccess: ["admin","labs", "library", "reports"],
       defaultPath: "/library/books",
       userAccess: [ "labs", "library"],
-      allAccess:["watch-video","read-pdf","watch-ppt","profile"]
+      allAccess:["watch-video","read-pdf","watch-ppt","profile","help"]
     }
    
   },
