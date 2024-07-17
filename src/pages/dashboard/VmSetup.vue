@@ -50,11 +50,21 @@
                   <q-btn class="shadow-3 fin-br-8 q-px-md bg-grey-1 custom-btn" @click="decrementNoOfVMs" icon="remove" style="margin-right: 10px;" />
                 </div>
                 <q-input v-model="nos" type="number" borderless label="No Of VM's" class="shadow-3 fin-br-8 q-px-md bg-grey-1 custom-input" style="flex: 1; margin-right: 10px;"  />
-                
+               
                   <div>
                   <q-btn class="shadow-3 fin-br-8 q-px-md bg-grey-1 custom-btn" @click="incrementNoOfVMs" icon="add" />
                 </div>
               </div>
+              <q-radio v-model="hideUsernameSelect" val="false" label="Admin VMs" class="custom-radio"  @input="logProfile" />
+             
+              <div class="input-container" style="display: flex; align-items: center;padding-top: 4%;">
+                
+                <q-select v-model="username"  v-if="!hideUsernameSelect" class="shadow-3 fin-br-8 q-px-md bg-grey-1 custom-input" borderless
+  :options="usernameOptions" label="Select Username" option-label="label" option-value="value"
+  style="width: 100%" @input="selectUserNames" />
+                 
+              </div>
+
               <div class="errorMsgBox">
                 <span  v-if="!nos">{{ errors.nos }}</span>
               </div>
@@ -80,6 +90,7 @@
 </template>
 
 <script>
+import { useProfileStore } from "src/stores/profile";
 import FinTable from "src/components/FinTable.vue"
 import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
@@ -111,13 +122,25 @@ export default {
         { label: 'Name', key: 'name', align: 'start'},
         {label: 'Active' ,key: 'provisioningState', align: 'start'}
       ],
-      VMsList: []
+      VMsList: [],
+      usernameOptions: [] ,
+      username: "" ,
+      hideUsernameSelect: false
     }
   },
   mounted() {
+    this.fetchUsernames();
     this.getVMsData();
+    this.  logProfile();
+    console.log(useProfileStore);
   },
   methods: {
+    logProfile(){
+      const profileStore = useProfileStore();
+      const userNameAdmin = profileStore.user.username; 
+      const userRoleAdmin = profileStore.user.roles.length >= 0 ? profileStore.user.roles[0].name : "";
+      console.log(userNameAdmin, userRoleAdmin);
+    },
     showMsg(message, type) {
       this.$q.notify({
         message: message || "Something Went Wrong!",
@@ -150,22 +173,81 @@ export default {
       }
     },
     createVms() {
-      if (!this.loader) {
-        this.loader = true;
-        this.$api.post(urls.createVmsUrl, {
-          nos: this.nos,
-          version: this.version,
-          type: this.version,
-          instance: this.instance,
-          region: this.region
-        }).then(response => {
-          this.loader = false;
+  if (!this.loader) {
+    this.loader = true;
+    let userNameValue = '';
+    let userRoleValue = '';
+    
+    if (this.hideUsernameSelect) {
+      const profileStore = useProfileStore();
+      userNameValue = profileStore.user.username;
+      userRoleValue = profileStore.user.roles.length > 0 ? profileStore.user.roles[0].name : '';
+    } else {
+      userNameValue = this.username.value;
+      userRoleValue = this.username.role;
+    }
+
+    // Function to handle the creation of single VM
+    const createSingleVm = () => {
+      return this.$api.post(urls.createVmsUrl, {
+        nos: 1,  // Always create one VM per request
+        version: this.version,
+        type: this.version,
+        instance: this.instance,
+        region: this.region,
+        userName: userNameValue,
+        userRole: userRoleValue,
+      });
+    };
+
+    // Array to store promises for multiple VM creations
+    const createVmPromises = [];
+
+    // Loop to create multiple VMs
+    for (let i = 0; i < this.nos; i++) {
+      createVmPromises.push(createSingleVm());
+    }
+
+    // Execute all promises and handle responses
+    Promise.all(createVmPromises)
+      .then(responses => {
+        this.loader = false;
+        responses.forEach(response => {
           this.showMsg(response.data?.message || 'Start Spinning VM Successfully', 'positive');
-        }).catch(error => {
-          this.loader = false;
-          this.showMsg(error.response?.data.message || error.message, 'negative');
+        });
+      })
+      .catch(error => {
+        this.loader = false;
+        this.showMsg(error.response?.data.message || error.message, 'negative');
+      });
+  }
+},
+    fetchUsernames() {
+      const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+      const requestVMsUrl = baseUrl + 'api/request-vms';
+      
+      axios.get(requestVMsUrl)
+        .then(response => {
+          if (Array.isArray(response.data.data)) {
+            // Filter usernames where status is "requested"
+            this.usernameOptions = response.data.data
+              .filter(user => user.status === 'Requested')
+              .map(user => ({
+                label: `${user.username} (${user.userRole})`,
+                value: user.username,
+            role: user.userRole
+              }));
+          } else {
+            console.error('Error: Response data.data is not an array');
+            // Handle the case where response data.data is not an array, e.g., show an error message
+            this.usernameOptions = []; // Reset options or handle as per your application's requirements
+          }
         })
-      }
+        .catch(error => {
+          console.error('Error fetching usernames:', error);
+          // Handle fetch error, e.g., show an error message to the user
+          this.usernameOptions = []; // Reset options or handle as per your application's requirements
+        });
     },
     selectVersion(selectedVersion) {
       this.version = selectedVersion;
