@@ -246,20 +246,13 @@ export default {
       studentsAccess: [ "labs", "library"],
       facultyAccess: ["admin","labs", "library", "reports"],
       defaultPath: "/library/books",
+      guestAccess: [ "library"],
       userAccess: [ "labs", "library"],
       allAccess:["watch-video","read-pdf","watch-ppt","profile","help"]
     }
    
   },
   computed: {
-    // backgroundStyle() {
-    //   // Check if the current route is 'library/books'
-    //   if (this.$route.name === 'library-books') {
-    //     return 'backgroundStyle'; // Apply the background style
-    //   } else {
-    //     return ''; // Do not apply any background style
-    //   }
-    // },
     widthSVG() { return window.innerWidth > 600 ? 197 : 150 },
     modules() {
       var userAccess = [];
@@ -267,6 +260,8 @@ export default {
         userAccess = this.adminAccess;
       } else if(this.userType == 'Faculty' ) {
         userAccess = this.facultyAccess;
+      } else if(this.userType == 'Guest' ) {
+        userAccess = this.guestAccess;
       } else {
         userAccess = this.studentsAccess;
       }
@@ -286,7 +281,11 @@ export default {
     if (!this.token) {  
       this.$router.push('/');
     }
-   
+    if (this.userType === 'Guest') {
+      document.body.classList.add('guest');
+    } else {
+      document.body.classList.remove('guest');
+    }
     this.getUserData();
     this.selectedModule = {
       module: this.$route.meta.module,
@@ -541,6 +540,18 @@ export default {
   background: #5479F7;
   backdrop-filter: blur(19px);
 }
+
+.guest .chapters_show > div:nth-child(1),
+.guest .chapter_right > div:nth-child(2){
+    /* Styles for first, second, and last child divs */
+    cursor: pointer; /* Change cursor to indicate it's clickable */
+}
+.guest .chapters_show> div:not(:nth-child(1)),
+.guest .chapter_right > div:not(:nth-child(2)) {
+    /* Styles for other child divs */
+    pointer-events: none; /* Disable click events *//* Optionally reduce opacity to indicate non-clickable */
+}
+
 
 .q-item__section--avatar {
   min-width: inherit !important;

@@ -44,15 +44,29 @@
         </slide>
       </carousel-3d>
     </fin-portlet-item>
-    <fin-portlet-item v-else style="height: 272px" class="q-pb-xl">
-      <div class="full-width full-height flex flex-center">
-        <q-spinner-ios color="blue-9" size="3.5em" />
-      </div>
-    </fin-portlet-item>
+    <fin-portlet-item class="q-pb-xl"  v-if="!presentations.length">
+      <carousel-3d :totalSlides="5" :count="5" @beforeSlideChange="getCurrentSlide"
+                 :controls-visible="true" :width="responsiveWidth" :height="responsiveHeight">
+      <slide v-for="i in Array.from({ length: 5 }).map((_, index) => index)" :key="i" :index="i" style="max-height:80%;">
+        <q-img :src="DummyBook_1" class="fit" alt="Dummy Book">
+          <template v-slot:error>
+            <q-img :src="FallbackBook" class="full-height full-width" />
+          </template>
+        </q-img>
+      </slide>
+    </carousel-3d>
+  </fin-portlet-item>
+      <!-- <div class="full-width full-height flex flex-center">
+         <q-spinner-ios color="blue-9" size="3.5em" /> 
+        <q-img :src="DummyBook_1" :ratio="16 / 9" class="fin-br-8 shadow-1" style="width:40%; height:40%;border:2px solid white" />
+     
+      </div> -->
+
     </div>
   </div>
-
+ 
   <div class="row col-12 bottom_div1">
+    <template  v-if="presentations.length">
     <div class="col-6 single_video">
       <q-img :src="selectedSlide.videoCoverPath" :ratio="16 / 9" class="fin-br-8 shadow-1" style="width:78%; height:78%;" />
       <div class="heading">
@@ -64,7 +78,20 @@
             </p>
       </div> 
     </div>
-    
+  </template>
+  <template  v-if="!presentations.length">
+    <div class="col-6 single_video">
+      <q-img :src="DummyBook_1" :ratio="16 / 9" class="fin-br-8" style="width:78%; height:78%; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);" />
+      <div class="heading">
+        <span class="heading_h4" style="margin-bottom: 2%;" ><span style="color: #5479F7;">Module Name: </span>
+        {{ selectedSlide?.heading }}
+      </span>
+      <p style="font-size: 14px;font-weight: 400;">
+              <span style="color: #5479F7;">Description: </span>{{ selectedSlide?.description }}
+            </p>
+      </div> 
+    </div>
+  </template>
     <div class="col-6" style="position: sticky;top: 10%;align-self: flex-start">
       <q-carousel swipeable animated v-model="slide" ref="carousel" infinite class="full-height"
                 style="padding-top: 20px;">
@@ -80,14 +107,72 @@
                       @click="$refs.carousel.next()" />
                   </q-carousel-control>
                 </template> -->
-                <template v-if="chaptersLoader|| !presentations.length">
-                  <q-carousel-slide :name="0" class="rounded-borders text-italic">
+                <template v-if="chaptersLoader|| !presentations.length ">
+                  <!-- <q-carousel-slide v-for="(slider, i) in allSlides" :name="i" class="items-end q-pa-none">
+                      <div class="row">
+                        <div class="col-2" style="display: flex; justify-content: center; align-items: center;">
+                          <q-carousel-control class="q-gutter-xs"   style="position: relative;">
+                          <q-btn position="top-left"  round dense class="shadow-2" text-color="white" icon="chevron_left"
+                                 @click="$refs.carousel.previous()" style="background-color: #5479F7;"/>
+                          </q-carousel-control>
+                        </div>
+                        <div class="col-8">
+  <div class="row">
+    <div class="col-6 col-lg-6 mb-4" v-for="item in slider">
+      <div class="fin-br-8" style="height: 100%;padding-bottom: 10px;padding-top: 10px;width: 90%;margin-left: auto;margin-right: auto">
+        <q-skelton class="full-height fin-br-8 shadow-2"  style="background-color: #F5F5F5;display:flex;align-items: center;justify-content: center;padding-top: 10%;padding-bottom: 10%"  >
+          <q-spinner-ios color="blue-9" size="3.5em"  /> 
+        </q-skelton>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="col-2" style="display: flex; justify-content: center; align-items: center;">
+                           <q-carousel-control class="q-gutter-xs"  style="position: relative;">
+                            <q-btn round dense class="shadow-2" text-color="white" icon="chevron_right" @click="$refs.carousel.next()" style="background-color: #5479F7;"/>
+                             </q-carousel-control>
+                          </div>
+                      </div>
+                    </q-carousel-slide>
+                   -->
+                   <q-carousel-slide :name="0" class="rounded-borders text-italic">
+                      <div class="row full-height">
+                        <div class="col-12 q-px-sm full-height">
+                          <div square class="full-width full-height q-pa-md rounded-borders"
+                            style="background-color: #F5F5F5;">
+                            No Chapters Found
+                          </div>
+                        </div>
+                      </div>
+                    </q-carousel-slide>
+ 
+ 
+ 
+                   <!-- <q-carousel-slide :name="0" class="rounded-borders text-italic">
                     <div class="row full-height">
-                      <div class="col-6 q-px-sm fin-br-8" style="height:100px" v-for="item in 4">
-                        <q-skeleton class="full-width full-height fin-br-8 shadow-1" style="background-color: #F5F5F5;" />
+                      <div class="col-6 q-px-lg col-lg-6 mb-4"  v-for="item in 4">
+                        <div class="fin-br-8" style="height: 100%;padding-bottom: 10px;padding-top: 10px;width: 90%;margin-left: auto;margin-right: auto">
+                        <q-skeleton class="full-height fin-br-8 shadow-1" style="background-color: #F5F5F5;display:flex;align-items: center;justify-content: center;padding-top: 10%;padding-bottom: 10%">
+                          <q-spinner-ios color="blue-9" size="3.5em"  /> 
+                          </q-skeleton>
+                      </div>
                       </div>
                     </div>
-                  </q-carousel-slide>
+                  </q-carousel-slide> -->
+                  
+
+                  <!-- <div class="row">
+    <div class="col-6 col-lg-6 mb-4" v-for="item in slider">
+      <div class="fin-br-8" style="height: 100%;padding-bottom: 10px;padding-top: 10px;width: 90%;margin-left: auto;margin-right: auto">
+        <q-img class="full-height fin-br-8 shadow-2 cursor-pointer" :src="item.presentationCoverPath ?? 'dummy'" @click="visitChapter(item)">
+          <template v-slot:error>
+            <q-img :src="DummyBook" class="full-height full-width" />
+          </template>
+        </q-img>
+      </div>
+    </div>
+  </div> -->
                 </template>
 
                 <template v-if="!chaptersLoader">
@@ -101,7 +186,7 @@
                           </q-carousel-control>
                         </div>
                         <div class="col-8">
-  <div class="row">
+  <div class="row chapters_show">
     <div class="col-6 col-lg-6 mb-4" v-for="item in slider">
       <div class="fin-br-8" style="height: 100%;padding-bottom: 10px;padding-top: 10px;width: 90%;margin-left: auto;margin-right: auto">
         <q-img class="full-height fin-br-8 shadow-2 cursor-pointer" :src="item.presentationCoverPath ?? 'dummy'" @click="visitChapter(item)">
@@ -154,7 +239,8 @@ import { urls } from "./Urls"
 import { storeToRefs } from "pinia";
 import { useCategoryStore } from "src/stores/Categories";
 import moment from "moment";
-import DummyBook from "src/assets/dummyBook.jpg"
+import DummyBook from "src/assets/dummyBook.jpg";
+import DummyBook_1 from "src/assets/presentation_pre.gif";
 import CryptoJS from 'crypto-js'
 export default {
   setup() {
@@ -174,6 +260,7 @@ export default {
   data() {
     return {
       DummyBook: DummyBook,
+      DummyBook_1: DummyBook_1,
       presentations: [],
       selectedSlide: {},
       loading: false,
@@ -352,12 +439,12 @@ getChaptersData() {
 
         this.getDummyChapters(this.chapters);
       } else {
-        this.showMsg(response.data?.message, 'negative');
+        // this.showMsg(response.data?.message, 'negative');
       }
     })
     .catch(error => {
       this.chaptersLoader = false;
-      this.showMsg(error.response?.data.message || error.message, 'negative');
+      // this.showMsg(error.response?.data.message || error.message, 'negative');
     });
 },
     getDummyChapters(chapter) {

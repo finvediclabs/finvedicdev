@@ -2,17 +2,17 @@
 <template>
   <fin-portlet style="background-color: transparent">
     <div class="row col-12 TopBG">
-      <div class="col-5">
+      <div class="col-5 topHead">
         <fin-portlet-heading class="q-md">
           <div class="heading_class">
                 <h4>{{ selectedSlide?.heading }}</h4>
           </div>
         </fin-portlet-heading>
       </div>
-      <div class="right_side col-7" style="margin-top: 0px;">
+      <div class="right_side col-md-7 col-12 " style="margin-top: 0px;">
         <fin-portlet-item  v-if="booksData.length">
              <carousel-3d :totalSlides="booksData.length" :count="booksData.length" @beforeSlideChange="getCurrentSlide"
-                  :controls-visible="true" :width="responsiveWidth" :height="responsiveHeight" display="7" >
+                  :controls-visible="true" :width="responsiveWidth" :height="responsiveHeight" :display="displaySlides" >
                 <slide v-for="(slide, i) in booksData" :key="i" :index="i" style="max-height: 80%" >
                   <q-img :src="slide.imagePath ?? 'dummy'" class="fin-br-8 fit" :alt="slide.heading"  >
                     <template v-slot:error>
@@ -25,8 +25,8 @@
       </div>
     </div>
 
-<div class="row col-12 bottom_div ">
-  <div class="col-4 single_book">
+<div class="row col-12 bottom_div topHead ">
+  <div class="col-4 single_book ">
     
     <q-avatar style="margin-left: auto;margin-right: auto" square class="book_single" >
                 <q-img :src="selectedSlide?.imagePath ?? 'dummy'" class="fin-br-8" style="border:1px solid #00000030"
@@ -64,7 +64,7 @@
                   <template v-if="chaptersData.length"  >
                     
                     <q-carousel-slide v-for="(slider, i) in allSlides" :name="i" class="items-end q-pa-none chapters_loader">
-                      <div class="row chapter_right">
+                      <div  class="row chapter_right" ref="chaptersRight">
                         <div class="col-1" style="display: flex; justify-content: center; align-items: center;" >
                           <q-carousel-control class="q-gutter-xs"   style="position: relative;">
                     <q-btn position="top-left"  round dense class="shadow-2" text-color="white" icon="chevron_left"
@@ -152,6 +152,7 @@ export default {
       responsiveHeight: '170',
       responsiveWidth: '300',
       chaptersLoader: false,
+      displaySlides: 7,
       loading: false
     }
   },
@@ -198,17 +199,21 @@ export default {
     updateCarouselDimensions() {
       const screenWidth = window.innerWidth;
       if (screenWidth < 600) {
-        this.responsiveHeight = '120'; // Height for small screens
-        this.responsiveWidth = '60'; // Width for small screens
+        this.responsiveHeight = '220'; // Height for small screens
+        this.responsiveWidth = '120';
+        this.displaySlides = 5; // Width for small screens
       } else if (screenWidth >= 600 && screenWidth < 1367) {
         this.responsiveHeight = '300'; // Height for medium screens
-        this.responsiveWidth = '170'; // Width for medium screens
+        this.responsiveWidth = '170';
+        this.displaySlides = 7; // Width for medium screens
       } else if (screenWidth >=1400 && screenWidth < 1602) {
         this.responsiveHeight = '400'; // Height for medium screens
-        this.responsiveWidth = '230'; // Width for medium screens
+        this.responsiveWidth = '230';
+        this.displaySlides = 7; // Width for medium screens
       }  else {
         this.responsiveHeight = '520'; // Height for large screens
-        this.responsiveWidth = '280'; // Width for large screens
+        this.responsiveWidth = '280';
+        this.displaySlides = 7; // Width for large screens
       }
     },
     getCurrentSlide(index) {
@@ -582,5 +587,10 @@ flex-direction: column;
 flex-direction: column;  
   /* border:2px solid green */
 } /* CSS rules here apply when the screen width is between 1920px and 2560px */
+}
+@media screen and (max-width: 567px){
+  .topHead{
+    display: none !important;
+  }
 }
 </style>
