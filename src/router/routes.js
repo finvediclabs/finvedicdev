@@ -195,6 +195,21 @@ const routes = [
       }
     ]
   },
+
+  {
+    path: '/help',
+    meta: { title: 'Help', module: 'help' },
+    component: () => import('layouts/DashboardLayout.vue'),
+    children: [
+      
+      {
+        path: '',
+        component: () => import('pages/help/Faq.vue'),
+        meta: { item: '' }
+      }
+    ]
+  },
+
   {
     path: '/profile',
     meta: { title: 'profile', module: 'profile' },
