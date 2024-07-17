@@ -3,12 +3,14 @@
 <script>
 import { storeToRefs } from "pinia";
 import { useSessionStore } from "src/stores/session";
+
 export default {
   name: 'IndexPage',
   setup() {
     const session = useSessionStore();
     const { token, userType } = storeToRefs(session);
     // session.setSessionToken();
+      console.log('Session Store:', session);
     return {
       token,
       userType,

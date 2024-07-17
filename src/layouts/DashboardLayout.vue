@@ -1,7 +1,7 @@
 <template>
   <q-layout view="hHh Lpr fFf  " :class="backgroundStyle" >
     <q-header>
-      <q-toolbar class=" text-black q-pa-sm q-pr-lg mainHeader" >
+      <q-toolbar class="text-black q-pa-sm q-pr-lg mainHeader">
         <q-item>
           <q-item-section avatar>
           <q-btn flat @click="toggleFunction" color="white" round dense icon="menu" v-if="showDrawer"/>
@@ -131,7 +131,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-if="showDrawer" v-model="drawerLeft" show-if-above :mini="miniState" width="180" breakpoint="900"
+    <q-drawer v-if="showDrawer" v-model="drawerLeft" show-if-above :mini="miniState" width=180 :breakpoint="900"
       class="text-white fin-drawer-style shadow-2">
       <q-scroll-area class="fit q-pl-md q-pt-md bg-finvedic q-pt-xl" :horizontal-thumb-style="{ opacity: 0 }">
         <q-list>
@@ -169,6 +169,7 @@
         </q-list>
       </q-scroll-area>
     </q-drawer>
+
     <q-page-container >
       <q-page >
         <router-view style="background-color: rgba(255, 255, 255, 0); " v-if="token" />
@@ -193,9 +194,11 @@ export default {
   setup() {
     const session = useSessionStore();
     const { token, userType } = storeToRefs(session);
+    
     const { setUserType, setSessionToken } = session;
     const profileStore = useProfileStore();
     const { user } = storeToRefs(profileStore);
+    console.log("Upload Document Path", user.value.uploadDocumentPath);
   
     return {
       token,
@@ -239,18 +242,14 @@ export default {
       ],
       expand: {},
       userOwner:'' ,
-      
-      
-
       adminAccess: ["admin", "labs",  "library", "reports"],
-      studentsAccess: [ "labs", "library"],
+      studentsAccess: ["admin", "labs", "library"],
       facultyAccess: ["admin","labs", "library", "reports"],
       defaultPath: "/library/books",
       guestAccess: [ "library"],
       userAccess: [ "labs", "library"],
       allAccess:["watch-video","read-pdf","watch-ppt","profile","help"]
     }
-   
   },
   computed: {
     widthSVG() { return window.innerWidth > 600 ? 197 : 150 },
@@ -279,8 +278,9 @@ export default {
   },
   mounted() {
     if (!this.token) {  
-      this.$router.push('/');
+        this.$router.push('/');
     }
+
     if (this.userType === 'Guest') {
       document.body.classList.add('guest');
     } else {
@@ -288,13 +288,18 @@ export default {
     }
     this.getUserData();
     this.selectedModule = {
-      module: this.$route.meta.module,
-      item: this.$route.meta.item
-    }
+        module: this.$route.meta.module,
+        item: this.$route.meta.item
+    };
     this.updateBackgroundStyle();
     this.knowModuleFunction();
     this.checkAccess();
-  },
+
+    // Check if uploadDocumentPath is null and redirect to /profile if needed
+    if (this.user && !this.user.uploadDocumentPath) {
+        this.$router.push('/profile');
+    }
+},
   watch: {
     token() {
       if (!this.token) {
@@ -363,9 +368,6 @@ export default {
         this.backgroundStyle = 'Classroom_BackgroundStyle';
       }
       else if(this.$route.path === '/admin/class-room'){
-        this.backgroundStyle = 'Classroom_BackgroundStyle';
-      }
-      else if(this.$route.path === '/admin/forms'){
         this.backgroundStyle = 'Classroom_BackgroundStyle';
       }
       else {
