@@ -243,7 +243,7 @@ export default {
       expand: {},
       userOwner:'' ,
       adminAccess: ["admin", "labs",  "library", "reports"],
-      studentsAccess: ["admin", "labs", "library"],
+      studentsAccess: ["labs", "library"],
       facultyAccess: ["admin","labs", "library", "reports"],
       defaultPath: "/library/books",
       guestAccess: [ "library"],
@@ -296,7 +296,7 @@ export default {
     this.checkAccess();
 
     // Check if uploadDocumentPath is null and redirect to /profile if needed
-    if (this.userType !== 'Admin' &&  this.user.uploadDocumentPath === null) {
+    if (this.userType !== 'Admin' &&  !this.user.uploadDocumentPath) {
         this.$router.push('/profile');
     }
 },
@@ -309,10 +309,11 @@ export default {
     user() {
       this.getUserData();
     },
-    '$route': 'updateBackgroundStyle',
+      
     $route (to, from){
       this.checkAccess();
     },
+      '$route': 'updateBackgroundStyle'
   },
   methods: {
     checkAccess() {
@@ -370,7 +371,7 @@ export default {
       else if(this.$route.path === '/admin/class-room'){
         this.backgroundStyle = 'Classroom_BackgroundStyle';
       }
-      else if(this.$route.path === '/admin/forms'){
+       else if(this.$route.path === '/admin/forms'){
         this.backgroundStyle = 'Classroom_BackgroundStyle';
       }
       else {
