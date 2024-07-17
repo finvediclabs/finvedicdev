@@ -296,7 +296,7 @@ export default {
     this.checkAccess();
 
     // Check if uploadDocumentPath is null and redirect to /profile if needed
-    if (this.user && !this.user.uploadDocumentPath) {
+    if (this.userType !== 'Admin' &&  this.user.uploadDocumentPath === null) {
         this.$router.push('/profile');
     }
 },
@@ -368,6 +368,9 @@ export default {
         this.backgroundStyle = 'Classroom_BackgroundStyle';
       }
       else if(this.$route.path === '/admin/class-room'){
+        this.backgroundStyle = 'Classroom_BackgroundStyle';
+      }
+      else if(this.$route.path === '/admin/forms'){
         this.backgroundStyle = 'Classroom_BackgroundStyle';
       }
       else {
