@@ -253,6 +253,7 @@ export default {
         owner: this.user.owner,
         id: this.user.id,
         password: this.user.password,
+        role: [this.user.role],
       };
       this.$api.put(`${urls.usersUrl}/${this.user.id}`, request).then(response => {
         this.submitLoading = false;

@@ -66,7 +66,7 @@
             <div class="col-12 q-px-sm">
               <label class="form-label">Course</label>
               <q-select v-model="course" class="q-px-md rounded-borders inputBackground" borderless
-                :options="courses" option-label="courseDesc" option-value="courseid"
+                :options="courses" option-label="courseDesc" option-value="courseId"
                 @select="onCourseSelect" />
               <div class="errorMsgBox">
                 <span v-if="errors.course && !course">{{ errors.course }}</span>
@@ -174,7 +174,7 @@ export default {
     },
     filteredTopics() {
       if (!this.course || !this.topics) return [];
-      return this.topics.filter(topic => topic.courseId === this.course.courseid);
+      return this.topics.filter(topic => topic.courseId === this.course.courseId);
     }
   },
   mounted() {
@@ -209,7 +209,7 @@ export default {
     },
     onCourseSelect(course) {
       this.course = course;
-      this.fetchTopicsByCourse(course.courseid);
+      this.fetchTopicsByCourse(course.courseId);
     },
     format(date) {
       const day = date.getDate();
