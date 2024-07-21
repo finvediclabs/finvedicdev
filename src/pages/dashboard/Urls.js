@@ -1,5 +1,6 @@
 export const urls = {
   usersUrl: 'api/users',
+  rolesUrl: 'api/roles',
   booksDataUrl: 'api/books',
   getRolesUrl: 'api/roles',
   createVmsUrl: 'api/labVms/createLabVm',

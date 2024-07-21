@@ -65,7 +65,7 @@
       },
         header: [
           { label: 'S.No', key: 'index', align: 'center' },
-          { label: 'ID', key: 'id', align: 'start', width: '50px' },
+         
           { label: 'Course Id', key: 'courseId', align: 'start', width: '50px' },
           { label: 'Topic Id', key: 'topicId', align: 'start', width: '50px' },
           { label: 'Topic', key: 'topicName', align: 'start', width: '150px' },
@@ -103,8 +103,7 @@
     },
     async submitTopicForm() {
       this.submitLoading = true;
-      const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-            const topicsUrl = baseUrl + 'api/topics';
+
       // Prepare the topic data with user-filled fields
       const topicData = {
         courseId: this.courseid,
@@ -114,8 +113,10 @@
       };
       console.log('Topic Data:', topicData);
       try {
+        const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+          const getTopicsUrl = baseUrl + 'api/topics';
         // Example Axios POST request to add topic
-        const response = await axios.post(topicsUrl, topicData);
+        const response = await axios.post(getTopicsUrl, topicData);
 
         if (response.status === 200) {
           // Topic created successfully

@@ -1,13 +1,13 @@
 <template>
   <q-layout view="hHh Lpr fFf  " :class="backgroundStyle" >
     <q-header>
-      <q-toolbar class=" text-black q-pa-sm q-pr-lg mainHeader" >
+      <q-toolbar class="text-black q-pa-sm q-pr-lg mainHeader">
         <q-item>
           <q-item-section avatar>
           <q-btn flat @click="toggleFunction" color="white" round dense icon="menu" v-if="showDrawer"/>
           <q-icon name="arrow_back" style="font-weight: bold;" class="cursor-pointer" @click="$router.go(-1)" v-if="!showDrawer" />
           </q-item-section>
-          <q-item-section class="text-h5 text-weight-bolder">
+          <q-item-section class="text-h5 text-weight-bolder logo">
             <svg xmlns="http://www.w3.org/2000/svg" :width="widthSVG" height="30" viewBox="0 0 197 30" fill="none">
               <path d="M197 25.0071H174.011V0.961853H185.507L185.532 13.5971H197V25.0071Z" fill="#ffff" />
               <path
@@ -131,7 +131,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-if="showDrawer" v-model="drawerLeft" show-if-above :mini="miniState" width="180" breakpoint="900"
+    <q-drawer v-if="showDrawer" v-model="drawerLeft" show-if-above :mini="miniState" width=180 :breakpoint="900"
       class="text-white fin-drawer-style shadow-2">
       <q-scroll-area class="fit q-pl-md q-pt-md bg-finvedic q-pt-xl" :horizontal-thumb-style="{ opacity: 0 }">
         <q-list>
@@ -169,6 +169,7 @@
         </q-list>
       </q-scroll-area>
     </q-drawer>
+
     <q-page-container >
       <q-page >
         <router-view style="background-color: rgba(255, 255, 255, 0); " v-if="token" />
@@ -193,9 +194,12 @@ export default {
   setup() {
     const session = useSessionStore();
     const { token, userType } = storeToRefs(session);
+    
     const { setUserType, setSessionToken } = session;
     const profileStore = useProfileStore();
     const { user } = storeToRefs(profileStore);
+    console.log("Upload Document Path", user.value.uploadDocumentPath);
+  
     return {
       token,
       userType,
@@ -228,38 +232,42 @@ export default {
         },
         {
            icon: 'summarize', label: 'Reports', value: 'reports', 
+         
+       },
+        {
+           icon: 'help', label: 'Help', value: 'help', 
+         
        }
+    
       ],
       expand: {},
       userOwner:'' ,
-      
-      
-
       adminAccess: ["admin", "labs",  "library", "reports"],
-      studentsAccess: [ "admin","labs", "library", "reports"],
+      studentsAccess: ["labs", "library"],
       facultyAccess: ["admin","labs", "library", "reports"],
+      defaultPath: "/library/books",
+      guestAccess: [ "library"],
+      userAccess: [ "labs", "library"],
+      allAccess:["watch-video","read-pdf","watch-ppt","profile","help"]
     }
   },
   computed: {
-    // backgroundStyle() {
-    //   // Check if the current route is 'library/books'
-    //   if (this.$route.name === 'library-books') {
-    //     return 'backgroundStyle'; // Apply the background style
-    //   } else {
-    //     return ''; // Do not apply any background style
-    //   }
-    // },
     widthSVG() { return window.innerWidth > 600 ? 197 : 150 },
     modules() {
       var userAccess = [];
-      if(this.user.owner == 'admin') {
+      if(this.userType == 'Admin') {
         userAccess = this.adminAccess;
-      } else if(this.user.owner == 'faculty' ) {
+      } else if(this.userType == 'Faculty' ) {
         userAccess = this.facultyAccess;
+      } else if(this.userType == 'Guest' ) {
+        userAccess = this.guestAccess;
       } else {
         userAccess = this.studentsAccess;
       }
+      this.userAccess = userAccess;
+      this.userAccess.push(...this.allAccess);
       return this.modulesList.filter(mode => userAccess.includes(mode.value) );
+      //return  this.modulesList ;
     }
   },
   props: {
@@ -269,22 +277,29 @@ export default {
     }
   },
   mounted() {
-    if (!this.token) {
-      this.$router.push('/');
+    if (!this.token) {  
+        this.$router.push('/');
     }
 
-    if(this.userType) {
-
+    if (this.userType === 'Guest') {
+      document.body.classList.add('guest');
+    } else {
+      document.body.classList.remove('guest');
     }
     this.getUserData();
-
     this.selectedModule = {
-      module: this.$route.meta.module,
-      item: this.$route.meta.item
-    }
+        module: this.$route.meta.module,
+        item: this.$route.meta.item
+    };
     this.updateBackgroundStyle();
     this.knowModuleFunction();
-  },
+    this.checkAccess();
+
+    // Check if uploadDocumentPath is null and redirect to /profile if needed
+    if (this.userType !== 'Admin' &&  !this.user.uploadDocumentPath) {
+        this.$router.push('/profile');
+    }
+},
   watch: {
     token() {
       if (!this.token) {
@@ -294,9 +309,21 @@ export default {
     user() {
       this.getUserData();
     },
-    '$route': 'updateBackgroundStyle',
+      
+    $route (to, from){
+      this.checkAccess();
+    },
+      '$route': 'updateBackgroundStyle'
   },
   methods: {
+    checkAccess() {
+       let path = this.$route.path;
+       let access = this.userAccess.filter(value => path.startsWith("/"+value));
+       if( access && access.length == 0) {
+          this.$router.push({path:this.defaultPath});
+       }
+       
+    },
     updateBackgroundStyle() {
       // Check if the current route is '/library/books'
       if (this.$route.path === '/library/books') {
@@ -342,6 +369,9 @@ export default {
         this.backgroundStyle = 'Classroom_BackgroundStyle';
       }
       else if(this.$route.path === '/admin/class-room'){
+        this.backgroundStyle = 'Classroom_BackgroundStyle';
+      }
+       else if(this.$route.path === '/admin/forms'){
         this.backgroundStyle = 'Classroom_BackgroundStyle';
       }
       else {
@@ -442,9 +472,8 @@ export default {
 .booksBackgroundStyle {
   background-image: url('/src/assets/BG_New.png');
   background-repeat: no-repeat;
-  background-size: 100vw 60vh;
-  /* background-color: #f0f0f0; */
-  /* Add any other background styles */
+  background-size: 100vw 66vh;
+ 
 }
 .Lib_CL_Room_BackgroundStyle{
   background-image: url('/src/assets/BG_New.png');
@@ -459,13 +488,13 @@ export default {
   background-color: #0A004B;
 }
 .AI_Setup_BackgroundStyle{
-  background-image: url('/src/assets/AI_setup_bg.png');
+  background-image: url('/src/assets/ai_set_bg.jpg');
   background-repeat: no-repeat;
   background-size: 100% 100%;
   margin-top:3%;
 }
 .Users_BackgroundStyle{
-  background-image: url('/src/assets/AI_setup_bg.png');
+  background-image: url('/src/assets/ai_set_bg.jpg');
   background-repeat: no-repeat;
   background-size: 100% 100%;
   margin-top:3%;
@@ -518,7 +547,32 @@ export default {
   backdrop-filter: blur(19px);
 }
 
+.guest .chapters_show > div:nth-child(1),
+.guest .chapter_right > div:nth-child(2){
+    /* Styles for first, second, and last child divs */
+    cursor: pointer; /* Change cursor to indicate it's clickable */
+}
+.guest .chapters_show> div:not(:nth-child(1)),
+.guest .chapter_right > div:not(:nth-child(2)) {
+    /* Styles for other child divs */
+    pointer-events: none; /* Disable click events *//* Optionally reduce opacity to indicate non-clickable */
+}
+
+
 .q-item__section--avatar {
   min-width: inherit !important;
+}
+@media only screen and (max-width:576px){
+  .logo{
+    display: none !important;
+  }
+}
+@media screen and (min-width: 1920px){
+  .booksBackgroundStyle {
+  background-image: url('/src/assets/BG_New.png');
+  background-repeat: no-repeat;
+  background-size: 100vw 60%;
+ 
+}
 }
 </style>

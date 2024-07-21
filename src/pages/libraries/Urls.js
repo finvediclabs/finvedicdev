@@ -5,6 +5,7 @@ export  const urls = {
   getVideoChaptersUrl: 'api/videoChapters/findVideoChapter',
   getPresentationsUrl: 'api/presentations',
   getPresentationChaptersUrl: 'api/presentationChapters/findPresentationChapter',
-
+  getImagesUrl:'fs/download',
+  getChaptersFromPost:'api/bookChapters/getBookChaptersByBookId',
   getEvents: 'api/calendarEvents'
 }

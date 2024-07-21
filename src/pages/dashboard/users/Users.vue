@@ -5,15 +5,15 @@
       <fin-portlet-item class="role_search">
         <q-select  v-model="roleSearch" :options="roleOptions"  label="Roles" outlined class="fin-input" dense />
       </fin-portlet-item>
-      <fin-portlet-item class="program_search">
+      <!-- <fin-portlet-item class="program_search">
         <q-select  v-model="programSearch" :options="['trine', 'client']" outlined label="Programs" class="fin-input" 
           dense label-color="white" />
-      </fin-portlet-item>
+      </fin-portlet-item> -->
       <fin-portlet-item>
         <!-- <q-btn class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder" no-caps @click="createUser()">
 </q-btn> -->
 <q-btn @click="createUser()" >
-  <img src="/src/assets/User_icon.png" alt="User Icon" style="width: 32px; height: 32px;" />
+  <q-img :src="usersIcon" alt="User Icon" style="width: 32px; height: 32px;" />
 </q-btn>
 
       </fin-portlet-item>
@@ -54,7 +54,7 @@
       :rules="[val => val && val.length > 0 || 'Is Active Is required']" />
   </div>
             <div class="col-12 q-px-sm q-py-xs">
-              <q-select outlined v-model="user.owner" :options="roles_new" label="Owner *" lazy-rules
+              <q-select outlined v-model="user.role" :options="rolesList"  option-label="name" lazy-rules
                 />
             </div>
             <div class="col-12 col-md-6 q-px-sm q-py-xs text-center q-pt-lg"></div>
@@ -77,10 +77,13 @@ import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 import { urls } from "src/pages/dashboard/Urls";
+import { useSessionStore } from "src/stores/session";
 import moment from "moment"
 import { useProfileStore } from "src/stores/profile";
 import { storeToRefs } from "pinia";
-import { useRolesStore } from "src/stores/roles"
+import { useRolesStore } from "src/stores/roles";
+import usersIcon from "../../../../src/assets/user.png"
+
 
 export default {
   setup() {
@@ -88,9 +91,13 @@ export default {
     const { profile } = storeToRefs(profileStore);
     const rolesStore = useRolesStore();
     const { roles } = storeToRefs(rolesStore);
+    
+    const session = useSessionStore();
+    const { userType } = storeToRefs(session);
     return {
       profile,
-      roles
+      roles,
+      userType
     }
   },
   components: {
@@ -105,9 +112,10 @@ export default {
       isActiveOptions: ['Y', 'N'],
       deleteUrl: urls.usersUrl,
       tab: 'allUsers',
+      usersIcon: usersIcon,
       roleSearch: '',
-      roleOptions: ['trine', 'client'],
-      roles_new: ['admin', 'student' , 'faculty', ''],
+      roleOptions: ['Admin', 'Student','Faculty'],
+      roles_new: [],
       programSearch: '',
       loading: true,
       createUserDialog: false,
@@ -122,6 +130,7 @@ export default {
         { label: 'Is Active', key: 'isActive', align: 'center' },
       ],
       usersList: [],
+      rolesList: [],
       submitLoading: false,
       user: {
         name: '',
@@ -130,11 +139,13 @@ export default {
         Number: '',
         role: '',
         id: '',
-        password: ''
+        password: '',
+        role: [],
       }
     }
   },
   mounted() {
+   
     this.getUsersData();
     const labels = document.querySelectorAll('.q-field__label');
 
@@ -143,15 +154,15 @@ export default {
         label.style.color = 'white';
       }
     });
-
+    this.getRoles();
   },
   watch: {
     roleSearch() {
       this.getUsersData();
     },
-    programSearch() {
-      this.getUsersData();
-    }
+    // programSearch() {
+    //   this.getUsersData();
+    // }
   },
   methods: {
     createUser() {
@@ -166,6 +177,20 @@ export default {
         actions: [
           { icon: 'close', color: 'white', handler: () => { } }
         ]
+      });
+    },
+    getRoles() {
+      this.loading = true;
+      this.$api.get(urls.rolesUrl).then(response => {
+        this.loading = false;
+        if (response.data.success) {
+          this.rolesList = response.data.data.map((item, index) => ({ ...item, createdAt: moment(item.createdAt).format('YYYY-MM-DD'), index: index + 1 }));
+        } else {
+          this.showMsg(response.data?.message, 'negative');
+        }
+      }).catch(error => {
+        this.loading = false;
+        this.showMsg(error.response?.data.message || error.message, 'negative');
       });
     },
     getUsersData() {
@@ -199,8 +224,9 @@ export default {
         email: this.user.mail,
         phoneNumber: this.user.Number,
         owner: this.user.owner,
-        isActive: this.isActive,
-        password: "Welcome@123",
+        isActive: this.user.isActive,
+        //password: "Welcome@123",
+        role: [this.user.role],
       };
       this.$api.post(urls.usersUrl, request).then(response => {
         this.submitLoading = false;
@@ -227,6 +253,7 @@ export default {
         owner: this.user.owner,
         id: this.user.id,
         password: this.user.password,
+        role: [this.user.role],
       };
       this.$api.put(`${urls.usersUrl}/${this.user.id}`, request).then(response => {
         this.submitLoading = false;

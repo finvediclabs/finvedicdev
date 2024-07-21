@@ -59,14 +59,14 @@ export default {
     },
     getPresentationsData() {
   if (!this.loading) {
-    const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-            const removeImagePath = baseUrl + 'fs/download/';
-          
     this.loading = true;
     this.$api.get(urls.presentationsUrl)
       .then(async response => {
         this.loading = false;
         if (response.data.success) {
+          const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+          const removeImagePath = baseUrl +'fs/download/'
+
           // this.presentations = response.data.data.map((item, index) => ({ ...item, index: index + 1,imageDownload: item.videoCoverPath.replace('http://localhost:8083/fs/download/', '') }) }));
           this.presentations  = response.data.data.map((item, index) => ({ ...item, index: index + 1, imageDownload: item.videoCoverPath.replace(removeImagePath, '') }));
           // Log the imageDownload of each item in presentations
@@ -78,6 +78,7 @@ export default {
               // Create form data
               const formData = new FormData();
               formData.append('filename', image);
+             
           const getImagesUrl = baseUrl + 'fs/download';
               // Send form data to http://localhost:8083/fs/download
               const downloadResponse = await axios.post(getImagesUrl, formData, {

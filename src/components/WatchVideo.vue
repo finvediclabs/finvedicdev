@@ -35,17 +35,17 @@ export default {
   },
   methods: {
     formatUrlAndSend() {
-      const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-            const removeImagePath = baseUrl + 'fs/download/';
-          const imagePath = baseUrl + 'fs/download'
-      
-      this.formattedUrl = this.decryptedString.replace(removeImagePath, ''); 
+      const baseUrls = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+      const basedUrl = baseUrls + 'fs/download/';
+      this.formattedUrl = this.decryptedString.replace(basedUrl, ''); 
       // console.log('Formatted URL:', this.formattedUrl); // Console log for formatted URL
 
       const formData = new FormData();
+      
+          const getVideoUrl = baseUrls + 'fs/download';
       formData.append('filename', this.formattedUrl);
 
-      fetch(imagePath, {
+      fetch(getVideoUrl, {
         method: 'POST',
         body: formData
       })

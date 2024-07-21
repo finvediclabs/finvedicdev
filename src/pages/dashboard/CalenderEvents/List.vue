@@ -60,10 +60,28 @@
         <!-- Form fields for adding a new course -->
         <q-form @submit="submitCourseForm" class="formContent" ref="courseForm">
           <!-- Add your form fields here -->
-          <q-input outlined v-model="courseData.courseid" label="Course ID" />
+          <q-input outlined v-model="courseData.courseId" label="Course ID" />
           <q-input outlined v-model="courseData.abstractt" label="Course Description" />
           <q-input outlined v-model="courseData.bibilography" label="Bibliography" />
           <q-input outlined v-model="courseData.courseDesc" label="Description" />
+          <q-select
+          outlined
+          v-model="courseData.teachers"
+          label="Teacher"
+          :options="userOptions"
+          option-value="id" 
+          option-label="displayname"
+          @input="logSelectedOption"
+        />
+        <q-select
+          outlined
+          v-model="courseData.batches"
+          label="Baches"
+          :options="batchOptions"
+          option-value="cycleid" 
+          option-label="cycleDesc"
+          @input="logSelectedOption"
+        />
           <!-- Add more form fields as needed -->
 
           <div class="row justify-center">
@@ -88,6 +106,7 @@
       <q-form @submit="submitBatchForm" class="formContent" ref="batchForm">
         <q-input outlined v-model="batchData.batchId" label="Batch ID" /> <!-- Add your form fields for adding a new batch -->
         <q-input outlined v-model="batchData.batchName" label="Batch Name" />
+       
         <q-input outlined v-model="batchData.startDate" label="Start Date" type="date" />
         <q-input outlined v-model="batchData.endDate" label="End Date" type="date" />
         <!-- Add more form fields as needed -->
@@ -125,6 +144,8 @@ export default {
   },
   data() {
     return {
+      userOptions: [], 
+      batchOptions: [],
       deleteUrl: urls.getEvents,
       courseDeleteUrl:urls.getCourses,
       batchDeleteUrl:urls.getBatches,
@@ -132,10 +153,12 @@ export default {
       addCourseDialog: false,
       submitLoading: false,
       courseData: {
-        courseid: '',
+        courseId: '',
         abstractt: '',
         bibliography: '',
         courseDesc: '',
+        teachers: [],
+        batches: [],
         // Add more fields as needed
       },
       addBatchDialog: false,
@@ -164,7 +187,7 @@ export default {
       eventsList: [], 
       courseheader: [
       { label: 'S.No', key: 'index', align: 'center' },
-        { label: 'Course Id', key: 'courseid', align: 'start' },
+        { label: 'Course Id', key: 'courseId', align: 'start' },
         { label: 'Course Description', key: 'abstractt', align: 'start' },
         { label: 'Bibilography', key: 'bibilography', align: 'start' },
       ],
@@ -183,11 +206,59 @@ export default {
     this.getEventsData();
     
   },
+  watch: {
+    userOptions: {
+      handler(newOptions) {
+        // Log the ID and name of each option in userOptions
+        newOptions.forEach(option => {
+          console.log('Option ID:', option.id);
+          console.log('Option Name:', option.name);
+        });
+      },
+      deep: true // Enable deep watch to watch for changes in nested properties
+    }
+  
+  },
   methods: {
     formatDate(dateString) {
     const [year, month, day] = dateString.split('-');
     return `${month}/${day}/${year}`;
-  },
+  }, 
+   logSelectedOption(selectedOptionId) {
+      // Find the selected option by ID in userOptions and log its ID and name
+      const selectedOption = this.userOptions.find(option => option.id === selectedOptionId);
+      if (selectedOption) {
+        console.log('Selected Option ID:', selectedOption.id);
+        console.log('Selected Option Name:', selectedOption.name);
+      }
+      else{
+        console.log('Selected Option ID:', 'undefined');
+      }
+    },
+  async fetchUserOptions() {
+      try {
+        const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+          const getUsersUrl = baseUrl + 'api/users/role/3';
+        const response = await axios.get(getUsersUrl );
+        console.log('Response from user options request:', response);
+        if (response.status === 200) {
+      this.userOptions = response.data.data.map(user => {
+        console.log('User ID:', user.id);
+        return {
+          id: user.id,
+          displayname: user.name + '-' + user.email,
+          name: user.name,
+          email:user.email,
+        };
+      });
+        } else {
+          throw new Error('Failed to fetch user data');
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        // Optionally handle the error or show a message to the user
+      }
+    },
     showMsg(message, type) {
       this.$q.notify({
         message: message || "Something Went Wrong!",
@@ -200,8 +271,10 @@ export default {
     },
     openAddCourseDialog() {
       this.addCourseDialog = true;
+      this.fetchUserOptions();
     },
     openAddBatchDialog() {
+    
     this.addBatchDialog = true;
   },
   submitBatchForm() {
@@ -211,9 +284,6 @@ export default {
 
   const startDateArr = this.batchData.startDate.split('-').map(Number);
   const endDateArr = this.batchData.endDate.split('-').map(Number);
-  const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-            const cycleUrl = baseUrl + 'api/cycles';
-  
   // Prepare the batch data with user-filled fields
   const batchData = {
     cycleid: this.batchData.batchId,
@@ -227,9 +297,10 @@ export default {
     lastUpdatedBy: "admin",
     // Add more fields as needed
   };
-
+  const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+          const getCyclesUrl = baseUrl + 'api/cycles';
   // Example Axios POST request to add batch
-  axios.post(cycleUrl, batchData)
+  axios.post(getCyclesUrl, batchData)
     .then(response => {
       this.submitBatchLoading = false;
       if (response.status === 201) {
@@ -250,6 +321,7 @@ export default {
       this.showMsg(error.response?.data.message || error.message, 'negative');
     });
 },
+
     getEventsData() {
       if (!this.loading) {
         this.loading = true;
@@ -269,19 +341,21 @@ export default {
     },
     submitCourseForm() {
       this.submitLoading = true;
-      const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-            const courseUrl = baseUrl + 'api/courss';
+
       // Prepare the course data with user-filled fields
       const courseData = {
-        courseid: this.courseData.courseid,
+        courseId: this.courseData.courseId,
         abstractt: this.courseData.abstractt,
         bibilography: this.courseData.bibilography,
         courseDesc:this.courseData.courseDesc,
+        teachers:[this.courseData.teachers],
+        batches: [this.courseData.batches],
         // Add more fields as needed
       };
-
+      const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+          const getCourseUrl = baseUrl + 'api/courss';
       // Example Axios POST request to add course
-      axios.post(courseUrl, courseData)
+      axios.post(getCourseUrl, courseData)
   .then(response => {
     this.submitLoading = false;
     if (response.status === 201) {
@@ -346,6 +420,13 @@ export default {
           this.loading = false;
           if (response.data.success) {
             this.batchList = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));
+            this.batchOptions = this.userOptions = response.data.data.map(item => {
+                 // console.log('User ID:', user.id);
+                  return {
+                    cycleid: item.cycleid,
+                    cycleDesc: item.cycleDesc
+                  };
+                });
           } else {
             this.showMsg(response.data?.message, 'negative');
           }
@@ -369,7 +450,7 @@ export default {
       this.$router.push({ path: `class-room/enrollments/${batch.cycleid}` })
     },
     showTopics(course) {
-      this.$router.push({ path: `class-room/topics/${course.courseid}` })
+      this.$router.push({ path: `class-room/topics/${course.courseId}` })
     },
 
   },

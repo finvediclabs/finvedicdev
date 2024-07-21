@@ -2,8 +2,8 @@
   <fin-portlet>
     <fin-portlet-header>
     </fin-portlet-header>
-    <div class="row">
-      <div class="col-3">
+    <div class="row totalView">
+      <div class="col-3 topView">
         <fin-portlet-item>
       <div class="row q-lg">
         <q-btn-group style="width: 100%; margin: 0 auto; display: flex; flex-direction: column;">
@@ -31,10 +31,10 @@
     </fin-portlet-item>
       </div>
     
-    <div class="col-9 right_side">
+    <div class="col-9 right_side topView">
       <fin-portlet-item class="q-pb-xl" v-if="presentations.length">
       <carousel-3d :totalSlides="presentations.length" :count="presentations.length" @beforeSlideChange="getCurrentSlide"
-        :controls-visible="true" :width="330" height="240">
+        :controls-visible="true" :width="responsiveWidth" :height="responsiveHeight">
         <slide v-for="(slide, i) in presentations" :key="i" :index="i" style="max-height:80% ">
           <q-img :src="slide.videoCoverPath ?? 'dummy'" class="fit" :alt="slide.heading">
             <template v-slot:error>
@@ -44,15 +44,29 @@
         </slide>
       </carousel-3d>
     </fin-portlet-item>
-    <fin-portlet-item v-else style="height: 272px" class="q-pb-xl">
-      <div class="full-width full-height flex flex-center">
-        <q-spinner-ios color="blue-9" size="3.5em" />
-      </div>
-    </fin-portlet-item>
+    <fin-portlet-item class="q-pb-xl"  v-if="!presentations.length">
+      <carousel-3d :totalSlides="5" :count="5" @beforeSlideChange="getCurrentSlide"
+                 :controls-visible="true" :width="responsiveWidth" :height="responsiveHeight">
+      <slide v-for="i in Array.from({ length: 5 }).map((_, index) => index)" :key="i" :index="i" style="max-height:80%;">
+        <q-img :src="DummyBook_1" class="fit" alt="Dummy Book">
+          <template v-slot:error>
+            <q-img :src="FallbackBook" class="full-height full-width" />
+          </template>
+        </q-img>
+      </slide>
+    </carousel-3d>
+  </fin-portlet-item>
+      <!-- <div class="full-width full-height flex flex-center">
+         <q-spinner-ios color="blue-9" size="3.5em" /> 
+        <q-img :src="DummyBook_1" :ratio="16 / 9" class="fin-br-8 shadow-1" style="width:40%; height:40%;border:2px solid white" />
+     
+      </div> -->
+
     </div>
   </div>
-
+ 
   <div class="row col-12 bottom_div1">
+    <template  v-if="presentations.length">
     <div class="col-6 single_video">
       <q-img :src="selectedSlide.videoCoverPath" :ratio="16 / 9" class="fin-br-8 shadow-1" style="width:78%; height:78%;" />
       <div class="heading">
@@ -64,10 +78,23 @@
             </p>
       </div> 
     </div>
-    <div class="col-6"></div>
-    <div class="col-6">
+  </template>
+  <template  v-if="!presentations.length">
+    <div class="col-6 single_video">
+      <q-img :src="DummyBook_1" :ratio="16 / 9" class="fin-br-8" style="width:78%; height:78%; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);" />
+      <div class="heading">
+        <span class="heading_h4" style="margin-bottom: 2%;" ><span style="color: #5479F7;">Module Name: </span>
+        {{ selectedSlide?.heading }}
+      </span>
+      <p style="font-size: 14px;font-weight: 400;">
+              <span style="color: #5479F7;">Description: </span>{{ selectedSlide?.description }}
+            </p>
+      </div> 
+    </div>
+  </template>
+    <div class="col-6" style="position: sticky;top: 10%;align-self: flex-start">
       <q-carousel swipeable animated v-model="slide" ref="carousel" infinite class="full-height"
-                style="padding-top: 50px;">
+                style="padding-top: 20px;">
                 
                 <!-- <template v-slot:control>
                   <q-carousel-control position="top-left" :offset="[20, 8]" class="text-black">
@@ -80,14 +107,72 @@
                       @click="$refs.carousel.next()" />
                   </q-carousel-control>
                 </template> -->
-                <template v-if="chaptersLoader">
-                  <q-carousel-slide :name="0" class="rounded-borders text-italic">
+                <template v-if="chaptersLoader|| !presentations.length ">
+                  <!-- <q-carousel-slide v-for="(slider, i) in allSlides" :name="i" class="items-end q-pa-none">
+                      <div class="row">
+                        <div class="col-2" style="display: flex; justify-content: center; align-items: center;">
+                          <q-carousel-control class="q-gutter-xs"   style="position: relative;">
+                          <q-btn position="top-left"  round dense class="shadow-2" text-color="white" icon="chevron_left"
+                                 @click="$refs.carousel.previous()" style="background-color: #5479F7;"/>
+                          </q-carousel-control>
+                        </div>
+                        <div class="col-8">
+  <div class="row">
+    <div class="col-6 col-lg-6 mb-4" v-for="item in slider">
+      <div class="fin-br-8" style="height: 100%;padding-bottom: 10px;padding-top: 10px;width: 90%;margin-left: auto;margin-right: auto">
+        <q-skelton class="full-height fin-br-8 shadow-2"  style="background-color: #F5F5F5;display:flex;align-items: center;justify-content: center;padding-top: 10%;padding-bottom: 10%"  >
+          <q-spinner-ios color="blue-9" size="3.5em"  /> 
+        </q-skelton>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="col-2" style="display: flex; justify-content: center; align-items: center;">
+                           <q-carousel-control class="q-gutter-xs"  style="position: relative;">
+                            <q-btn round dense class="shadow-2" text-color="white" icon="chevron_right" @click="$refs.carousel.next()" style="background-color: #5479F7;"/>
+                             </q-carousel-control>
+                          </div>
+                      </div>
+                    </q-carousel-slide>
+                   -->
+                   <q-carousel-slide :name="0" class="rounded-borders text-italic">
+                      <div class="row full-height">
+                        <div class="col-12 q-px-sm full-height">
+                          <div square class="full-width full-height q-pa-md rounded-borders"
+                            style="background-color: #F5F5F5;">
+                            No Chapters Found
+                          </div>
+                        </div>
+                      </div>
+                    </q-carousel-slide>
+ 
+ 
+ 
+                   <!-- <q-carousel-slide :name="0" class="rounded-borders text-italic">
                     <div class="row full-height">
-                      <div class="col-6 q-px-sm fin-br-8" style="height:100px" v-for="item in 4">
-                        <q-skeleton class="full-width full-height fin-br-8 shadow-1" style="background-color: #F5F5F5;" />
+                      <div class="col-6 q-px-lg col-lg-6 mb-4"  v-for="item in 4">
+                        <div class="fin-br-8" style="height: 100%;padding-bottom: 10px;padding-top: 10px;width: 90%;margin-left: auto;margin-right: auto">
+                        <q-skeleton class="full-height fin-br-8 shadow-1" style="background-color: #F5F5F5;display:flex;align-items: center;justify-content: center;padding-top: 10%;padding-bottom: 10%">
+                          <q-spinner-ios color="blue-9" size="3.5em"  /> 
+                          </q-skeleton>
+                      </div>
                       </div>
                     </div>
-                  </q-carousel-slide>
+                  </q-carousel-slide> -->
+                  
+
+                  <!-- <div class="row">
+    <div class="col-6 col-lg-6 mb-4" v-for="item in slider">
+      <div class="fin-br-8" style="height: 100%;padding-bottom: 10px;padding-top: 10px;width: 90%;margin-left: auto;margin-right: auto">
+        <q-img class="full-height fin-br-8 shadow-2 cursor-pointer" :src="item.presentationCoverPath ?? 'dummy'" @click="visitChapter(item)">
+          <template v-slot:error>
+            <q-img :src="DummyBook" class="full-height full-width" />
+          </template>
+        </q-img>
+      </div>
+    </div>
+  </div> -->
                 </template>
 
                 <template v-if="!chaptersLoader">
@@ -101,8 +186,8 @@
                           </q-carousel-control>
                         </div>
                         <div class="col-8">
-  <div class="row">
-    <div class="col-6 col-lg-3 mb-4" v-for="item in slider">
+  <div class="row chapters_show">
+    <div class="col-6 col-lg-6 mb-4" v-for="item in slider">
       <div class="fin-br-8" style="height: 100%;padding-bottom: 10px;padding-top: 10px;width: 90%;margin-left: auto;margin-right: auto">
         <q-img class="full-height fin-br-8 shadow-2 cursor-pointer" :src="item.presentationCoverPath ?? 'dummy'" @click="visitChapter(item)">
           <template v-slot:error>
@@ -154,7 +239,8 @@ import { urls } from "./Urls"
 import { storeToRefs } from "pinia";
 import { useCategoryStore } from "src/stores/Categories";
 import moment from "moment";
-import DummyBook from "src/assets/dummyBook.jpg"
+import DummyBook from "src/assets/dummyBook.jpg";
+import DummyBook_1 from "src/assets/presentation_pre.gif";
 import CryptoJS from 'crypto-js'
 export default {
   setup() {
@@ -174,6 +260,7 @@ export default {
   data() {
     return {
       DummyBook: DummyBook,
+      DummyBook_1: DummyBook_1,
       presentations: [],
       selectedSlide: {},
       loading: false,
@@ -182,8 +269,17 @@ export default {
       allSlides: [],
       chaptersLoader: false,
       loading: false,
+      responsiveHeight: '40vh',
+      responsiveWidth: '80vw',
       slideWidth: window.innerWidth < 470 ? window.innerWidth - 30 : 450,
     }
+  },
+  created() {
+    this.updateCarouselDimensions();
+    window.addEventListener('resize', this.updateCarouselDimensions);
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.updateCarouselDimensions);
   },
   watch: {
     selectedSlide() {
@@ -218,6 +314,22 @@ export default {
         ]
       });
     },
+    updateCarouselDimensions() {
+      const screenWidth = window.innerWidth;
+      if (screenWidth < 600) {
+        this.responsiveHeight = '30vh'; // Height for small screens
+        this.responsiveWidth = '90vw'; // Width for small screens
+      } else if (screenWidth >= 600 && screenWidth < 1367) {
+        this.responsiveHeight = '220vh'; // Height for medium screens
+        this.responsiveWidth = '340'; // Width for medium screens
+      } else if (screenWidth >=1400 && screenWidth < 1602) {
+        this.responsiveHeight = '300vh'; // Height for medium screens
+        this.responsiveWidth = '400'; // Width for medium screens
+      } else {
+        this.responsiveHeight = '320vh'; // Height for large screens
+        this.responsiveWidth = '480'; // Width for large screens
+      }
+    },
     getCurrentSlide(index) {
       this.selectedSlide = this.presentations[index];
     },
@@ -243,14 +355,12 @@ export default {
         // Fetch videoCoverPath and send it to download URL for each presentation
         if (presentation.videoCoverPath) {
           const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-            const removeImagePath = baseUrl + 'fs/download/';
-        
-
+          const getImagesUrl = baseUrl + 'fs/download';
+          const removeImagePath = baseUrl +'fs/download/'
           const videoCoverPathWithoutPrefix = presentation.videoCoverPath.replace(removeImagePath, '');
           const formData = new FormData();
           formData.append('filename', videoCoverPathWithoutPrefix);
-
-          const getImagesUrl = baseUrl + 'fs/download';
+        
           axios.post(getImagesUrl, formData, { responseType: 'blob' })
             .then(downloadResponse => {
               // Handle download success, e.g., open or save the downloaded file
@@ -308,13 +418,12 @@ getChaptersData() {
         this.chapters.forEach(chapter => {
           if (chapter.presentationCoverPath) {
             const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-            const removeImagePath = baseUrl + 'fs/download/';
-    
+          const getImagesUrl = baseUrl + 'fs/download';
+            const removeImagePath = baseUrl +'fs/download/'
             const imagePathWithoutPrefix = chapter.presentationCoverPath.replace(removeImagePath, '');
             const formData = new FormData();
             formData.append('filename', imagePathWithoutPrefix);
-            
-          const getImagesUrl = baseUrl + 'fs/download';
+          
             axios.post(getImagesUrl, formData, { responseType: 'blob' })
               .then(downloadResponse => {
                 const blob = new Blob([downloadResponse.data]);
@@ -330,12 +439,12 @@ getChaptersData() {
 
         this.getDummyChapters(this.chapters);
       } else {
-        this.showMsg(response.data?.message, 'negative');
+        // this.showMsg(response.data?.message, 'negative');
       }
     })
     .catch(error => {
       this.chaptersLoader = false;
-      this.showMsg(error.response?.data.message || error.message, 'negative');
+      // this.showMsg(error.response?.data.message || error.message, 'negative');
     });
 },
     getDummyChapters(chapter) {
@@ -433,13 +542,17 @@ getChaptersData() {
 .bottom_div1{
   position:relative; 
   background-color: #ffff !important;
-  margin-top: 4vh;
+  /* margin-top: 4vh; */
+  margin-top: 2vh;
+  display: flex;
+  align-items: end;
+  justify-content: center;
   /* border: 2px solid grey; */
 }
 .single_video{
-  /* margin-top: -16vh; */
+  margin-top: -14vh;
   /* border:2px solid red; */
-  position: absolute;
+  /* position: absolute; */
   top: -12vh;
 }
 .heading{
@@ -459,6 +572,25 @@ getChaptersData() {
 .padding_zero{
     padding: 5% 0px;
   }
-  
+  .totalView{
+height: 50vh;
+}
+@media screen and (min-width: 1920px) {
+    /* Your CSS styles for this screen width range */
+    .totalView{
+height: 54vh;
+}
+.topView{
+  padding-top: 4%;
+}
+}
+@media screen and (min-width: 1400px) and (max-width: 1602px) {
+  .totalView{
+    height: 52vh;
+}
+.topView{
+  padding-top: 4%;
+}
+}
 </style>
 ./Urls

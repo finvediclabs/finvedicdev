@@ -47,7 +47,7 @@
 
                       <q-item clickable v-close-popup @click="showChaptersList(item)" v-if="showChapters">
                         <q-item-section>
-                          <q-item-label>Show Chapters</q-item-label>
+                          <q-item-label>View</q-item-label>
                         </q-item-section>
                       </q-item>
                       <div class="justify-center flex" v-if="showChapters">

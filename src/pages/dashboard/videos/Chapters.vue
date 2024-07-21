@@ -70,8 +70,8 @@ export default {
     async getChaptersData() {
   if (this.videoId) {
     const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-            const removeImagePath = baseUrl + 'fs/download/';
-          const imagePath = baseUrl + 'fs/download'
+          const getImagesUrl = baseUrl + 'fs/download';
+          const removeImagePath = baseUrl +'fs/download/'
     this.loading = true;
     try {
       const formData = new FormData();
@@ -94,10 +94,11 @@ export default {
           if (image) {
             // Create form data
             const formData = new FormData();
+            
             formData.append('filename', image);
 
             // Send form data to http://localhost:8083/fs/download
-            const downloadResponse = await axios.post(imagePath, formData, {
+            const downloadResponse = await axios.post(getImagesUrl, formData, {
               responseType: 'blob' // Set response type to blob
             });
 

@@ -29,7 +29,7 @@
           label="Student"
           :options="userOptions"
           option-value="id" 
-          option-label="name"
+          option-label="displayname"
           @input="logSelectedOption"
         />
         <q-input outlined v-model="enrollmentData.enrollmentDateStr" label="Enrollment Date (MM/DD/YYYY)" />
@@ -130,16 +130,16 @@ export default {
     async fetchUserOptions() {
       try {
         const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-            const usersUrl = baseUrl + 'api/users';
-          
-        const response = await axios.get(usersUrl);
+          const getUsersUrl = baseUrl + 'api/users';
+        const response = await axios.get(getUsersUrl );
         console.log('Response from user options request:', response);
         if (response.status === 200) {
       this.userOptions = response.data.data.map(user => {
         console.log('User ID:', user.id);
         return {
           id: user.id,
-          name: user.name,
+          displayname: user.name + '-' + user.email,
+          name: user.name
         };
       });
         } else {
@@ -228,9 +228,8 @@ export default {
   try {
     // Example Axios POST request to add enrollment
     const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-            const enrollmentsUrl = baseUrl + 'api/enrollments';
-         
-    const response = await axios.post(enrollmentsUrl, enrollmentData);
+          const getEnrollmentsUrl = baseUrl + 'api/enrollments';
+    const response = await axios.post(getEnrollmentsUrl, enrollmentData);
 
     if (response.status === 201) {
       // Enrollment created successfully

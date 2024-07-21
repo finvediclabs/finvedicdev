@@ -66,16 +66,16 @@ export default {
     },
     async sendPostRequest() {
     try {
-      const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-            const removeImagePath = baseUrl + 'fs/download/';
-          const imagePath = baseUrl + 'fs/download'
       // Remove the prefix from this.pdfPath
+      const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+          const getPdfUrl = baseUrl + 'fs/download';
+          const removeImagePath = baseUrl +'fs/download/'
       const filePathWithoutPrefix = this.pdfPath.replace(removeImagePath, '');
-
+     
       const formData = new FormData();
       formData.append('filename', filePathWithoutPrefix); // Use the modified filePathWithoutPrefix
 
-      const response = await Axios.post(imagePath, formData, { responseType: 'blob' });
+      const response = await Axios.post(getPdfUrl, formData, { responseType: 'blob' });
 
       if (response.status === 200) {
         const blob = new Blob([response.data]);

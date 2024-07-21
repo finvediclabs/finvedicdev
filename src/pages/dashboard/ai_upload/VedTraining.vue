@@ -90,9 +90,7 @@ export default {
       formData.append("source", "portal");
 
       try {
-        const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-            const botUrl = baseUrl + 'api/bot';
-        const response = await axios.post(botUrl, formData, {
+        const response = await axios.post("https://fnbackendprod.finvedic.com/api/bot", formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }

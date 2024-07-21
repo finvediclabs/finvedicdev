@@ -76,6 +76,11 @@ const routes = [
         meta: { item: 'uploadpdfbot' }
       },
       {
+        path: 'forms',
+        component: () => import('pages/dashboard/forms/forms.vue'),
+        meta: { item: 'uploadpdfbot' }
+      },
+      {
         path: 'vm-setup',
         component: () => import('pages/dashboard/VmSetup.vue'),
         meta: { item: 'vm-setup' }
@@ -190,6 +195,21 @@ const routes = [
       }
     ]
   },
+
+  {
+    path: '/help',
+    meta: { title: 'Help', module: 'help' },
+    component: () => import('layouts/DashboardLayout.vue'),
+    children: [
+      
+      {
+        path: '',
+        component: () => import('pages/help/Faq.vue'),
+        meta: { item: '' }
+      }
+    ]
+  },
+
   {
     path: '/profile',
     meta: { title: 'profile', module: 'profile' },

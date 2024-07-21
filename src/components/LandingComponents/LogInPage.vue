@@ -108,13 +108,15 @@ export default {
         }).then(response => {
           this.loading = false;
           sessionStorage.setItem('accessToken', response.data.accessToken);
-          sessionStorage.setItem('userType', 1);
+         // sessionStorage.setItem('userType', 1);
           this.setUserData(response.data.user);
           this.setSessionToken(response.data.accessToken);
           var user = response.data.user;
-          this.setUserType( user.roles?.length ? user.roles[0].id : '' );
+          sessionStorage.setItem('userType',(user.roles?.length ? user.roles[0].name : 'Student' ));
+          this.setUserType( user.roles?.length ? user.roles[0].name : 'Student' );
 
         }).catch(error => {
+          this.loading = false;
           let errorMessage = error.response?.data.message || error.message;
       if (errorMessage.includes('properties of undefined')) {
         errorMessage = "You are not authorized to login";

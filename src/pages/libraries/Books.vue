@@ -2,33 +2,33 @@
 <template>
   <fin-portlet style="background-color: transparent">
     <div class="row col-12 TopBG">
-      <div class="col-5">
+      <div class="col-5 topHead">
         <fin-portlet-heading class="q-md">
           <div class="heading_class">
                 <h4>{{ selectedSlide?.heading }}</h4>
-              </div>
-              </fin-portlet-heading>
-
+          </div>
+        </fin-portlet-heading>
       </div>
-<div class="right_side col-7" style="margin-top: 0px;">
-    <fin-portlet-item  v-if="booksData.length">
-      <carousel-3d :totalSlides="booksData.length" :count="booksData.length" @beforeSlideChange="getCurrentSlide"
-        :controls-visible="true" width="170" height="300" display="7" >
-        <slide v-for="(slide, i) in booksData" :key="i" :index="i" style="max-height: 80%" >
-          <q-img :src="slide.imagePath ?? 'dummy'" class="fin-br-8 fit" :alt="slide.heading"  >
-            <template v-slot:error>
-              <q-img :src="DummyBook" class="full-width" />
-            </template>
-          </q-img>
-        </slide>
-      </carousel-3d>
-    </fin-portlet-item>
-  </div>
-</div>
+      <div class="right_side col-md-7 col-12 " style="margin-top: 0px;">
+        <fin-portlet-item  v-if="booksData.length">
+             <carousel-3d :totalSlides="booksData.length" :count="booksData.length" @beforeSlideChange="getCurrentSlide"
+                  :controls-visible="true" :width="responsiveWidth" :height="responsiveHeight" :display="displaySlides" >
+                <slide v-for="(slide, i) in booksData" :key="i" :index="i" style="max-height: 80%" >
+                  <q-img :src="slide.imagePath ?? 'dummy'" class="fin-br-8 fit" :alt="slide.heading"  >
+                    <template v-slot:error>
+                        <q-img :src="DummyBook" class="full-width" />
+                    </template>
+                  </q-img>
+                </slide>
+             </carousel-3d>
+        </fin-portlet-item>
+      </div>
+    </div>
 
-<div class="row col-12 bottom_div">
-  <div class="col-6 single_book">
-    <q-avatar style="width: 19vw; height: 56vh; margin-left:10%;" square>
+<div class="row col-12 bottom_div topHead ">
+  <div class="col-4 single_book ">
+    
+    <q-avatar style="margin-left: auto;margin-right: auto" square class="book_single" >
                 <q-img :src="selectedSlide?.imagePath ?? 'dummy'" class="fin-br-8" style="border:1px solid #00000030"
                   :alt="selectedSlide?.heading" >
                   <template v-slot:error>
@@ -36,11 +36,13 @@
                   </template>
                 </q-img>
               </q-avatar>
+              <div class="desc_div">
               <p class="single_book_desc">
                   {{ selectedSlide?.description }}
                 </p>
+              </div>
   </div>
-  <div class="col-4"></div>
+  
   <div class="right_side_chapters col-8">
     
     <q-carousel swipeable animated v-model="slide" ref="carousel" infinite class="full-height"
@@ -62,7 +64,7 @@
                   <template v-if="chaptersData.length"  >
                     
                     <q-carousel-slide v-for="(slider, i) in allSlides" :name="i" class="items-end q-pa-none chapters_loader">
-                      <div class="row chapter_right">
+                      <div  class="row chapter_right" ref="chaptersRight">
                         <div class="col-1" style="display: flex; justify-content: center; align-items: center;" >
                           <q-carousel-control class="q-gutter-xs"   style="position: relative;">
                     <q-btn position="top-left"  round dense class="shadow-2" text-color="white" icon="chevron_left"
@@ -147,9 +149,19 @@ export default {
       chaptersData: [],
       slide: 0,
       allSlides: [],
+      responsiveHeight: '170',
+      responsiveWidth: '300',
       chaptersLoader: false,
+      displaySlides: 7,
       loading: false
     }
+  },
+  created() {
+    this.updateCarouselDimensions();
+    window.addEventListener('resize', this.updateCarouselDimensions);
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.updateCarouselDimensions);
   },
   watch: {
     selectedSlide() {
@@ -184,10 +196,30 @@ export default {
         ]
       });
     },
+    updateCarouselDimensions() {
+      const screenWidth = window.innerWidth;
+      if (screenWidth < 600) {
+        this.responsiveHeight = '220'; // Height for small screens
+        this.responsiveWidth = '120';
+        this.displaySlides = 5; // Width for small screens
+      } else if (screenWidth >= 600 && screenWidth < 1367) {
+        this.responsiveHeight = '300'; // Height for medium screens
+        this.responsiveWidth = '170';
+        this.displaySlides = 7; // Width for medium screens
+      } else if (screenWidth >=1400 && screenWidth < 1602) {
+        this.responsiveHeight = '400'; // Height for medium screens
+        this.responsiveWidth = '230';
+        this.displaySlides = 7; // Width for medium screens
+      }  else {
+        this.responsiveHeight = '520'; // Height for large screens
+        this.responsiveWidth = '280';
+        this.displaySlides = 7; // Width for large screens
+      }
+    },
     getCurrentSlide(index) {
       this.selectedSlide = this.booksData[index];
     },
-    getBooksData() {
+   async getBooksData() {
   this.loading = true;
   let request = {
     params: {
@@ -198,24 +230,38 @@ export default {
     request.params.subCategoryId = this.selectedSubCategory.id;
   }
 
-  this.$api.get(urls.getBooksDataUrl, request).then(response => {
+  await this.$api.get(urls.getBooksDataUrl, request).then(response => {
     this.loading = false;
     console.log('Data from getbooksurl:', response.data);
     if (response.data.success) {
-      this.booksData = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));
+      this.booksData = response.data.data.map((item, index) => ({
+        index: index + 1,
+        id: item.id,
+        accountId: item.accountId,
+        description: item.description,
+        heading: item.heading,
+        imagePath: item.imagePath,
+        createdAt: item.createdAt ? moment(item.createdAt).format('YYYY-MM-DD') : null,
+        updatedAt: item.updatedAt ? moment(item.updatedAt).format('YYYY-MM-DD') : null,
+        createdBy: item.createdBy,
+        lastUpdatedBy: item.lastUpdatedBy,
+        deletedAt: item.deletedAt ? moment(item.deletedAt).format('YYYY-MM-DD') : null,
+      }));
+      
+      console.log('Books Data:', this.booksData);
       
       // Loop through each book and fetch imagePath for it
       this.booksData.forEach(book => {
         // Fetch imagePath and send it to download URL for each book
         if (book.imagePath) {
           const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-          const removeImagePath = baseUrl + 'fs/download/';
-          const imagePath = baseUrl + 'fs/download'
+          const getImagesUrl = baseUrl + 'fs/download';
+          const removeImagePath = baseUrl +'fs/download/'
           const imagePathWithoutPrefix = book.imagePath.replace(removeImagePath, '');
           const formData = new FormData();
           formData.append('filename', imagePathWithoutPrefix);
           
-          axios.post(imagePath, formData, { responseType: 'blob' })
+          axios.post(getImagesUrl, formData, { responseType: 'blob' })
             .then(downloadResponse => {
               // Handle download success, e.g., open or save the downloaded file
               const blob = new Blob([downloadResponse.data]);
@@ -236,10 +282,15 @@ export default {
     } else {
       this.showMsg(response.data?.message, 'negative');
     }
-  }).catch(error => {
-    this.loading = false;
-    this.showMsg(error.message, 'negative');
-  });
+  }) .catch(error => {
+      this.loading = false;
+      if (error.response && error.response.status === 405) {
+        console.error('Error 405: Method Not Allowed');
+        // You can add additional handling for this specific error code
+      } else {
+        this.showMsg(error.message, 'negative');
+      }
+    });
 },
 
 
@@ -248,8 +299,8 @@ getChaptersData() {
   const formData = new FormData();
   formData.append('bookId', this.selectedSlide?.id); // Add bookId to form data
   const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-const getChaptersUrl = baseUrl + 'api/bookChapters/getBookChaptersByBookId'
-  axios.post(getChaptersUrl, formData)
+          const getChapters = baseUrl + 'api/bookChapters/getBookChaptersByBookId';
+  axios.post(getChapters, formData)
     .then(response => {
       this.chaptersLoader = false;
       if (response.data.success) {
@@ -273,13 +324,14 @@ const getChaptersUrl = baseUrl + 'api/bookChapters/getBookChaptersByBookId'
         this.chaptersData.forEach(chapter => {
           if (chapter.chapterImagePath) {
             const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-            const removeImagePath = baseUrl + 'fs/download/';
-          const imagePath = baseUrl + 'fs/download'
-            const imagePathWithoutPrefix = chapter.chapterImagePath.replace(removeImagePath , '');
+          const getImagesUrl = baseUrl + 'fs/download';
+          const removeImagePath = baseUrl +'fs/download/'
+            const imagePathWithoutPrefix = chapter.chapterImagePath.replace(removeImagePath, '');
             const formData = new FormData();
+          
             formData.append('filename', imagePathWithoutPrefix);
             
-            axios.post(imagePath, formData, { responseType: 'blob' })
+            axios.post(getImagesUrl, formData, { responseType: 'blob' })
               .then(downloadResponse => {
                 const blob = new Blob([downloadResponse.data]);
                 const url = window.URL.createObjectURL(blob);
@@ -347,18 +399,15 @@ const getChaptersUrl = baseUrl + 'api/bookChapters/getBookChaptersByBookId'
 </script>
 <style>
 .TopBG{
-  /* background-color:rgba(255, 255, 255, 0); */
-
-  /* background-color: ; */
-  /* background-image: url('/src/assets/Background_new_crop.png'); */
+  
   background-repeat: no-repeat;
   background-size: 100vw 65vh
-  /* background-color: red; */
+  
 }
 .bottom_div{
   position:relative; 
   background-color: #ffff !important;
-  margin-top: 10vh;
+  margin-top: 6%;
 
   padding-bottom: 4vh;
 
@@ -370,36 +419,62 @@ const getChaptersUrl = baseUrl + 'api/bookChapters/getBookChaptersByBookId'
   background-size: 100vw 65vh;
 } */
 .single_book{
-  position: absolute;
-  top: -46vh;
-  /* border: 2px solid green; */
-  /* margin-top: -30%; */
-  /* padding-bottom: 2%; */
+  margin-top: -25%;
+  display: flex; justify-content: center;
+flex-direction: column;  
+  /* border:2px solid green */
 }
 .right_side{
   z-index: 2;
 }
+.book_single{
+  width: 24vw;
+  /* border: 2px solid green; */
+  height: 100%;
+  margin-top: 4%;
+  /* padding-top: 4vw; */
+}
+.desc_div{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  margin-bottom: auto;
+  width:100%;
+  /* border: 2px solid green; */
+}
 .single_book_desc{
   font-family: 'Manrope';
-  font-size:16px;
-  width: 46%;
+  font-size:20px;
+  width: 86%;
   /* border:2px solid red; */
-  margin-left:10%;
+  /* margin-left:10%; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* border:2px solid red; */
   margin-top: 2%;
-  line-height: 20px;
+  line-height: 30px;
   color: #5479F7;
   
 }
 .heading_class{
   /* border: 2px solid green; */
- width:80%
+ width:80%;
+ /* margin-left:auto; */
+ display: flex;
+ align-self:end;
+
+ justify-content: center;
+ margin-right: auto;
+ /* border: 2px solid red; */
 }
 h4{
   color: #032390;
   font-family: 'Playfair Display SC', serif;
   font-weight: 700;
   text-align: center;
-  width: 80%;
+  /* width: 80%; */
   margin-left:auto;
   margin-right:auto;
   line-height:140%;
@@ -407,7 +482,7 @@ h4{
   text-transform: uppercase;
   margin-top: auto;
   margin-bottom: auto;
-  font-size: 20px;
+  font-size: 28px;
   
 }
 .chapter_text{
@@ -422,7 +497,7 @@ h4{
 }
 .right_side_chapters{
   position:relative;
-  /* margin-top: 2%; */
+  margin-top: 1%;
   /* border: 2px solid red; */
 }
 .chapter_right{
@@ -437,11 +512,85 @@ h4{
 .q-carousel{
   background: transparent;
 }
-
-@media screen and (min-width: 1367px) and (max-width: 1920px) {
+.TopBG{
+  /* border:2px solid green; */
+  padding-top: 2%;
+}
+@media screen and (min-width: 1920px) {
     /* Your CSS styles for this screen width range */
     .bottom_div{
-      margin-top:14%;
+      margin-top:10%;
     }
+    .book_single{
+  width: 26vw;
+  height: 100%;
+  /* padding-top: 2% */
+}
+.TopBG{
+  /* border:2px solid green; */
+  padding-top: 4%;
+}
+h4{
+  color: #032390;
+  font-family: 'Playfair Display SC', serif;
+  font-weight: 700;
+  text-align: center;
+  /* width: 80%; */
+  margin-left:auto;
+  margin-right:auto;
+  line-height:140%;
+  /* margin-top: -0.75%; */
+  text-transform: uppercase;
+  margin-top: auto;
+  margin-bottom: auto;
+  font-size: 1.2em;
+  
+}
+.single_book_desc{
+  font-family: 'Manrope';
+  font-size:24px;
+  width: 90%;
+  /* border:2px solid red; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 20px;
+  color: #5479F7;
+  
+}
+.single_book{
+  margin-top: -33%;
+  display: flex; justify-content: center;
+flex-direction: column;  
+  /* border:2px solid green */
+}
+.single_book_desc{
+  font-family: 'Manrope';
+  font-size:2em;
+  width: 86%;
+  /* border:2px solid red; */
+  /* margin-left:10%; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* border:2px solid red; */
+  margin-top: 2%;
+  line-height: 30px;
+  color: #5479F7;
+  
+}
+}
+@media screen and (min-width: 1400px) and (max-width: 1602px) {
+  .single_book{
+  margin-top: -30%;
+  display: flex; justify-content: center;
+flex-direction: column;  
+  /* border:2px solid green */
+} /* CSS rules here apply when the screen width is between 1920px and 2560px */
+}
+@media screen and (max-width: 567px){
+  .topHead{
+    display: none !important;
+  }
 }
 </style>
