@@ -78,30 +78,33 @@
               <div class="q-pa-sm absolute-top-right arrow" style="margin-top: -19px">
                 <q-icon name="arrow_drop_up" size="xl" style="color: #EAEAEA"></q-icon>
               </div>
-              <div class="q-px-md">
-                <div class="full-width row items-center">
-                  Tomorrow's Class
-                  <q-space />
-                  <q-icon name="calendar_month" size="20px" />
-                </div>
-                <div class="fill-width text-center items-center row justify-center text-body1 text-weight-bolder q-py-lg"
-                  style="align-items: center;">
-                  <div>Nov</div>
-                  <div class="text-h5 q-px-md text-weight-bolder">21</div>
-                  <div>2023</div>
-                </div>
-                <div class="full-width bg-finvedic row q-px-sm q-py-xs fin-br-8 text-white cursor-pointer">
-                  <div>Banking</div>
-                  <q-space />
-                  <div>11:00 AM </div>
-                </div>
-              </div>
+              <div class="q-px-md" v-if="nextOrLastEvent">
+  <div class="full-width row items-center">
+    {{ isNextEvent ? "Next Class" : "Last Class" }}
+    <q-space />
+    <q-icon name="calendar_month" size="20px" />
+  </div>
+  <div class="fill-width text-center items-center row justify-center text-body1 text-weight-bolder q-py-lg" style="align-items: center;">
+    <div>{{ nextOrLastEvent.date.split('-')[1] }}</div>
+    <!-- <div class="text-h5 q-px-md text-weight-bolder">{{ nextOrLastEvent.date.split('-')[2] }}</div> -->
+    <div>{{ nextOrLastEvent.date.split('-')[0] }}</div>
+  </div>
+  <div class="full-width bg-finvedic row q-px-sm q-py-xs fin-br-8 text-white cursor-pointer">
+    <a :href="nextOrLastEvent.link" target="_blank" style="text-decoration: none;">
+  <div class="full-width bg-finvedic q-px-sm q-py-xs fin-br-8 text-white cursor-pointer">
+    <div class="text-center">{{ nextOrLastEvent.topic }}</div>
+    <div class="text-center" >Time: {{ nextOrLastEvent.start }}</div>
+  </div>
+</a>
+  </div>
+</div>
+
             </div>
           </q-menu>
         </q-btn>
 
         <q-avatar class="shadow-4" :size="isMobile ? '40px' : '50px'">
-          <q-img :src="user?.photoPath || profileImg" class="profileImg cursor-pointer rounded full-width full-height" />
+          <q-img :src="imageUrl || profileImg" class="profileImg cursor-pointer rounded full-width full-height" />
           <q-menu :offset="[-5, 5]" max-width="300px" style="width:230px;background: transparent!important;"
             class="fin-br-8 q-py-md shadow-0" transition-show="flip-right" transition-hide="rotate">
             <div style="background-color: #EAEAEA;opacity:0.99" class="q-py-md shadow-2 fin-br-8">
@@ -185,6 +188,8 @@ import { useSessionStore } from "src/stores/session";
 import { setToken } from "src/boot/axios"
 import { useProfileStore } from "src/stores/profile";
 import profileImg from "src/assets/profile.png";
+import ColorHash from 'color-hash'
+var colorHash = new ColorHash();
 import Chatbot from "src/layouts/ChatBot.vue";
 export default {
   components: {
@@ -213,6 +218,7 @@ export default {
     return {
       backgroundStyle: '',
       profileImg: profileImg,
+      imageUrl: '', 
       profileMenu: false,
       CurrentDate: new Date().toDateString(),
       selectedModule: {},
@@ -287,6 +293,7 @@ export default {
       document.body.classList.remove('guest');
     }
     this.getUserData();
+    this. getEventsDataNotification();
     this.selectedModule = {
         module: this.$route.meta.module,
         item: this.$route.meta.item
@@ -300,21 +307,20 @@ export default {
         this.$router.push('/profile');
     }
 },
-  watch: {
-    token() {
-      if (!this.token) {
-        this.$router.push('/');
-      }
-    },
-    user() {
-      this.getUserData();
-    },
-      
-    $route (to, from){
-      this.checkAccess();
-    },
-      '$route': 'updateBackgroundStyle'
+ watch: {
+  token(newVal, oldVal) {
+    if (!newVal) {
+      this.$router.push('/');
+    }
   },
+  user() {
+    this.getUserData();
+  },
+  $route(to, from) {
+    this.updateBackgroundStyle();
+    this.checkAccess();
+  }
+},
   methods: {
     checkAccess() {
        let path = this.$route.path;
@@ -323,6 +329,71 @@ export default {
           this.$router.push({path:this.defaultPath});
        }
        
+    },
+    getEventsDataNotification() {
+  var request = {
+    categoryId: this.selectedCategory?.id,
+    subCategoryId: this.selectedSubCategory?.id
+  };
+  this.loading = true;
+  const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+  const getEvents = baseUrl + 'api/calendarEvents';
+
+  this.$api.get(getEvents, {
+    params: request
+  }).then(response => {
+    this.loading = false;
+    if (response.data.success) {
+      let events = response.data.data;
+
+      // Map and sort events by date and start time
+      events = events.map(event => ({
+        title: event.title,
+        date: event.date,
+        start: event.start,
+        end: event.end,
+        link: event.link,
+        topic: event.topic,
+        color: 'white',
+        backgroundColor: colorHash.hex(event.title),
+        width: '100%',
+        height: '50px'
+      })).sort((a, b) => new Date(`${a.date} ${a.start}`) - new Date(`${b.date} ${b.start}`));
+
+      const now = new Date();
+      let nextEvent = null;
+      let lastEvent = null;
+
+      // Find the next event
+      nextEvent = events.find(event => new Date(`${event.date} ${event.start}`) > now);
+
+      // Find the most recent past event if no next event is found
+      if (!nextEvent) {
+        lastEvent = events.reverse().find(event => new Date(`${event.date} ${event.start}`) <= now);
+      }
+
+      this.events = events;
+      this.nextOrLastEvent = nextEvent || lastEvent;
+      this.isNextEvent = !!nextEvent; // true if next event, false if last event
+      console.log("events:", this.events);
+      console.log("nextOrLastEvent:", this.nextOrLastEvent);
+    } else {
+      this.showMsg(response.data?.message, 'negative');
+    }
+  }).catch(error => {
+    this.loading = false;
+    this.showMsg(error.response?.data.message || error.message, 'negative');
+  });
+},
+showMsg(message, type) {
+      this.$q.notify({
+        message: message || "Something Went Wrong!",
+        type: type,
+        position: 'top-right',
+        actions: [
+          { icon: 'close', color: 'white', handler: () => { } }
+        ]
+      });
     },
     updateBackgroundStyle() {
       // Check if the current route is '/library/books'
@@ -366,13 +437,13 @@ export default {
         this.backgroundStyle = 'Users_BackgroundStyle'; // Apply the background style class
       } 
       else if(this.$route.path === '/admin/vm-setup'){
-        this.backgroundStyle = 'Classroom_BackgroundStyle';
+        this.backgroundStyle = 'Users_BackgroundStyle';
       }
       else if(this.$route.path === '/admin/class-room'){
-        this.backgroundStyle = 'Classroom_BackgroundStyle';
+        this.backgroundStyle = 'Users_BackgroundStyle';
       }
        else if(this.$route.path === '/admin/forms'){
-        this.backgroundStyle = 'Classroom_BackgroundStyle';
+        this.backgroundStyle = 'Users_BackgroundStyle';
       }
       else {
         this.backgroundStyle = ''; // Do not apply any background style
@@ -381,7 +452,7 @@ export default {
     getUserData() {
       this.$api.get(`api/users/${this.user.id}`).then(response => {
         if (response.data.success) {
-          var user = response.data.data;
+          const user = response.data.data;
           this.profile = {
             name: user.name,
             email: user.email,
@@ -389,15 +460,28 @@ export default {
             role: this.user.roles ? this.user.roles[0] : [],
             owner: user.owner,
           }
-          this.imageUrl = user.photoPath;
+          const baseURL = 'http://localhost:8087/fs/download/';
+          const filename = user.uploadDocumentPath.replace(baseURL, '');
+          // Post the filename to get the image blob
+          const formData = new FormData();
+          formData.append('filename', filename);
+
+          this.$api.post('http://localhost:8087/fs/download', formData, {
+            responseType: 'blob'
+          }).then(response => {
+            const url = URL.createObjectURL(response.data);
+            this.imageUrl = url;
+          }).catch(error => {
+            this.showMsg(error.response?.data.message || error.message, 'negative');
+          });
+
         } else {
           this.showMsg(response.data.message, 'negative');
         }
       }).catch(error => {
         this.loading = false;
         this.showMsg(error.response?.data.message || error.message, 'negative');
-      })
-
+      });
     },
     
     knowModuleFunction() {

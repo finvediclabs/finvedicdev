@@ -13,28 +13,38 @@
       </fin-portlet-item>
     </fin-portlet>
     <q-dialog v-model="addTopicDialog">
-    <fin-portlet style="min-width: 400px; max-width: 600px;">
-      <fin-portlet-header bordered>
-        <fin-portlet-heading small>Add Topic</fin-portlet-heading>
-      </fin-portlet-header>
-      <fin-portlet-item class="w-100 addTopicDialog">
-        <!-- Form fields for adding new topic -->
-        <q-form @submit="submitTopicForm" class="formContent" ref="topicForm">
-          <q-input outlined v-model="topicData.topicId" label="Topic ID" />
-          <q-input outlined v-model="topicData.topicName" label="Topic Name" />
-          <!-- Add more form fields as needed -->
+      <fin-portlet style="min-width: 400px; max-width: 600px;">
+  <fin-portlet-header bordered>
+    <fin-portlet-heading small>Add Topic</fin-portlet-heading>
+  </fin-portlet-header>
+  <fin-portlet-item class="w-100 addTopicDialog">
+    <!-- Form fields for adding new topic -->
+    <q-form @submit="submitTopicForm" class="formContent" ref="topicForm">
+      <q-input
+        outlined
+        v-model="topicData.topicId"
+        label="Topic ID"
+        :rules="[val => !!val || 'Topic ID is required']"
+      />
+      <q-input
+        outlined
+        v-model="topicData.topicName"
+        label="Topic Name"
+        :rules="[val => !!val || 'Topic Name is required']"
+      />
+      <!-- Add more form fields as needed -->
 
-          <div class="row justify-center">
-            <div class="col-12 q-px-sm q-py-xs text-right q-pt-lg">
-              <q-btn label="Close" v-close-popup type="reset" color="primary" flat class="q-mr-sm" no-caps />
-              <q-btn label="Submit" type="submit" color="primary" :disable="submitLoading" no-caps>
-                <q-spinner-ios size="xs" class="q-ml-sm" v-if="submitLoading" />
-              </q-btn>
-            </div>
-          </div>
-        </q-form>
-      </fin-portlet-item>
-    </fin-portlet>
+      <div class="row justify-center">
+        <div class="col-12 q-px-sm q-py-xs text-right q-pt-lg">
+          <q-btn label="Close" v-close-popup type="reset" color="primary" flat class="q-mr-sm" no-caps />
+          <q-btn label="Submit" type="submit" color="primary" :disable="submitLoading" no-caps>
+            <q-spinner-ios size="xs" class="q-ml-sm" v-if="submitLoading" />
+          </q-btn>
+        </div>
+      </div>
+    </q-form>
+  </fin-portlet-item>
+</fin-portlet>
   </q-dialog>
   </template>
   <script>

@@ -3,19 +3,12 @@
     <fin-portlet-header>
       <fin-portlet-heading :loading="loading" backArrow ><span class="User_heading" >Users</span></fin-portlet-heading>
       <fin-portlet-item class="role_search">
-        <q-select  v-model="roleSearch" :options="roleOptions"  label="Roles" outlined class="fin-input" dense />
+        <q-select  v-model="roleSearch" :options="roleOptions"  label="Roles"  option-value="value" outlined class="fin-input" dense />
       </fin-portlet-item>
-      <!-- <fin-portlet-item class="program_search">
-        <q-select  v-model="programSearch" :options="['trine', 'client']" outlined label="Programs" class="fin-input" 
-          dense label-color="white" />
-      </fin-portlet-item> -->
       <fin-portlet-item>
-        <!-- <q-btn class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder" no-caps @click="createUser()">
-</q-btn> -->
 <q-btn @click="createUser()" >
   <q-img :src="usersIcon" alt="User Icon" style="width: 32px; height: 32px;" />
 </q-btn>
-
       </fin-portlet-item>
     </fin-portlet-header>
     <fin-portlet-item class="table-scroll">
@@ -114,7 +107,7 @@ export default {
       tab: 'allUsers',
       usersIcon: usersIcon,
       roleSearch: '',
-      roleOptions: ['Admin', 'Student','Faculty'],
+      roleOptions: [],
       roles_new: [],
       programSearch: '',
       loading: true,
@@ -125,7 +118,7 @@ export default {
         { label: 'S.No', key: 'index', align: 'center' },
         { label: 'Name', key: 'name', align: 'start' },
         { label: 'Email Address', key: 'email', align: 'center' },
-        { label: 'Role', key: 'owner', align: 'center' },
+        { label: 'Role', key: 'role', align: 'center' },
         { label: 'Date Added', key: 'createdAt', align: 'center' },
         { label: 'Is Active', key: 'isActive', align: 'center' },
       ],
@@ -138,6 +131,7 @@ export default {
         mail: '',
         Number: '',
         role: '',
+        roleValue: '',
         id: '',
         password: '',
         role: [],
@@ -155,11 +149,13 @@ export default {
       }
     });
     this.getRoles();
+    this.getRoleOptions();
   },
   watch: {
-    roleSearch() {
-      this.getUsersData();
-    },
+    roleSearch(newVal) {
+      console.log('Selected Role Value:', newVal);
+    this.getUsersData();
+  },
     // programSearch() {
     //   this.getUsersData();
     // }
@@ -193,18 +189,74 @@ export default {
         this.showMsg(error.response?.data.message || error.message, 'negative');
       });
     },
+    getRoleOptions() {
+  this.$api.get(urls.usersUrl).then(response => {
+    if (response.data.success) {
+      // Extract unique roles from the main user data URL
+      const roleMap = new Map();
+      response.data.data.forEach(user => {
+        if (user.role && user.role.length > 0 && user.role[0].id && user.role[0].name) {
+          roleMap.set(user.role[0].id, user.role[0].name);
+        }
+      });
+
+      // Add "All Users" option manually
+      this.roleOptions = [
+        { label: 'All Users', value: '' },
+        ...Array.from(roleMap, ([value, label]) => ({
+          label,
+          value
+        }))
+      ];
+
+      console.log('Role Options:', this.roleOptions);
+    } else {
+      this.showMsg(response.data?.message, 'negative');
+    }
+  }).catch(error => {
+    this.showMsg(error.response?.data.message || error.message, 'negative');
+  });
+},
     getUsersData() {
       this.loading = true;
-      this.$api.get(urls.usersUrl).then(response => {
+
+      let url1 = urls.usersUrl;
+      if (this.roleSearch && this.roleSearch.value) {
+        url1 = `${urls.usersUrl}/role/${this.roleSearch.value}`;
+        console.log('Role Search Value:', this.roleSearch.value); // Log the roleSearch value
+        console.log('Constructed URL:', url1); // Log the URL
+      }
+
+      this.$api.get(url1).then(response => {
         this.loading = false;
         if (response.data.success) {
-          this.usersList = response.data.data.map((item, index) => ({ ...item, createdAt: moment(item.createdAt).format('YYYY-MM-DD'), index: index + 1 }));
+          this.usersList = response.data.data.map((item, index) => ({
+            ...item,
+            createdAt: moment(item.createdAt).format('YYYY-MM-DD'),
+            index: index + 1,
+            role: item.role.length > 0 ? item.role[0].name : 'No Role',
+            roleValue: item.role.length > 0 ? item.role[0].id : 'No Id'
+          }));
         } else {
           this.showMsg(response.data?.message, 'negative');
         }
       }).catch(error => {
         this.loading = false;
         this.showMsg(error.response?.data.message || error.message, 'negative');
+      });
+    },
+    createUser() {
+      this.user = {};
+      this.createUserDialog = true;
+    },
+    showMsg(message, type) {
+      this.$q.notify({
+        message: message || "Something Went Wrong!",
+        type: type,
+        position: 'top-right',
+        actions: [
+          { icon: 'close', color: 'white', handler: () => {} }
+        ]
       });
     },
     onSubmit() {

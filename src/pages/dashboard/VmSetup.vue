@@ -21,7 +21,7 @@
       class="image-btn"
       @click="selectVersion('Windows')"
     >
-      <img src="https://gurukul.finvedic.com/images/Windows.png" alt="Windows" style="width: 100%; height: 100%;" />
+      <q-img :src="windows" alt="Windows" style="width: 100%; height: 100%;" />
     </q-btn>
     <div class="outer">
   <div class="inner"></div>
@@ -35,7 +35,7 @@
       class="image-btn"
       @click="selectVersion('Linux')"
     >
-      <img src="https://gurukul.finvedic.com/images/LinuxOS.png" alt="Linux" style="width: 100%; height: 100%;" />
+      <q-img :src="linuxOs" alt="Linux" style="width: 100%; height: 100%;" />
     </q-btn>
   </div>
   <div style="text-align: center; padding-top: 20px;">
@@ -96,6 +96,8 @@ import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
+import windows from "../../assets/windows.png";
+import linuxOs from "../../assets/LinuxOs.png";
 import axios from "axios";
 import { urls } from "./Urls";
 export default {
@@ -109,6 +111,8 @@ export default {
   data() {
     return {
       version: "",
+      windows:windows,
+      linuxOs:linuxOs,
       nos: 0,
       instance: "Standard_D2s_v3=3",
       region: "East US",

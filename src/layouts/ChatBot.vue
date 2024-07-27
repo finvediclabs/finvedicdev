@@ -369,6 +369,12 @@
    position: relative;
    margin-left: 4%;
    background: #007bff;
+   -webkit-touch-callout: default; 
+  -webkit-user-select: text; 
+  -khtml-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
    &:after {
      bottom: 100%;
      left: 7%;
@@ -437,7 +443,7 @@
  .chatbot.open.maximized  .input-container{
     
    min-width: 100%;
-   margin: 0px 0px;
+   margin: 0px 0px !important;
    display: flex;
    position: fixed;
    margin-left: 1.1%;
