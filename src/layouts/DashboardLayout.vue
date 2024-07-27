@@ -119,6 +119,7 @@
                       <path id="Arrow 3"
                         d="M26.3536 4.85355C26.5488 4.65829 26.5488 4.34171 26.3536 4.14644L23.1716 0.964464C22.9763 0.769202 22.6597 0.769202 22.4645 0.964464C22.2692 1.15973 22.2692 1.47631 22.4645 1.67157L25.2929 4.5L22.4645 7.32843C22.2692 7.52369 22.2692 7.84027 22.4645 8.03553C22.6597 8.23079 22.9763 8.23079 23.1716 8.03553L26.3536 4.85355ZM4.37114e-08 5L26 5L26 4L-4.37114e-08 4L4.37114e-08 5Z"
                         fill="black" />
+
                     </svg>
                   </q-item-section>
                 </q-item>
@@ -243,7 +244,7 @@ export default {
       expand: {},
       userOwner:'' ,
       adminAccess: ["admin", "labs",  "library", "reports"],
-      studentsAccess: ["labs", "library"],
+      studentsAccess: ["admin","labs", "library"],
       facultyAccess: ["admin","labs", "library", "reports"],
       defaultPath: "/library/books",
       guestAccess: [ "library"],
@@ -296,7 +297,7 @@ export default {
     this.checkAccess();
 
     // Check if uploadDocumentPath is null and redirect to /profile if needed
-    if (this.userType !== 'Admin' &&  !this.user.uploadDocumentPath) {
+    if (this.userType !== 'Admin' &&  !this.user.phoneNumber) {
         this.$router.push('/profile');
     }
 },

@@ -14,10 +14,10 @@
             :rules="[val => val && val.length > 0 || 'User Name is required']" />
 
           <q-input outlined class="q-my-sm" v-model="email" label="Email Address" dense lazy-rules
-            :rules="[val => val && val.length > 0 || 'Email is required']" />
+            :rules="[emailRules]" />
 
           <q-input v-model="password" class="q-my-sm" outlined label="Password" dense :type="isPwd ? 'password' : 'text'"
-            lazy-rules :rules="[val => val && val.length > 0 || 'Password is required']">
+            lazy-rules :rules="[passwordRules]">
             <template v-slot:append>
               <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click="isPwd = !isPwd" />
             </template>
@@ -44,9 +44,11 @@
     </div>
   </div>
 </template>
+
 <script>
 import AccountLogIn from "./AccountLogIn.vue";
-import { urls } from "./Urls"
+import { urls } from "./Urls";
+
 export default {
   name: 'create-account-page',
   components: {
@@ -77,6 +79,18 @@ export default {
     changePage(page) {
       this.$emit('changePage', page);
     },
+    passwordRules(val) {
+      const minLength = val && val.length >= 8 || 'Password must be at least 8 characters';
+      const hasNumber = /[0-9]/.test(val) || 'Password must contain a number';
+      const hasSpecial = /[!@#\$%\^\&*\)\(+=._-]/.test(val) || 'Password must contain a special character';
+      const hasLetter = /[a-zA-Z]/.test(val) || 'Password must contain a letter';
+
+      return [minLength, hasNumber, hasSpecial, hasLetter].filter(rule => rule !== true)[0] || true;
+    },
+    emailRules(val) {
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@(gmail\.com|finvedic\.com)$/;
+      return emailPattern.test(val) || 'Email must be a valid address and end with gmail.com or finvedic.com';
+    },
     onSubmit() {
       this.$api.post(urls.registerUrl, {
         name: this.name,
@@ -87,13 +101,13 @@ export default {
         if (response.data.success) {
           this.showMsg(response.data.data, 'positive');
           this.showMsg("Please Login With Your credentials", 'positive');
+          this.$router.push('/');
         } else {
           this.showMsg(response.data.message, 'negative');
         }
-        this.$router.push('/');
       }).catch(error => {
         this.showMsg(error.response?.data.message || error.message, 'negative');
-      })
+      });
     }
   }
 }

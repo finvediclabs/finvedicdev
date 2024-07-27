@@ -4,7 +4,7 @@
       <fin-portlet-heading :loading="loading" back-arrow>Profile</fin-portlet-heading>
       <fin-portlet-item>
         <q-btn label="Edit" no-caps class="text-white sub-btn fin-br-8 q-px-xl" @click="disableEdit = false"
-          v-if="disableEdit" />
+          v-if="disableEdit"/>
       </fin-portlet-item>
       <fin-portlet-item>
         <q-btn label="Reset Password" no-caps class="text-white sub-btn fin-br-8 q-px-xl" @click="showResetPasswordDialog" v-if="disableEdit" />
@@ -17,17 +17,26 @@
             <q-img :src="imageUrl" class="fit" />
           </q-avatar>
           <div class="q-mt-md" v-if="!disableEdit">
-            <label for="fileInput" class="profile-label">
-              Change Profile
-            </label>
-            <br><br>
-            <input id="fileInput" name="file" type="file" class="hidden-input" ref="file" @change="onChange" accept=".pdf,.jpg,.jpeg,.png">
-            <p>Layout</p>
-            <div class="flex flex-center">
-              <q-avatar size="50px" class="bg-grey cursor-pointer" @click="editProfile.profileBg = ''"></q-avatar>
-              <q-avatar square size="50px" class="bg-grey q-mx-sm cursor-pointer" @click="editProfile.profileBg = 'square'"></q-avatar>
-            </div>
-          </div>
+                <label for="fileInput" class="profile-label">
+                  Change Profile
+                </label>
+                <br><br>
+                <input
+                  id="fileInput"
+                  name="file"
+                  type="file"
+                  class="hidden-input"
+                  ref="file"
+                  @change="onChange"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                />
+                <p>Layout</p>
+                <div class="flex flex-center">
+                  <q-avatar size="50px" class="bg-grey cursor-pointer" @click="editProfile.profileBg = ''"></q-avatar>
+                  <q-avatar square size="50px" class="bg-grey q-mx-sm cursor-pointer" @click="editProfile.profileBg = 'square'"></q-avatar>
+                </div>
+              </div>
+
         </div>
         <div class="col-md-1"></div>
         <div class="col-12 col-md-8">
@@ -47,11 +56,18 @@
                   </div>
                 </div>
                 <div class="col-12">
-                  <q-input label="Phone Number" borderless class="shadow-3 q-px-md fin-br-8" v-model="profile.phoneNumber" :disable="disableEdit" />
-                  <div class="errorMsgBox">
-                    <span v-if="error.phoneNumber && !profile.phoneNumber">{{ error.phoneNumber }}</span>
-                  </div>
-                </div>
+                      <q-input 
+                        label="Phone Number" 
+                        borderless 
+                        class="shadow-3 q-px-md fin-br-8" 
+                        v-model="profile.phoneNumber" 
+                        :disable="disableEdit" 
+                        :rules="[phoneNumberRules]"
+                      />
+                      <div class="errorMsgBox">
+                        <span v-if="error.phoneNumber">{{ error.phoneNumber }}</span>
+                      </div>
+                    </div>
                 <div class="col-12">
                   <q-select borderless class="shadow-3 q-px-md fin-br-8" v-model="profile.role" label="Role" :options="roles" option-value="id" option-label="name" disable />
                   <div class="errorMsgBox">
@@ -73,15 +89,30 @@
                     <span v-if="error.gender && !profile.gender">{{ error.gender }}</span>
                   </div>
                 </div>
-                <div class="col-12">
+                <!-- <div class="col-12">
                     <q-input label="Date of Birth" type="date" borderless class="shadow-3 q-px-md fin-br-8" v-model="profile.dob" :disable="disableEdit" />
                     <div class="errorMsgBox">
                       <span v-if="error.dob && !profile.dob">{{ error.dob }}</span>
                     </div>
+                  </div> -->
+                  <div class="col-12">
+                    <q-input 
+                      label="Date of Birth" 
+                      type="date" 
+                      borderless 
+                      class="shadow-3 q-px-md fin-br-8" 
+                      v-model="profile.dob" 
+                      :disable="disableEdit" 
+                      :rules="[dateOfBirthRules]"
+                    />
+                    <div class="errorMsgBox">
+                    <span v-if="error.dob && !profile.dob">{{ error.dob }}</span>
                   </div>
+                </div>
               </div>
               <div class="col-md-1"></div>
               <div class="col-5">
+              
                 <div class="col-12">
                   <q-input 
                     label="Highest Qualification" 
@@ -120,22 +151,21 @@
                     <span v-if="error.specialization && !profile.specialization">{{ error.specialization }}</span>
                   </div>
                 </div>
-                <div class="col-12">
+                <!-- <div class="col-12">
                   <q-uploader 
-        :label="uploadDocumentLabel" 
-        borderless 
-        class="shadow-3 q-px-md fin-br-8" 
-        style="width: 100%;" 
-        :disable="disableEdit" 
-        :factory="documentUploadFactory" 
-        accept=".pdf" 
-        max-file-size="5242880"
-        @added="onPdfChange"
-      />
+                    :label="uploadDocumentLabel" 
+                    borderless 
+                    class="shadow-3 q-px-md fin-br-8" 
+                    style="width: 100%;" 
+                    :disable="disableEdit" 
+                    accept=".pdf" 
+                    max-file-size="5242880"
+                    @added="onPdfChange"
+                   />
                   <div class="errorMsgBox">
                     <span v-if="error.uploadDocumentPath && !profile.uploadDocumentPath">{{ error.uploadDocumentPath }}</span>
                   </div>
-                </div>
+                </div> -->
                 <div class="q-pa-sm col-12 text-center" style="min-height:70px;">
                   <q-btn label="Cancel" no-caps color="red" class="fin-br-8" @click="cancelEdit()" size="md" v-if="!disableEdit" />
                   <q-btn color="primary" no-caps class="fin-br-8 q-ml-sm" size="md" style="min-width:150px" label="Update" type="submit" :disable="loading" v-if="!disableEdit">
@@ -382,15 +412,29 @@ export default {
         this.showMsg("New passwords do not match", 'negative');
         return;
       }
+      if (!this.resetPasswordForm.newPassword) {
+       this.showMsg("New password cannot be empty", 'negative');
+       return;
+        }
 
-      this.loading = true;
-      const request = {
+      if (this.resetPasswordForm.newPassword !== this.resetPasswordForm.confirmNewPassword) {
+       this.showMsg("New passwords do not match", 'negative');
+       return;
+        }
+
+      if (!this.isStrongPassword(this.resetPasswordForm.newPassword)) {
+        this.showMsg("New password is not strong enough", 'negative');
+       return;
+        }
+
+       this.loading = true;
+       const request = {
         userId: this.user.id,
         oldPassword: this.resetPasswordForm.oldPassword,
         newPassword: this.resetPasswordForm.newPassword,
       };
 
-      this.$api.put('api/users/reset-password', request).then(response => {
+       this.$api.put('api/users/reset-password', request).then(response => {
         this.loading = false;
         if (response.data.success) {
           this.showMsg("Your password is updated successfully", 'positive');
@@ -403,12 +447,16 @@ export default {
         this.showMsg(error.response?.data.message || error.message, 'negative');
       });
     },
-    onChange(event) {
-      const file = event.target.files[0];
-      if (file) {
-        this.uploadFile(file);
-      }
+    isStrongPassword(password) {
+    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return strongPasswordRegex.test(password);
     },
+    // onChange(event) {
+    //   const file = event.target.files[0];
+    //   if (file) {
+    //     this.uploadFile(file);
+    //   }
+    // },
     async onPdfChange(files) {
       if (files.length > 0) {
         const file = files[0];
@@ -444,9 +492,34 @@ export default {
   },
 
   // Method to update profile
+  getUserData() {
+    this.$api.get(`api/users/${this.user.id}`).then(response => {
+      if (response.data.success) {
+        var user = response.data.data;
+        this.profile = {
+          name: user.name,
+          email: user.email,
+          gender: user.gender,
+          dob: user.dob,
+          graduationDegree: user.graduationDegree,
+          qualificationYear: user.qualificationYear,
+          specialization: user.specialization,
+          phoneNumber: user.phoneNumber,
+          uploadDocumentPath: user.uploadDocumentPath,
+          role: this.user.roles ? this.user.roles[0] : []
+        };
+        this.imageUrl = user.photoPath;
+        console.log('Upload Document Path:', this.profile.uploadDocumentPath);
+      } else {
+        this.showMsg(response.data.message, 'negative');
+      }
+    }).catch(error => {
+      this.loading = false;
+      this.showMsg(error.response?.data.message || error.message, 'negative');
+    });
+  },
   updateProfile() {
-    if (this.profile.file) { // Check if there is a new file to upload
-      // Call uploadFile to get file path
+    if (this.profile.file) { 
       this.uploadFile(this.profile.file)
         .then(filePath => {
           // Construct request with updated file path
@@ -512,9 +585,9 @@ export default {
     }
   },
   cancelEdit() {
-      this.disableEdit = true; // Assuming this disables the edit mode
-    },
-
+    this.disableEdit = true;
+    this.getUserData(); // Fetch the latest user data from the database
+  },
   // Method to handle file input change
   onChange(event) {
     const file = event.target.files[0];
@@ -525,8 +598,43 @@ export default {
     }
   },
     
+  validatePhoneNumber(phoneNumber) {
+      const phoneNumberRegex = /^[0-9]{10}$/;
+      return phoneNumberRegex.test(phoneNumber);
+    },
+    phoneNumberRules(val) {
+      return this.validatePhoneNumber(val) || "Please enter a valid 10-digit phone number.";
+    },
+    dateOfBirthRules(val) {
+  const today = new Date();
+  const todayStr = today.toISOString().split('T')[0];
+  const inputDate = new Date(val);
+
+  // Check if the date is in the future
+  if (val > todayStr) {
+    return "Date of Birth cannot be in the future.";
   }
- 
+
+  // Check if the date is in the current year
+  const currentYear = today.getFullYear();
+  const inputYear = inputDate.getFullYear();
+  if (inputYear === currentYear) {
+    return "Date of Birth cannot be in the current year.";
+  }
+
+  // Check if the age is at least 18
+  const age = currentYear - inputYear;
+  const monthDifference = today.getMonth() - inputDate.getMonth();
+  const dayDifference = today.getDate() - inputDate.getDate();
+
+  if (age < 18 || (age === 18 && (monthDifference < 0 || (monthDifference === 0 && dayDifference < 0)))) {
+    return "You must be at least 18 years old.";
+  }
+
+  return true;
+}
+
+  }
 };
 </script>
 

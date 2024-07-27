@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="text-h5 text-weight-bolder">Log In</div>
-    <account-log-in />
-    <div class="full-width text-center q-py-sm">OR</div>
+    <!-- <account-log-in /> 
+    <div class="full-width text-center q-py-sm">OR</div> -->
     <div class="">
       <div class="">
         <q-form @submit="onSubmit">
