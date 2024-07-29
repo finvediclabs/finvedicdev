@@ -80,11 +80,11 @@
               </div>
               <q-space />
               <q-btn :label="lab.locked ? 'Locked' : 'Shutdown'" size="8px" dense class="q-px-md text-weight-bold"
-                rounded :style="{ background: (lab.locked || lab.provisioningState === 'Deleting' || lab.provisioningState === 'Deleted') ? '#D49F8A' : '#7BFF90' }"
-                :disable="(lab.provisioningState === 'Deleting' || lab.provisioningState === 'Deleted')"
-                @click="shutdown(lab)">
-                <q-icon name="lock" size="14px" class="q-pl-sm"></q-icon>
-              </q-btn>
+  rounded :style="{ background: (lab.locked || lab.provisioningState === 'Deleting' || lab.provisioningState === 'Deleted') ? '#D49F8A' : '#7BFF90' }"
+  :disable="!canShutdown(lab)"
+  @click="shutdown(lab)">
+  <q-icon name="lock" size="14px" class="q-pl-sm"></q-icon>
+</q-btn>
             </div>
           </div>
         </q-card-section>
@@ -136,6 +136,16 @@ export default {
     this.loadLockedStates(); // Load locked states from local storage
   },
   computed: {
+    canShutdown() {
+    return (lab) => {
+      const profileStore = useProfileStore();
+      const profileUsername = profileStore.user.username;
+      const isAdmin = profileStore.user.roles.some(role => role.name === 'Admin');
+      return (isAdmin || lab.userName === profileUsername) &&
+             lab.provisioningState !== 'Deleting' && 
+             lab.provisioningState !== 'Deleted';
+    };
+  },
     getBorderColor() {
       return function(provisioningState, locked) {
         return locked ? '0px solid #FF7F50' : (provisioningState === 'Succeeded' ? '0px solid #FF7F50' : '0px solid #FF7F50');
@@ -165,22 +175,32 @@ export default {
       window.location.href = baseUrl + "/download/" + vmname;
     },
     async shutdown(lab) {
-      if (lab.provisioningState === 'Deleted' || lab.provisioningState === 'Deleting') {
-        this.showMsg('Cannot perform shutdown action as the lab is already deleted or deleting.', 'negative');
-        return;
-      }
+  const profileStore = useProfileStore();
+  const profileUsername = profileStore.user.username;
+  const isAdmin = profileStore.user.roles.some(role => role.name === 'Admin');
 
-      try {
-        const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-        const getDeleteVMUrl = baseUrl + 'deletevm/';
-        const response = await fetch(getDeleteVMUrl + lab.name);
-        console.log('success');
-        lab.locked = true;
-        this.saveLockedStates(); // Save locked states to local storage
-      } catch (error) {
-        console.error(error);
-      }
-    },
+  // Check if the user is an Admin or if the lab belongs to the user
+  if (!isAdmin && lab.userName !== profileUsername) {
+    this.showMsg('You do not have permission to perform this action.', 'negative');
+    return;
+  }
+
+  if (lab.provisioningState === 'Deleted' || lab.provisioningState === 'Deleting') {
+    this.showMsg('Cannot perform shutdown action as the lab is already deleted or deleting.', 'negative');
+    return;
+  }
+
+  try {
+    const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+    const getDeleteVMUrl = baseUrl + 'deletevm/';
+    const response = await fetch(getDeleteVMUrl + lab.name);
+    console.log('success');
+    lab.locked = true;
+    this.saveLockedStates(); // Save locked states to local storage
+  } catch (error) {
+    console.error(error);
+  }
+},
     loadLockedStates() {
       const lockedStates = JSON.parse(localStorage.getItem('lockedStates')) || {};
       this.labsData.forEach((lab) => {
