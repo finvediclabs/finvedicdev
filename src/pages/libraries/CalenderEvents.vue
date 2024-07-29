@@ -63,7 +63,22 @@
         </div>
       </div>
     </fin-portlet-header>
-    <q-select v-model="selectedBatch" :options="batchOptions" label="Select a Batch" emit-value map-options />
+    <fin-portlet-header>
+    <div class="row full-width">
+      <div class="col-1"></div>
+    <div class="col-12 col-md-6 q-pa-md">
+      <q-select
+        v-model="selectedBatch"
+        :options="batchOptions"
+        label="Select a Batch"
+        emit-value
+        map-options
+        class="bg-white custom-select"
+style="border-radius: 10px"
+      />
+    </div>
+  </div>
+</fin-portlet-header>
     <fin-portlet-item>
       <fin-calender isReadOnly :events="filteredEvents" :template="template" :view="isMobile ? 'day' : 'week'" />
     </fin-portlet-item>
@@ -395,6 +410,14 @@ z-index: 99999 !important;
   background-color: white !important;
   min-height: 25vh !important;
 
+}
+.custom-select .q-select__control {
+  border-bottom: none !important; /* Remove the underline */
+}
+
+.custom-select .q-select__control:focus {
+  border-bottom: none !important; /* Ensure no underline on focus */
+  box-shadow: none !important; /* Remove any focus shadow */
 }
 .toastui-calendar-section-button { display: none!important; }
 .toastui-calendar-section-detail {display: none !important;}
