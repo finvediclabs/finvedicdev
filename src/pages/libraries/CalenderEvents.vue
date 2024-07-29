@@ -3,9 +3,9 @@
     <fin-portlet-header>
       <div class="row full-width">
         <div class="col-1"></div>
-        <div class="col-12 col-md-6 " :class="{ 'q-mt-xl': !isMobile }">
-          <!-- v-for="(event, index) in events" :key="event.id" -->
-          <q-card v-if="upcomingEvents.length > 0 || events.length > 0" class="my-card full-width text-white full-height" style="background: #5479F7;">
+        <div class="col-12 col-md-6" :class="{ 'q-mt-xl': !isMobile }">
+
+          <q-card v-if="filteredEvents.length > 0" class="my-card full-width text-white full-height" style="background: #5479F7;">
   <q-card-section class="row justify-between">
     <div v-if="nextEvent">
       <div>Next Class : {{ extractTitle(nextEventTitle) }}</div>
@@ -36,23 +36,19 @@
     <q-btn label="Connect" class="text-blue bg-white q-px-lg fin-br-8" no-caps :href="nextEvent ? extractLink(nextEventTitle) : lastEvent ? extractLink(lastEventTitle) : ''" target="_blank" />
   </q-card-section>
 </q-card>
-
+        
         </div>
-        <div class="col-12 col-md-4  q-mx-auto q-mt-xl"  style="display: flex; flex-direction: column;" >
-          <template v-for="category in categories"  >
-
+        <div class="col-12 col-md-4 q-mx-auto q-mt-xl" style="display: flex; flex-direction: column;">
+          <template v-for="category in categories">
             <q-btn :label="category.categoryName" no-caps v-if="!subCategories[category.id]" size="md"
-              class="full-width fin-br-8 q-pa-md  categoryClass"
+              class="full-width fin-br-8 q-pa-md categoryClass"
               :class="{ 'active-categoryClass': selectedCategory?.id == category.id }"
-              @click="selectCategory(category)" 
-              style="margin-top: auto;margin-bottom: auto;"
-              />
-
+              @click="selectCategory(category)"
+              style="margin-top: auto;margin-bottom: auto;" />
             <q-btn-dropdown :label="category.categoryName" no-caps v-if="subCategories[category.id]" size="md"
               class="full-width fin-br-8 q-pa-md categoryClass"
               :class="{ 'active-categoryClass': selectedCategory?.id === category.id }"
-              style="margin-top: auto;margin-bottom: auto;"
-              >
+              style="margin-top: auto;margin-bottom: auto;">
               <q-list>
                 <q-item v-for="subCategory in subCategories[category.id]" clickable v-close-popup
                   @click="selectSubCategory(category, subCategory)" :active="selectedSubCategory?.id == subCategory.id"
@@ -63,21 +59,15 @@
                 </q-item>
               </q-list>
             </q-btn-dropdown>
-
           </template>
         </div>
       </div>
-      
     </fin-portlet-header>
-    
-    <fin-portlet-item >
-      <fin-calender  isReadOnly :events="events" :template="template" :view="isMobile ? 'day' : 'week'"  />
-      <!-- <div  v-if="showDiv" class="hiddendiv">SANDEEP</div> -->
-
+    <q-select v-model="selectedBatch" :options="batchOptions" label="Select a Batch" emit-value map-options />
+    <fin-portlet-item>
+      <fin-calender isReadOnly :events="filteredEvents" :template="template" :view="isMobile ? 'day' : 'week'" />
     </fin-portlet-item>
   </fin-portlet>
-  
- 
 </template>
 <script>
 import FinPortlet from 'src/components/Portlets/FinPortlet.vue';
@@ -128,6 +118,9 @@ export default {
         // },
       },
       events: [],
+      batches: [], // Store raw batch names if needed
+    batchOptions: [], // Options for q-select
+    selectedBatch: null,
     }
   },
   watch: {
@@ -143,13 +136,28 @@ export default {
     }
   },
   computed: {
-    pastEvents() {
-    const now = new Date();
-    return this.events.filter(event => new Date(event.end) < now);
+  filteredEvents() {
+    if (this.selectedBatch) {
+      return this.events.filter(event => event.batch === this.selectedBatch);
+    }
+    return this.events;
+  },
+  nextEvent() {
+    const upcomingEvents = this.filteredEvents.filter(event => new Date(event.start) > new Date());
+    if (upcomingEvents.length > 0) {
+      return upcomingEvents.reduce((next, current) => {
+        if (!next || new Date(current.start) < new Date(next.start)) {
+          return current;
+        }
+        return next;
+      });
+    }
+    return null;
   },
   lastEvent() {
-    if (this.pastEvents.length > 0) {
-      return this.pastEvents.reduce((prev, current) => {
+    const pastEvents = this.filteredEvents.filter(event => new Date(event.end) < new Date());
+    if (pastEvents.length > 0) {
+      return pastEvents.reduce((prev, current) => {
         if (!prev || new Date(current.end) > new Date(prev.end)) {
           return current;
         }
@@ -158,89 +166,17 @@ export default {
     }
     return null;
   },
-  lastEventTitle() {
-    return this.lastEvent ? this.lastEvent.title : '';
-  },
-  // Compute last event start time
-  lastEventStart() {
-    return this.lastEvent ? this.formatDateTime(this.lastEvent.start) : '';
-  },
-  // Compute last event end time
-  lastEventEnd() {
-    return this.lastEvent ? this.formatDateTime(this.lastEvent.end) : '';
-  },
-  // Compute last event time
-  lastEventTime() {
-    return this.lastEvent ? `${this.lastEventStart} - ${this.lastEventEnd}` : '';
-  },
-  lastEventDate() {
-    return this.lastEvent ? this.formatDate(this.lastEvent.start) : '';
-  },
-  // Compute last event start time
-  lastEventStartTime() {
-    return this.lastEvent ? this.formatTime(this.lastEvent.start) : '';
-  },
-  // Compute last event end time
-  lastEventEndTime() {
-    return this.lastEvent ? this.formatTime(this.lastEvent.end) : '';
-  },
-    // Filter upcoming events
-    upcomingEvents() {
-      const now = new Date();
-      return this.events.filter(event => new Date(event.start) > now);
-    },
-    nextEventTopic() {
-      return this.nextEvent ? this.nextEvent.topic : '';
-    },
-    // Compute next upcoming event
-    nextEvent() {
-      const upcomingEvents = this.upcomingEvents;
-      if (upcomingEvents.length > 0) {
-        return upcomingEvents.reduce((next, current) => {
-          if (!next || new Date(current.start) < new Date(next.start)) {
-            return current;
-          }
-          return next;
-        });
-      }
-      return null;
-    },
-    // Compute next event title
-    nextEventTitle() {
-      
+  nextEventTitle() {
     return this.nextEvent ? this.nextEvent.title : '';
-    
-    
-    },
-    // Compute next event start time
-    nextEventStart() {
-    return this.nextEvent ? this.formatDateTime(this.nextEvent.start) : '';
-  },
-  // Compute next event end time
-  nextEventEnd() {
-    return this.nextEvent ? this.formatDateTime(this.nextEvent.end) : '';
-  },
-  // Compute next event time
-  nextEventTime() {
-    return this.nextEvent ? `${this.nextEventStart} - ${this.nextEventEnd}` : '';
   },
   nextEventDate() {
-  return this.nextEvent ? this.formatDate(this.nextEvent.start) : '';
-},
-// Compute next event start time
-nextEventStartTime() {
-  return this.nextEvent ? this.formatTime(this.nextEvent.start) : '';
-},
-// Compute next event end time
-nextEventEndTime() {
-  return this.nextEvent ? this.formatTime(this.nextEvent.end) : '';
-},
-upcomingEvents() {
-    const now = new Date();
-    return this.events.filter(event => new Date(event.start) > now);
+    return this.nextEvent ? this.formatDate(this.nextEvent.start) : '';
   },
-  lastEventTopic() {
-    return this.lastEvent ? this.lastEvent.topic : '';
+  nextEventStartTime() {
+    return this.nextEvent ? this.formatTime(this.nextEvent.start) : '';
+  },
+  nextEventEndTime() {
+    return this.nextEvent ? this.formatTime(this.nextEvent.end) : '';
   },
   lastEventTitle() {
     return this.lastEvent ? this.lastEvent.title : '';
@@ -253,19 +189,6 @@ upcomingEvents() {
   },
   lastEventEndTime() {
     return this.lastEvent ? this.formatTime(this.lastEvent.end) : '';
-  },
-  // Compute last event
-  lastEvent() {
-    const events = this.events;
-    if (events.length > 0) {
-      return events.reduce((last, current) => {
-        if (!last || new Date(current.start) > new Date(last.start)) {
-          return current;
-        }
-        return last;
-      });
-    }
-    return null;
   },
 },
   mounted() {
@@ -324,38 +247,65 @@ upcomingEvents() {
     // },
     
     getEventsData() {
-  var request = {
-    categoryId: this.selectedCategory?.id,
-    subCategoryId: this.selectedSubCategory?.id
-  };
-  this.loading = true;
-  this.$api.get(urls.getEvents, {
-    params: request
-  }).then(response => {
-    this.loading = false;
-    if (response.data.success) {
-      let events = response.data.data;
-      this.events = events.map(event => (
-        {
-          title: `Title: <a href="${event.link}"  target="_blank">${event.title}</a><br>Topic: ${event.topic}`,
-          start: `${event.date} ${event.start}`,
-          end: `${event.date} ${event.end}`,
-          link: `${event.link}`,
-          topic: `${event.topic}`,
-          color: 'white',
-          backgroundColor: colorHash.hex(event.title),
-          width: '100%', // Set width to '100%'
-          height: '50px'
+      var request = {
+        categoryId: this.selectedCategory?.id,
+        subCategoryId: this.selectedSubCategory?.id
+      };
+      this.loading = true;
+      this.$api.get(urls.getEvents, {
+        params: request
+      }).then(response => {
+        this.loading = false;
+        if (response.data.success) {
+          let events = response.data.data;
+
+          // Group events by batch
+          const batchGroups = events.reduce((groups, event) => {
+            const batch = event.batch || 'Unknown Batch'; // Handle case where batch might be undefined
+            if (!groups[batch]) {
+              groups[batch] = [];
+            }
+            groups[batch].push(event);
+            return groups;
+          }, {});
+
+          // Extract unique batches and transform into options
+          this.batchOptions = Object.keys(batchGroups).map(batch => ({
+            label: batch,
+            value: batch
+          }));
+
+          // Log grouped events
+          console.log("Grouped Events by Batch:");
+          for (const [batch, batchEvents] of Object.entries(batchGroups)) {
+            console.log(`Batch: ${batch}`);
+            batchEvents.forEach(event => {
+              console.log(`  Title: ${event.title}, Date: ${event.date}`);
+            });
+          }
+
+          // Flatten the grouped events and map them for the calendar
+          this.events = Object.values(batchGroups).flat().map(event => ({
+            title: `Title: <a href="${event.link}" target="_blank">${event.title}</a><br>Topic: ${event.topic}`,
+            start: `${event.date} ${event.start}`,
+            end: `${event.date} ${event.end}`,
+            link: `${event.link}`,
+            topic: `${event.topic}`,
+            batch: event.batch,
+            color: 'white',
+            backgroundColor: colorHash.hex(event.title),
+            width: '100%', // Set width to '100%'
+            height: '50px'
+          }));
+        } else {
+          this.showMsg(response.data?.message, 'negative');
         }
-      ));
-    } else {
-      this.showMsg(response.data?.message, 'negative');
+      }).catch(error => {
+        this.loading = false;
+        this.showMsg(error.response?.data.message || error.message, 'negative');
+      });
     }
-  }).catch(error => {
-    this.loading = false;
-    this.showMsg(error.response?.data.message || error.message, 'negative');
-  })
-}
+
 
   }
 }

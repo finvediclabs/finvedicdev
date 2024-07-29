@@ -74,9 +74,9 @@
             </div>
             <div class="col-12 q-px-sm">
               <label class="form-label">Topic</label>
-              <q-select v-model="filteredTopic" class="q-px-md rounded-borders inputBackground" borderless
-                :options="filteredTopics" option-label="topicName" option-value="topicId"
-                @select="selectTopic(filteredTopic)" />
+              <q-select v-model="topic" class="q-px-md rounded-borders inputBackground" borderless
+  :options="filteredTopics" option-label="topicName" option-value="topicId"
+  @select="selectTopic" />
               <div class="errorMsgBox">
                 <span v-if="errors.topic && !topic">{{ errors.topic }}</span>
               </div>
@@ -160,6 +160,7 @@ export default {
       link: '',
       errors: {},
       editedEvent: {},
+      filteredTopic: '',
       selectedRadio: '', // To store the selected radio option
       additionalInput: '' // Example additional input
     }
@@ -211,6 +212,9 @@ export default {
       this.course = course;
       this.fetchTopicsByCourse(course.courseId);
     },
+    selectTopic(topic) {
+    this.topic = topic;
+  },
     format(date) {
       const day = date.getDate();
       const month = new Date(date).toLocaleDateString('en-US', { month: 'short' });

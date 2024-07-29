@@ -283,17 +283,19 @@ export default {
         uploadDocumentPath: user.uploadDocumentPath,
         role: this.user.roles ? this.user.roles[0] : []
       };
-
+ const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+    const removeImagePath = baseUrl +'fs/download/'
       // Extract the filename by removing the base URL
-      const baseURL = 'http://localhost:8087/fs/download/';
-      const filename = user.uploadDocumentPath.replace(baseURL, '');
+      // const baseURL1 = 'http://localhost:8087/fs/download/';
+      const filename = user.uploadDocumentPath.replace(removeImagePath, '');
 
       // Create a FormData object
       const formData = new FormData();
       formData.append('filename', filename);
-
+// const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+    const ImagePath = baseUrl +'fs/download'
       // Send POST request with FormData
-      axios.post('http://localhost:8087/fs/download', formData, { responseType: 'blob' })
+      axios.post(ImagePath, formData, { responseType: 'blob' })
         .then(response => {
           // Create a URL for the image blob
           const url = window.URL.createObjectURL(new Blob([response.data]));

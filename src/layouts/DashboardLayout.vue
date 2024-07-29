@@ -460,13 +460,15 @@ showMsg(message, type) {
             role: this.user.roles ? this.user.roles[0] : [],
             owner: user.owner,
           }
-          const baseURL = 'http://localhost:8087/fs/download/';
-          const filename = user.uploadDocumentPath.replace(baseURL, '');
+          const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+    const removeImagePath = baseUrl +'fs/download/'
+          // const baseURL = 'http://localhost:8087/fs/download/';
+          const filename = user.uploadDocumentPath.replace(removeImagePath, '');
           // Post the filename to get the image blob
           const formData = new FormData();
           formData.append('filename', filename);
-
-          this.$api.post('http://localhost:8087/fs/download', formData, {
+    const ImagePath = baseUrl +'fs/download'
+          this.$api.post(ImagePath, formData, {
             responseType: 'blob'
           }).then(response => {
             const url = URL.createObjectURL(response.data);
@@ -562,7 +564,7 @@ showMsg(message, type) {
 .Lib_CL_Room_BackgroundStyle{
   background-image: url('/src/assets/BG_New.png');
   background-repeat: no-repeat;
-  background-size: 100vw 35%;
+  background-size: 100vw 40%;
 }
 .module-select-active {
   background: #fff;
