@@ -110,7 +110,8 @@ editDataFun(val) {
     title: val.heading,
     description: val.description,
     id: val.id,
-    cover: val.imagePath, // Set initial cover to existing image path
+    cover: '',
+    coverOld: '' ,// Initialize cover as an empty string
     categoryId: val.categoryId,
     subCategoryId: val.subCategory
   };
@@ -123,6 +124,8 @@ editDataFun(val) {
 
   // Function to get cover Blob via a POST request
   async function fetchCoverBlob(imagePath) {
+    item.coverOld=imagePath;
+    console.log(imagePath)
     try {
       // Remove the base URL part from imagePath
       const filename = imagePath.replace(removeImagePath, '');
@@ -149,23 +152,22 @@ editDataFun(val) {
         return null;
       }
     } catch (error) {
-      // console.error('Error fetching cover Blob:', error);
+      console.error('Error fetching cover Blob:', error);
       return null;
     }
   }
 
   // Fetch the cover Blob and then proceed
   fetchCoverBlob(val.imagePath).then((coverUrl) => {
-    if (coverUrl && coverUrl !== item.cover) {
-      // Update cover if it has changed
+    if (coverUrl) {
       item.cover = coverUrl;
       console.log('Updated Cover URL:', item.cover);
     } else {
-      // Log if the cover is not updated or is the same
-      console.log('Cover URL not changed or not fetched.');
+      // Handle the case where cover URL couldn't be fetched
+      console.warn('Cover URL could not be fetched, proceeding without cover.');
     }
 
-    // Open the form regardless of whether cover URL was updated
+    // Open the form regardless of whether cover URL was fetched
     this.createFile('Update Book', item);
   });
 },

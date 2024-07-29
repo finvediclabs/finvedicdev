@@ -124,6 +124,7 @@ export default {
         description: val.description,
         id: val.id,
         cover: '',
+        coverOld: '' ,
         file:val.videoFilePath
       };
       
@@ -135,6 +136,7 @@ const removevideoCoverPath = baseUrl + 'fs/download/';
 
 // Function to get cover Blob via a POST request
 async function fetchCoverBlob(videoCoverPath) {
+  item.coverOld=videoCoverPath;
   try {
     // Remove the base URL part from videoCoverPath
     const filename = videoCoverPath.replace(removevideoCoverPath, '');

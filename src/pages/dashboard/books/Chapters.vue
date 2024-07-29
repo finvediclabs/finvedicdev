@@ -119,6 +119,7 @@ export default {
         description: val.description,
         id: val.id,
         cover: '',
+        coverOld: '' ,
         file: val.chapterFilePath
       };
       console.log('Original Cover Path:', val.chapterImagePath);
@@ -129,6 +130,7 @@ const removechapterImagePath = baseUrl + 'fs/download/';
 
 // Function to get cover Blob via a POST request
 async function fetchCoverBlob(chapterImagePath) {
+  item.coverOld = chapterImagePath;
   try {
     // Remove the base URL part from chapterImagePath
     const filename = chapterImagePath.replace(removechapterImagePath, '');

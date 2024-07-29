@@ -108,6 +108,7 @@ export default {
         description: val.description,
         id: val.id,
         cover: '',
+        coverOld: '' ,
         categoryId: val.categoryId,
         subCategoryId: val.subCategory
       };
@@ -118,6 +119,7 @@ export default {
 
   // Function to get cover Blob via a POST request
   async function fetchCoverBlob(videoCoverPath) {
+    item.coverOld=videoCoverPath;
     try {
       // Remove the base URL part from videoCoverPath
       const filename = videoCoverPath.replace(removevideoCoverPath, '');
