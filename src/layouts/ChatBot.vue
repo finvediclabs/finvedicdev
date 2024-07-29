@@ -79,31 +79,30 @@
      };
    },
    methods: {
-     toggleChatbot() {
-       this.isOpen = !this.isOpen;
-       
-     },
-     minimizeChatbot() {
-       this.isOpen = false;
-     },
-     toggleMaximize() {
-       this.isMaximized = !this.isMaximized;
-       this.maximizeIcon = this.isMaximized ? '▢' : '□'; // Change icon based on maximize state
-       if (this.isMaximized) {
-    const welcomeMessage = this.$refs.welcomeMessage;
-    welcomeMessage.innerHTML = "Hi! I am Drona, your AI virtual assistant. Ask me about Fintech?";
-  }
-  else {
-        const welcomeMessage = this.$refs.welcomeMessage;
-        welcomeMessage.innerHTML = this.originalWelcomeMessage;
-      }
-     },
- 
-     closeChatbot() {
-   this.isOpen = false;
-   this.messages = []; // Clear all messages
-   
- },
+    toggleChatbot() {
+    this.isOpen = !this.isOpen;
+  },
+  minimizeChatbot() {
+    this.isOpen = false;
+  },
+  toggleMaximize() {
+    this.isMaximized = !this.isMaximized;
+    this.maximizeIcon = this.isMaximized ? '▢' : '□'; // Change icon based on maximize state
+    if (this.isMaximized) {
+      const welcomeMessage = this.$refs.welcomeMessage;
+      welcomeMessage.innerHTML = "Hi! I am Drona, your AI virtual assistant. Ask me about Fintech?";
+      document.body.classList.add('no-scroll'); // Add class to body
+    } else {
+      const welcomeMessage = this.$refs.welcomeMessage;
+      welcomeMessage.innerHTML = this.originalWelcomeMessage;
+      document.body.classList.remove('no-scroll'); // Remove class from body
+    }
+  },
+  closeChatbot() {
+    this.isOpen = false;
+    this.messages = []; // Clear all messages
+    document.body.classList.remove('no-scroll'); // Remove class from body when closing
+  },
      sendMessage() {
     
        const message = this.newMessage.trim();
@@ -198,7 +197,9 @@
   align-items: center;
   margin-bottom: 10px; /* Adjust margin as needed */
 }
-
+.no-scroll {
+  overflow: hidden;
+}
 .message-container img, .message-container svg {
   margin-right: 10px; /* Adjust margin between icon and text */
 }
@@ -247,14 +248,16 @@
    z-index: 9999;
  }
  .chatbot.open.maximized {
-   width: 100vw;
-   height: 100vh;
+   width: 100%;
+   height: 100%;
    bottom: 0;
    right: 0;
  }
  .chatbot.open.maximized .chat-container{
    min-width: 100vw;
-   min-height: 100vh;
+   min-height: 84vh;
+   /* border: 2px solid black; */
+   /* max-height: 90vh; */
  }
  /* .chatbot.open.maximized .welcome-message {
    padding-top: 0px;
@@ -441,12 +444,14 @@
    outline: none;
  }
  .chatbot.open.maximized  .input-container{
-    
-   min-width: 100%;
-   margin: 0px 0px !important;
+    min-height: 6vh;
+    max-height: 6vh;
+   min-width: 100vw;
+   margin: 0px 0px;
    display: flex;
    position: fixed;
-   margin-left: 1.1%;
+   bottom: 0;
+   /* margin-left: 1.1%; */
    
    
  }
@@ -456,10 +461,48 @@
   
 
  }
+ .chatbot.open.maximized .messages .incoming{
+  margin-bottom: 40px;
+  margin-top: 30px;
+ }
+ .chatbot.open.maximized .messages .outgoing{
+  margin-bottom: 40px;
+  margin-top:30px;
+ }
  .chatbot.open.maximized .welcome-message{
   font-size: 32px;
   padding: 1%;
  }
+ 
+ .chatbot.open.maximized .chat-container-wrapper {
+   /* Space for scrollbar */
+   overflow: hidden; /* Hide overflow */
+ }
+ 
+ .chatbot.open.maximized .chat-container::-webkit-scrollbar {
+   width: 8px; /* Width of the scrollbar */
+   height: 8px; /* Height of the scrollbar */
+ }
+ 
+ /* Track */
+ .chatbot.open.maximized .chat-container::-webkit-scrollbar-track {
+   background: #f1f1f1; /* Color of the track */
+   border-radius: 20px; /* Rounded corners */
+ }
+
+ 
+ 
+ /* Handle */
+ .chatbot.open.maximized .chat-container::-webkit-scrollbar-thumb {
+   background: #7f9af3; /* Color of the handle */
+   border-radius: 20px; /* Rounded corners */
+ }
+ 
+ /* Handle on hover */
+ .chatbot.open.maximized .chat-container::-webkit-scrollbar-thumb:hover {
+   background: #5479F7; /* Darker handle color on hover */
+ }
+ 
 
  .chatbot.open.maximized .send-button{
   border-radius: 0px;
