@@ -17,37 +17,50 @@
       <div class="chat-container" v-scroll-bottom>
         <!-- Messages -->
         <div class="messages">
-  <div v-for="message in messages" :key="message.id" :class="message.type">
-    <div class="message-container">
-      <template v-if="message.type === 'incoming'" class="monk_icon">
-        <img src="https://gurukul.finvedic.com/images/monk_half.png" alt="" style="width: 30px !important; background-color: #5479F7; border-radius: 50%;">
-      </template>
-     
-      {{ message.text }}
-      <!-- <template v-if="message.type === 'outgoing'" class="user_icon">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-heart user-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-left: auto;">
-          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-          <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
-          <path d="M6 21v-2a4 4 0 0 1 4 -4h.5" />
-          <path d="M18 22l3.35 -3.284a2.143 2.143 0 0 0 .005 -3.071a2.242 2.242 0 0 0 -3.129 -.006l-.224 .22l-.223 -.22a2.242 2.242 0 0 0 -3.128 -.006a2.143 2.143 0 0 0 -.006 3.071l3.355 3.296z" />
-        </svg>
-      </template> -->
-      
-    </div>
-  </div>
-  <div v-if="isTyping" class="typing-preloader">
-    <template v-if="isTyping" class="monk_icon" >
-        <img src="https://gurukul.finvedic.com/images/monk_half.png" alt="" style="width: 30px !important; background-color: #5479F7; border-radius: 50%;">
-      </template>
-    Typing...</div>
+          <div v-for="message in messages" :key="message.id" :class="message.type">
+  <div class="message-container">
+    <template v-if="message.type === 'incoming'" class="monk_icon">
+      <img src="https://gurukul.finvedic.com/images/monk_half.png" alt="" style="width: 30px !important; background-color: #5479F7; border-radius: 50%;">
+    </template>
+    <!-- Render messages with code blocks using v-html -->
+    <div v-if="message.containsCode" class="code-block-container">
+  <!-- Copy Button -->
+  <button class="copy-button" @click="copyCode(message.text)">
+    Copy Code
+  </button>
+  <button v-if="message.type === 'incoming'" class="copy-button-all" @click="copyText(message.text)">
+    Copy
+  </button>
+  <div class="code-block" v-html="formattedCodeBlocks(message.text)"></div>
 </div>
+    
+    <div v-else>
+  <span>{{ message.text }}</span>
+  <!-- Copy Button for incoming messages only -->
+  <button  v-if="message.type === 'incoming'" class="copy-button" @click="copyText(message.text)">
+    Copy
+  </button>
+</div>
+  </div>
+</div>
+          <div v-if="isTyping" class="typing-preloader">
+            <template v-if="isTyping" class="monk_icon">
+              <img src="https://gurukul.finvedic.com/images/monk_half.png" alt="" style="width: 30px !important; background-color: #5479F7; border-radius: 50%;">
+            </template>
+            Typing...
+          </div>
+        </div>
       </div>
     </div>
     <!-- Input field for user to type messages -->
     <div class="input-container">
       <input type="text" v-model="newMessage" @keyup.enter="sendMessage" placeholder="Enter your Query..." class="input-field">
       <button @click="sendMessage" class="send-button">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-send" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 14l11 -11" /><path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5" /></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-send" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <path d="M10 14l11 -11" />
+          <path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5" />
+        </svg>
       </button>
     </div>
     <!-- Button to toggle chatbot visibility -->
@@ -61,6 +74,8 @@
     </button>
   </div>
 </template>
+
+
  
  <script>
  export default {
@@ -103,62 +118,95 @@
     this.messages = []; // Clear all messages
     document.body.classList.remove('no-scroll'); // Remove class from body when closing
   },
-     sendMessage() {
-    
-       const message = this.newMessage.trim();
-       if (!message) return;
-        // Don't send empty messages
- // Check if message is empty before setting isTyping to true
- this.isTyping = message.length > 0;
-       // Push the outgoing message to the messages array immediately
-       const outgoingMessage = { text: message, type: 'outgoing', id: Date.now() };
-       this.messages.push(outgoingMessage);
-       console.log('Outgoing message:', outgoingMessage); // Log outgoing message
-       this.newMessage = ''; // Clear the input field
-       this.$nextTick(() => {
+  sendMessage() {
+    const message = this.newMessage.trim();
+    if (!message) return;
+
+    this.isTyping = message.length > 0;
+
+    // Push the outgoing message to the messages array immediately
+    const outgoingMessage = { text: message, type: 'outgoing', id: Date.now() };
+    this.messages.push(outgoingMessage);
+    console.log('Outgoing message:', outgoingMessage); // Log outgoing message
+    this.newMessage = ''; // Clear the input field
+    this.$nextTick(() => {
+      const chatContainer = this.$el.querySelector('.chat-container');
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    });
+
+    // Send the message to the API
+    const formData = new FormData();
+    const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+    const chatBotUrl = baseUrl + 'api/bot/query';
+    formData.append('query', message); // Append the query parameter
+    formData.append('source', 'PORTAL'); // Append the source parameter
+    fetch(chatBotUrl, {
+      method: 'POST',
+      body: formData // Send form data
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      const responseData = data.data;
+      // Check if the response contains a code block
+      const containsCode = responseData.includes('```');
+      const formattedMessage = containsCode 
+        ? responseData.replace(/```([\s\S]*?)```/g, '<div class="code-block">$1</div>')
+        : responseData;
+
+      console.log('Formatted message:', formattedMessage); // Log formatted message with code blocks
+
+      const incomingMessage = { text: formattedMessage, type: 'incoming', id: Date.now(), containsCode };
+      this.messages.push(incomingMessage);
+      console.log('Incoming message:', incomingMessage); // Log incoming message
+      this.isTyping = false;
+
+      this.$nextTick(() => {
         const chatContainer = this.$el.querySelector('.chat-container');
         chatContainer.scrollTop = chatContainer.scrollHeight;
+      });
+    })
+    .catch(error => {
+      console.error('There was a problem with the fetch operation:', error);
+      const errorMessage = { text: 'Error sending message', type: 'incoming', id: Date.now() };
+      this.messages.push(errorMessage);
+      console.log('Error message:', errorMessage); // Log error message
+      this.isTyping = false;
     });
- 
-       // Send the message to the API
-       const formData = new FormData();
-       const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-       const chatBotUrl = baseUrl +'api/bot/query'
-       formData.append('query', message); // Append the query parameter
-       formData.append('source', 'PORTAL'); // Append the source parameter
-       fetch(chatBotUrl, {
-         method: 'POST',
-         body: formData // Send form data
-       })
-       .then(response => {
-         if (!response.ok) {
-           throw new Error('Network response was not ok');
-         }
-         return response.json();
-       })
-       .then(data => {
-         // Handle the response from the API
-         const responseData = data.data; // Extract the 'data' field from the API response
-         const incomingMessage = { text: responseData, type: 'incoming', id: Date.now() };
-         this.messages.push(incomingMessage);
-         console.log('Incoming message:', incomingMessage); // Log incoming message
-         this.isTyping = false; 
- 
-         // Scroll to the bottom of the chat container after receiving a new message
-         this.$nextTick(() => {
-           const chatContainer = this.$el.querySelector('.chat-container');
-           chatContainer.scrollTop = chatContainer.scrollHeight;
-         });
-       })
-       .catch(error => {
-         console.error('There was a problem with the fetch operation:', error);
-         // Optionally, you can add an error message to the messages array
-         const errorMessage = { text: 'Error sending message', type: 'incoming', id: Date.now() };
-         this.messages.push(errorMessage);
-         console.log('Error message:', errorMessage); // Log error message
-         this.isTyping = false;
-       });
-     },
+  },
+  copyText(text) {
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Text copied to clipboard');
+    }).catch(err => {
+      console.error('Failed to copy text: ', err);
+    });
+  },
+  copyCode(htmlText) {
+    // Create a temporary container to parse the HTML and extract code blocks
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = htmlText;
+    
+    // Extract all code blocks
+    const codeBlocks = Array.from(tempDiv.querySelectorAll('.code-block'));
+    
+    // Combine all code blocks' text content into a single string
+    const codeTexts = codeBlocks.map(codeBlock => codeBlock.textContent || codeBlock.innerText).join('\n\n');
+    
+    // Copy the combined code to clipboard
+    navigator.clipboard.writeText(codeTexts).then(() => {
+      alert('Code copied to clipboard!');
+    }).catch(err => {
+      console.error('Failed to copy code: ', err);
+    });
+  },
+  formattedCodeBlocks(htmlText) {
+    // Format code blocks for display
+    return htmlText.replace(/```([\s\S]*?)```/g, '<div class="code-block">$1</div>');
+  },
      startDragging(event) {
        this.isDragging = true;
        const chatbot = this.$refs.toggle_button;
@@ -192,6 +240,17 @@
  </script>
  
  <style scoped>
+  .codeBlock {
+  background-color: black;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  border: 2px solid black !important;
+  z-index: 100;
+  white-space: pre-wrap; /* Preserve whitespace and line breaks */
+  overflow: auto; /* Ensure scroll if content is too large */
+  margin: 5px 0; /* Optional: Add some margin for better spacing */
+}
  .message-container {
   display: flex;
   align-items: center;
@@ -625,6 +684,50 @@
    z-index: 3;
    /* Ensure the image is above other content */
  }
+ .copy-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.copy-button-all {
+  position: absolute;
+  top: 5px;
+  right: 100px;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.copy-button:hover {
+  background-color: #0056b3;
+}
+
+.code-block {
+  background-color: black;
+  color: white;
+  /* padding: 10px; */
  
+  white-space: pre-wrap;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: fit-content;
+
+}
+.code-block-container{
+  margin: 5px 0;
+    padding: 5px 10px;
+    border-radius: 5px;
+    overflow-x: hidden;
+  border-radius: 5px;
+}
  </style>
  

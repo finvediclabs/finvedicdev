@@ -184,6 +184,9 @@ export default {
   nextEventTitle() {
     return this.nextEvent ? this.nextEvent.title : '';
   },
+  nextEventTopic() {
+    return this.nextEvent ? this.nextEvent.topic : '';
+  },
   nextEventDate() {
     return this.nextEvent ? this.formatDate(this.nextEvent.start) : '';
   },
@@ -196,6 +199,10 @@ export default {
   lastEventTitle() {
     return this.lastEvent ? this.lastEvent.title : '';
   },
+  lastEventTopic() {
+    return this.lastEvent ? this.lastEvent.topic : '';
+  },
+  
   lastEventDate() {
     return this.lastEvent ? this.formatDate(this.lastEvent.start) : '';
   },
@@ -205,6 +212,7 @@ export default {
   lastEventEndTime() {
     return this.lastEvent ? this.formatTime(this.lastEvent.end) : '';
   },
+
 },
   mounted() {
    // if (this.selectedCategory) {
