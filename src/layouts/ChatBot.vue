@@ -12,7 +12,7 @@
     <div class="welcome-message" ref="welcomeMessage">
       Hi! I am Drona, your AI virtual assistant.<br>Ask me about Fintech?
     </div>
-    <img src="https://gurukul.finvedic.com/images/monk.png" alt="" class="monk-image">
+    <q-img :src="monk" alt="" class="monk-image"/>
     <div class="chat-container-wrapper">
       <div class="chat-container" v-scroll-bottom>
         <!-- Messages -->
@@ -20,32 +20,38 @@
           <div v-for="message in messages" :key="message.id" :class="message.type">
   <div class="message-container">
     <template v-if="message.type === 'incoming'" class="monk_icon">
-      <img src="https://gurukul.finvedic.com/images/monk_half.png" alt="" style="width: 30px !important; background-color: #5479F7; border-radius: 50%;">
+      <q-img :src="monk_half" alt="" style="width: 60px !important;height:45px !important; background-color: #5479F7; border-radius: 50%;"/>
     </template>
     <!-- Render messages with code blocks using v-html -->
     <div v-if="message.containsCode" class="code-block-container">
   <!-- Copy Button -->
-  <button class="copy-button" @click="copyCode(message.text)">
-    Copy Code
-  </button>
-  <button v-if="message.type === 'incoming'" class="copy-button-all" @click="copyText(message.text)">
-    Copy
-  </button>
+  <q-btn class="copy-button" @click="copyCode(message.text)" style="padding-top: 0% !important;
+  padding-bottom: 0% !important;
+  align-items:start;">
+  <q-img :src="copy_code" alt="code copy" style="width: 100%;"></q-img>
+</q-btn>
+<q-btn v-if="message.type === 'incoming'" class="copy-button-all" @click="copyText(message.text)" style="padding-top: 0% !important;
+  padding-bottom: 0% !important;
+  align-items:start;">
+   <q-img :src="code" alt="code copy" style="width: 100%;"></q-img>
+</q-btn>
   <div class="code-block" v-html="formattedCodeBlocks(message.text)"></div>
 </div>
     
     <div v-else>
   <span>{{ message.text }}</span>
   <!-- Copy Button for incoming messages only -->
-  <button  v-if="message.type === 'incoming'" class="copy-button" @click="copyText(message.text)">
-    Copy
-  </button>
+  <q-btn v-if="message.type === 'incoming'" class="copy-button" @click="copyText(message.text)" style="padding-top: 0% !important;
+  padding-bottom: 0% !important;
+  align-items:start;">
+   <q-img :src="code" alt="code copy" style="width: 100%;"></q-img>
+</q-btn>
 </div>
   </div>
 </div>
           <div v-if="isTyping" class="typing-preloader">
             <template v-if="isTyping" class="monk_icon">
-              <img src="https://gurukul.finvedic.com/images/monk_half.png" alt="" style="width: 30px !important; background-color: #5479F7; border-radius: 50%;">
+              <q-img :src="monk_half" alt="" style="width: 60px !important;height:45px !important; background-color: #5479F7; border-radius: 50%;"/>
             </template>
             Typing...
           </div>
@@ -66,10 +72,10 @@
     <!-- Button to toggle chatbot visibility -->
     <button class="toggle-button" @click="toggleChatbot" ref="toggle_button" @mousedown="startDragging">
       <template v-if="isOpen">
-        <img :src="isOpen ? 'https://gurukul.finvedic.com/images/monk_half.png' : 'https://gurukul.finvedic.com/images/monk_half_mirrored.png'" alt="Monk Icon" style="background-color: red;">
+        <q-img :src="isOpen ? 'monk_half' : 'monk_half'" alt="Monk Icon" style="background-color: red;"/>
       </template>
       <template v-else>
-        <img src="https://gurukul.finvedic.com/images/monk_half.png" alt="Person Icon" style="transform: scaleX(-1);">
+        <q-img class="toggle-button-img" :src="monk_half" alt="Person Icon" style="transform: scaleX(-1);"/>
       </template>
     </button>
   </div>
@@ -78,10 +84,18 @@
 
  
  <script>
+ import copy_code from "../assets/copy_code.png";
+ import code from "../assets/copy.png"
+ import monk from "../assets/monk.png"
+ import monk_half from "../assets/monk_half.png"
  export default {
    data() {
      return {
        isOpen: false,
+       monk:monk,
+       monk_half:monk_half,
+       copy_code:copy_code,
+       code:code,
        newMessage: '',
        maximizeIcon: '□',
        messages: [],
@@ -492,7 +506,7 @@
    z-index: 9999999;
  }
  
- .toggle-button img {
+ .toggle-button-img {
    width: 100%;
    height: 100%;
    border-radius: 50%;
@@ -633,8 +647,12 @@
    align-items: center; /* Center icon vertically */
    border-bottom-right-radius: 20px;
  }
- 
- 
+ .custom-btn_chat{
+  padding-top: 0% !important;
+  padding-bottom: 0% !important;
+  align-items: flex-start;
+ }
+
  .chat-container-wrapper {
    /* Space for scrollbar */
    overflow: hidden; /* Hide overflow */
@@ -698,7 +716,7 @@
 .copy-button-all {
   position: absolute;
   top: 5px;
-  right: 100px;
+  right: 60px;
   background-color: black;
   color: white;
   border: none;
@@ -714,6 +732,8 @@
 .code-block {
   background-color: black;
   color: white;
+  margin-top: 4% !important;
+  margin-bottom: 4% !important;
   /* padding: 10px; */
  
   white-space: pre-wrap;
