@@ -77,7 +77,7 @@ export default {
         // Log the imageDownload of each item in booksList
         this.booksList.forEach(async item => {
           const image = item.imageDownload;
-          console.log(image);
+          // console.log(image);
           // Check if image exists
           if (image) {
             // Create form data
@@ -92,7 +92,7 @@ export default {
             
             // Handle the blob response as needed
             item.imageDownload = URL.createObjectURL(downloadResponse.data);
-            console.log(downloadResponse); // Log or process the blob response
+            // console.log(downloadResponse); // Log or process the blob response
           }
         });
       } else {
@@ -104,18 +104,73 @@ export default {
     }
   }
 },
+editDataFun(val) {
+  // Create the item object with initial properties
+  let item = {
+    title: val.heading,
+    description: val.description,
+    id: val.id,
+    cover: '',
+    coverOld: '' ,// Initialize cover as an empty string
+    categoryId: val.categoryId,
+    subCategoryId: val.subCategory
+  };
 
-    editDataFun(val) {
-      let item = {
-        title: val.heading,
-        description: val.description,
-        id: val.id,
-        cover: val.imagePath,
-        categoryId: val.categoryId,
-        subCategoryId: val.subCategory
-      };
-      this.createFile('Update Book', item);
-    },
+  // console.log('Original Cover Path:', val.imagePath);
+
+  // Define the base URL to remove
+  const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+  const removeImagePath = baseUrl + 'fs/download/';
+
+  // Function to get cover Blob via a POST request
+  async function fetchCoverBlob(imagePath) {
+    item.coverOld=imagePath;
+    // console.log(imagePath)
+    try {
+      // Remove the base URL part from imagePath
+      const filename = imagePath.replace(removeImagePath, '');
+      // console.log("Filename:", filename);
+
+      // Create a FormData object and append the filename
+      const formData = new FormData();
+      formData.append('filename', filename);
+
+      // Send POST request with FormData
+      const postImagePath = baseUrl + 'fs/download';
+      const response = await axios.post(postImagePath, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data' // Ensure the correct content type is set
+        },
+        responseType: 'blob' // Request response as a Blob
+      });
+
+      // Convert Blob to a URL
+      if (response.status === 200) {
+        return URL.createObjectURL(response.data); // Create an object URL for the Blob
+      } else {
+        // console.error('Failed to fetch cover Blob:', response.statusText);
+        return null;
+      }
+    } catch (error) {
+      // console.error('Error fetching cover Blob:', error);
+      return null;
+    }
+  }
+
+  // Fetch the cover Blob and then proceed
+  fetchCoverBlob(val.imagePath).then((coverUrl) => {
+    if (coverUrl) {
+      item.cover = coverUrl;
+      // console.log('Updated Cover URL:', item.cover);
+    } else {
+      // Handle the case where cover URL couldn't be fetched
+      // console.warn('Cover URL could not be fetched, proceeding without cover.');
+    }
+
+    // Open the form regardless of whether cover URL was fetched
+    this.createFile('Update Book', item);
+  });
+},
     showChaptersList(book) {
       this.$router.push({ path: `books/chapter/${book.id}` })
     },

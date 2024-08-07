@@ -52,50 +52,72 @@
   </div>
 </div>
 <q-dialog v-model="addCourseDialog">
-    <fin-portlet style="min-width: 400px; max-width: 600px;">
-      <fin-portlet-header bordered>
-        <fin-portlet-heading small>Add Course</fin-portlet-heading>
-      </fin-portlet-header>
-      <fin-portlet-item class="w-100 addCourseDialog">
-        <!-- Form fields for adding a new course -->
-        <q-form @submit="submitCourseForm" class="formContent" ref="courseForm">
-          <!-- Add your form fields here -->
-          <q-input outlined v-model="courseData.courseId" label="Course ID" />
-          <q-input outlined v-model="courseData.abstractt" label="Course Description" />
-          <q-input outlined v-model="courseData.bibilography" label="Bibliography" />
-          <q-input outlined v-model="courseData.courseDesc" label="Description" />
-          <q-select
+  <fin-portlet style="min-width: 400px; max-width: 600px;">
+    <fin-portlet-header bordered>
+      <fin-portlet-heading small>Add Course</fin-portlet-heading>
+    </fin-portlet-header>
+    <fin-portlet-item class="w-100 addCourseDialog">
+      <!-- Form fields for adding a new course -->
+      <q-form @submit="submitCourseForm" class="formContent" ref="courseForm">
+        <!-- Add your form fields here -->
+        <q-input
+          outlined
+          v-model="courseData.courseId"
+          label="Course ID"
+          :rules="[val => !!val || 'Course ID is required']"
+        />
+        <q-input
+          outlined
+          v-model="courseData.abstractt"
+          label="Course Description"
+          :rules="[val => !!val || 'Course Description is required']"
+        />
+        <q-input
+          outlined
+          v-model="courseData.bibilography"
+          label="Bibliography"
+          :rules="[val => !!val || 'Bibliography is required']"
+        />
+        <q-input
+          outlined
+          v-model="courseData.courseDesc"
+          label="Description"
+          :rules="[val => !!val || 'Description is required']"
+        />
+        <q-select
           outlined
           v-model="courseData.teachers"
           label="Teacher"
           :options="userOptions"
-          option-value="id" 
+          option-value="id"
           option-label="displayname"
+          :rules="[val => !!val || 'Teacher is required']"
           @input="logSelectedOption"
         />
         <q-select
           outlined
           v-model="courseData.batches"
-          label="Baches"
+          label="Batches"
           :options="batchOptions"
-          option-value="cycleid" 
+          option-value="cycleid"
           option-label="cycleDesc"
+          :rules="[val => !!val || 'Batches are required']"
           @input="logSelectedOption"
         />
-          <!-- Add more form fields as needed -->
 
-          <div class="row justify-center">
-            <div class="col-12 q-px-sm q-py-xs text-right q-pt-lg">
-              <q-btn label="Close" v-close-popup type="reset" color="primary" flat class="q-mr-sm" no-caps />
-              <q-btn label="Submit" type="submit" color="primary" :disable="submitLoading" no-caps>
-                <q-spinner-ios size="xs" class="q-ml-sm" v-if="submitLoading" />
-              </q-btn>
-            </div>
+        <div class="row justify-center">
+          <div class="col-12 q-px-sm q-py-xs text-right q-pt-lg">
+            <q-btn label="Close" v-close-popup type="reset" color="primary" flat class="q-mr-sm" no-caps />
+            <q-btn label="Submit" type="submit" color="primary" :disable="submitLoading" no-caps>
+              <q-spinner-ios size="xs" class="q-ml-sm" v-if="submitLoading" />
+            </q-btn>
           </div>
-        </q-form>
-      </fin-portlet-item>
-    </fin-portlet>
-  </q-dialog>
+        </div>
+      </q-form>
+    </fin-portlet-item>
+  </fin-portlet>
+</q-dialog>
+
   
 <q-dialog v-model="addBatchDialog">
   <fin-portlet style="min-width: 400px; max-width: 600px;">
@@ -103,24 +125,44 @@
       <fin-portlet-heading small>Add Batch</fin-portlet-heading>
     </fin-portlet-header>
     <fin-portlet-item class="w-100 addBatchDialog">
-      <q-form @submit="submitBatchForm" class="formContent" ref="batchForm">
-        <q-input outlined v-model="batchData.batchId" label="Batch ID" /> <!-- Add your form fields for adding a new batch -->
-        <q-input outlined v-model="batchData.batchName" label="Batch Name" />
-       
-        <q-input outlined v-model="batchData.startDate" label="Start Date" type="date" />
-        <q-input outlined v-model="batchData.endDate" label="End Date" type="date" />
-        <!-- Add more form fields as needed -->
+  <q-form @submit="submitBatchForm" class="formContent" ref="batchForm">
+    <q-input
+      outlined
+      v-model="batchData.batchId"
+      label="Batch ID"
+      :rules="[val => !!val || 'Batch ID is required']"
+    />
+    <q-input
+      outlined
+      v-model="batchData.batchName"
+      label="Batch Name"
+      :rules="[val => !!val || 'Batch Name is required']"
+    />
+    <q-input
+      outlined
+      v-model="batchData.startDate"
+      label="Start Date"
+      type="date"
+      :rules="[val => !!val || 'Start Date is required']"
+    />
+    <q-input
+      outlined
+      v-model="batchData.endDate"
+      label="End Date"
+      type="date"
+      :rules="[val => !!val || 'End Date is required']"
+    />
 
-        <div class="row justify-center">
-          <div class="col-12 q-px-sm q-py-xs text-right q-pt-lg">
-            <q-btn label="Close" v-close-popup type="reset" color="primary" flat class="q-mr-sm" no-caps />
-            <q-btn label="Submit" type="submit" color="primary" :disable="submitBatchLoading" no-caps>
-              <q-spinner-ios size="xs" class="q-ml-sm" v-if="submitBatchLoading" />
-            </q-btn>
-          </div>
-        </div>
-      </q-form>
-    </fin-portlet-item>
+    <div class="row justify-center">
+      <div class="col-12 q-px-sm q-py-xs text-right q-pt-lg">
+        <q-btn label="Close" v-close-popup type="reset" color="primary" flat class="q-mr-sm" no-caps />
+        <q-btn label="Submit" type="submit" color="primary" :disable="submitBatchLoading" no-caps>
+          <q-spinner-ios size="xs" class="q-ml-sm" v-if="submitBatchLoading" />
+        </q-btn>
+      </div>
+    </div>
+  </q-form>
+</fin-portlet-item>
   </fin-portlet>
 </q-dialog>
 </template>
@@ -238,7 +280,7 @@ export default {
   async fetchUserOptions() {
       try {
         const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-          const getUsersUrl = baseUrl + 'api/users/role/3';
+          const getUsersUrl = baseUrl + 'api/users/role/7';
         const response = await axios.get(getUsersUrl );
         console.log('Response from user options request:', response);
         if (response.status === 200) {

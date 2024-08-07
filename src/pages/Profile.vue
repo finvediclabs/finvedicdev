@@ -268,31 +268,53 @@ export default {
       });
     },
     getUserData() {
-      this.$api.get(`api/users/${this.user.id}`).then(response => {
-        if (response.data.success) {
-          var user = response.data.data;
-          this.profile = {
-            name: user.name,
-            email: user.email,
-            gender: user.gender,
-            dob: user.dob,
-            graduationDegree: user.graduationDegree,
-            qualificationYear: user.qualificationYear,
-            specialization: user.specialization,
-            phoneNumber: user.phoneNumber,
-            uploadDocumentPath: user.uploadDocumentPath,
-            role: this.user.roles ? this.user.roles[0] : []
-          };
-          this.imageUrl = user.photoPath;
+  this.$api.get(`api/users/${this.user.id}`).then(response => {
+    if (response.data.success) {
+      var user = response.data.data;
+      this.profile = {
+        name: user.name,
+        email: user.email,
+        gender: user.gender,
+        dob: user.dob,
+        graduationDegree: user.graduationDegree,
+        qualificationYear: user.qualificationYear,
+        specialization: user.specialization,
+        phoneNumber: user.phoneNumber,
+        uploadDocumentPath: user.uploadDocumentPath,
+        role: this.user.roles ? this.user.roles[0] : []
+      };
+ const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+    const removeImagePath = baseUrl +'fs/download/'
+      // Extract the filename by removing the base URL
+      // const baseURL1 = 'http://localhost:8087/fs/download/';
+      const filename = user.uploadDocumentPath.replace(removeImagePath, '');
+
+      // Create a FormData object
+      const formData = new FormData();
+      formData.append('filename', filename);
+// const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+    const ImagePath = baseUrl +'fs/download'
+      // Send POST request with FormData
+      axios.post(ImagePath, formData, { responseType: 'blob' })
+        .then(response => {
+          // Create a URL for the image blob
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          this.imageUrl = url;
+          console.log('Image URL:', this.imageUrl);
           console.log('Upload Document Path:', this.profile.uploadDocumentPath);
-        } else {
-          this.showMsg(response.data.message, 'negative');
-        }
-      }).catch(error => {
-        this.loading = false;
-        this.showMsg(error.response?.data.message || error.message, 'negative');
-      });
-    },
+        })
+        .catch(error => {
+          this.showMsg(error.response?.data.message || error.message, 'negative');
+        });
+
+    } else {
+      this.showMsg(response.data.message, 'negative');
+    }
+  }).catch(error => {
+    this.loading = false;
+    this.showMsg(error.response?.data.message || error.message, 'negative');
+  });
+},
     verifyData() {
       var errorCount = 0;
       this.profile.name ? '' : errorCount++;

@@ -232,7 +232,7 @@ export default {
 
   await this.$api.get(urls.getBooksDataUrl, request).then(response => {
     this.loading = false;
-    console.log('Data from getbooksurl:', response.data);
+    // console.log('Data from getbooksurl:', response.data);
     if (response.data.success) {
       this.booksData = response.data.data.map((item, index) => ({
         index: index + 1,
@@ -248,7 +248,7 @@ export default {
         deletedAt: item.deletedAt ? moment(item.deletedAt).format('YYYY-MM-DD') : null,
       }));
       
-      console.log('Books Data:', this.booksData);
+      // console.log('Books Data:', this.booksData);
       
       // Loop through each book and fetch imagePath for it
       this.booksData.forEach(book => {
@@ -269,7 +269,7 @@ export default {
               book.imagePath = url; // Update imagePath with the received image URL
             })
             .then(() => {
-              console.log('Post request successful'); // Log successful post request
+              // console.log('Post request successful'); // Log successful post request
             })
             .catch(error => {
               // console.error('Error in post request:', error); // Log error in post request
@@ -285,7 +285,7 @@ export default {
   }) .catch(error => {
       this.loading = false;
       if (error.response && error.response.status === 405) {
-        console.error('Error 405: Method Not Allowed');
+        // console.error('Error 405: Method Not Allowed');
         // You can add additional handling for this specific error code
       } else {
         this.showMsg(error.message, 'negative');
@@ -338,7 +338,7 @@ getChaptersData() {
                 chapter.chapterImagePath = url; // Update imagePath with the received image URL
               })
               .catch(error => {
-                console.error('Error in post request for imagePath:', error);
+                // console.error('Error in post request for imagePath:', error);
                 this.showMsg(error.response?.data.message || error.message, 'negative');
               });
           }
@@ -369,7 +369,7 @@ getChaptersData() {
     },
     
     visitChapter(chapter) {
-  console.log('Chapter File Path:', chapter.chapterFilePath); // Log the chapter file path
+  // console.log('Chapter File Path:', chapter.chapterFilePath); // Log the chapter file path
   
   var ext = chapter.chapterFilePath?.substr(chapter.chapterFilePath.lastIndexOf('.') + 1);
   let url = '/read-pdf';
@@ -379,7 +379,7 @@ getChaptersData() {
   let item = chapter.chapterFilePath;
 
   if (item) {
-    console.log(item); // Log the item here
+    // console.log(item); // Log the item here
 
     this.$router.push({
       path: url,

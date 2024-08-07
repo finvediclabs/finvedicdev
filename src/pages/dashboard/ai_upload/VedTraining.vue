@@ -87,7 +87,7 @@ export default {
 
       const formData = new FormData();
       formData.append("file", this.selectedFile);
-      formData.append("source", "portal");
+      formData.append("source", "website");
 
       try {
         const response = await axios.post("https://fnbackendprod.finvedic.com/api/bot", formData, {

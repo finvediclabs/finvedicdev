@@ -1,7 +1,8 @@
 <template>
   <div class="row q-lg" style="margin-top: 2%;">
-    <q-btn-group rounded style="width: 80%; margin-left: auto; margin-right: auto;">
-  <div v-for="category in categories" :key="category" class="full-width">
+    <q-btn-group  rounded style="width: 80%; margin-left: auto; margin-right: auto;flex-direction: row;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2), 0 2px 2px rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12)!important;">
+  <div v-for="category in categories" :key="category" class="full-width" >
     <q-btn
       unelevated
       rounded

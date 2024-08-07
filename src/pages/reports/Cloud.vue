@@ -15,7 +15,7 @@
         >
         <img src="https://gurukul.finvedic.com/images/cost.png" alt="Windows" style="width: 100%; height: 100%;" />
       </q-btn>
-      <div class="button-label">User Based<br>Cost Analysis</div>
+      <div class="button-label">User Based<br>Analysis</div>
         </div>
         <div class="btn_container">
         <q-btn

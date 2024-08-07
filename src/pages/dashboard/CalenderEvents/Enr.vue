@@ -105,8 +105,8 @@ export default {
       handler(newOptions) {
         // Log the ID and name of each option in userOptions
         newOptions.forEach(option => {
-          console.log('Option ID:', option.id);
-          console.log('Option Name:', option.name);
+          // console.log('Option ID:', option.id);
+          // console.log('Option Name:', option.name);
         });
       },
       deep: true // Enable deep watch to watch for changes in nested properties
@@ -120,11 +120,11 @@ export default {
       // Find the selected option by ID in userOptions and log its ID and name
       const selectedOption = this.userOptions.find(option => option.id === selectedOptionId);
       if (selectedOption) {
-        console.log('Selected Option ID:', selectedOption.id);
-        console.log('Selected Option Name:', selectedOption.name);
+        // console.log('Selected Option ID:', selectedOption.id);
+        // console.log('Selected Option Name:', selectedOption.name);
       }
       else{
-        console.log('Selected Option ID:', 'undefined');
+        // console.log('Selected Option ID:', 'undefined');
       }
     },
     async fetchUserOptions() {
@@ -132,10 +132,10 @@ export default {
         const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
           const getUsersUrl = baseUrl + 'api/users';
         const response = await axios.get(getUsersUrl );
-        console.log('Response from user options request:', response);
+        // console.log('Response from user options request:', response);
         if (response.status === 200) {
       this.userOptions = response.data.data.map(user => {
-        console.log('User ID:', user.id);
+        // console.log('User ID:', user.id);
         return {
           id: user.id,
           displayname: user.name + '-' + user.email,
@@ -146,7 +146,7 @@ export default {
           throw new Error('Failed to fetch user data');
         }
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        // console.error('Error fetching user data:', error);
         // Optionally handle the error or show a message to the user
       }
     },

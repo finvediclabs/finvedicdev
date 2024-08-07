@@ -346,7 +346,7 @@ export default {
 
   this.$api.get(urls.getPresentationsUrl, request).then(response => {
     this.loading = false;
-    console.log('Data from getPresentationsUrl:', response.data);
+    // console.log('Data from getPresentationsUrl:', response.data);
     if (response.data.success) {
       this.presentations = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));
 
@@ -369,7 +369,7 @@ export default {
               presentation.videoCoverPath = url; // Update videoCoverPath with the received video URL
             })
             .then(() => {
-              console.log('Post request successful'); // Log successful post request
+              // console.log('Post request successful'); // Log successful post request
             })
             .catch(error => {
               // console.error('Error in post request:', error); // Log error in post request
@@ -391,7 +391,7 @@ getChaptersData() {
   this.chaptersLoader = true;
   const formData = new FormData();
   formData.append('presentationId', this.selectedSlide?.id); // Add presentationId to form data
-  console.log('Selected Slide ID:', this.selectedSlide?.id);
+  // console.log('Selected Slide ID:', this.selectedSlide?.id);
   const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
           const getChaptersUrl = baseUrl + 'api/presentationChapters/findPresentationChapter';
   axios.post(getChaptersUrl, formData)
@@ -431,7 +431,7 @@ getChaptersData() {
                 chapter.presentationCoverPath = url; // Update presentationCoverPath with the received image URL
               })
               .catch(error => {
-                console.error('Error in post request for presentationCoverPath:', error);
+                // console.error('Error in post request for presentationCoverPath:', error);
                 this.showMsg(error.response?.data.message || error.message, 'negative');
               });
           }
