@@ -27,13 +27,13 @@
   <!-- Copy Button -->
   <q-btn class="copy-button" @click="copyCode(message.text)" style="padding-top: 0% !important;
   padding-bottom: 0% !important;
-  align-items:start;">
-  <q-img :src="copy_code" alt="code copy" style="width: 100%;"></q-img>
+  align-items:start;">copy code
+  <!-- <q-img :src="copy_code" alt="code copy" style="width: 100%;"></q-img> -->
 </q-btn>
 <q-btn v-if="message.type === 'incoming'" class="copy-button-all" @click="copyText(message.text)" style="padding-top: 0% !important;
   padding-bottom: 0% !important;
-  align-items:start;">
-   <q-img :src="code" alt="code copy" style="width: 100%;"></q-img>
+  align-items:start;">copy
+   <!-- <q-img :src="code" alt="code copy" style="width: 100%;"></q-img> -->
 </q-btn>
   <div class="code-block" v-html="formattedCodeBlocks(message.text)"></div>
 </div>
@@ -43,8 +43,8 @@
   <!-- Copy Button for incoming messages only -->
   <q-btn v-if="message.type === 'incoming'" class="copy-button" @click="copyText(message.text)" style="padding-top: 0% !important;
   padding-bottom: 0% !important;
-  align-items:start;">
-   <q-img :src="code" alt="code copy" style="width: 100%;"></q-img>
+  align-items:start;">copy
+   <!-- <q-img :src="code" alt="code copy" style="width: 100%;"></q-img> -->
 </q-btn>
 </div>
   </div>
