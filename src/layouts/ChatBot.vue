@@ -137,7 +137,8 @@
     // Push the outgoing message to the messages array immediately
     const outgoingMessage = { text: message, type: 'outgoing', id: Date.now() };
     this.messages.push(outgoingMessage);
-    console.log('Outgoing message:', outgoingMessage); // Log outgoing message
+    // console.log('Outgoing message:', outgoingMessage); 
+    // Log outgoing message
     this.newMessage = ''; // Clear the input field
     this.$nextTick(() => {
       const chatContainer = this.$el.querySelector('.chat-container');
@@ -168,11 +169,13 @@
         ? responseData.replace(/```([\s\S]*?)```/g, '<div class="code-block">$1</div>')
         : responseData;
 
-      console.log('Formatted message:', formattedMessage); // Log formatted message with code blocks
+      // console.log('Formatted message:', formattedMessage); 
+      // Log formatted message with code blocks
 
       const incomingMessage = { text: formattedMessage, type: 'incoming', id: Date.now(), containsCode };
       this.messages.push(incomingMessage);
-      console.log('Incoming message:', incomingMessage); // Log incoming message
+      // console.log('Incoming message:', incomingMessage);
+       // Log incoming message
       this.isTyping = false;
 
       this.$nextTick(() => {
@@ -181,10 +184,10 @@
       });
     })
     .catch(error => {
-      console.error('There was a problem with the fetch operation:', error);
+      // console.error('There was a problem with the fetch operation:', error);
       const errorMessage = { text: 'Error sending message', type: 'incoming', id: Date.now() };
       this.messages.push(errorMessage);
-      console.log('Error message:', errorMessage); // Log error message
+      // console.log('Error message:', errorMessage); // Log error message
       this.isTyping = false;
     });
   },
@@ -192,7 +195,7 @@
     navigator.clipboard.writeText(text).then(() => {
       alert('Text copied to clipboard');
     }).catch(err => {
-      console.error('Failed to copy text: ', err);
+      // console.error('Failed to copy text: ', err);
     });
   },
   copyCode(htmlText) {
@@ -210,7 +213,7 @@
     navigator.clipboard.writeText(codeTexts).then(() => {
       alert('Code copied to clipboard!');
     }).catch(err => {
-      console.error('Failed to copy code: ', err);
+      // console.error('Failed to copy code: ', err);
     });
   },
   formattedCodeBlocks(htmlText) {

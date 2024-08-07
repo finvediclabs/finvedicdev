@@ -451,7 +451,7 @@ export default {
         .get(urls.getVideosUrl, request)
         .then((response) => {
           this.loading = false;
-          console.log("Data from getbooksurl:", response.data);
+          // console.log("Data from getbooksurl:", response.data);
           if (response.data.success) {
             this.VideosList = response.data.data.map((item, index) => ({
               ...item,
@@ -483,7 +483,7 @@ export default {
                     video.videoCoverPath = url; // Update imagePath with the received image URL
                   })
                   .then(() => {
-                    console.log("Post request successful"); // Log successful post request
+                    // console.log("Post request successful"); // Log successful post request
                   })
                   .catch((error) => {
                     console.error("Error in post request:", error); // Log error in post request

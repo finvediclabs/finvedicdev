@@ -20,7 +20,7 @@ export default {
   computed: {
     viewJsData() {
       const decryptedData = CryptoJS.AES.decrypt(this.$route.query.item, 'fileData').toString(CryptoJS.enc.Utf8);
-      console.log('Decrypted Data:', decryptedData);
+      // console.log('Decrypted Data:', decryptedData);
       return decryptedData;
     }
   },

@@ -203,7 +203,7 @@ export default {
     const { setUserType, setSessionToken } = session;
     const profileStore = useProfileStore();
     const { user } = storeToRefs(profileStore);
-    console.log("Upload Document Path", user.value.uploadDocumentPath);
+    // console.log("Upload Document Path", user.value.uploadDocumentPath);
   
     return {
       token,
@@ -375,8 +375,8 @@ export default {
       this.events = events;
       this.nextOrLastEvent = nextEvent || lastEvent;
       this.isNextEvent = !!nextEvent; // true if next event, false if last event
-      console.log("events:", this.events);
-      console.log("nextOrLastEvent:", this.nextOrLastEvent);
+      // console.log("events:", this.events);
+      // console.log("nextOrLastEvent:", this.nextOrLastEvent);
     } else {
       this.showMsg(response.data?.message, 'negative');
     }

@@ -86,7 +86,7 @@ export default {
             }));
             this.chaptersList.forEach(async item => {
           const image = item.imageDownload;
-          console.log(image);
+          // console.log(image);
           // Check if image exists
           if (image) {
             // Create form data
@@ -101,7 +101,7 @@ export default {
             
             // Handle the blob response as needed
             item.imageDownload = URL.createObjectURL(downloadResponse.data);
-            console.log(downloadResponse); // Log or process the blob response
+            // console.log(downloadResponse); // Log or process the blob response
           }
         });
             
@@ -122,7 +122,7 @@ export default {
         coverOld: '' ,
         file: val.chapterFilePath
       };
-      console.log('Original Cover Path:', val.chapterImagePath);
+      // console.log('Original Cover Path:', val.chapterImagePath);
 
 // Define the base URL to remove
 const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
@@ -134,7 +134,7 @@ async function fetchCoverBlob(chapterImagePath) {
   try {
     // Remove the base URL part from chapterImagePath
     const filename = chapterImagePath.replace(removechapterImagePath, '');
-    console.log("Filename:", filename);
+    // console.log("Filename:", filename);
 
     // Create a FormData object and append the filename
     const formData = new FormData();
@@ -153,11 +153,11 @@ async function fetchCoverBlob(chapterImagePath) {
     if (response.status === 200) {
       return URL.createObjectURL(response.data); // Create an object URL for the Blob
     } else {
-      console.error('Failed to fetch cover Blob:', response.statusText);
+      // console.error('Failed to fetch cover Blob:', response.statusText);
       return null;
     }
   } catch (error) {
-    console.error('Error fetching cover Blob:', error);
+    // console.error('Error fetching cover Blob:', error);
     return null;
   }
 }
@@ -166,10 +166,10 @@ async function fetchCoverBlob(chapterImagePath) {
 fetchCoverBlob(val.chapterImagePath).then((coverUrl) => {
   if (coverUrl) {
     item.cover = coverUrl;
-    console.log('Updated Cover URL:', item.cover);
+    // console.log('Updated Cover URL:', item.cover);
   } else {
     // Handle the case where cover URL couldn't be fetched
-    console.warn('Cover URL could not be fetched, proceeding without cover.');
+    // console.warn('Cover URL could not be fetched, proceeding without cover.');
   }
 
       this.createFile('Update Chapter', item);

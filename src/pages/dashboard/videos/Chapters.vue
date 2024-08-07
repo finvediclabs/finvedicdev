@@ -89,7 +89,7 @@ export default {
         // Log the imageDownload of each item in chaptersList
         this.chaptersList.forEach(async item => {
           const image = item.imageDownload;
-          console.log(image);
+          // console.log(image);
           // Check if image exists
           if (image) {
             // Create form data
@@ -104,7 +104,7 @@ export default {
 
             // Handle the blob response as needed
             item.imageDownload = URL.createObjectURL(downloadResponse.data);
-            console.log(downloadResponse); // Log or process the blob response
+            // console.log(downloadResponse); // Log or process the blob response
           }
         });
 
@@ -113,7 +113,7 @@ export default {
       }
     } catch (error) {
       this.loading = false;
-      console.log(error);
+      // console.log(error);
     }
   }
 },
@@ -128,7 +128,7 @@ export default {
         file:val.videoFilePath
       };
       
-  console.log('Original Cover Path:', val.videoCoverPath);
+  // console.log('Original Cover Path:', val.videoCoverPath);
 
 // Define the base URL to remove
 const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
@@ -140,7 +140,7 @@ async function fetchCoverBlob(videoCoverPath) {
   try {
     // Remove the base URL part from videoCoverPath
     const filename = videoCoverPath.replace(removevideoCoverPath, '');
-    console.log("Filename:", filename);
+    // console.log("Filename:", filename);
 
     // Create a FormData object and append the filename
     const formData = new FormData();
@@ -159,11 +159,11 @@ async function fetchCoverBlob(videoCoverPath) {
     if (response.status === 200) {
       return URL.createObjectURL(response.data); // Create an object URL for the Blob
     } else {
-      console.error('Failed to fetch cover Blob:', response.statusText);
+      // console.error('Failed to fetch cover Blob:', response.statusText);
       return null;
     }
   } catch (error) {
-    console.error('Error fetching cover Blob:', error);
+    // console.error('Error fetching cover Blob:', error);
     return null;
   }
 }
@@ -172,7 +172,7 @@ async function fetchCoverBlob(videoCoverPath) {
 fetchCoverBlob(val.videoCoverPath).then((coverUrl) => {
   if (coverUrl) {
     item.cover = coverUrl;
-    console.log('Updated Cover URL:', item.cover);
+    // console.log('Updated Cover URL:', item.cover);
   } else {
     // Handle the case where cover URL couldn't be fetched
     console.warn('Cover URL could not be fetched, proceeding without cover.');

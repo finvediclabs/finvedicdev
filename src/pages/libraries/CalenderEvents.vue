@@ -299,11 +299,11 @@ export default {
           }));
 
           // Log grouped events
-          console.log("Grouped Events by Batch:");
+          // console.log("Grouped Events by Batch:");
           for (const [batch, batchEvents] of Object.entries(batchGroups)) {
-            console.log(`Batch: ${batch}`);
+            // console.log(`Batch: ${batch}`);
             batchEvents.forEach(event => {
-              console.log(`  Title: ${event.title}, Date: ${event.date}`);
+              // console.log(`  Title: ${event.title}, Date: ${event.date}`);
             });
           }
 

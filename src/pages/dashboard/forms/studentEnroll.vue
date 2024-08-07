@@ -85,10 +85,10 @@ export default {
           a.href = url;
           a.download = filename;
           a.click();
-          console.log('Download successful');
+          // console.log('Download successful');
         })
         .catch(error => {
-          console.error('Error in download:', error);
+          // console.error('Error in download:', error);
         });
     }
   }

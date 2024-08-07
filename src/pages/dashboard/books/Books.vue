@@ -77,7 +77,7 @@ export default {
         // Log the imageDownload of each item in booksList
         this.booksList.forEach(async item => {
           const image = item.imageDownload;
-          console.log(image);
+          // console.log(image);
           // Check if image exists
           if (image) {
             // Create form data
@@ -92,7 +92,7 @@ export default {
             
             // Handle the blob response as needed
             item.imageDownload = URL.createObjectURL(downloadResponse.data);
-            console.log(downloadResponse); // Log or process the blob response
+            // console.log(downloadResponse); // Log or process the blob response
           }
         });
       } else {
@@ -116,7 +116,7 @@ editDataFun(val) {
     subCategoryId: val.subCategory
   };
 
-  console.log('Original Cover Path:', val.imagePath);
+  // console.log('Original Cover Path:', val.imagePath);
 
   // Define the base URL to remove
   const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
@@ -125,11 +125,11 @@ editDataFun(val) {
   // Function to get cover Blob via a POST request
   async function fetchCoverBlob(imagePath) {
     item.coverOld=imagePath;
-    console.log(imagePath)
+    // console.log(imagePath)
     try {
       // Remove the base URL part from imagePath
       const filename = imagePath.replace(removeImagePath, '');
-      console.log("Filename:", filename);
+      // console.log("Filename:", filename);
 
       // Create a FormData object and append the filename
       const formData = new FormData();
@@ -148,11 +148,11 @@ editDataFun(val) {
       if (response.status === 200) {
         return URL.createObjectURL(response.data); // Create an object URL for the Blob
       } else {
-        console.error('Failed to fetch cover Blob:', response.statusText);
+        // console.error('Failed to fetch cover Blob:', response.statusText);
         return null;
       }
     } catch (error) {
-      console.error('Error fetching cover Blob:', error);
+      // console.error('Error fetching cover Blob:', error);
       return null;
     }
   }
@@ -161,10 +161,10 @@ editDataFun(val) {
   fetchCoverBlob(val.imagePath).then((coverUrl) => {
     if (coverUrl) {
       item.cover = coverUrl;
-      console.log('Updated Cover URL:', item.cover);
+      // console.log('Updated Cover URL:', item.cover);
     } else {
       // Handle the case where cover URL couldn't be fetched
-      console.warn('Cover URL could not be fetched, proceeding without cover.');
+      // console.warn('Cover URL could not be fetched, proceeding without cover.');
     }
 
     // Open the form regardless of whether cover URL was fetched

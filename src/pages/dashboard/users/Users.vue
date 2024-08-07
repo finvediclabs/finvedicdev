@@ -153,7 +153,7 @@ export default {
   },
   watch: {
     roleSearch(newVal) {
-      console.log('Selected Role Value:', newVal);
+      // console.log('Selected Role Value:', newVal);
     this.getUsersData();
   },
     // programSearch() {
@@ -209,7 +209,7 @@ export default {
         }))
       ];
 
-      console.log('Role Options:', this.roleOptions);
+      // console.log('Role Options:', this.roleOptions);
     } else {
       this.showMsg(response.data?.message, 'negative');
     }
@@ -223,8 +223,8 @@ export default {
       let url1 = urls.usersUrl;
       if (this.roleSearch && this.roleSearch.value) {
         url1 = `${urls.usersUrl}/role/${this.roleSearch.value}`;
-        console.log('Role Search Value:', this.roleSearch.value); // Log the roleSearch value
-        console.log('Constructed URL:', url1); // Log the URL
+        // console.log('Role Search Value:', this.roleSearch.value); // Log the roleSearch value
+        // console.log('Constructed URL:', url1); // Log the URL
       }
 
       this.$api.get(url1).then(response => {

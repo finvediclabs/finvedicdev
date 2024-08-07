@@ -131,7 +131,7 @@ export default {
     }
   },
   mounted() {
-    console.log(useProfileStore);
+    // console.log(useProfileStore);
     this.getAzureVmsData();
     this.loadLockedStates(); // Load locked states from local storage
   },
@@ -196,7 +196,7 @@ export default {
     const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
     const getDeleteVMUrl = baseUrl + 'deletevm/';
     const response = await fetch(getDeleteVMUrl + lab.name);
-    console.log('success');
+    // console.log('success');
     lab.locked = true;
     this.saveLockedStates(); // Save locked states to local storage
   } catch (error) {
@@ -233,7 +233,7 @@ export default {
   this.$api.get(urls.getAzureVmsUrl).then(response => {
     this.loading = false;
     this.labsData = response.data.data.map(vm => {
-      console.log(vm.userName); // Log the username here
+      // console.log(vm.userName); // Log the username here
       return {
         ...vm,
         userName: vm.userName 
@@ -259,12 +259,12 @@ selectVersion(os) {
       }
       const profileStore = useProfileStore();
   const user = profileStore.user;
-  console.log(user.roles[0].name);
+  // console.log(user.roles[0].name);
   // Ensure createdAt is set, if available
   const createdAt = user.createdAt ? user.createdAt : new Date().toISOString();
 
   const userRole = user.roles.length >= 0 ? user.roles[0].name : "";
-  console.log(userRole);
+  // console.log(userRole);
       const requestData = {
         userId: user.id,
         accountId: user.accountId,
@@ -277,7 +277,7 @@ selectVersion(os) {
         status: 'Requested',
         operatingSystem: this.selectedOS // Include selected OS
       };
-console.log(requestData)
+// console.log(requestData)
       try {
         // Send POST request
         const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';

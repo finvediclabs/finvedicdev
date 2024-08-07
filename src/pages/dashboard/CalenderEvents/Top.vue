@@ -121,7 +121,7 @@
         topicName: this.topicData.topicName, // Allow user input for topic name
         // Add more fields as needed
       };
-      console.log('Topic Data:', topicData);
+      // console.log('Topic Data:', topicData);
       try {
         const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
           const getTopicsUrl = baseUrl + 'api/topics';

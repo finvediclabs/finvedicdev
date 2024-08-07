@@ -258,7 +258,7 @@ export default {
         }
         
         try {
-          console.log('Create Event Request:', request);
+          // console.log('Create Event Request:', request);
           let response = await this.$api.post(urls.getEvents, request);
           if (response.data.success) {
             this.showMsg(response.data?.message || 'Event Created Successfully', 'positive');
