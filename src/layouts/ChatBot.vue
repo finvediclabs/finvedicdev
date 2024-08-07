@@ -25,14 +25,10 @@
     <!-- Render messages with code blocks using v-html -->
     <div v-if="message.containsCode" class="code-block-container">
   <!-- Copy Button -->
-  <q-btn class="copy-button" @click="copyCode(message.text)" style="padding-top: 0% !important;
-  padding-bottom: 0% !important;
-  align-items:start;">copy code
+  <q-btn class="copy-button" @click="copyCode(message.text)">copy code
   <!-- <q-img :src="copy_code" alt="code copy" style="width: 100%;"></q-img> -->
 </q-btn>
-<q-btn v-if="message.type === 'incoming'" class="copy-button-all" @click="copyText(message.text)" style="padding-top: 0% !important;
-  padding-bottom: 0% !important;
-  align-items:start;">copy
+<q-btn v-if="message.type === 'incoming'" class="copy-button-all" @click="copyText(message.text)" >copy
    <!-- <q-img :src="code" alt="code copy" style="width: 100%;"></q-img> -->
 </q-btn>
   <div class="code-block" v-html="formattedCodeBlocks(message.text)"></div>
@@ -41,9 +37,9 @@
     <div v-else>
   <span>{{ message.text }}</span>
   <!-- Copy Button for incoming messages only -->
-  <q-btn v-if="message.type === 'incoming'" class="copy-button" @click="copyText(message.text)" style="padding-top: 0% !important;
-  padding-bottom: 0% !important;
-  align-items:start;">copy
+  <q-btn v-if="message.type === 'incoming'" class="copy-button" @click="copyText(message.text)" 
+  
+  >copy
    <!-- <q-img :src="code" alt="code copy" style="width: 100%;"></q-img> -->
 </q-btn>
 </div>
@@ -708,6 +704,7 @@
   right: 5px;
   background-color: black;
   color: white;
+  font-size: 12px;
   border: none;
   border-radius: 5px;
   padding: 5px 10px;
@@ -716,13 +713,14 @@
 .copy-button-all {
   position: absolute;
   top: 5px;
-  right: 60px;
+  right: 100px;
   background-color: black;
   color: white;
   border: none;
   border-radius: 5px;
   padding: 5px 10px;
   cursor: pointer;
+  font-size: 12px;
 }
 
 .copy-button:hover {
