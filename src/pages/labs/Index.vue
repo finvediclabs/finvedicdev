@@ -74,13 +74,13 @@
             <div class="col flex">
               <div class="q-px-md shadow-4 rounded-borders q-pa-xs text-center"
                 style="width:90px;font-size: 8px;background-color: white;"
-                @click="lab.provisioningState !== 'Deleting' && lab.provisioningState !== 'Deleted' ? download(lab.name) : null"
+                @click="lab.provisioningState !== 'Deleting' && lab.provisioningState !== 'Deleted' && lab.provisioningState !== 'Failed' ? download(lab.name) : null"
                 :class="{ 'pointer-events-none': lab.locked }">
-                {{ lab.provisioningState === 'Deleting' || lab.provisioningState === 'Deleted' ? lab.provisioningState : "Download" }}
+                {{ lab.provisioningState === 'Deleting' ||lab.provisioningState === 'Failed' || lab.provisioningState === 'Deleted' ? lab.provisioningState : "Download" }}
               </div>
               <q-space />
               <q-btn :label="lab.locked ? 'Locked' : 'Shutdown'" size="8px" dense class="q-px-md text-weight-bold"
-  rounded :style="{ background: (lab.locked || lab.provisioningState === 'Deleting' || lab.provisioningState === 'Deleted') ? '#D49F8A' : '#7BFF90' }"
+  rounded :style="{ background: (lab.locked || lab.provisioningState === 'Deleting' || lab.provisioningState === 'Deleted' || lab.provisioningState === 'Failed' ) ? '#D49F8A' : '#7BFF90' }"
   :disable="!canShutdown(lab)"
   @click="shutdown(lab)">
   <q-icon name="lock" size="14px" class="q-pl-sm"></q-icon>
@@ -143,7 +143,9 @@ export default {
       const isAdmin = profileStore.user.roles.some(role => role.name === 'Admin');
       return (isAdmin || lab.userName === profileUsername) &&
              lab.provisioningState !== 'Deleting' && 
-             lab.provisioningState !== 'Deleted';
+             lab.provisioningState !== 'Deleted'  && 
+             lab.provisioningState !== 'Failed';
+             
     };
   },
     getBorderColor() {
@@ -185,8 +187,8 @@ export default {
     return;
   }
 
-  if (lab.provisioningState === 'Deleted' || lab.provisioningState === 'Deleting') {
-    this.showMsg('Cannot perform shutdown action as the lab is already deleted or deleting.', 'negative');
+  if (lab.provisioningState === 'Deleted' || lab.provisioningState === 'Deleting' || lab.provisioningState === 'Failed' ) {
+    this.showMsg('Cannot perform shutdown action as the lab is already deleted or deleting or failed.', 'negative');
     return;
   }
 
