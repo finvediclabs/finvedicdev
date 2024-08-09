@@ -81,6 +81,11 @@ const routes = [
         meta: { item: 'uploadpdfbot' }
       },
       {
+        path: 'studentRegister',
+        component: () => import('pages/dashboard/StudentRegisterForm/StudentRegeister.vue'),
+        meta: { item: 'studentRegster' }
+      },
+      {
         path: 'vm-setup',
         component: () => import('pages/dashboard/VmSetup.vue'),
         meta: { item: 'vm-setup' }

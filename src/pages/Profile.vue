@@ -385,7 +385,7 @@ export default {
 
       this.loading = true;
       const request = {
-        userId: this.user.id,
+        id: this.user.id,
         oldPassword: this.resetPasswordForm.oldPassword,
         newPassword: this.resetPasswordForm.newPassword,
       };

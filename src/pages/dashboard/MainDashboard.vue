@@ -120,10 +120,18 @@ export default {
         },
         {
           image: organizationPng,
-          title: 'Forms',
+          title: 'Website Forms Data',
           description: 'Perfect for learning how the framework works.',
           path: 'forms',
           background: '#1E90FF90',
+          enable: true
+        },
+        {
+          image: usersPng,
+          title: 'Student Register Form',
+          description: 'Perfect for learning how the framework works.',
+          path: 'studentRegister',
+          background: '#b9e59b',
           enable: true
         },
       ]

@@ -345,6 +345,9 @@ export default {
       else if (this.$route.path === '/admin/users') {
         this.backgroundStyle = 'Users_BackgroundStyle'; // Apply the background style class
       } 
+      else if (this.$route.path === '/admin/studentRegister') {
+        this.backgroundStyle = 'Users_BackgroundStyle'; // Apply the background style class
+      } 
       
       else if (this.$route.path === '/admin/books') {
         this.backgroundStyle = 'Users_BackgroundStyle'; // Apply the background style class
