@@ -122,7 +122,7 @@ export default {
   methods: {
     download(vmname) {
       const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-      window.location.href = baseUrl + "/download/" + vmname;
+      window.location.href = baseUrl + "download/" + vmname;
     },
     async shutdown(lab) {
       if (lab.provisioningState === 'Deleted' || lab.provisioningState === 'Deleting') {
