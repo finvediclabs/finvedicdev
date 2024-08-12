@@ -124,7 +124,9 @@ export default {
   const now = moment().toISOString(); // Get current time in ISO format
 
   try {
-    const response = await fetch('http://localhost:8087/api/roles', {
+    const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+  const rolesURL = baseUrl + 'api/roles';
+    const response = await fetch(rolesURL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
