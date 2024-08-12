@@ -280,33 +280,38 @@ export default {
         qualificationYear: user.qualificationYear,
         specialization: user.specialization,
         phoneNumber: user.phoneNumber,
-        uploadDocumentPath: user.uploadDocumentPath,
+        uploadDocumentPath: user.uploadDocumentPath || '',  // Set to empty string if null or undefined
         role: this.user.roles ? this.user.roles[0] : []
       };
- const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-    const removeImagePath = baseUrl +'fs/download/'
-      // Extract the filename by removing the base URL
-      // const baseURL1 = 'http://localhost:8087/fs/download/';
-      const filename = user.uploadDocumentPath.replace(removeImagePath, '');
 
-      // Create a FormData object
-      const formData = new FormData();
-      formData.append('filename', filename);
-// const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-    const ImagePath = baseUrl +'fs/download'
-      // Send POST request with FormData
-      axios.post(ImagePath, formData, { responseType: 'blob' })
-        .then(response => {
-          // Create a URL for the image blob
-          const url = window.URL.createObjectURL(new Blob([response.data]));
-          this.imageUrl = url;
-          console.log('Image URL:', this.imageUrl);
-          console.log('Upload Document Path:', this.profile.uploadDocumentPath);
-        })
-        .catch(error => {
-          this.showMsg(error.response?.data.message || error.message, 'negative');
-        });
+      if (this.profile.uploadDocumentPath) {
+        const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+        const removeImagePath = baseUrl + 'fs/download/';
+        
+        // Extract the filename by removing the base URL
+        const filename = this.profile.uploadDocumentPath.replace(removeImagePath, '');
 
+        // Create a FormData object
+        const formData = new FormData();
+        formData.append('filename', filename);
+
+        const ImagePath = baseUrl + 'fs/download';
+        
+        // Send POST request with FormData
+        axios.post(ImagePath, formData, { responseType: 'blob' })
+          .then(response => {
+            // Create a URL for the image blob
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            this.imageUrl = url;
+            console.log('Image URL:', this.imageUrl);
+            console.log('Upload Document Path:', this.profile.uploadDocumentPath);
+          })
+          .catch(error => {
+            this.showMsg(error.response?.data.message || error.message, 'negative');
+          });
+      } else {
+        this.imageUrl = '';  // Set imageUrl to an empty string if no document path
+      }
     } else {
       this.showMsg(response.data.message, 'negative');
     }

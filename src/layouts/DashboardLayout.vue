@@ -450,41 +450,50 @@ showMsg(message, type) {
       }
     },
     getUserData() {
-      this.$api.get(`api/users/${this.user.id}`).then(response => {
-        if (response.data.success) {
-          const user = response.data.data;
-          this.profile = {
-            name: user.name,
-            email: user.email,
-            phoneNumber: user.phoneNumber,
-            role: this.user.roles ? this.user.roles[0] : [],
-            owner: user.owner,
-          }
-          const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-    const removeImagePath = baseUrl +'fs/download/'
-          // const baseURL = 'http://localhost:8087/fs/download/';
-          const filename = user.uploadDocumentPath.replace(removeImagePath, '');
-          // Post the filename to get the image blob
-          const formData = new FormData();
-          formData.append('filename', filename);
-    const ImagePath = baseUrl +'fs/download'
-          this.$api.post(ImagePath, formData, {
-            responseType: 'blob'
-          }).then(response => {
-            const url = URL.createObjectURL(response.data);
-            this.imageUrl = url;
-          }).catch(error => {
-            this.showMsg(error.response?.data.message || error.message, 'negative');
-          });
+  this.$api.get(`api/users/${this.user.id}`).then(response => {
+    if (response.data.success) {
+      const user = response.data.data;
+      this.profile = {
+        name: user.name,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        role: this.user.roles ? this.user.roles[0] : [],
+        owner: user.owner,
+      };
 
-        } else {
-          this.showMsg(response.data.message, 'negative');
-        }
-      }).catch(error => {
-        this.loading = false;
-        this.showMsg(error.response?.data.message || error.message, 'negative');
-      });
-    },
+      const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+      const removeImagePath = baseUrl + 'fs/download/';
+
+      // Check if uploadDocumentPath is not null or undefined
+      if (user.uploadDocumentPath) {
+        const filename = user.uploadDocumentPath.replace(removeImagePath, '');
+
+        // Post the filename to get the image blob
+        const formData = new FormData();
+        formData.append('filename', filename);
+        const ImagePath = baseUrl + 'fs/download';
+
+        this.$api.post(ImagePath, formData, {
+          responseType: 'blob'
+        }).then(response => {
+          const url = URL.createObjectURL(response.data);
+          this.imageUrl = url;
+        }).catch(error => {
+          this.showMsg(error.response?.data.message || error.message, 'negative');
+        });
+      } else {
+        this.imageUrl = ''; // Set imageUrl to an empty string if uploadDocumentPath is null
+      }
+
+    } else {
+      this.showMsg(response.data.message, 'negative');
+    }
+  }).catch(error => {
+    this.loading = false;
+    this.showMsg(error.response?.data.message || error.message, 'negative');
+  });
+},
+
     
     knowModuleFunction() {
       var filteredModule = this.modulesList.filter(module => module.menu);
