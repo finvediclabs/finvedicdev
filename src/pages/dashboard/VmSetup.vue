@@ -96,7 +96,7 @@ import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
-import windows from "../../assets/windows.png";
+import windows from "../../assets/Windows.png";
 import linuxOs from "../../assets/LinuxOs.png";
 import axios from "axios";
 import { urls } from "./Urls";

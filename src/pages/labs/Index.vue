@@ -102,7 +102,7 @@
 import { useProfileStore } from "src/stores/profile";
 import { useSessionStore } from "src/stores/session";
 import { setToken } from "src/boot/axios";
-import windows from "../../assets/windows.png";
+import windows from "../../assets/Windows.png";
 import linuxOs from "../../assets/LinuxOs.png";
 import axios from 'axios';
 import FinPortlet from "src/components/Portlets/FinPortlet.vue";
