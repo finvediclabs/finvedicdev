@@ -40,8 +40,9 @@ export default {
   methods: {
     async fetchVMs() {
       try {
-        
-        const response = await axios.get('http://localhost:8087/api/labVms/deleted');
+        const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+        const labsURL = baseUrl + 'api/labVms/deleted';
+        const response = await axios.get(labsURL);
         this.vms = response.data.data; // Adjust according to the data structure
         this.groupVMsByUser();
       } catch (error) {
