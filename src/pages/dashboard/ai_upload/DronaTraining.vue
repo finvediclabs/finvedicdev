@@ -13,13 +13,16 @@
         style="display: none;"
         ref="fileInput"
       />
+      <q-img :src="Character_Drona" alt="Person Icon" style="width:60px; position: absolute; top: 65px;left: 26%; 
+    transform: translateX(-50%);"/>
       
-      <div class="btn border-gradient-blue-purple" style="position: absolute; top: 65px;left: 26%;
+
+      <template class="btn border-gradient-blue-purple" style="position: absolute; top: 65px;left: 26%;
     transform: translateX(-50%);">
-        <span>
-          <img src="https://gurukul.finvedic.com/images/monk_half.png" alt="Person Icon">
-        </span>
-    </div>
+        
+          <q-img :src="Character_Drona" alt="Person Icon" style="width:20%"/>
+      
+    </template>
   
       <div style="display: flex; flex-direction: column; align-items: center; padding-top: 70px;">
         <div>
@@ -56,6 +59,8 @@
   
   <script>
   import axios from 'axios';
+ import Character_Drona from "../../../assets/Character_Drona.png";
+  
   
   export default {
     data() {
@@ -63,6 +68,9 @@
         selectedFile: null,
         pdfUrl: null,
         notification: null,
+       Character_Drona:Character_Drona,
+
+     
       };
     },
     methods: {

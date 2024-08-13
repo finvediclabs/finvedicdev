@@ -65,6 +65,7 @@
         </svg>
       </button>
     </div>
+
     <!-- Button to toggle chatbot visibility -->
     <button class="toggle-button" @click="toggleChatbot" ref="toggle_button" @mousedown="startDragging">
       <template v-if="isOpen">
@@ -99,6 +100,8 @@
        xOffset: 0,
        yOffset: 0,
        isTyping: false,
+       Character_Drona:Character_Drona,
+       Character_half_Drona:Character_half_Drona,
        originalWelcomeMessage: "Hi! I am Drona, your AI virtual assistant.<br>Ask me about Fintech?"
   
      };

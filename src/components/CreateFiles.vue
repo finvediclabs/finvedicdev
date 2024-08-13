@@ -300,7 +300,7 @@ export default {
       this.$api.post(this.queryParams.url, this.getRequest()).then(response => {
         this.loading = false;
         if (response.data.success) {
-          this.showMsg(response.data?.message || 'File Created Successfully', 'positive');
+          this.showMsg('File Created Successfully', 'positive');
           this.$router.go(-1);
         } else {
           this.showMsg(response.data?.message, 'negative');

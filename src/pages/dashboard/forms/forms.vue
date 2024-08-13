@@ -1,10 +1,6 @@
 <template>
   <fin-portlet style="background-color: transparent">
-    <fin-portlet-header>
-      <fin-portlet-heading :loading="masterLoading" backArrow>
-        <span class="User_heading">Forms Data</span>
-      </fin-portlet-heading>
-    </fin-portlet-header>
+  
   </fin-portlet>
   <div class="q-pa-xs row justify-center">
     <div class="col-12" style="margin-top: -4%;">
