@@ -74,9 +74,9 @@
             </div>
             <div class="col-12 q-px-sm">
               <label class="form-label">Topic</label>
-              <q-select v-model="topic" class="q-px-md rounded-borders inputBackground" borderless
-  :options="filteredTopics" option-label="topicName" option-value="topicId"
-  @select="selectTopic" />
+              <q-select v-model="filteredTopic" class="q-px-md rounded-borders inputBackground" borderless
+                :options="filteredTopics" option-label="topicName" option-value="topicId"
+                @select="selectTopic(filteredTopic)" />
               <div class="errorMsgBox">
                 <span v-if="errors.topic && !topic">{{ errors.topic }}</span>
               </div>
@@ -256,7 +256,7 @@ export default {
           updatedAt: new Date(),
           deletedAt: null,
         }
-        
+        // console.log('Create Event Request:', request);
         try {
           // console.log('Create Event Request:', request);
           let response = await this.$api.post(urls.getEvents, request);
