@@ -5,14 +5,7 @@
       <div class="col-3 topView">
         <fin-portlet-item>
           <div class="row q-lg">
-            <q-btn-group
-              style="
-                width: 100%;
-                margin: 0 auto;
-                display: flex;
-                flex-direction: column;
-              "
-            >
+            <q-btn-group class="style_for_q_btn" style="flex-direction: column;">
               <div v-for="category in categories" class="full-width">
                 <q-btn
                   unelevated
@@ -460,7 +453,7 @@ export default {
         .get(urls.getVideosUrl, request)
         .then((response) => {
           this.loading = false;
-          console.log("Data from getbooksurl:", response.data);
+          // console.log("Data from getbooksurl:", response.data);
           if (response.data.success) {
             this.VideosList = response.data.data.map((item, index) => ({
               ...item,
@@ -492,7 +485,7 @@ export default {
                     video.videoCoverPath = url; // Update imagePath with the received image URL
                   })
                   .then(() => {
-                    console.log("Post request successful"); // Log successful post request
+                    // console.log("Post request successful"); // Log successful post request
                   })
                   .catch((error) => {
                     console.error("Error in post request:", error); // Log error in post request
@@ -702,6 +695,13 @@ export default {
   /* border:2px solid red; */
   /* position: absolute;
   top: -12vh; */
+}
+.style_for_q_btn{
+  width: 100%;
+                margin: 0 auto;
+                display: flex;
+                flex-direction: column;
+
 }
 .heading {
   margin-top: 3%;

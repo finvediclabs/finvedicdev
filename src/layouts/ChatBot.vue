@@ -44,7 +44,6 @@
 </q-btn>
 </div>
   </div>
->>>>>>> prod
 </div>
           <div v-if="isTyping" class="typing-preloader">
             <template v-if="isTyping" class="monk_icon">
@@ -70,7 +69,6 @@
     <!-- Button to toggle chatbot visibility -->
     <button class="toggle-button" @click="toggleChatbot" ref="toggle_button" @mousedown="startDragging">
       <template v-if="isOpen">
-
         <q-img :src="isOpen ? 'monk_half' : 'monk_half'" alt="Monk Icon" style="background-color: red;"/>
       </template>
       <template v-else>

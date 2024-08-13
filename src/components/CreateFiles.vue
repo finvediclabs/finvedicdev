@@ -62,7 +62,7 @@
               <label class="text-weight-bolder">Cover</label>
               <div v-if="coverPath" class="shadow-3 dropzone-container">
                 <q-btn class="q-pa-xs close-btn bg-grey-5" size="sm" icon="close" flat @click="coverPath = ''" />
-                <q-img :src="coverPath" class="full-width preview-img" />
+                <q-img :src="coverPathNew" class="full-width preview-img" />
               </div>
               <drop-file @update="(val) => cover = val" :fileRef="'cover'" accept=".jpg, .jpeg, .png" min-size="512"
                 max-size="30720" v-else />
@@ -137,6 +137,7 @@ export default {
       selectedCategory: {},
       selectedSubCategory: {},
       coverPath: '',
+      coverPathNew: '',
       errors: {},
       chapter: false,
       id: '',
@@ -148,6 +149,11 @@ export default {
       filePath: '',
       coverRequired: true,
       fileAccept: '',
+    }
+  },
+   watch: {
+    coverPath(newVal) {
+      console.log('coverPath updated:', newVal);
     }
   },
   mounted() {
@@ -166,12 +172,14 @@ export default {
       this.description = item.description;
       this.id = item.id;
       // this.cover[0] = item.cover;
-      this.coverPath = item.cover;
+      this.coverPathNew = item.cover
+      this.coverPath = item.coverOld;
       this.filePath = item.file;
       this.selectedCategory.id = item.categoryId;
       this.selectedSubCategory.id = item.subCategoryId;
     }
   },
+  
   methods: {
     showMsg(message, type) {
       this.$q.notify({
