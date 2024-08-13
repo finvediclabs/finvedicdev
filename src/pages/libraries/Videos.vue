@@ -36,6 +36,7 @@
                   "
                 />
 
+
                 <q-btn-dropdown
                   unelevated
                   rounded
@@ -77,6 +78,7 @@
             </q-btn-group>
           </div>
         </fin-portlet-item>
+
       </div>
       <div class="col-9 right_side topView">
         <fin-portlet-item class="q-pb-xl" v-if="VideosList.length">

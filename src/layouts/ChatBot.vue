@@ -12,7 +12,7 @@
     <div class="welcome-message" ref="welcomeMessage">
       Hi! I am Drona, your AI virtual assistant.<br>Ask me about Fintech?
     </div>
-    <img src="https://gurukul.finvedic.com/images/monk.png" alt="" class="monk-image">
+    <q-img :src="Character_Drona" alt="" class="monk-image"/>
     <div class="chat-container-wrapper">
       <div class="chat-container" v-scroll-bottom>
         <!-- Messages -->
@@ -20,7 +20,10 @@
   <div v-for="message in messages" :key="message.id" :class="message.type">
     <div class="message-container">
       <template v-if="message.type === 'incoming'" class="monk_icon">
-        <img src="https://gurukul.finvedic.com/images/monk_half.png" alt="" style="width: 30px !important; background-color: #5479F7; border-radius: 50%;">
+          <div>
+                <q-img :src="Character_half_Drona" style="width: 40px; height: 40px; background-color: #5479F7; border-radius: 50%; object-fit: contain; border: 1.5px solid #dcdcdc" alt="Character Drona"/>
+          </div>
+
       </template>
      
       {{ message.text }}
@@ -37,7 +40,9 @@
   </div>
   <div v-if="isTyping" class="typing-preloader">
     <template v-if="isTyping" class="monk_icon" >
-        <img src="https://gurukul.finvedic.com/images/monk_half.png" alt="" style="width: 30px !important; background-color: #5479F7; border-radius: 50%;">
+        <div>
+          <q-img :src="Character_half_Drona" style="width: 40px; height: 40px; background-color: #5479F7; border-radius: 50%; border: 1.5px solid #dcdcdc; " alt="Monk Half"/>
+        </div>
       </template>
     Typing...</div>
 </div>
@@ -50,19 +55,24 @@
         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-send" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 14l11 -11" /><path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5" /></svg>
       </button>
     </div>
+
     <!-- Button to toggle chatbot visibility -->
     <button class="toggle-button" @click="toggleChatbot" ref="toggle_button" @mousedown="startDragging">
       <template v-if="isOpen">
-        <img :src="isOpen ? 'https://gurukul.finvedic.com/images/monk_half.png' : 'https://gurukul.finvedic.com/images/monk_half_mirrored.png'" alt="Monk Icon" style="background-color: red;">
+         <q-img :src="isOpen ? 'Character_Drona' : 'Character_Drona'" alt="Monk Icon" style="width: 30px; background-color: red; border-radius: 50%;"/>
       </template>
       <template v-else>
-        <img src="https://gurukul.finvedic.com/images/monk_half.png" alt="Person Icon" style="transform: scaleX(-1);">
+      <div>
+         <q-img :src="Character_half_Drona" alt="Person Icon" style="width: 70px; height: 70px; margin-right: 10%; border: 2px solid #dcdcdc; background-color: #007bff; border-radius: 50%;" />
+         </div>
       </template>
     </button>
   </div>
 </template>
  
  <script>
+ import Character_Drona from "../assets/Character_Drona.png";
+ import Character_half_Drona from "../assets/Character_half_Drona.png";
  export default {
    data() {
      return {
@@ -74,6 +84,8 @@
        xOffset: 0,
        yOffset: 0,
        isTyping: false,
+       Character_Drona:Character_Drona,
+       Character_half_Drona:Character_half_Drona,
        originalWelcomeMessage: "Hi! I am Drona, your AI virtual assistant.<br>Ask me about Fintech?"
   
      };

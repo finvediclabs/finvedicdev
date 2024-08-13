@@ -9,12 +9,12 @@
         <q-btn-group style="width: 100%; margin: 0 auto; display: flex; flex-direction: column;">
         <div v-for="category in categories" class="full-width">
           <q-btn unelevated rounded :label="category.categoryName" no-caps v-if="!subCategories[category.id]" class="full-width padding_zero"
-            size="m" :class="{ 'white-background': !selectedCategory || selectedCategory.id !== category.id, 'bg-finvedic text-white': selectedCategory && selectedCategory.id === category.id }"
+            size="sm" :class="{ 'white-background': !selectedCategory || selectedCategory.id !== category.id, 'bg-finvedic text-white': selectedCategory && selectedCategory.id === category.id }"
             @click="selectCategory(category)"  style="margin-bottom: 10%;padding-top: 5%;padding-bottom: 5%;" />
 
           <q-btn-dropdown unelevated rounded :label="category.categoryName" no-caps v-if="subCategories[category.id]"
             class="full-width padding_zero" :class="{ 'white-background': !selectedCategory || selectedCategory.id !== category.id, 'bg-finvedic text-white': selectedCategory && selectedCategory.id === category.id }"
-            size="m" style="padding-top: 5%;padding-bottom: 5%;">
+            size="sm" style="padding-top: 5%;padding-bottom: 5%;">
             <q-list>
               <q-item v-for="subCategory in subCategories[category.id]" clickable v-close-popup
                 @click="selectSubCategory(category, subCategory)"

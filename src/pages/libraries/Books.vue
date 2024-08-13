@@ -482,7 +482,7 @@ h4{
   text-transform: uppercase;
   margin-top: auto;
   margin-bottom: auto;
-  font-size: 28px;
+  font-size: 25px;
   
 }
 .chapter_text{

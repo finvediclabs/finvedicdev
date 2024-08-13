@@ -161,7 +161,7 @@ export default {
     deleteItem(item) {
       this.$q.dialog({
         title: 'Confirm',
-        message: `Are You sure want to delete ${item.name}`,
+        message: `Are You sure want to delete`,
         persistent: true,
         cancel: {
           label: 'No',
@@ -175,7 +175,7 @@ export default {
       }).onOk(() => {
         this.$api.delete(this.deleteUrl + '/' + item.id).then(response => {
           if (response.data.success) {
-            this.showMsg(response.data.message, 'positive');
+            this.showMsg('File Deleted Successfully', 'positive');
             this.$emit('reCall');
           } else {
             this.this.showMsg(response?.data.message, 'negative');

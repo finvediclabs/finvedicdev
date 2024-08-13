@@ -309,11 +309,12 @@ export default {
     user() {
       this.getUserData();
     },
-      
+
     $route (to, from){
       this.checkAccess();
     },
       '$route': 'updateBackgroundStyle'
+
   },
   methods: {
     checkAccess() {
@@ -373,6 +374,9 @@ export default {
       }
        else if(this.$route.path === '/admin/forms'){
         this.backgroundStyle = 'Classroom_BackgroundStyle';
+      }
+      else if(this.$route.path === '/help'){
+        this.backgroundStyle = 'help_backgroundStyle';
       }
       else {
         this.backgroundStyle = ''; // Do not apply any background style
@@ -472,13 +476,20 @@ export default {
 .booksBackgroundStyle {
   background-image: url('/src/assets/BG_New.png');
   background-repeat: no-repeat;
-  background-size: 100vw 66vh;
+  background-size: 100vw 70vh;
  
 }
 .Lib_CL_Room_BackgroundStyle{
   background-image: url('/src/assets/BG_New.png');
   background-repeat: no-repeat;
   background-size: 100vw 35%;
+}
+.help_backgroundStyle{
+  background-image: url('/src/assets/BackImg.png');
+  background-repeat: no-repeat;
+  background-size: 100vw 55vh;
+  position: absolute;
+  top: 72px
 }
 .module-select-active {
   background: #fff;
