@@ -95,7 +95,7 @@ export default {
       formData.append("source", "website");
 
       try {
-        const response = await axios.post("https://fnbackendprod.finvedic.com/api/bot", formData, {
+        const response = await axios.post("https://fnbackendprod.finvedic.in/api/bot", formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }

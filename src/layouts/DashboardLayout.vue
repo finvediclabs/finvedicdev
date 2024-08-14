@@ -447,6 +447,9 @@ showMsg(message, type) {
        else if(this.$route.path === '/admin/forms'){
         this.backgroundStyle = 'Users_BackgroundStyle';
       }
+      else if (this.$route.path === '/admin/studentRegister') {
+        this.backgroundStyle = 'Users_BackgroundStyle'; // Apply the background style class
+      } 
       else if(this.$route.path === '/help'){
         this.backgroundStyle = 'help_backgroundStyle';
       }
