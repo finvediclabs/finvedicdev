@@ -1,156 +1,101 @@
 <template>
-    <div class="chart-container">
-      <div class="chart-item">
-        <canvas ref="barChart" class="chart-canvas" style="height: 100%;"></canvas>
-      </div>
-      <div class="chart-item">
-        <canvas ref="pieChart" class="chart-canvas"></canvas>
-      </div>
-      <div class="chart-item">
-        <canvas ref="stackedBarChart" class="chart-canvas" style="height: 100%;"></canvas>
-      </div>
-      <div class="chart-item">
-        <canvas ref="lineChart" class="chart-canvas" style="height: 100%;"></canvas>
-      </div>
-    </div>
-  </template>
-  
-  <script>
-  import Chart from 'chart.js/auto';
-  
-  export default {
-    mounted() {
-      this.renderCharts();
-    },
-    methods: {
-      renderCharts() {
-        this.renderChart(this.$refs.barChart, 'bar', 'Usage-Based Cost Analysis');
-        this.renderPieChart(this.$refs.pieChart);
-        this.renderStackedBarChart(this.$refs.stackedBarChart, 'Stacked Bar Chart');
-        this.renderChart(this.$refs.lineChart, 'line', 'Line Chart');
-      },
-      renderChart(canvasRef, chartType, chartLabel) {
-        var ctx = canvasRef.getContext('2d');
-        const options = {
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          },
-          layout: {
-            padding: 10
-          }
-        };
-        new Chart(ctx, {
-          type: chartType,
-          data: {
-            labels: ['January', 'February', 'March', 'April', 'May'],
-            datasets: [{
-              label: chartLabel,
-              data: [500, 750, 600, 900, 800], // Dummy data for Usage-Based Cost Analysis
-              backgroundColor: [
-                'rgba(255, 99, 132, 0.6)',
-                'rgba(54, 162, 235, 0.6)',
-                'rgba(255, 206, 86, 0.6)',
-                'rgba(75, 192, 192, 0.6)',
-                'rgba(153, 102, 255, 0.6)'
-              ],
-              borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)'
-              ],
-              borderWidth: 1
-            }]
-          },
-          options: options
-        });
-      },
-      renderPieChart(canvasRef) {
-        var ctx = canvasRef.getContext('2d');
-        new Chart(ctx, {
-          type: 'pie',
-          data: {
-            labels: ['January', 'February', 'March', 'April', 'May'],
-            datasets: [{
-              label: 'Pie Chart',
-              data: [500, 750, 600, 900, 800], // Dummy data for Usage-Based Cost Analysis
-              backgroundColor: [
-                'rgba(255, 99, 132, 0.6)',
-                'rgba(54, 162, 235, 0.6)',
-                'rgba(255, 206, 86, 0.6)',
-                'rgba(75, 192, 192, 0.6)',
-                'rgba(153, 102, 255, 0.6)'
-              ]
-            }]
-          },
-          options: {
-            plugins: {
-              legend: {
-                labels: {
-                  generateLabels: function(chart) {
-                    return [];
-                  }
-                }
-              }
-            }
-          }
-        });
-      },
-      renderStackedBarChart(canvasRef, chartLabel) {
-        var ctx = canvasRef.getContext('2d');
-        new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: ['January', 'February', 'March', 'April', 'May'],
-            datasets: [{
-              label: 'Expenditure',
-              data: [300, 400, 350, 500, 450],
-              backgroundColor: 'rgba(54, 162, 235, 0.6)'
-            }, {
-              label: 'Revenue',
-              data: [200, 350, 250, 400, 350],
-              backgroundColor: 'rgba(255, 99, 132, 0.6)'
-            }]
-          },
-          options: {
-            scales: {
-              x: {
-                stacked: true
-              },
-              y: {
-                stacked: true,
-                beginAtZero: true
-              }
-            },
-            layout: {
-              padding: 10
-            }
-          }
-        });
+  <div class="vm-container">
+    <BarChart :data="groupedVMs" barColor="rgba(84, 121, 247, 0.8)" borderColor="rgba(84, 121, 247, 1)" class="half-height" />
+    <table class="half-height">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>VM Name</th>
+          <th>Active Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="vm in groupedVMs" :key="vm.userName">
+          <td>{{ vm.userName || 'N/A' }}</td>
+          <td>{{ vm.names.join(', ') }}</td>
+          <td>{{ vm.totalActiveTime }} minutes</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</template>
+
+<script>
+import axios from 'axios';
+import BarChart from './Barchart.vue';
+
+export default {
+  components: {
+    BarChart
+  },
+  data() {
+    return {
+      vms: [],
+      groupedVMs: []
+    };
+  },
+  mounted() {
+    this.fetchVMs();
+  },
+  methods: {
+    async fetchVMs() {
+      try {
+        const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+        const labsURL = baseUrl + 'api/labVms/deleted';
+        const response = await axios.get(labsURL);
+        this.vms = response.data.data; // Adjust according to the data structure
+        this.groupVMsByUser();
+      } catch (error) {
+        console.error('Error fetching VM data:', error);
       }
+    },
+    groupVMsByUser() {
+      const grouped = {};
+      
+      this.vms.forEach(vm => {
+        const userName = vm.userName || 'N/A';
+        if (!grouped[userName]) {
+          grouped[userName] = {
+            userName,
+            names: [],
+            totalActiveTime: 0
+          };
+        }
+        grouped[userName].names.push(vm.name);
+        grouped[userName].totalActiveTime += vm.activeTime;
+      });
+
+      this.groupedVMs = Object.values(grouped);
     }
   }
-  </script>
-  
-  <style scoped>
-  .chart-container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-auto-rows: minmax(0, 1fr); /* Ensure all rows take up equal height */
-    gap: 20px; /* Adjust gap between items */
-    height: 600px; /* Fixed height for the container */
-  }
-  
-  .chart-item {
-    width: 100%;
-  }
-  
-  .chart-canvas {
-    height: 100%; /* Each chart takes up 50% of the container's height */
-    width: 100%;
-  }
-  </style>
-  
+}
+</script>
+
+<style scoped>
+.vm-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 20px;
+}
+
+.half-height {
+  height: 50%;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  color: #ffffff;
+  background-color: #5479F7;
+}
+
+th, td {
+  border: 1px solid #5479F7;
+  padding: 8px;
+  text-align: left;
+}
+</style>

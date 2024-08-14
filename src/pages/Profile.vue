@@ -21,7 +21,7 @@
               Change Profile
             </label>
             <br><br>
-            <input id="fileInput" name="file" type="file" class="hidden-input" ref="file" @change="onChange" accept=".pdf,.jpg,.jpeg,.png">
+            <input id="fileInput" name="file" type="file" class="hidden-input" ref="file" @change="onChange" accept=".jpg,.png">
             <p>Layout</p>
             <div class="flex flex-center">
               <q-avatar size="50px" class="bg-grey cursor-pointer" @click="editProfile.profileBg = ''"></q-avatar>
@@ -47,10 +47,23 @@
                   </div>
                 </div>
                 <div class="col-12">
-                  <q-input label="Phone Number" borderless class="shadow-3 q-px-md fin-br-8" v-model="profile.phoneNumber" :disable="disableEdit" />
-                  <div class="errorMsgBox">
-                    <span v-if="error.phoneNumber && !profile.phoneNumber">{{ error.phoneNumber }}</span>
-                  </div>
+                      <q-input 
+                        label="Phone Number" 
+                        borderless 
+                        class="shadow-3 q-px-md fin-br-8" 
+                        v-model="profile.phoneNumber" 
+                        :disable="disableEdit" 
+                        :rules="[
+                          val => val && val.length > 0 || 'Phone Number is required',
+                          val => /^[0-9]+$/.test(val) || 'Phone Number must not contain letters',
+                          val => /^\d{10}$/.test(val) || 'Phone Number must be exactly 10 digits'
+                    
+                        ]"
+                      />
+                      <div class="errorMsgBox">
+                        <span v-if="error.phoneNumber && !profile.phoneNumber">{{ error.phoneNumber }}</span>
+                      </div>
+                  
                 </div>
                 <div class="col-12">
                   <q-select borderless class="shadow-3 q-px-md fin-br-8" v-model="profile.role" label="Role" :options="roles" option-value="id" option-label="name" disable />
@@ -73,23 +86,39 @@
                     <span v-if="error.gender && !profile.gender">{{ error.gender }}</span>
                   </div>
                 </div>
-                <div class="col-12">
-                    <q-input label="Date of Birth" type="date" borderless class="shadow-3 q-px-md fin-br-8" v-model="profile.dob" :disable="disableEdit" />
-                    <div class="errorMsgBox">
-                      <span v-if="error.dob && !profile.dob">{{ error.dob }}</span>
-                    </div>
-                  </div>
-              </div>
+                            </div>
               <div class="col-md-1"></div>
               <div class="col-5">
                 <div class="col-12">
+                  <div class="col-12">
                   <q-input 
-                    label="Highest Qualification" 
+                    label="Date of Birth" 
+                    type="date" 
                     borderless 
                     class="shadow-3 q-px-md fin-br-8" 
-                    v-model="profile.graduationDegree" 
+                    v-model="profile.dob" 
                     :disable="disableEdit" 
-                  />
+                    :rules="[
+                      val => val && isValidDate(val) || 'Date of Birth is required',
+                      val => isValidAge(val) || 'Age must be between 18 and 70 years'
+                    ]"
+                  /> 
+              <div class="errorMsgBox">
+                                <span v-if="error.dob && !profile.dob">{{ error.dob }}</span>
+                    </div>
+                  </div>
+
+                  <q-input 
+                        label="Highest Qualification" 
+                        borderless 
+                        class="shadow-3 q-px-md fin-br-8" 
+                        v-model="profile.graduationDegree" 
+                        :disable="disableEdit" 
+                        :rules="[
+                          val => val && val.trim().length > 0 || 'Highest Qualification is required',
+                          val => /^[a-zA-Z\s]+$/.test(val) || 'Highest Qualification must contain only letters and spaces'
+                        ]"
+                      />
                   <div class="errorMsgBox">
                     <span v-if="error.graduationDegree && !profile.graduationDegree">{{ error.graduationDegree }}</span>
                   </div>
@@ -97,12 +126,16 @@
                 <div class="col-12">
                   <div class="col-12 mt-4"> <!-- Added mt-4 for spacing -->
                     <q-input 
-                      label="Qualification Year" 
-                      borderless 
-                      class="shadow-3 q-px-md fin-br-8" 
-                      v-model="profile.qualificationYear"
-                      :disable="disableEdit" 
-                    />
+                          label="Qualification Year" 
+                          borderless 
+                          class="shadow-3 q-px-md fin-br-8" 
+                          v-model="profile.qualificationYear" 
+                          :disable="disableEdit" 
+                          :rules="[
+                            val => val && /^\d+$/.test(val) || 'Qualification Year must be a number',
+                            val => isValidYear(val) || 'Qualification Year must be a valid year'
+                          ]"
+                        />
                     <div class="errorMsgBox">
                       <span v-if="error.qualificationYear && !profile.qualificationYear">{{ error.qualificationYear }}</span> <!-- Updated v-if to error.qualificationYear -->
                     </div>
@@ -114,33 +147,36 @@
                     borderless 
                     class="shadow-3 q-px-md fin-br-8" 
                     v-model="profile.specialization" 
-                    :disable="disableEdit" 
+                    :disable="disableEdit"
+                    :rules="[
+                          val => val && val.trim().length > 0 || 'Specialization is required',
+                          val => /^[a-zA-Z\s]+$/.test(val) || 'Specialization must contain only letters and spaces'
+                        ]" 
                   />
                   <div class="errorMsgBox">
                     <span v-if="error.specialization && !profile.specialization">{{ error.specialization }}</span>
                   </div>
                 </div>
-                <div class="col-12">
+                <!-- <div class="col-12">
                   <q-uploader 
-        :label="uploadDocumentLabel" 
-        borderless 
-        class="shadow-3 q-px-md fin-br-8" 
-        style="width: 100%;" 
-        :disable="disableEdit" 
-        :factory="documentUploadFactory" 
-        accept=".pdf" 
-        max-file-size="5242880"
-        @added="onPdfChange"
-      />
+                      :label="uploadDocumentLabel" 
+                      borderless 
+                      class="shadow-3 q-px-md fin-br-8" 
+                      style="width: 100%;" 
+                      :disable="disableEdit" 
+                      :factory="documentUploadFactory" 
+                      accept=".pdf" 
+                      max-file-size="5242880"
+                      @added="onPdfChange"
+                    />
                   <div class="errorMsgBox">
                     <span v-if="error.uploadDocumentPath && !profile.uploadDocumentPath">{{ error.uploadDocumentPath }}</span>
                   </div>
-                </div>
+                </div> -->
                 <div class="q-pa-sm col-12 text-center" style="min-height:70px;">
                   <q-btn label="Cancel" no-caps color="red" class="fin-br-8" @click="cancelEdit()" size="md" v-if="!disableEdit" />
                   <q-btn color="primary" no-caps class="fin-br-8 q-ml-sm" size="md" style="min-width:150px" label="Update" type="submit" :disable="loading" v-if="!disableEdit">
-                    <!-- <q-spinner-ios color="white" class="q-pl-sm" v-if="loading" /> -->
-                  </q-btn>
+                    </q-btn>
                 </div>
               </div>
             </div>
@@ -251,11 +287,6 @@ export default {
     this.getUserData();
     
   },
-  watch: {
-    user() {
-      this.getUserData();
-    }
-  },
   methods: {
     showMsg(message, type) {
       this.$q.notify({
@@ -268,31 +299,58 @@ export default {
       });
     },
     getUserData() {
-      this.$api.get(`api/users/${this.user.id}`).then(response => {
-        if (response.data.success) {
-          var user = response.data.data;
-          this.profile = {
-            name: user.name,
-            email: user.email,
-            gender: user.gender,
-            dob: user.dob,
-            graduationDegree: user.graduationDegree,
-            qualificationYear: user.qualificationYear,
-            specialization: user.specialization,
-            phoneNumber: user.phoneNumber,
-            uploadDocumentPath: user.uploadDocumentPath,
-            role: this.user.roles ? this.user.roles[0] : []
-          };
-          this.imageUrl = user.photoPath;
-          console.log('Upload Document Path:', this.profile.uploadDocumentPath);
-        } else {
-          this.showMsg(response.data.message, 'negative');
-        }
-      }).catch(error => {
-        this.loading = false;
-        this.showMsg(error.response?.data.message || error.message, 'negative');
-      });
-    },
+  this.$api.get(`api/users/${this.user.id}`).then(response => {
+    if (response.data.success) {
+      var user = response.data.data;
+      this.profile = {
+        name: user.name,
+        email: user.email,
+        gender: user.gender,
+        dob: user.dob,
+        graduationDegree: user.graduationDegree,
+        qualificationYear: user.qualificationYear,
+        specialization: user.specialization,
+        phoneNumber: user.phoneNumber,
+        uploadDocumentPath: user.uploadDocumentPath,  // Set to empty string if null or undefined
+        role: this.user.roles ? this.user.roles[0] : []
+      };
+
+      if (this.profile.uploadDocumentPath) {
+        const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+        const removeImagePath = baseUrl + 'fs/download/';
+        
+        // Extract the filename by removing the base URL
+        const filename = this.profile.uploadDocumentPath.replace(removeImagePath, '');
+
+        // Create a FormData object
+        const formData = new FormData();
+        formData.append('filename', filename);
+
+        const ImagePath = baseUrl + 'fs/download';
+        
+        // Send POST request with FormData
+        axios.post(ImagePath, formData, { responseType: 'blob' })
+          .then(response => {
+            // Create a URL for the image blob
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            this.imageUrl = url;
+            console.log('Image URL:', this.imageUrl);
+            console.log('Upload Document Path:', this.profile.uploadDocumentPath);
+          })
+          .catch(error => {
+            this.showMsg(error.response?.data.message || error.message, 'negative');
+          });
+      } else {
+        this.imageUrl = '';  // Set imageUrl to an empty string if no document path
+      }
+    } else {
+      this.showMsg(response.data.message, 'negative');
+    }
+  }).catch(error => {
+    this.loading = false;
+    this.showMsg(error.response?.data.message || error.message, 'negative');
+  });
+},
     verifyData() {
       var errorCount = 0;
       this.profile.name ? '' : errorCount++;
@@ -367,13 +425,13 @@ export default {
 //       this.showMsg(error.response?.data.message || error.message, 'negative');
 //     });
 // },
-//     onChange() {
-//       this.profile.file = this.$refs.file.files.length ? this.$refs.file.files[0] : '';
-//       if (typeof this.profile.file === 'object') {
-//         let fileSrc = URL.createObjectURL(this.profile.file);
-//         this.imageUrl = fileSrc;
-//       }
-//     },
+    onChange() {
+      this.profile.file = this.$refs.file.files.length ? this.$refs.file.files[0] : '';
+      if (typeof this.profile.file === 'object') {
+        let fileSrc = URL.createObjectURL(this.profile.file);
+        this.imageUrl = fileSrc;
+      }
+    },
     showResetPasswordDialog() {
       this.showResetPassword = true;
     },
@@ -403,48 +461,64 @@ export default {
         this.showMsg(error.response?.data.message || error.message, 'negative');
       });
     },
-    onChange(event) {
-      const file = event.target.files[0];
-      if (file) {
-        this.uploadFile(file);
-      }
-    },
-    async onPdfChange(files) {
-      if (files.length > 0) {
-        const file = files[0];
-        try {
-          const filePath = await this.uploadFile(file);
-          this.profile.uploadDocumentPath = filePath;
-        } catch (error) {
-          console.error('Error uploading file:', error);
-        }
-      }
-    },
+    // onChange(event) {
+    //   const file = event.target.files[0];
+    //   if (file) {
+    //     this.uploadFile(file);
+    //   }
+    // },
+    // async onPdfChange(files) {
+    //   if (files.length > 0) {
+    //     const file = files[0];
+    //     try {
+    //       const filePath = await this.uploadFile(file);
+    //       this.profile.uploadDocumentPath = filePath;
+    //     } catch (error) {
+    //       console.error('Error uploading file:', error);
+    //     }
+    //   }
+    // },
     async uploadFile(file) {
-    const formData = new FormData();
-    formData.append('file', file);
-
+    this.loading = true;
     try {
-      
+      // Check if the file type is JPG or PNG
+      const allowedTypes = ['image/jpeg', 'image/png'];
+      if (!allowedTypes.includes(file.type)) {
+        throw new Error('Only JPG and PNG files are allowed.');
+      }
+
+      // Proceed with uploading the file if validation passes
+      const formData = new FormData();
+      formData.append('file', file);
+
       const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
       const getFileUrl = baseUrl + 'fs/upload-file';
+
       const response = await fetch(getFileUrl, {
-     
         method: 'POST',
         body: formData
       });
       const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'File upload failed');
+      }
+
       const filePath = data.uri;
       console.log('File uploaded:', filePath);
       return filePath; // Return the file path
     } catch (error) {
       console.error('Error uploading file:', error);
       throw error;
+    } finally {
+      this.loading = false; // Ensure loading is set to false after completion
     }
   },
 
+
   // Method to update profile
   updateProfile() {
+    this.loading = true;
     if (this.profile.file) { // Check if there is a new file to upload
       // Call uploadFile to get file path
       this.uploadFile(this.profile.file)
@@ -461,7 +535,7 @@ export default {
             specialization: this.profile.specialization,
             uploadDocumentPath: filePath, // Use the file path here
             phoneNumber: this.profile.phoneNumber,
-            photoPath: this.imageUrl,
+            // photoPath: this.imageUrl,
             password: this.user.password,
           };
 
@@ -470,6 +544,7 @@ export default {
         })
         .then(response => {
           if (response.data.success) {
+            this.getUserData(); 
             this.cancelEdit();
           } else {
             this.showMsg(response.data.message, 'negative');
@@ -524,9 +599,72 @@ export default {
       this.imageUrl = fileSrc; // Update image preview if necessary
     }
   },
-    
-  }
- 
+  
+    validatePhoneNumber(number) {
+      // Check if the number is exactly 10 digits and does not contain letters
+      const phoneRegex = /^\d{10}$/;
+      return phoneRegex.test(number) && /^[0-9]+$/.test(number);
+    },
+    validateForm() {
+      this.error.phoneNumber = this.validatePhoneNumber(this.profile.phoneNumber) ? '' : 'Invalid phone number';
+      this.error.graduationDegree = this.isValidDegree(this.profile.graduationDegree) ? '' : 'Invalid Highest Qualification';
+      this.error.qualificationYear = this.isValidYear(this.profile.qualificationYear) ? '' : 'Invalid Qualification Year';
+      this.error.span = this.isValidSpecialization(this.profile.specialization) ? '' : 'Invalid Specialization';
+     
+    },
+   
+    isValidDate(date) {
+      return !!date;
+    },
+    isValidDate(date) {
+      return !!date;
+    },
+    isValidAge(date) {
+      const today = new Date();
+      const birthDate = new Date(date);
+      const age = today.getFullYear() - birthDate.getFullYear();
+      const monthDifference = today.getMonth() - birthDate.getMonth();
+      const dayDifference = today.getDate() - birthDate.getDate();
+      if (monthDifference < 0 || (monthDifference === 0 && dayDifference < 0)) {
+        age--;
+      }
+      return age >= 18 && age <= 70;
+    },
+    isValidDegree(degree) {
+      return degree && /^[a-zA-Z\s]+$/.test(degree);
+    },
+    isValidYear(year) {
+      const currentYear = new Date().getFullYear();
+      const yearNumber = parseInt(year, 10);
+      // Check if the year is a valid year within a reasonable range
+      return yearNumber >= 1900 && yearNumber <= currentYear;
+    },
+    isValidSpecialization(specialization)
+    {
+      return specialization && /^[a-zA-Z\s]+$/.test(specialization);
+    }
+  
+  },
+  watch: {
+    user() {
+      this.getUserData();
+    },
+    'profile.phoneNumber': function(newValue) {
+      this.validateForm();
+    }
+  },
+  ' profile.dob': function(newValue) {
+      this.validateForm();
+    },
+    'profile.graduationDegree': function(newValue) {
+      this.validateForm();
+    },
+    'profile.qualificationYear': function(newValue) {
+      this.validateForm();
+    },
+    'profile.specialization': function(newValue) {
+      this.validateForm();
+    },
 };
 </script>
 

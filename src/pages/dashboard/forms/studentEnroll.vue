@@ -2,7 +2,11 @@
   <div class="whole_body">
     <div id="content">
       <fin-portlet-header>
-        <fin-portlet-heading :loading="loading"><span class="User_heading">Student Enrollments</span></fin-portlet-heading>
+        
+      <fin-portlet-heading :loading="masterLoading" backArrow> 
+        <span class="User_heading">Student Enrollments</span>
+      </fin-portlet-heading>
+
       </fin-portlet-header>
       <div class="fin-table shadow-6 fin-br-8">
         <table id="enrollmentsTable" class="table full-width rounded-borders">
@@ -85,10 +89,10 @@ export default {
           a.href = url;
           a.download = filename;
           a.click();
-          console.log('Download successful');
+          // console.log('Download successful');
         })
         .catch(error => {
-          console.error('Error in download:', error);
+          // console.error('Error in download:', error);
         });
     }
   }

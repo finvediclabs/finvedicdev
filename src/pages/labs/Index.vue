@@ -5,16 +5,51 @@
         <fin-portlet-heading><span class="User_heading" >Labs</span></fin-portlet-heading>
       </fin-portlet-header>
       <fin-portlet-item>
-        <div class="row justify-center q-pa-md">
+        <q-form @submit="onSubmit" ref="form" class="q-pa-md">
+    <div class="row">
+      <div class="col-12 col-md-5 q-pa-sm" style="margin-left: auto; margin-right: auto;">
+        <p style="text-align: center; font-size: 24px; font-weight: 600; color: #5479F7;">
+          Select The Operating System
+        </p>
+        <div class="image-btn-container">
           <q-btn
-  v-if="!isUserExistsInLabs"
-  color="green"
-  class="text-white"
-  @click="requestForVM"
->
-  Request for VM
-</q-btn>
+            v-ripple
+            v-model="selectedOS"
+            toggle
+            :flat="selectedOS !== 'Windows'"
+            :color="selectedOS === 'Windows' ? 'green' : 'white'"
+            class="image-btn"
+            @click="selectVersion('Windows')"
+          >
+            <q-img :src="windows" alt="Windows" style="width: 100%; height: 100%;" />
+          </q-btn>
+          <div class="outer">
+            <div class="inner"></div>
+            </div>
+          <q-btn
+            v-ripple
+            v-model="selectedOS"
+            toggle
+            :flat="selectedOS !== 'Linux'"
+            :color="selectedOS === 'Linux' ? 'green' : 'white'"
+            class="image-btn"
+            @click="selectVersion('Linux')"
+          >
+            <q-img :src="linuxOs" alt="Linux" style="width: 100%; height: 100%;" />
+          </q-btn>
         </div>
+      </div>
+    </div>
+    <div style="text-align: center; padding-top: 20px;">
+  <p v-if="selectedOS" style="color: green;">You selected: {{ selectedOS }} OS</p>
+  <p v-else style="color: red;">You didn't select operating system</p>
+</div>
+    <div class="row justify-center q-pa-md">
+      <q-btn
+      color="primary" no-caps class="sub-btn q-ml-sm fin-br-8" style="min-width:150px" label="Requeste For VM" type="submit"
+        :disabled="!formIsValid" />
+    </div>
+  </q-form>
       </fin-portlet-item>
 
       <fin-portlet-item >
@@ -39,17 +74,17 @@
             <div class="col flex">
               <div class="q-px-md shadow-4 rounded-borders q-pa-xs text-center"
                 style="width:90px;font-size: 8px;background-color: white;"
-                @click="lab.provisioningState !== 'Deleting' && lab.provisioningState !== 'Deleted' ? download(lab.name) : null"
+                @click="lab.provisioningState !== 'Deleting' && lab.provisioningState !== 'Deleted' && lab.provisioningState !== 'Failed' ? download(lab.name) : null"
                 :class="{ 'pointer-events-none': lab.locked }">
-                {{ lab.provisioningState === 'Deleting' || lab.provisioningState === 'Deleted' ? lab.provisioningState : lab.type }}
+                {{ lab.provisioningState === 'Deleting' ||lab.provisioningState === 'Failed' || lab.provisioningState === 'Deleted' ? lab.provisioningState : "Download" }}
               </div>
               <q-space />
               <q-btn :label="lab.locked ? 'Locked' : 'Shutdown'" size="8px" dense class="q-px-md text-weight-bold"
-                rounded :style="{ background: (lab.locked || lab.provisioningState === 'Deleting' || lab.provisioningState === 'Deleted') ? '#D49F8A' : '#7BFF90' }"
-                :disable="(lab.provisioningState === 'Deleting' || lab.provisioningState === 'Deleted')"
-                @click="shutdown(lab)">
-                <q-icon name="lock" size="14px" class="q-pl-sm"></q-icon>
-              </q-btn>
+  rounded :style="{ background: (lab.locked || lab.provisioningState === 'Deleting' || lab.provisioningState === 'Deleted' || lab.provisioningState === 'Failed' ) ? '#D49F8A' : '#7BFF90' }"
+  :disable="!canShutdown(lab)"
+  @click="shutdown(lab)">
+  <q-icon name="lock" size="14px" class="q-pl-sm"></q-icon>
+</q-btn>
             </div>
           </div>
         </q-card-section>
@@ -67,6 +102,8 @@
 import { useProfileStore } from "src/stores/profile";
 import { useSessionStore } from "src/stores/session";
 import { setToken } from "src/boot/axios";
+import windows from "../../assets/Windows.png";
+import linuxOs from "../../assets/LinuxOS.png";
 import axios from 'axios';
 import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
@@ -86,16 +123,31 @@ export default {
   },
   data() {
     return {
+      selectedOS: '',
+      windows:windows,
+      linuxOs:linuxOs,
       labsData: [],
-      labImg: "https://gurukul.finvedic.com/images/Windows.png",
+      labImg: windows,
     }
   },
   mounted() {
-    console.log(useProfileStore);
+    // console.log(useProfileStore);
     this.getAzureVmsData();
     this.loadLockedStates(); // Load locked states from local storage
   },
   computed: {
+    canShutdown() {
+    return (lab) => {
+      const profileStore = useProfileStore();
+      const profileUsername = profileStore.user.username;
+      const isAdmin = profileStore.user.roles.some(role => role.name === 'Admin');
+      return (isAdmin || lab.userName === profileUsername) &&
+             lab.provisioningState !== 'Deleting' && 
+             lab.provisioningState !== 'Deleted'  && 
+             lab.provisioningState !== 'Failed';
+             
+    };
+  },
     getBorderColor() {
       return function(provisioningState, locked) {
         return locked ? '0px solid #FF7F50' : (provisioningState === 'Succeeded' ? '0px solid #FF7F50' : '0px solid #FF7F50');
@@ -116,7 +168,7 @@ export default {
     const profileStore = useProfileStore();
     const profileUsername = profileStore.user.username;
 
-    return this.labsData.some(lab => lab.userName === profileUsername && lab.provisioningState === 'Succeeded');
+    return this.labsData.some(lab => lab.userName === profileUsername && lab.provisioningState === 'Succeeded' ||lab.userName === profileUsername && lab.provisioningState === 'Creating');
   }
   },
   methods: {
@@ -125,22 +177,32 @@ export default {
       window.location.href = baseUrl + "download/" + vmname;
     },
     async shutdown(lab) {
-      if (lab.provisioningState === 'Deleted' || lab.provisioningState === 'Deleting') {
-        this.showMsg('Cannot perform shutdown action as the lab is already deleted or deleting.', 'negative');
-        return;
-      }
+  const profileStore = useProfileStore();
+  const profileUsername = profileStore.user.username;
+  const isAdmin = profileStore.user.roles.some(role => role.name === 'Admin');
 
-      try {
-        const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-        const getDeleteVMUrl = baseUrl + 'deletevm/';
-        const response = await fetch(getDeleteVMUrl + lab.name);
-        console.log('success');
-        lab.locked = true;
-        this.saveLockedStates(); // Save locked states to local storage
-      } catch (error) {
-        console.error(error);
-      }
-    },
+  // Check if the user is an Admin or if the lab belongs to the user
+  if (!isAdmin && lab.userName !== profileUsername) {
+    this.showMsg('You do not have permission to perform this action.', 'negative');
+    return;
+  }
+
+  if (lab.provisioningState === 'Deleted' || lab.provisioningState === 'Deleting' || lab.provisioningState === 'Failed' ) {
+    this.showMsg('Cannot perform shutdown action as the lab is already deleted or deleting or failed.', 'negative');
+    return;
+  }
+
+  try {
+    const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+    const getDeleteVMUrl = baseUrl + 'deletevm/';
+    const response = await fetch(getDeleteVMUrl + lab.name);
+    // console.log('success');
+    lab.locked = true;
+    this.saveLockedStates(); // Save locked states to local storage
+  } catch (error) {
+    console.error(error);
+  }
+},
     loadLockedStates() {
       const lockedStates = JSON.parse(localStorage.getItem('lockedStates')) || {};
       this.labsData.forEach((lab) => {
@@ -171,7 +233,7 @@ export default {
   this.$api.get(urls.getAzureVmsUrl).then(response => {
     this.loading = false;
     this.labsData = response.data.data.map(vm => {
-      console.log(vm.userName); // Log the username here
+      // console.log(vm.userName); // Log the username here
       return {
         ...vm,
         userName: vm.userName 
@@ -182,48 +244,59 @@ export default {
     this.showMsg(error.response?.data.message || error.message, 'negative');
   });
 },
-async requestForVM() {
-  const profileStore = useProfileStore();
+selectVersion(os) {
+      this.selectedOS = os;
+      this.validateForm(); // Validate form whenever selection changes
+    },
+    validateForm() {
+      // Simple validation logic: Check if `selectedOS` is set
+      this.formIsValid = !!this.selectedOS;
+    },
+    async onSubmit() {
+      if (!this.formIsValid) {
+        this.showMsg('Please select an operating system.', 'negative');
+        return;
+      }
+      const profileStore = useProfileStore();
   const user = profileStore.user;
-  console.log(user.roles[0].name);
+  // console.log(user.roles[0].name);
   // Ensure createdAt is set, if available
   const createdAt = user.createdAt ? user.createdAt : new Date().toISOString();
 
   const userRole = user.roles.length >= 0 ? user.roles[0].name : "";
-  console.log(userRole);
+  // console.log(userRole);
+      const requestData = {
+        userId: user.id,
+        accountId: user.accountId,
+        name: user.name,
+        username: user.username,
+        email: user.email,
+        userRole: userRole, // Set userRole here
+        createdAt: createdAt, // Include createdAt
+        timestamp: new Date().toISOString(), // Current timestamp
+        status: 'Requested',
+        operatingSystem: this.selectedOS // Include selected OS
+      };
+// console.log(requestData)
+      try {
+        // Send POST request
+        const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+        const requestVMsUrl = baseUrl + 'api/request-vms';
+        const response = await axios.post(requestVMsUrl, requestData);
 
-// Prepare data to send
-const requestData = {
-  userId: user.id,
-  accountId: user.accountId,
-  name: user.name,
-  username: user.username,
-  email: user.email,
-  userRole: userRole, // Set userRole here
-  createdAt: createdAt, // Include createdAt
-  timestamp: new Date().toISOString(), // Current timestamp
-  status: "Requested",
+        // Handle success response
+        const successMessage = response.data.message;
+        this.showMsg(successMessage, 'positive');
+      } catch (error) {
+        console.error('Error sending request:', error);
+
+        // Handle error response
+        const errorMessage = error.response?.data?.message || 'Something went wrong!';
+        this.showMsg(errorMessage, 'negative');
+      }
+    }
+  }
 };
-
-  try {
-    // Send POST request
-    const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-    const requestVMsUrl = baseUrl + 'api/request-vms';
-    const response = await axios.post(requestVMsUrl, requestData);
-
-    // Handle success response
-    const successMessage = response.data.message;
-    this.showMsg(successMessage, 'positive');
-  } catch (error) {
-    console.error('Error sending request:', error);
-
-    // Handle error response
-    const errorMessage = error.response?.data?.message || 'Something went wrong!';
-    this.showMsg(errorMessage, 'negative');
-  }
-}
-  }
-}
 </script>
 
 <style>
@@ -245,6 +318,37 @@ const requestData = {
   margin-right: auto;
   width: 60vw;
 }
+
+.image-btn-container {
+  display: flex;
+  justify-content: center;
+}
+
+.image-btn {
+  width: 180px;
+  height: 180px;
+  margin: 0 10px; /* Adjust as needed */
+}
+.outer {
+  width: 1px;
+  height: 180px;
+  margin: auto;
+  position: relative;
+  overflow: hidden;
+}
+.inner {
+  position: absolute;
+  width:100%;
+  height: 40%;
+  background: #5479F7;
+  top: 30%;
+  box-shadow: 0px 0px 30px 20px #5479F7;
+}
+.bg-green {
+    background: #b2ccfc !important;
+    border-radius: 20px;
+}
+
 .scroll_on::-webkit-scrollbar {
         width: 10px;
          /* Width of the scrollbar */

@@ -160,6 +160,7 @@ export default {
       link: '',
       errors: {},
       editedEvent: {},
+      filteredTopic: '',
       selectedRadio: '', // To store the selected radio option
       additionalInput: '' // Example additional input
     }
@@ -211,6 +212,9 @@ export default {
       this.course = course;
       this.fetchTopicsByCourse(course.courseId);
     },
+    selectTopic(topic) {
+    this.topic = topic;
+  },
     format(date) {
       const day = date.getDate();
       const month = new Date(date).toLocaleDateString('en-US', { month: 'short' });
@@ -252,9 +256,9 @@ export default {
           updatedAt: new Date(),
           deletedAt: null,
         }
-        
+        // console.log('Create Event Request:', request);
         try {
-          console.log('Create Event Request:', request);
+          // console.log('Create Event Request:', request);
           let response = await this.$api.post(urls.getEvents, request);
           if (response.data.success) {
             this.showMsg(response.data?.message || 'Event Created Successfully', 'positive');

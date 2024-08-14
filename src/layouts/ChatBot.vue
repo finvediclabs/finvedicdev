@@ -12,61 +12,87 @@
     <div class="welcome-message" ref="welcomeMessage">
       Hi! I am Drona, your AI virtual assistant.<br>Ask me about Fintech?
     </div>
-    <img src="https://gurukul.finvedic.com/images/monk.png" alt="" class="monk-image">
+    <q-img :src="monk" alt="" class="monk-image"/>
     <div class="chat-container-wrapper">
       <div class="chat-container" v-scroll-bottom>
         <!-- Messages -->
         <div class="messages">
-  <div v-for="message in messages" :key="message.id" :class="message.type">
-    <div class="message-container">
-      <template v-if="message.type === 'incoming'" class="monk_icon">
-        <img src="https://gurukul.finvedic.com/images/monk_half.png" alt="" style="width: 30px !important; background-color: #5479F7; border-radius: 50%;">
-      </template>
-     
-      {{ message.text }}
-      <!-- <template v-if="message.type === 'outgoing'" class="user_icon">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-heart user-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin-left: auto;">
-          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-          <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
-          <path d="M6 21v-2a4 4 0 0 1 4 -4h.5" />
-          <path d="M18 22l3.35 -3.284a2.143 2.143 0 0 0 .005 -3.071a2.242 2.242 0 0 0 -3.129 -.006l-.224 .22l-.223 -.22a2.242 2.242 0 0 0 -3.128 -.006a2.143 2.143 0 0 0 -.006 3.071l3.355 3.296z" />
-        </svg>
-      </template> -->
-      
-    </div>
-  </div>
-  <div v-if="isTyping" class="typing-preloader">
-    <template v-if="isTyping" class="monk_icon" >
-        <img src="https://gurukul.finvedic.com/images/monk_half.png" alt="" style="width: 30px !important; background-color: #5479F7; border-radius: 50%;">
-      </template>
-    Typing...</div>
+          <div v-for="message in messages" :key="message.id" :class="message.type">
+  <div class="message-container">
+    <template v-if="message.type === 'incoming'" class="monk_icon">
+      <q-img :src="monk_half" alt="" style="width: 60px !important;height:45px !important; background-color: #5479F7; border-radius: 50%;"/>
+    </template>
+    <!-- Render messages with code blocks using v-html -->
+    <div v-if="message.containsCode" class="code-block-container">
+  <!-- Copy Button -->
+  <q-btn class="copy-button" @click="copyCode(message.text)">copy code
+  <!-- <q-img :src="copy_code" alt="code copy" style="width: 100%;"></q-img> -->
+</q-btn>
+<q-btn v-if="message.type === 'incoming'" class="copy-button-all" @click="copyText(message.text)" >copy
+   <!-- <q-img :src="code" alt="code copy" style="width: 100%;"></q-img> -->
+</q-btn>
+  <div class="code-block" v-html="formattedCodeBlocks(message.text)"></div>
 </div>
+    
+    <div v-else>
+  <span>{{ message.text }}</span>
+  <!-- Copy Button for incoming messages only -->
+  <q-btn v-if="message.type === 'incoming'" class="copy-button" @click="copyText(message.text)" 
+  
+  >copy
+   <!-- <q-img :src="code" alt="code copy" style="width: 100%;"></q-img> -->
+</q-btn>
+</div>
+  </div>
+</div>
+          <div v-if="isTyping" class="typing-preloader">
+            <template v-if="isTyping" class="monk_icon">
+              <q-img :src="monk_half" alt="" style="width: 60px !important;height:45px !important; background-color: #5479F7; border-radius: 50%;"/>
+            </template>
+            Typing...
+          </div>
+        </div>
       </div>
     </div>
     <!-- Input field for user to type messages -->
     <div class="input-container">
       <input type="text" v-model="newMessage" @keyup.enter="sendMessage" placeholder="Enter your Query..." class="input-field">
       <button @click="sendMessage" class="send-button">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-send" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 14l11 -11" /><path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5" /></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-send" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <path d="M10 14l11 -11" />
+          <path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5" />
+        </svg>
       </button>
     </div>
+
     <!-- Button to toggle chatbot visibility -->
     <button class="toggle-button" @click="toggleChatbot" ref="toggle_button" @mousedown="startDragging">
       <template v-if="isOpen">
-        <img :src="isOpen ? 'https://gurukul.finvedic.com/images/monk_half.png' : 'https://gurukul.finvedic.com/images/monk_half_mirrored.png'" alt="Monk Icon" style="background-color: red;">
+        <q-img :src="isOpen ? 'monk_half' : 'monk_half'" alt="Monk Icon" style="background-color: red;"/>
       </template>
       <template v-else>
-        <img src="https://gurukul.finvedic.com/images/monk_half.png" alt="Person Icon" style="transform: scaleX(-1);">
+        <q-img class="toggle-button-img" :src="monk_half" alt="Person Icon" style="transform: scaleX(-1);"/>
       </template>
     </button>
   </div>
 </template>
+
+
  
  <script>
+ import copy_code from "../assets/copy_code.png";
+ import code from "../assets/copy.png"
+ import monk from "../assets/monk.png"
+ import monk_half from "../assets/monk_half.png"
  export default {
    data() {
      return {
        isOpen: false,
+       monk:monk,
+       monk_half:monk_half,
+       copy_code:copy_code,
+       code:code,
        newMessage: '',
        maximizeIcon: '□',
        messages: [],
@@ -74,92 +100,129 @@
        xOffset: 0,
        yOffset: 0,
        isTyping: false,
+      //  Character_Drona:Character_Drona,
+      //  Character_half_Drona:Character_half_Drona,
        originalWelcomeMessage: "Hi! I am Drona, your AI virtual assistant.<br>Ask me about Fintech?"
   
      };
    },
    methods: {
-     toggleChatbot() {
-       this.isOpen = !this.isOpen;
-       
-     },
-     minimizeChatbot() {
-       this.isOpen = false;
-     },
-     toggleMaximize() {
-       this.isMaximized = !this.isMaximized;
-       this.maximizeIcon = this.isMaximized ? '▢' : '□'; // Change icon based on maximize state
-       if (this.isMaximized) {
-    const welcomeMessage = this.$refs.welcomeMessage;
-    welcomeMessage.innerHTML = "Hi! I am Drona, your AI virtual assistant. Ask me about Fintech?";
-  }
-  else {
-        const welcomeMessage = this.$refs.welcomeMessage;
-        welcomeMessage.innerHTML = this.originalWelcomeMessage;
+    toggleChatbot() {
+    this.isOpen = !this.isOpen;
+  },
+  minimizeChatbot() {
+    this.isOpen = false;
+  },
+  toggleMaximize() {
+    this.isMaximized = !this.isMaximized;
+    this.maximizeIcon = this.isMaximized ? '▢' : '□'; // Change icon based on maximize state
+    if (this.isMaximized) {
+      const welcomeMessage = this.$refs.welcomeMessage;
+      welcomeMessage.innerHTML = "Hi! I am Drona, your AI virtual assistant. Ask me about Fintech?";
+      document.body.classList.add('no-scroll'); // Add class to body
+    } else {
+      const welcomeMessage = this.$refs.welcomeMessage;
+      welcomeMessage.innerHTML = this.originalWelcomeMessage;
+      document.body.classList.remove('no-scroll'); // Remove class from body
+    }
+  },
+  closeChatbot() {
+    this.isOpen = false;
+    this.messages = []; // Clear all messages
+    document.body.classList.remove('no-scroll'); // Remove class from body when closing
+  },
+  sendMessage() {
+    const message = this.newMessage.trim();
+    if (!message) return;
+
+    this.isTyping = message.length > 0;
+
+    // Push the outgoing message to the messages array immediately
+    const outgoingMessage = { text: message, type: 'outgoing', id: Date.now() };
+    this.messages.push(outgoingMessage);
+    // console.log('Outgoing message:', outgoingMessage); 
+    // Log outgoing message
+    this.newMessage = ''; // Clear the input field
+    this.$nextTick(() => {
+      const chatContainer = this.$el.querySelector('.chat-container');
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    });
+
+    // Send the message to the API
+    const formData = new FormData();
+    const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+    const chatBotUrl = baseUrl + 'api/bot/query';
+    formData.append('query', message); // Append the query parameter
+    formData.append('source', 'PORTAL'); // Append the source parameter
+    fetch(chatBotUrl, {
+      method: 'POST',
+      body: formData // Send form data
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
-     },
- 
-     closeChatbot() {
-   this.isOpen = false;
-   this.messages = []; // Clear all messages
-   
- },
-     sendMessage() {
-    
-       const message = this.newMessage.trim();
-       if (!message) return;
-        // Don't send empty messages
- // Check if message is empty before setting isTyping to true
- this.isTyping = message.length > 0;
-       // Push the outgoing message to the messages array immediately
-       const outgoingMessage = { text: message, type: 'outgoing', id: Date.now() };
-       this.messages.push(outgoingMessage);
-       console.log('Outgoing message:', outgoingMessage); // Log outgoing message
-       this.newMessage = ''; // Clear the input field
-       this.$nextTick(() => {
+      return response.json();
+    })
+    .then(data => {
+      const responseData = data.data;
+      // Check if the response contains a code block
+      const containsCode = responseData.includes('```');
+      const formattedMessage = containsCode 
+        ? responseData.replace(/```([\s\S]*?)```/g, '<div class="code-block">$1</div>')
+        : responseData;
+
+      // console.log('Formatted message:', formattedMessage); 
+      // Log formatted message with code blocks
+
+      const incomingMessage = { text: formattedMessage, type: 'incoming', id: Date.now(), containsCode };
+      this.messages.push(incomingMessage);
+      // console.log('Incoming message:', incomingMessage);
+       // Log incoming message
+      this.isTyping = false;
+
+      this.$nextTick(() => {
         const chatContainer = this.$el.querySelector('.chat-container');
         chatContainer.scrollTop = chatContainer.scrollHeight;
+      });
+    })
+    .catch(error => {
+      // console.error('There was a problem with the fetch operation:', error);
+      const errorMessage = { text: 'Error sending message', type: 'incoming', id: Date.now() };
+      this.messages.push(errorMessage);
+      // console.log('Error message:', errorMessage); // Log error message
+      this.isTyping = false;
     });
- 
-       // Send the message to the API
-       const formData = new FormData();
-       const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-       const chatBotUrl = baseUrl +'api/bot/query'
-       formData.append('query', message); // Append the query parameter
-       formData.append('source', 'PORTAL'); // Append the source parameter
-       fetch(chatBotUrl, {
-         method: 'POST',
-         body: formData // Send form data
-       })
-       .then(response => {
-         if (!response.ok) {
-           throw new Error('Network response was not ok');
-         }
-         return response.json();
-       })
-       .then(data => {
-         // Handle the response from the API
-         const responseData = data.data; // Extract the 'data' field from the API response
-         const incomingMessage = { text: responseData, type: 'incoming', id: Date.now() };
-         this.messages.push(incomingMessage);
-         console.log('Incoming message:', incomingMessage); // Log incoming message
-         this.isTyping = false; 
- 
-         // Scroll to the bottom of the chat container after receiving a new message
-         this.$nextTick(() => {
-           const chatContainer = this.$el.querySelector('.chat-container');
-           chatContainer.scrollTop = chatContainer.scrollHeight;
-         });
-       })
-       .catch(error => {
-         console.error('There was a problem with the fetch operation:', error);
-         // Optionally, you can add an error message to the messages array
-         const errorMessage = { text: 'Error sending message', type: 'incoming', id: Date.now() };
-         this.messages.push(errorMessage);
-         console.log('Error message:', errorMessage); // Log error message
-         this.isTyping = false;
-       });
-     },
+  },
+  copyText(text) {
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Text copied to clipboard');
+    }).catch(err => {
+      // console.error('Failed to copy text: ', err);
+    });
+  },
+  copyCode(htmlText) {
+    // Create a temporary container to parse the HTML and extract code blocks
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = htmlText;
+    
+    // Extract all code blocks
+    const codeBlocks = Array.from(tempDiv.querySelectorAll('.code-block'));
+    
+    // Combine all code blocks' text content into a single string
+    const codeTexts = codeBlocks.map(codeBlock => codeBlock.textContent || codeBlock.innerText).join('\n\n');
+    
+    // Copy the combined code to clipboard
+    navigator.clipboard.writeText(codeTexts).then(() => {
+      alert('Code copied to clipboard!');
+    }).catch(err => {
+      // console.error('Failed to copy code: ', err);
+    });
+  },
+  formattedCodeBlocks(htmlText) {
+    // Format code blocks for display
+    return htmlText.replace(/```([\s\S]*?)```/g, '<div class="code-block">$1</div>');
+  },
      startDragging(event) {
        this.isDragging = true;
        const chatbot = this.$refs.toggle_button;
@@ -193,12 +256,25 @@
  </script>
  
  <style scoped>
+  .codeBlock {
+  background-color: black;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  border: 2px solid black !important;
+  z-index: 100;
+  white-space: pre-wrap; /* Preserve whitespace and line breaks */
+  overflow: auto; /* Ensure scroll if content is too large */
+  margin: 5px 0; /* Optional: Add some margin for better spacing */
+}
  .message-container {
   display: flex;
   align-items: center;
   margin-bottom: 10px; /* Adjust margin as needed */
 }
-
+.no-scroll {
+  overflow: hidden;
+}
 .message-container img, .message-container svg {
   margin-right: 10px; /* Adjust margin between icon and text */
 }
@@ -247,14 +323,16 @@
    z-index: 9999;
  }
  .chatbot.open.maximized {
-   width: 100vw;
-   height: 100vh;
+   width: 100%;
+   height: 100%;
    bottom: 0;
    right: 0;
  }
  .chatbot.open.maximized .chat-container{
    min-width: 100vw;
-   min-height: 100vh;
+   min-height: 84vh;
+   /* border: 2px solid black; */
+   /* max-height: 90vh; */
  }
  /* .chatbot.open.maximized .welcome-message {
    padding-top: 0px;
@@ -369,6 +447,12 @@
    position: relative;
    margin-left: 4%;
    background: #007bff;
+   -webkit-touch-callout: default; 
+  -webkit-user-select: text; 
+  -khtml-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
    &:after {
      bottom: 100%;
      left: 7%;
@@ -424,7 +508,7 @@
    z-index: 9999999;
  }
  
- .toggle-button img {
+ .toggle-button-img {
    width: 100%;
    height: 100%;
    border-radius: 50%;
@@ -435,12 +519,14 @@
    outline: none;
  }
  .chatbot.open.maximized  .input-container{
-    
-   min-width: 100%;
+    min-height: 6vh;
+    max-height: 6vh;
+   min-width: 100vw;
    margin: 0px 0px;
    display: flex;
    position: fixed;
-   margin-left: 1.1%;
+   bottom: 0;
+   /* margin-left: 1.1%; */
    
    
  }
@@ -450,10 +536,48 @@
   
 
  }
+ .chatbot.open.maximized .messages .incoming{
+  margin-bottom: 40px;
+  margin-top: 30px;
+ }
+ .chatbot.open.maximized .messages .outgoing{
+  margin-bottom: 40px;
+  margin-top:30px;
+ }
  .chatbot.open.maximized .welcome-message{
   font-size: 32px;
   padding: 1%;
  }
+ 
+ .chatbot.open.maximized .chat-container-wrapper {
+   /* Space for scrollbar */
+   overflow: hidden; /* Hide overflow */
+ }
+ 
+ .chatbot.open.maximized .chat-container::-webkit-scrollbar {
+   width: 8px; /* Width of the scrollbar */
+   height: 8px; /* Height of the scrollbar */
+ }
+ 
+ /* Track */
+ .chatbot.open.maximized .chat-container::-webkit-scrollbar-track {
+   background: #f1f1f1; /* Color of the track */
+   border-radius: 20px; /* Rounded corners */
+ }
+
+ 
+ 
+ /* Handle */
+ .chatbot.open.maximized .chat-container::-webkit-scrollbar-thumb {
+   background: #7f9af3; /* Color of the handle */
+   border-radius: 20px; /* Rounded corners */
+ }
+ 
+ /* Handle on hover */
+ .chatbot.open.maximized .chat-container::-webkit-scrollbar-thumb:hover {
+   background: #5479F7; /* Darker handle color on hover */
+ }
+ 
 
  .chatbot.open.maximized .send-button{
   border-radius: 0px;
@@ -525,8 +649,12 @@
    align-items: center; /* Center icon vertically */
    border-bottom-right-radius: 20px;
  }
- 
- 
+ .custom-btn_chat{
+  padding-top: 0% !important;
+  padding-bottom: 0% !important;
+  align-items: flex-start;
+ }
+
  .chat-container-wrapper {
    /* Space for scrollbar */
    overflow: hidden; /* Hide overflow */
@@ -576,6 +704,54 @@
    z-index: 3;
    /* Ensure the image is above other content */
  }
+ .copy-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: black;
+  color: white;
+  font-size: 12px;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.copy-button-all {
+  position: absolute;
+  top: 5px;
+  right: 100px;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.copy-button:hover {
+  background-color: #0056b3;
+}
+
+.code-block {
+  background-color: black;
+  color: white;
+  margin-top: 4% !important;
+  margin-bottom: 4% !important;
+  /* padding: 10px; */
  
+  white-space: pre-wrap;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: fit-content;
+
+}
+.code-block-container{
+  margin: 5px 0;
+    padding: 5px 10px;
+    border-radius: 5px;
+    overflow-x: hidden;
+  border-radius: 5px;
+}
  </style>
  

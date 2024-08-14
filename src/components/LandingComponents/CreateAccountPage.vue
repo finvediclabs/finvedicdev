@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="text-h5 text-weight-bolder">Create Account</div>
-    <account-log-in />
-    <div class="full-width text-center q-py-sm">OR</div>
+    <!-- <account-log-in />
+    <div class="full-width text-center q-py-sm">OR</div> -->
     <div class="">
       <div class="">
         <q-form @submit="onSubmit">
@@ -14,10 +14,18 @@
             :rules="[val => val && val.length > 0 || 'User Name is required']" />
 
           <q-input outlined class="q-my-sm" v-model="email" label="Email Address" dense lazy-rules
-            :rules="[val => val && val.length > 0 || 'Email is required']" />
+            :rules="[
+              val => val && val.length > 0 || 'Email is required',
+              val => /@finvedic\.com$|@gmail\.com$/.test(val) || 'Email must end with @finvedic.com or @gmail.com'
+            ]" />
 
           <q-input v-model="password" class="q-my-sm" outlined label="Password" dense :type="isPwd ? 'password' : 'text'"
-            lazy-rules :rules="[val => val && val.length > 0 || 'Password is required']">
+            lazy-rules :rules="[
+              val => val && val.length > 0 || 'Password is required',
+              val => val.length >= 8 || 'Password must be at least 8 characters long',
+              val => /[A-Z]/.test(val) || 'Password must contain at least one uppercase letter',
+              val => /[0-9]/.test(val) || 'Password must contain at least one number'
+            ]">
             <template v-slot:append>
               <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click="isPwd = !isPwd" />
             </template>
@@ -25,7 +33,10 @@
 
           <q-input v-model="confirmPassword" class="q-my-sm" outlined label="Confirm Password" dense
             :type="isCrmPwd ? 'password' : 'text'" lazy-rules
-            :rules="[val => val && val.length > 0 && password === val || 'Confirm Password is Wrong']">
+            :rules="[
+              val => val && val.length > 0 || 'Confirm Password is required',
+              val => password === val || 'Passwords do not match'
+            ]">
             <template v-slot:append>
               <q-icon :name="isCrmPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer"
                 @click="isCrmPwd = !isCrmPwd" />
@@ -38,15 +49,17 @@
         </q-form>
       </div>
       <div class="q-my-lg">
-        Alreay have an account?
+        Already have an account?
         <q-btn outline label="Log In" dense class="q-px-lg q-mx-md sub-btn-outline" @click="changePage('loginPage')" />
       </div>
     </div>
   </div>
 </template>
+
 <script>
 import AccountLogIn from "./AccountLogIn.vue";
-import { urls } from "./Urls"
+import { urls } from "./Urls";
+
 export default {
   name: 'create-account-page',
   components: {
@@ -58,8 +71,8 @@ export default {
       isCrmPwd: true,
       name: '',
       userName: '',
-      email: "",
-      password: "",
+      email: '',
+      password: '',
       confirmPassword: '',
     }
   },
@@ -70,7 +83,7 @@ export default {
         type: type,
         position: 'top-right',
         actions: [
-          { icon: 'close', color: 'white', handler: () => { } }
+          { icon: 'close', color: 'white', handler: () => {} }
         ]
       });
     },

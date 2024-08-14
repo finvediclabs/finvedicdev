@@ -14,12 +14,15 @@
       ref="fileInput"
     />
     
-    <div class="btn border-gradient-blue-purple" style="position: absolute; top: 65px;right: 24%;
+          <q-img :src="Character_Ved" alt="Person Icon" style="width: 190px; position: absolute; top: 40px;right: 24%;
+    transform: translateX(50%);"/>
+
+    <template class="btn border-gradient-blue-purple" style="position: absolute; top: 65px;right: 24%;
     transform: translateX(50%);">
-      <span>
-        <img src="https://gurukul.finvedic.com/images/monk_half.png" alt="Person Icon">
-      </span>
-  </div>
+     
+        <q-img :src="Character_Ved" alt="Person Icon"/>
+     
+  </template>
 
     <div style="display: flex; flex-direction: column; align-items: center; padding-top: 70px;">
       <div>
@@ -56,6 +59,7 @@
 
 <script>
 import axios from 'axios';
+ import Character_Ved from "../../../assets/Character_Ved.png";
 
 export default {
   data() {
@@ -63,6 +67,7 @@ export default {
       selectedFile: null,
       pdfUrl: null,
       notification: null,
+      Character_Ved: Character_Ved,
     };
   },
   methods: {
@@ -87,7 +92,7 @@ export default {
 
       const formData = new FormData();
       formData.append("file", this.selectedFile);
-      formData.append("source", "portal");
+      formData.append("source", "website");
 
       try {
         const response = await axios.post("https://fnbackendprod.finvedic.com/api/bot", formData, {

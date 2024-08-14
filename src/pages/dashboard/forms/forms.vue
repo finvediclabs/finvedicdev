@@ -1,10 +1,6 @@
 <template>
   <fin-portlet style="background-color: transparent">
-    <fin-portlet-header>
-      <fin-portlet-heading :loading="masterLoading" backArrow>
-        <span class="User_heading">Forms Data</span>
-      </fin-portlet-heading>
-    </fin-portlet-header>
+  
   </fin-portlet>
   <div class="q-pa-xs row justify-center">
     <div class="col-12" style="margin-top: -4%;">
@@ -172,7 +168,7 @@ export default {
           })
           .catch(error => {
             this.masterLoading = false;
-            console.error('Master data error:', error);
+            // console.error('Master data error:', error);
             this.showMsg(error.response?.data.message || error.message, 'negative');
           });
       }
@@ -196,7 +192,7 @@ export default {
           })
           .catch(error => {
             this.contactLoading = false;
-            console.error('Contact data error:', error);
+            // console.error('Contact data error:', error);
             this.showMsg(error.response?.data.message || error.message, 'negative');
           });
       }
@@ -220,7 +216,7 @@ export default {
           })
           .catch(error => {
             this.inquiryLoading = false;
-            console.error('Inquiry data error:', error);
+            // console.error('Inquiry data error:', error);
             this.showMsg(error.response?.data.message || error.message, 'negative');
           });
       }
@@ -244,7 +240,7 @@ export default {
           })
           .catch(error => {
             this.enrollLoading = false;
-            console.error('Enroll data error:', error);
+            // console.error('Enroll data error:', error);
             this.showMsg(error.response?.data.message || error.message, 'negative');
           });
       }
