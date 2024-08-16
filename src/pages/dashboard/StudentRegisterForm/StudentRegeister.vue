@@ -13,13 +13,24 @@
       <div class="container">
         <!-- Table for displaying students -->
         <q-table
-          :rows="students"
-          :columns="columns"
-          row-key="id"
-          class="q-mb-md"
-          @row-click="showStudentDetails"
-          :pagination.sync="pagination"
+    :rows="students"
+    :columns="columns"
+    row-key="id"
+    class="q-mb-md"
+    @row-click="showStudentDetails"
+    :pagination.sync="pagination"
+  >
+    <template v-slot:body-cell-actions="props">
+      <q-td :props="props">
+        <q-btn
+          color="red"
+          @click.stop="deleteStudent(props.row.id)"
+          icon="delete"
+          flat
         />
+      </q-td>
+    </template>
+  </q-table>
   
         <!-- Dialog for student enrollment -->
         <q-dialog v-model="dialog">
@@ -120,6 +131,18 @@
           <p class="User_heading">Batch Details</p>
         </fin-portlet-heading>
         <div class="row">
+          <div class="col-12">
+          <q-select
+  v-model="selectedCycleId"
+  :options="cycleOptions"
+  label="Select Cycle"
+   @input="onCycleSelect"
+  emit-value
+  map-options
+/>
+</div>
+        </div>
+        <div class="row">
           <div class="col-4"> 
             <q-input
               v-model="newStudent.batchId"
@@ -138,7 +161,6 @@
             <q-input
               v-model="newStudent.startDate"
               label="Start Date"
-              type="date"
               required
             />
           </div>
@@ -146,6 +168,24 @@
         <fin-portlet-heading>
           <p class="User_heading">Payments</p>
         </fin-portlet-heading>
+        <div class="row">
+          <div class="col-6">
+            <q-input
+              v-model="newStudent.registrationFee"
+              label="Registration Fee"
+              type="number"
+              required
+            />
+          </div>
+          <div class="col-6">
+            <q-input
+              v-model="newStudent.courseFee"
+              label="Total Course Fee"
+              type="number"
+              required
+            />
+          </div>
+          </div>
         <div class="row">
           <div class="col-6">
             <q-input
@@ -227,15 +267,32 @@
             </div>
           </div>
           <div class="col-12">
-              <fin-portlet-heading>
-                <p class="User_heading">Payments</p>
-              </fin-portlet-heading>
-              <ul>
-                <li v-for="payment in selectedStudent.payments" :key="payment.paymentDate">
-                  Amount: {{ payment.amount }} | Date: {{ payment.paymentDate }}
-                </li>
-              </ul>
+        <fin-portlet-heading>
+          <p class="User_heading">Payments</p>
+        </fin-portlet-heading>
+        <div class="row">
+          <div class="col-6">
+              <q-input
+                v-model="selectedStudent.registrationFee"
+                label="Registration Fee"
+                readonly
+              />
             </div>
+            <div class="col-6">
+              <q-input
+                v-model="selectedStudent.courseFee"
+                label="Total Course Fee"
+                readonly
+              />
+            </div>
+        </div>
+        <ul>
+          <li v-for="payment in selectedStudent.payments" :key="payment.paymentDate">
+            Amount: {{ payment.amount }} | Date: {{ payment.paymentDate }}
+          </li>
+        </ul>
+        <q-btn label="Add Amount" @click="addPaymentDialog = true" />
+      </div>
           <fin-portlet-heading>
             <p class="User_heading">Documents</p>
           </fin-portlet-heading>
@@ -287,7 +344,25 @@
       </q-card-section>
     </q-card>
   </q-dialog>
+  <q-dialog v-model="addPaymentDialog">
+  <q-card>
+    <q-card-section>
+      <div class="text-h6">Add Payment</div>
+    </q-card-section>
 
+    <q-card-section>
+      <q-form>
+        <q-input v-model="newPayment.amount" label="Amount" type="number" />
+        <q-input v-model="newPayment.paymentDate" label="Payment Date" type="date" />
+      </q-form>
+    </q-card-section>
+
+    <q-card-actions align="right">
+      <q-btn flat label="Cancel" v-close-popup />
+      <q-btn flat label="Add Payment" color="primary" @click="addPayment" />
+    </q-card-actions>
+  </q-card>
+</q-dialog>
       </div>
     </fin-portlet>
   </template>
@@ -305,10 +380,13 @@
       return {
         dialog: false,
         detailsDialog: false,
+        addPaymentDialog: false,
         newStudent: {
           fullName: '',
           email: '',
           contactNumber: '',
+          registrationFee: '',
+          courseFee:'',
           cgpa: '',
           education: '',
           codingPlatform: '',
@@ -321,6 +399,12 @@
           paymentAmount: '',  
           paymentDate: '', 
         },
+        newPayment: {
+        amount: '',
+        paymentDate: ''
+      },
+      selectedCycleId: null,
+    cycleOptions: [],
         usersIcon: usersIcon,
         students: [],
         selectedStudent: {},
@@ -329,6 +413,7 @@
           { name: 'fullName', label: 'Name', align: 'left', field: row => row.fullName },
           { name: 'email', label: 'Email', align: 'left', field: row => row.email },
           { name: 'education', label: 'Course', align: 'left', field: row => row.education },
+          { name: 'actions', label: 'Actions', align: 'center', field: 'actions', sortable: false },
         ],
         pagination: {
           rowsPerPage: 5,
@@ -344,11 +429,31 @@
     },
     created() {
       this.fetchStudents();
+      this.fetchCycles();
     },
+    watch: {
+  selectedCycleId(newValue) {
+    const selectedCycle = this.cycleOptions.find(cycle => cycle.value === newValue);
+    
+    if (selectedCycle) {
+      this.newStudent.batchId = selectedCycle.value;
+      this.newStudent.batchName = selectedCycle.label; // Set batchName to cycleDesc
+
+      // Convert cycleStartDate array to a string in YYYY-MM-DD format
+      const [year, month, day] = selectedCycle.cycleStartDate;
+      this.newStudent.startDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    }
+  }
+},
     methods: {
+      resetSelection() {
+      this.selectedCycleId = null; // This will clear the selection
+    },
       async fetchStudents() {
         try {
-          const response = await axios.get('http://localhost:8087/api/registered-students');
+          const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+          const registeredStudentsURL = baseUrl + 'api/registered-students';
+          const response = await axios.get(registeredStudentsURL);
           if (response.data.success) {
             this.students = response.data.data;
           }
@@ -365,7 +470,11 @@
   
         if (row.id !== undefined) {
           try {
-            const response = await axios.get(`http://localhost:8087/api/registered-students/${row.id}`);
+            const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+const registeredStudentsURL = baseUrl + 'api/registered-students';
+
+const response = await axios.get(`${registeredStudentsURL}/${row.id}`);
+
             if (response.data.success) {
               this.selectedStudent = response.data.data;
               this.detailsDialog = true;
@@ -377,11 +486,60 @@
           console.error('Student ID is undefined');
         }
       },
+      async addPayment() {
+   try {
+  const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+  const registeredStudentsURL = baseUrl + 'api/registered-students';
+
+  const response = await this.$axios.post(
+    `${registeredStudentsURL}/${this.selectedStudent.id}/payments`,
+    this.newPayment
+  );
+        
+        // Add the new payment to the selectedStudent's payments array
+        this.selectedStudent.payments.push(this.newPayment);
+        
+        // Close the dialog and reset the form
+        this.addPaymentDialog = false;
+        this.newPayment = { amount: '', paymentDate: '' };
+        
+        // Optionally, you can show a success message here
+      } catch (error) {
+        console.error("Error adding payment:", error);
+        // Handle error (show an error message, etc.)
+      }
+    },
+    async fetchCycles() {
+  try {
+    const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+  const cyclesURL = baseUrl + 'api/cycles';
+
+
+    const response = await axios.get(cyclesURL);
+    const cycles = response.data.data; // Adjust based on actual API response
+
+    // Transform the data
+    this.cycleOptions = cycles.map(cycle => ({
+      label: cycle.cycleDesc, // cycleDesc for display
+      value: cycle.cycleid,   // cycleid for value
+      cycleStartDate: cycle.cycleStartDate // Include cycleStartDate
+    }));
+
+    // For testing, set a default value if you have one
+    if (this.cycleOptions.length > 0) {
+      this.selectedCycleId = this.cycleOptions[0].value;
+    }
+  } catch (error) {
+    console.error('Error fetching cycles:', error);
+  }
+},
 
       async enrollStudent() {
   const isValid = this.newStudent.fullName &&
     this.newStudent.email &&
     this.newStudent.contactNumber &&
+    this.newStudent.registrationFee &&
+    this.newStudent.courseFee &&
     this.newStudent.cgpa &&
     this.newStudent.education &&
     this.newStudent.codingPlatform &&
@@ -423,6 +581,8 @@
       const studentData = {
         fullName: this.newStudent.fullName,
         contactNumber: this.newStudent.contactNumber,
+        registrationFee: parseInt(this.newStudent.registrationFee),
+        courseFee: parseInt(this.newStudent.courseFee),
         email: this.newStudent.email,
         cgpa: parseFloat(this.newStudent.cgpa),
         education: this.newStudent.education,
@@ -441,8 +601,10 @@
       };
 
       console.log('Enrolling student with data:', studentData);
+      const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+  const registeredStudentsURL = baseUrl + 'api/registered-students';
 
-      const response = await axios.post('http://localhost:8087/api/registered-students', studentData);
+      const response = await axios.post(registeredStudentsURL, studentData);
 
       // Log the response data
       console.log('Enroll response:', response.data);
@@ -454,6 +616,8 @@
           fullName: '',
           email: '',
           contactNumber: '',
+          registrationFee: '',
+          courseFee:'',
           cgpa: '',
           education: '',
           codingPlatform: '',
@@ -477,6 +641,27 @@
     console.error('Please fill in all required fields');
   }
 },
+async deleteStudent(id) {
+      try {
+        // Confirm deletion
+        const confirmed = confirm("Are you sure you want to delete this student?");
+        if (confirmed) {
+          const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+  const registeredStudentsURL = baseUrl + 'api/registered-students';
+
+          const response = await axios.delete(`${registeredStudentsURL}/${id}`);
+          if (response.data.success) {
+            // Remove student from local array
+            this.students = this.students.filter(student => student.id !== id);
+            console.log('Student deleted successfully.');
+          } else {
+            console.error('Error deleting student:', response.data.message);
+          }
+        }
+      } catch (error) {
+        console.error('Error deleting student:', error);
+      }
+    },
     downloadPdf(pdfUrl, filename) {
       const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
       const getImagesUrl = baseUrl + 'fs/download';
@@ -499,11 +684,49 @@
           console.error('Error in download:', error);
         });
     },
+    async uploadFile(file) {
+  this.loading = true;
+  try {
+    // Check if the file type is PDF
+    const allowedTypes = ['application/pdf'];
+    if (!allowedTypes.includes(file.type)) {
+      throw new Error('Only PDF files are allowed.');
+    }
+
+    // Proceed with uploading the file if validation passes
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+    const getFileUrl = baseUrl + 'fs/upload-file';
+
+    const response = await fetch(getFileUrl, {
+      method: 'POST',
+      body: formData
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'File upload failed');
+    }
+
+    const filePath = data.uri;
+    console.log('File uploaded:', filePath);
+    return filePath; // Return the file path
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    throw error;
+  } finally {
+    this.loading = false; // Ensure loading is set to false after completion
+  }
+},
 
     async enrollStudent() {
   const isValid = this.newStudent.fullName &&
     this.newStudent.email &&
     this.newStudent.contactNumber &&
+    this.newStudent.registrationFee &&
+    this.newStudent.courseFee &&
     this.newStudent.cgpa &&
     this.newStudent.education &&
     this.newStudent.codingPlatform &&
@@ -547,6 +770,8 @@
       const studentData = {
         fullName: this.newStudent.fullName,
         contactNumber: this.newStudent.contactNumber,
+        registrationFee: parseInt(this.newStudent.registrationFee),
+        courseFee: parseInt(this.newStudent.courseFee),
         email: this.newStudent.email,
         cgpa: parseFloat(this.newStudent.cgpa),
         education: this.newStudent.education,
@@ -567,8 +792,9 @@
       };
 
       console.log('Enrolling student with data:', studentData);
-
-      const response = await axios.post('http://localhost:8087/api/registered-students', studentData);
+      const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+      const registeredStudentsURL = baseUrl + 'api/registered-students';
+      const response = await axios.post(registeredStudentsURL, studentData);
 
       // Log the response data
       console.log('Enroll response:', response.data);
@@ -580,6 +806,8 @@
           fullName: '',
           email: '',
           contactNumber: '',
+          registrationFee: '',
+          courseFee: '',
           cgpa: '',
           education: '',
           codingPlatform: '',
