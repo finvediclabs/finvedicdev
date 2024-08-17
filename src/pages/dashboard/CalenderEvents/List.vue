@@ -223,6 +223,7 @@ export default {
         { label: 'Course', key: 'course', align: 'start' },
         { label: 'Topic', key: 'topic', align: 'start' },
         { label: 'Date', key: 'date', align: 'start' },
+        { label: 'Date', key: 'endDate', align: 'start' },
         { label: 'Start Time', key: 'start', align: 'start' },
         { label: 'End Time', key: 'end', align: 'start' },
       ],
