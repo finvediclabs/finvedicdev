@@ -269,11 +269,12 @@ export default {
               book.imagePath = url; // Update imagePath with the received image URL
             })
             .then(() => {
-              // console.log('Post request successful'); // Log successful post request
+              console.log('Post request successful');
+               // Log successful post request
             })
             .catch(error => {
-              // console.error('Error in post request:', error); // Log error in post request
-              // this.showMsg(error.response?.data.message || error.message, 'negative');
+              console.error('Error in post request:', error); // Log error in post request
+              this.showMsg(error.response?.data.message || error.message, 'negative');
             });
         }
       });
@@ -588,9 +589,9 @@ flex-direction: column;
   /* border:2px solid green */
 } /* CSS rules here apply when the screen width is between 1920px and 2560px */
 }
-@media screen and (max-width: 567px){
+/* @media screen and (max-width: 567px){
   .topHead{
     display: none !important;
   }
-}
+} */
 </style>

@@ -223,6 +223,7 @@ export default {
         { label: 'Course', key: 'course', align: 'start' },
         { label: 'Topic', key: 'topic', align: 'start' },
         { label: 'Date', key: 'date', align: 'start' },
+        { label: 'Date', key: 'endDate', align: 'start' },
         { label: 'Start Time', key: 'start', align: 'start' },
         { label: 'End Time', key: 'end', align: 'start' },
       ],
@@ -382,42 +383,53 @@ export default {
       }
     },
     submitCourseForm() {
-      this.submitLoading = true;
+  this.submitLoading = true;
 
-      // Prepare the course data with user-filled fields
-      const courseData = {
-        courseId: this.courseData.courseId,
-        abstractt: this.courseData.abstractt,
-        bibilography: this.courseData.bibilography,
-        courseDesc:this.courseData.courseDesc,
-        teachers:[this.courseData.teachers],
-        batches: [this.courseData.batches],
-        // Add more fields as needed
-      };
-      const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-          const getCourseUrl = baseUrl + 'api/courss';
-      // Example Axios POST request to add course
-      axios.post(getCourseUrl, courseData)
-  .then(response => {
-    this.submitLoading = false;
-    if (response.status === 201) {
-      // Course added successfully
-      this.showMsg("Course added successfully.", 'positive');
-      this.getCoursesData();
-      this.addCourseDialog = false; // Close the dialog
-      // Reset form data if needed
-      // this.$refs.courseForm.reset();
-    } else {
-      // Handle other status codes if needed
-      this.showMsg("Failed to add course.", 'negative');
-    }
-  })
-  .catch(error => {
-    this.submitLoading = false;
-    // Handle Axios errors
-    this.showMsg(error.response?.data.message || error.message, 'negative');
-  });
-    },
+  // Prepare the course data with user-filled fields
+  const courseData = {
+    courseId: this.courseData.courseId,
+    abstractt: this.courseData.abstractt,
+    bibilography: this.courseData.bibilography,
+    courseDesc: this.courseData.courseDesc,
+    teachers: [this.courseData.teachers],
+    batches: [this.courseData.batches],
+    // Add more fields as needed
+  };
+
+  console.log("Course Data:", courseData);
+
+  const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+  const getCourseUrl = baseUrl + 'api/courss';
+
+  console.log("Base URL:", baseUrl);
+  console.log("Get Course URL:", getCourseUrl);
+
+  // Example Axios POST request to add course
+  axios.post(getCourseUrl, courseData)
+    .then(response => {
+      console.log("Response:", response);
+      this.submitLoading = false;
+      if (response.status === 201) {
+        // Course added successfully
+        console.log("Course added successfully");
+        this.showMsg("Course added successfully.", 'positive');
+        this.getCoursesData();
+        this.addCourseDialog = false; // Close the dialog
+        // Reset form data if needed
+        // this.$refs.courseForm.reset();
+      } else {
+        // Handle other status codes if needed
+        console.log("Failed to add course with status code:", response.status);
+        this.showMsg("Failed to add course.", 'negative');
+      }
+    })
+    .catch(error => {
+      this.submitLoading = false;
+      // Handle Axios errors
+      console.log("Error:", error);
+      this.showMsg(error.response?.data.message || error.message, 'negative');
+    });
+},
     editDataFun(val) {
       let params = JSON.stringify(val);
       console.log(val);

@@ -157,22 +157,7 @@
                     <span v-if="error.specialization && !profile.specialization">{{ error.specialization }}</span>
                   </div>
                 </div>
-                <!-- <div class="col-12">
-                  <q-uploader 
-                      :label="uploadDocumentLabel" 
-                      borderless 
-                      class="shadow-3 q-px-md fin-br-8" 
-                      style="width: 100%;" 
-                      :disable="disableEdit" 
-                      :factory="documentUploadFactory" 
-                      accept=".pdf" 
-                      max-file-size="5242880"
-                      @added="onPdfChange"
-                    />
-                  <div class="errorMsgBox">
-                    <span v-if="error.uploadDocumentPath && !profile.uploadDocumentPath">{{ error.uploadDocumentPath }}</span>
-                  </div>
-                </div> -->
+               
                 <div class="q-pa-sm col-12 text-center" style="min-height:70px;">
                   <q-btn label="Cancel" no-caps color="red" class="fin-br-8" @click="cancelEdit()" size="md" v-if="!disableEdit" />
                   <q-btn color="primary" no-caps class="fin-br-8 q-ml-sm" size="md" style="min-width:150px" label="Update" type="submit" :disable="loading" v-if="!disableEdit">
@@ -461,23 +446,7 @@ export default {
         this.showMsg(error.response?.data.message || error.message, 'negative');
       });
     },
-    // onChange(event) {
-    //   const file = event.target.files[0];
-    //   if (file) {
-    //     this.uploadFile(file);
-    //   }
-    // },
-    // async onPdfChange(files) {
-    //   if (files.length > 0) {
-    //     const file = files[0];
-    //     try {
-    //       const filePath = await this.uploadFile(file);
-    //       this.profile.uploadDocumentPath = filePath;
-    //     } catch (error) {
-    //       console.error('Error uploading file:', error);
-    //     }
-    //   }
-    // },
+
     async uploadFile(file) {
     this.loading = true;
     try {
@@ -631,17 +600,18 @@ export default {
       return age >= 18 && age <= 70;
     },
     isValidDegree(degree) {
-      return degree && /^[a-zA-Z\s]+$/.test(degree);
-    },
-    isValidYear(year) {
-      const currentYear = new Date().getFullYear();
-      const yearNumber = parseInt(year, 10);
-      // Check if the year is a valid year within a reasonable range
-      return yearNumber >= 1900 && yearNumber <= currentYear;
-    },
+  return degree && /^[a-zA-Z\s.,'-]+$/.test(degree);
+},
+isValidYear(year) {
+  const currentYear = new Date().getFullYear();
+  const yearNumber = parseInt(year, 10);
+
+  // Check if year is a valid number and at least 18 years before the current year
+  return !isNaN(yearNumber) && yearNumber <= (currentYear - 18);
+},
     isValidSpecialization(specialization)
     {
-      return specialization && /^[a-zA-Z\s]+$/.test(specialization);
+      return specialization && /^[a-zA-Z\s.,'-]+$/.test(specialization);
     }
   
   },

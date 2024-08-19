@@ -301,9 +301,10 @@ export default {
     this.updateBackgroundStyle();
     this.knowModuleFunction();
     this.checkAccess();
-
+    // console.log("User Type:", this.userType);
+    // console.log("User Specialization:", this.user.specialization);
     // Check if uploadDocumentPath is null and redirect to /profile if needed
-    if (this.userType !== 'Admin' &&  !this.user.uploadDocumentPath) {
+    if (this.userType !== 'Admin' &&  !this.user.specialization) {
         this.$router.push('/profile');
     }
 },
@@ -447,6 +448,9 @@ showMsg(message, type) {
        else if(this.$route.path === '/admin/forms'){
         this.backgroundStyle = 'Users_BackgroundStyle';
       }
+      else if (this.$route.path === '/admin/studentRegister') {
+        this.backgroundStyle = 'Users_BackgroundStyle'; // Apply the background style class
+      } 
       else if(this.$route.path === '/help'){
         this.backgroundStyle = 'help_backgroundStyle';
       }

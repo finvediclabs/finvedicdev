@@ -270,14 +270,13 @@ export default {
     // },
     
     getEventsData() {
-      var request = {
-        categoryId: this.selectedCategory?.id,
-        subCategoryId: this.selectedSubCategory?.id
-      };
-      this.loading = true;
-      this.$api.get(urls.getEvents, {
-        params: request
-      }).then(response => {
+    var request = {
+      categoryId: this.selectedCategory?.id,
+      subCategoryId: this.selectedSubCategory?.id
+    };
+    this.loading = true;
+    this.$api.get(urls.getEvents, { params: request })
+      .then(response => {
         this.loading = false;
         if (response.data.success) {
           let events = response.data.data;
@@ -288,7 +287,33 @@ export default {
             if (!groups[batch]) {
               groups[batch] = [];
             }
-            groups[batch].push(event);
+            
+            const startDate = new Date(event.date);
+            const endDate = event.endDate ? new Date(event.endDate) : startDate; // Use startDate if endDate is null
+            const dateArray = [];
+
+            // Generate dates between startDate and endDate
+            for (let dt = new Date(startDate); dt <= endDate; dt.setDate(dt.getDate() + 1)) {
+              dateArray.push(new Date(dt));
+            }
+
+            // Create an event for each date in the range
+            dateArray.forEach(date => {
+              const formattedDate = date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+              groups[batch].push({
+                title: `Title: <a href="${event.link}" target="_blank">${event.title}</a><br>Topic: ${event.topic}`,
+                start: `${formattedDate} ${event.start}`,
+                end: `${formattedDate} ${event.end}`,
+                link: event.link,
+                topic: event.topic,
+                batch: event.batch,
+                color: 'white',
+                backgroundColor: colorHash.hex(event.title),
+                width: '100%', // Set width to '100%'
+                height: '50px'
+              });
+            });
+
             return groups;
           }, {});
 
@@ -298,36 +323,18 @@ export default {
             value: batch
           }));
 
-          // Log grouped events
-          // console.log("Grouped Events by Batch:");
-          for (const [batch, batchEvents] of Object.entries(batchGroups)) {
-            // console.log(`Batch: ${batch}`);
-            batchEvents.forEach(event => {
-              // console.log(`  Title: ${event.title}, Date: ${event.date}`);
-            });
-          }
-
           // Flatten the grouped events and map them for the calendar
-          this.events = Object.values(batchGroups).flat().map(event => ({
-            title: `Title: <a href="${event.link}" target="_blank">${event.title}</a><br>Topic: ${event.topic}`,
-            start: `${event.date} ${event.start}`,
-            end: `${event.date} ${event.end}`,
-            link: `${event.link}`,
-            topic: `${event.topic}`,
-            batch: event.batch,
-            color: 'white',
-            backgroundColor: colorHash.hex(event.title),
-            width: '100%', // Set width to '100%'
-            height: '50px'
-          }));
+          this.events = Object.values(batchGroups).flat();
         } else {
           this.showMsg(response.data?.message, 'negative');
         }
-      }).catch(error => {
+      })
+      .catch(error => {
         this.loading = false;
         this.showMsg(error.response?.data.message || error.message, 'negative');
       });
-    }
+  }
+
 
 
   }

@@ -223,7 +223,7 @@ export default {
     },
     validateForm() {
       if (this.date && this.startTime && this.endTime && this.course) {
-        this.editedEvent?.id ? this.updateEvent() : this.createEvents();
+        this.editedEvent?.id ? this.updateEvent() : this.createEvent();
       } else {
         this.errors = {
           date: "Date is required",
@@ -233,46 +233,47 @@ export default {
         }
       }
     },
-    async createEvents() {
-      const startDate = moment(this.date);
-      const endDate = this.endDate ? moment(this.endDate) : moment(this.date); // Use startDate if endDate is not provided
-      const diffDays = endDate.diff(startDate, 'days');
+    async createEvent() {
+  // Prepare the request payload
+  const request = {
+    accountId: null,
+    date: moment(this.date).format('MM/DD/YYYY'), // Format date as MM/DD/YYYY
+    endDate: this.endDate ? moment(this.endDate).format('MM/DD/YYYY') : null, // Format end date as MM/DD/YYYY
+    start: `${this.getTwoDigits(this.startTime.hours)}:${this.getTwoDigits(this.startTime.minutes)}`,
+    end: `${this.getTwoDigits(this.endTime.hours)}:${this.getTwoDigits(this.endTime.minutes)}`,
+    batch: this.batch,
+    course: this.course.courseDesc,
+    topic: this.filteredTopic.topicName,
+    title: this.course.courseDesc,
+    link: 'https://meet.google.com/hvz-zusp-jrv',
+    createdAt: new Date().getTime(), // Timestamp in milliseconds
+    updatedAt: new Date().getTime(), // Timestamp in milliseconds
+    createdBy: this.user.name,
+    lastUpdatedBy: this.user.name,
+    deletedAt: null,
+    googleEventId: null,
+  };
 
-      for (let i = 0; i <= diffDays; i++) {
-        const eventDate = moment(startDate).add(i, 'days');
-        var request = {
-          accountId: null,
-          course: this.course.courseDesc,
-          topic: this.filteredTopic.topicName,
-          batch: this.batch,
-          title: this.course.courseDesc,
-          createdBy: this.user.name,
-          lastUpdatedBy: this.user.name,
-          date: eventDate.format('YYYY-MM-DD'),
-          start: `${this.getTwoDigits(this.startTime.hours)}:${this.getTwoDigits(this.startTime.minutes)}`,
-          end: `${this.getTwoDigits(this.endTime.hours)}:${this.getTwoDigits(this.endTime.minutes)}`,
-          link: 'https://meet.google.com/hvz-zusp-jrv',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          deletedAt: null,
-        }
-        // console.log('Create Event Request:', request);
-        try {
-          // console.log('Create Event Request:', request);
-          let response = await this.$api.post(urls.getEvents, request);
-          if (response.data.success) {
-            this.showMsg(response.data?.message || 'Event Created Successfully', 'positive');
-          } else {
-            this.showMsg(response.data?.message, 'negative');
-          }
-        } catch (error) {
-          var message = error.response?.data.message || error.response?.data.message || 'Something went wrong!';
-          this.showMsg(message || error.message, 'negative');
-        }
-      }
-      this.clearData();
-      this.$router.go(-1);
-    },
+  // Log the request payload
+  console.log('Create Event Request:', request);
+
+  try {
+    // Make the API request to create the event
+    let response = await this.$api.post(urls.getEvents, request);
+    if (response.data.success) {
+      this.showMsg(response.data?.message || 'Event Created Successfully', 'positive');
+    } else {
+      this.showMsg(response.data?.message, 'negative');
+    }
+  } catch (error) {
+    var message = error.response?.data.message || error.response?.data.message || 'Something went wrong!';
+    this.showMsg(message || error.message, 'negative');
+  }
+
+  // Clear the form data and navigate back
+  this.clearData();
+  this.$router.go(-1);
+},
    updateEvent() {
       var request = {
         id: this.editedEvent.id,
