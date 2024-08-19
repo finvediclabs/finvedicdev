@@ -301,9 +301,10 @@ export default {
     this.updateBackgroundStyle();
     this.knowModuleFunction();
     this.checkAccess();
-
+    // console.log("User Type:", this.userType);
+    // console.log("User Specialization:", this.user.specialization);
     // Check if uploadDocumentPath is null and redirect to /profile if needed
-    if (this.userType !== 'Admin' &&  !this.user.uploadDocumentPath) {
+    if (this.userType !== 'Admin' &&  !this.user.specialization) {
         this.$router.push('/profile');
     }
 },

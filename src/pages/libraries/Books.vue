@@ -589,9 +589,9 @@ flex-direction: column;
   /* border:2px solid green */
 } /* CSS rules here apply when the screen width is between 1920px and 2560px */
 }
-@media screen and (max-width: 567px){
+/* @media screen and (max-width: 567px){
   .topHead{
     display: none !important;
   }
-}
+} */
 </style>
