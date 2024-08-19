@@ -292,20 +292,23 @@ export default {
     } else {
       document.body.classList.remove('guest');
     }
-    this.getUserData();
+
     this. getEventsDataNotification();
     this.selectedModule = {
         module: this.$route.meta.module,
         item: this.$route.meta.item
     };
+    this.getUserData();
     this.updateBackgroundStyle();
     this.knowModuleFunction();
     this.checkAccess();
 
-    // Check if uploadDocumentPath is null and redirect to /profile if needed
-    if (this.userType !== 'Admin' &&  !this.user.uploadDocumentPath) {
-        this.$router.push('/profile');
-    }
+    if (this.userType === 'student' && (!this.user.profile || Object.keys(this.user.profile).length === 0)) {
+            this.$router.push('/profile');
+     }
+    
+     console.log(this.getUserData())
+    
 },
 
  watch: {
@@ -466,6 +469,8 @@ showMsg(message, type) {
         owner: user.owner,
       };
 
+   
+
       const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
       const removeImagePath = baseUrl + 'fs/download/';
 
@@ -489,6 +494,8 @@ showMsg(message, type) {
       } else {
         this.imageUrl = ''; // Set imageUrl to an empty string if uploadDocumentPath is null
       }
+      
+      return this.profile;
 
     } else {
       this.showMsg(response.data.message, 'negative');

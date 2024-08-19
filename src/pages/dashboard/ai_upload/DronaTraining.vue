@@ -12,6 +12,7 @@
         accept="application/pdf"
         style="display: none;"
         ref="fileInput"
+        multiple
       />
       <q-img :src="Character_Drona" alt="Person Icon" style="width:60px; position: absolute; top: 65px;left: 26%; 
     transform: translateX(-50%);"/>
@@ -45,6 +46,7 @@
 </div>
 
 
+
 <button class="upload" style="" @click="uploadPDF">Upload</button>
 
       <div v-if="pdfUrl">
@@ -55,7 +57,9 @@
         {{ notification }}
       </div>
     </div>
+
   </template>
+  
   
   <script>
   import axios from 'axios';
@@ -69,51 +73,49 @@
         pdfUrl: null,
         notification: null,
        Character_Drona:Character_Drona,
-
-     
       };
     },
     methods: {
       handleFileUpload(event) {
-        this.selectedFile = event.target.files[0];
+        this.selectedFiles = Array.from(event.target.files);
       },
       handleDrop(event) {
-        event.preventDefault();
-        this.selectedFile = event.dataTransfer.files[0];
+          event.preventDefault();
+          this.selectedFiles = Array.from(event.dataTransfer.files);
       },
       openFilePicker() {
         this.$refs.fileInput.click();
       },
+      
       async uploadPDF() {
-        if (!this.selectedFile) {
+        if (!this.selectedFiles) {
           this.notification = "Please select a PDF file to upload."; // Set notification message
           setTimeout(() => {
             this.notification = null; // Clear notification after a delay
           }, 3000); // Adjust the delay as needed
           return;
         }
-  
+        
         const formData = new FormData();
-        formData.append("file", this.selectedFile);
-        formData.append("source", "portal");
-  
+
+        this.selectedFiles.forEach(file => {
+          formData.append("files", file);
+          formData.append("source", "portal");
+        })
         try {
-          const response = await axios.post("https://fnbackendprod.finvedic.com/api/bot", formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          });
-  
-          // Assuming the response contains a URL for the uploaded file
-          this.pdfUrl = response.data.url;
-          this.notification = "PDF uploaded successfully"; // Set notification message
-          setTimeout(() => {
-            this.notification = null; // Clear notification after a delay
-          }, 3000); // Adjust the delay as needed
-        } catch (error) {
-          console.error("Error uploading PDF:", error);
-          // Handle error
-        }
+            const response = await axios.post("http://localhost:8087/api/drona/upload/files", formData);
+            this.$emit('files-refresh');
+    
+            if (response.data.DronaResponse && response.data.DronaResponse.length > 0) {
+                this.notification = response.data.DronaResponse[0].status;
+            } // Set notification message
+            setTimeout(() => {
+              this.notification = null; // Clear notification after a delay
+            }, 3000); // Adjust the delay as needed
+          } catch (error) {
+            console.error("Error uploading PDF:", error);
+            // Handle error
+          }
       },
     },
   };
