@@ -12,7 +12,7 @@
     <div class="welcome-message" ref="welcomeMessage">
       Hi! I am Drona, your AI virtual assistant.<br>Ask me about Fintech?
     </div>
-    <q-img :src="monk" alt="" class="monk-image"/>
+    <q-img :src="Character_Drona" alt="" class="monk-image"/>
     <div class="chat-container-wrapper">
       <div class="chat-container" v-scroll-bottom>
         <!-- Messages -->
@@ -20,7 +20,7 @@
           <div v-for="message in messages" :key="message.id" :class="message.type">
   <div class="message-container">
     <template v-if="message.type === 'incoming'" class="monk_icon">
-      <q-img :src="monk_half" alt="" style="width: 60px !important;height:45px !important; background-color: #5479F7; border-radius: 50%;"/>
+    <div>  <q-img :src="Character_half_Drona" alt="Character Drona" style="width: 40px !important;height:40px !important; background-color: #5479F7; border-radius: 50%; object-fit: contain; border: 1.5px solid #dcdcdc"/>  </div>
     </template>
     <!-- Render messages with code blocks using v-html -->
     <div v-if="message.containsCode" class="code-block-container">
@@ -37,9 +37,7 @@
     <div v-else>
   <span>{{ message.text }}</span>
   <!-- Copy Button for incoming messages only -->
-  <q-btn v-if="message.type === 'incoming'" class="copy-button" @click="copyText(message.text)" 
-  
-  >copy
+  <q-btn v-if="message.type === 'incoming'" class="copy-button" @click="copyText(message.text)" >copy
    <!-- <q-img :src="code" alt="code copy" style="width: 100%;"></q-img> -->
 </q-btn>
 </div>
@@ -47,7 +45,7 @@
 </div>
           <div v-if="isTyping" class="typing-preloader">
             <template v-if="isTyping" class="monk_icon">
-              <q-img :src="monk_half" alt="" style="width: 60px !important;height:45px !important; background-color: #5479F7; border-radius: 50%;"/>
+              <q-img :src="Character_half_Drona" alt="Character Half" style="width: 40px !important;height:40px !important; background-color: #5479F7; border-radius: 50%; border: 1.5px solid #dcdcdc"/>
             </template>
             Typing...
           </div>
@@ -69,10 +67,10 @@
     <!-- Button to toggle chatbot visibility -->
     <button class="toggle-button" @click="toggleChatbot" ref="toggle_button" @mousedown="startDragging">
       <template v-if="isOpen">
-        <q-img :src="isOpen ? 'monk_half' : 'monk_half'" alt="Monk Icon" style="background-color: red;"/>
+        <q-img :src="isOpen ? 'Character_Drona' : 'Character_Drona' " alt="Monk Icon" style="width:30px; background-color: red; border-radius:50%"/>
       </template>
       <template v-else>
-        <q-img class="toggle-button-img" :src="monk_half" alt="Person Icon" style="transform: scaleX(-1);"/>
+        <q-img class='toggle-button-img' :src='Character_half_Drona' alt="Person Icon" style="width: 70px; height: 70px; margin-right: 10%; border: 2px solid #dcdcdc; background-color: #007bff; border-radius: 50%;"/>
       </template>
     </button>
   </div>
@@ -81,16 +79,40 @@
 
  
  <script>
+
  import copy_code from "../assets/copy_code.png";
  import code from "../assets/copy.png"
- import monk from "../assets/monk.png"
- import monk_half from "../assets/monk_half.png"
+ import Character_Drona from "../assets/Character_Drona.png"
+ import Character_half_Drona  from "../assets/Character_half_Drona.png"
+
+
+import { useProfileStore } from "src/stores/profile";
+import { storeToRefs } from "pinia";
+import { useRolesStore } from "src/stores/roles";
+
  export default {
+
+  mounted(){
+    this.getUserData();
+  },
+  setup() {
+      const profileStore = useProfileStore();
+      const { user } = storeToRefs(profileStore);
+      const { setUserData } = profileStore;
+      const rolesStore = useRolesStore();
+      const { roles } = storeToRefs(rolesStore);
+      return {
+        roles,
+        user,
+        setUserData
+      };
+    },
+
    data() {
      return {
        isOpen: false,
-       monk:monk,
-       monk_half:monk_half,
+       Character_half_Drona:Character_half_Drona,
+       Character_Drona:Character_Drona,
        copy_code:copy_code,
        code:code,
        newMessage: '',
@@ -100,13 +122,28 @@
        xOffset: 0,
        yOffset: 0,
        isTyping: false,
-      //  Character_Drona:Character_Drona,
-      //  Character_half_Drona:Character_half_Drona,
        originalWelcomeMessage: "Hi! I am Drona, your AI virtual assistant.<br>Ask me about Fintech?"
   
      };
    },
    methods: {
+
+    // Fetch profile data
+    async getUserData() {
+      this.$api.get(`api/users/${this.user.id}`).then(response => {
+        if (response.data.success) {
+          var user = response.data.data;
+          //console.log(user)
+          this.userId = user.id;
+        } else {
+          this.showMsg(response.data.message, 'negative');
+        }
+      }).catch(error => {
+        this.loading = false;
+        this.showMsg(error.response?.data.message || error.message, 'negative');
+      });
+    },
+
     toggleChatbot() {
     this.isOpen = !this.isOpen;
   },
@@ -149,23 +186,35 @@
     });
 
     // Send the message to the API
-    const formData = new FormData();
     const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-    const chatBotUrl = baseUrl + 'api/bot/query';
-    formData.append('query', message); // Append the query parameter
-    formData.append('source', 'PORTAL'); // Append the source parameter
+    const chatBotUrl = baseUrl + 'api/drona/askdrona';
+
+    const requestData = {
+          "User-ID": this.userId,
+          "question": message
+      };
+
+    const Body=JSON.stringify(requestData);
+    console.log(Body);
+
     fetch(chatBotUrl, {
       method: 'POST',
-      body: formData // Send form data
+      headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+      body: Body // Send form data
     })
     .then(response => {
+      //console.log('Response:', response);
       if (!response.ok) {
         throw new Error('Network response was not ok');
+
       }
       return response.json();
     })
     .then(data => {
-      const responseData = data.data;
+      const responseData = data.DronaResponse || "Sorry, no response received.";
       // Check if the response contains a code block
       const containsCode = responseData.includes('```');
       const formattedMessage = containsCode 
@@ -193,6 +242,7 @@
       // console.log('Error message:', errorMessage); // Log error message
       this.isTyping = false;
     });
+
   },
   copyText(text) {
     navigator.clipboard.writeText(text).then(() => {
@@ -223,6 +273,7 @@
     // Format code blocks for display
     return htmlText.replace(/```([\s\S]*?)```/g, '<div class="code-block">$1</div>');
   },
+
      startDragging(event) {
        this.isDragging = true;
        const chatbot = this.$refs.toggle_button;

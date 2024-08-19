@@ -9,6 +9,7 @@
     <input
       type="file"
       @change="handleFileUpload"
+      multiple
       accept="application/pdf"
       style="display: none;"
       ref="fileInput"
@@ -49,7 +50,7 @@
 
     <div v-if="pdfUrl">
       <h2>Uploaded PDF:</h2>
-      <embed :src="pdfUrl" type="application/pdf" width="600" height="400" />
+      <embed :src="pdfUrl"  type="application/pdf" width="600" height="400" />
     </div>
     <div v-if="notification" class="notification">
       {{ notification }}
@@ -71,49 +72,48 @@ export default {
     };
   },
   methods: {
-    handleFileUpload(event) {
-      this.selectedFile = event.target.files[0];
-    },
-    handleDrop(event) {
-      event.preventDefault();
-      this.selectedFile = event.dataTransfer.files[0];
-    },
-    openFilePicker() {
-      this.$refs.fileInput.click();
-    },
-    async uploadPDF() {
-      if (!this.selectedFile) {
-        this.notification = "Please select a PDF file to upload."; // Set notification message
-        setTimeout(() => {
-          this.notification = null; // Clear notification after a delay
-        }, 3000); // Adjust the delay as needed
-        return;
-      }
+      handleFileUpload(event) {
+        this.selectedFiles = Array.from(event.target.files);
+      },
+      handleDrop(event) {
+          event.preventDefault();
+          this.selectedFiles = Array.from(event.dataTransfer.files);
+      },
+      openFilePicker() {
+        this.$refs.fileInput.click();
+      },
+      async uploadPDF() {
+        if (!this.selectedFiles) {
+          this.notification = "Please select a PDF file to upload."; // Set notification message
+          setTimeout(() => {
+            this.notification = null; // Clear notification after a delay
+          }, 3000); // Adjust the delay as needed
+          return;
+        }
+        
+        const formData = new FormData();
 
-      const formData = new FormData();
-      formData.append("file", this.selectedFile);
-      formData.append("source", "website");
-
-      try {
-        const response = await axios.post("https://fnbackendprod.finvedic.com/api/bot", formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
+        this.selectedFiles.forEach(file => {
+          formData.append("files", file);
+          formData.append("source", "portal");
+        })
+        try {
+            const response = await axios.post("http://localhost:8087/api/ved/upload/files", formData);
+            this.$emit('files-refresh');
+    
+            if (response.data.VedResponse && response.data.VedResponse.length > 0) {
+                this.notification = response.data.VedResponse[0].status;
+            } // Set notification message
+            setTimeout(() => {
+              this.notification = null; // Clear notification after a delay
+            }, 3000); // Adjust the delay as needed
+          } catch (error) {
+            console.error("Error uploading PDF:", error);
+            // Handle error
           }
-        });
-
-        // Assuming the response contains a URL for the uploaded file
-        this.pdfUrl = response.data.url;
-        this.notification = "PDF uploaded successfully"; // Set notification message
-        setTimeout(() => {
-          this.notification = null; // Clear notification after a delay
-        }, 3000); // Adjust the delay as needed
-      } catch (error) {
-        console.error("Error uploading PDF:", error);
-        // Handle error
-      }
+      },
     },
-  },
-};
+  };
 </script>
 
 <style scoped>
