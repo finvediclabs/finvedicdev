@@ -187,19 +187,19 @@ const routes = [
       }
     ]
   },
-  {
-    path: '/reports',
-    meta: { title: 'Reports', module: 'reports' },
-    component: () => import('layouts/DashboardLayout.vue'),
-    children: [
+  // {
+  //   path: '/reports',
+  //   meta: { title: 'Reports', module: 'reports' },
+  //   component: () => import('layouts/DashboardLayout.vue'),
+  //   children: [
       
-      {
-        path: '',
-        component: () => import('pages/reports/Index.vue'),
-        meta: { item: '' }
-      }
-    ]
-  },
+  //     {
+  //       path: '',
+  //       component: () => import('pages/reports/Index.vue'),
+  //       meta: { item: '' }
+  //     }
+  //   ]
+  // },
 
   {
     path: '/help',
