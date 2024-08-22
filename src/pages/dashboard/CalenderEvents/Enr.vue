@@ -1,7 +1,7 @@
 <template>
   <fin-portlet>
     <fin-portlet-header>
-      <fin-portlet-heading :loading="loading" backArrow>Enrollments {{ cycleId }}</fin-portlet-heading>
+      <fin-portlet-heading :loading="loading" backArrow>Cycle: {{ cycleDesc }}</fin-portlet-heading>
       <fin-portlet-item>
         <q-btn label="Add" dense color="blue-15" class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder"
           no-caps @click="createEnrollment()" />
@@ -9,7 +9,7 @@
     </fin-portlet-header>
     <fin-portlet-item class="table-scroll">
       <fin-table :columns="header" :data="chaptersList" select @reCall="getChaptersData()" @editFun="editDataFun"
-        :loading="loading" allowDelete :delete-url="deleteUrl" />
+        :loading="loading" allowEnrollmentDelete :delete-url="deleteUrl" />
     </fin-portlet-item>
   </fin-portlet>
 
@@ -32,7 +32,7 @@
           option-label="displayname"
           @input="logSelectedOption"
         />
-        <q-input outlined v-model="enrollmentData.enrollmentDateStr" label="Enrollment Date (MM/DD/YYYY)" />
+        <q-input outlined v-model="enrollmentData.enrollmentDateStr" label="Enrollment Date" type="Date" />
         <div class="row justify-center">
             <div class="col-12 q-px-sm q-py-xs text-right q-pt-lg">
               <q-btn label="Close" v-close-popup type="reset" color="primary" flat class="q-mr-sm" no-caps />
@@ -85,6 +85,8 @@ export default {
       enrollmentData: {
       courseId: '', // Allow user input for courseId
       cycleid: '', // Allow user input for cycleid
+      cycleData: null,
+      cycleDesc: '',
       studentId: null, // Allow user input for studentId
       username: '', // Allow user input for username
       enrollmentDateStr: '', // Allow user input for enrollmentDateStr
@@ -99,6 +101,7 @@ export default {
   },
   mounted() {
     this.getChaptersData();
+    this.getCycles(); 
   },
   watch: {
     userOptions: {
@@ -125,6 +128,23 @@ export default {
       }
       else{
         // console.log('Selected Option ID:', 'undefined');
+      }
+    },
+    async getCycles() {
+      try {
+        const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+        const getCyclesUrl = `${baseUrl}api/cycles/${this.cycleId}`;
+        
+        const response = await axios.get(getCyclesUrl);
+        if (response.status === 200) {
+          this.cycleData = response.data.data; // Assuming the API returns the cycle data in `data`
+          this.cycleDesc = this.cycleData.cycleDesc; // Store cycle description
+        } else {
+          throw new Error('Failed to fetch cycle data');
+        }
+      } catch (error) {
+        console.error('Error fetching cycle data:', error);
+        this.showMsg('Error fetching cycle data', 'negative');
       }
     },
     async fetchUserOptions() {
@@ -168,6 +188,7 @@ export default {
         this.$api.get(url)
       .then(response => {
         this.loading = false;
+        console.log('Response:', response);
         if (response.data.success) {
           this.chaptersList = response.data.data.map((item, index) => ({ ...item, index: index + 1 }));
         } else {
@@ -190,8 +211,8 @@ export default {
   // Parse enrollment date string
   let enrollmentDate;
   try {
-    // Split the date string into parts (MM/DD/YYYY)
-    const [month, day, year] = this.enrollmentData.enrollmentDateStr.split('/');
+    // Split the date string into parts (DD/MM/YYYY)
+    const [day, month, year] = this.enrollmentData.enrollmentDateStr.split('/');
     // Create a new Date object from the parsed parts
     enrollmentDate = new Date(`${year}-${month}-${day}`);
     // Check if the parsed date is valid
@@ -199,7 +220,7 @@ export default {
       throw new Error('Invalid enrollment date');
     }
   } catch (error) {
-    this.showMsg('Invalid enrollment date format. Please enter date in MM/DD/YYYY format.', 'negative');
+    this.showMsg('Invalid enrollment date format. Please enter date in DD/MM/YYYY format.', 'negative');
     this.submitLoading = false;
     return;
   }
@@ -228,7 +249,7 @@ export default {
   try {
     // Example Axios POST request to add enrollment
     const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-          const getEnrollmentsUrl = baseUrl + 'api/enrollments';
+    const getEnrollmentsUrl = baseUrl + 'api/enrollments';
     const response = await axios.post(getEnrollmentsUrl, enrollmentData);
 
     if (response.status === 201) {
@@ -257,6 +278,7 @@ export default {
         cycleid: val.cycleid,
         username: val.username,
         enrollmentDateStr: val.enrollmentDateStr,
+        
       };
       // Open the dialog for editing
       this.addEnrollmentDialog = true;
