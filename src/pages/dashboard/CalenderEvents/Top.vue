@@ -117,7 +117,7 @@
           { label: 'S.No', key: 'index', align: 'center' },
          
           { label: 'Course Id', key: 'courseId', align: 'start', width: '50px' },
-          { label: 'Topic Id', key: 'topicId', align: 'start', width: '50px' },
+          // { label: 'Topic Id', key: 'topicId', align: 'start', width: '50px' },
           { label: 'Topic', key: 'topicName', align: 'start', width: '150px' },
         ],
         chaptersList: [],
