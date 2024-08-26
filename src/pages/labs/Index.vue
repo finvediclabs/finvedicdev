@@ -66,7 +66,7 @@
                 <div class="col flex items-center">
                   <span style="font-weight: bold;color: white;">{{ lab.name }}</span>
                   <q-space />
-                  <q-img v-if="lab.provisioningState === 'Creating'" src="https://gurukul.finvedic.com/images/loader.gif" style="width: 30px; height: 30px;" />
+                  <q-img v-if="lab.provisioningState === 'Creating'" :src="loader" style="width: 30px; height: 30px;" />
                 </div>
                 <div class="flex" style="color: white;">
                   <p><strong>Instance :</strong> {{ lab.size }}</p>
@@ -109,6 +109,7 @@
 import { useProfileStore } from "src/stores/profile";
 import { useSessionStore } from "src/stores/session";
 import { setToken } from "src/boot/axios";
+import loader from "../../assets/loader.gif";
 import windows from "../../assets/Windows.png";
 import linuxOs from "../../assets/LinuxOS.png";
 import axios from 'axios';
@@ -133,6 +134,7 @@ export default {
       selectedOS: '',
       windows:windows,
       linuxOs:linuxOs,
+      loader:loader,
       labsData: [],
       labImg: windows,
     }
