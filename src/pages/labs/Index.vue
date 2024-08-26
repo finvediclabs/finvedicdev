@@ -96,7 +96,7 @@
 <div class="row col-12">
   <div class="col-4">
   </div>
-  <div class="col-4"><a href="https://gurukul.finvedic.com/dojo/" target="_blank" class="styled-link">Gurukul Dojo</a></div>
+  <div class="col-4"><a href="https://gurukul.finvedic.com/dojo/" target="_blank" class="styled-link">Finvedic Dojo</a></div>
   <div class="col-4"></div>
 </div>
         </div>
