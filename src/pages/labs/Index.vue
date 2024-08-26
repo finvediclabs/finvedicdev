@@ -55,42 +55,49 @@
       <fin-portlet-item >
         <div class="scroll_on">
           <div class="row" style="width: 100%;margin-left: auto;margin-right: auto;">
-  <div class="col-12 col-sm-6 col-md-6 col-lg-6 q-pa-lg" v-for="(lab, index) in filteredLabs" :key="lab.id" style="padding-top: 0;">
-    <q-card class="shadow-8" :style="{ border: getBorderColor(lab.provisioningState, lab.locked), height: '100%' }" style="background-color: #5479F7">
-      <q-card-section horizontal>
-        <q-card-section class="q-pa-md lab-img flex items-center">
-          <q-img :src="labImg" class="full-width" />
-        </q-card-section>
-        <q-card-section class="" style="width: 70%;font-size: 13px;">
-          <div class="column full-width">
-            <div class="col flex items-center">
-              <span style="font-weight: bold;color: white;">{{ lab.name }}</span>
-              <q-space />
-              <q-img v-if="lab.provisioningState === 'Creating'" src="https://gurukul.finvedic.com/images/loader.gif" style="width: 30px; height: 30px;" />
-            </div>
-            <div class="flex" style="color: white;">
-              <p><strong>Instance :</strong> {{ lab.size }}</p>
-            </div>
-            <div class="col flex">
-              <div class="q-px-md shadow-4 rounded-borders q-pa-xs text-center"
-                style="width:90px;font-size: 8px;background-color: white;"
-                @click="lab.provisioningState !== 'Deleting' && lab.provisioningState !== 'Deleted' && lab.provisioningState !== 'Failed' ? download(lab.name) : null"
-                :class="{ 'pointer-events-none': lab.locked }">
-                {{ lab.provisioningState === 'Deleting' ||lab.provisioningState === 'Failed' || lab.provisioningState === 'Deleted' ? lab.provisioningState : "Download" }}
+          <div class="col-12 col-sm-6 col-md-6 col-lg-6 q-pa-lg" v-for="(lab, index) in filteredLabs" :key="lab.id" style="padding-top: 0;">
+        <q-card class="shadow-8" :style="{ border: getBorderColor(lab.provisioningState, lab.locked), height: '100%' }" style="background-color: #5479F7">
+          <q-card-section horizontal>
+            <q-card-section class="q-pa-md lab-img flex items-center">
+              <q-img :src="labImg" class="full-width" />
+            </q-card-section>
+            <q-card-section class="" style="width: 70%;font-size: 13px;">
+              <div class="column full-width">
+                <div class="col flex items-center">
+                  <span style="font-weight: bold;color: white;">{{ lab.name }}</span>
+                  <q-space />
+                  <q-img v-if="lab.provisioningState === 'Creating'" src="https://gurukul.finvedic.com/images/loader.gif" style="width: 30px; height: 30px;" />
+                </div>
+                <div class="flex" style="color: white;">
+                  <p><strong>Instance :</strong> {{ lab.size }}</p>
+                </div>
+                <div class="col flex">
+                  <div class="q-px-md shadow-4 rounded-borders q-pa-xs text-center"
+                    style="width:90px;font-size: 8px;background-color: white;"
+                    @click="lab.provisioningState !== 'Deleting' && lab.provisioningState !== 'Deleted' && lab.provisioningState !== 'Failed' ? download(lab.name) : null"
+                    :class="{ 'pointer-events-none': lab.locked }">
+                    {{ lab.provisioningState === 'Deleting' ||lab.provisioningState === 'Failed' || lab.provisioningState === 'Deleted' ? lab.provisioningState : "Download" }}
+                  </div>
+                  <q-space />
+                  <q-btn :label="lab.locked ? 'Locked' : 'Shutdown'" size="8px" dense class="q-px-md text-weight-bold"
+      rounded :style="{ background: (lab.locked || lab.provisioningState === 'Deleting' || lab.provisioningState === 'Deleted' || lab.provisioningState === 'Failed' ) ? '#D49F8A' : '#7BFF90' }"
+      :disable="!canShutdown(lab)"
+      @click="shutdown(lab)">
+      <q-icon name="lock" size="14px" class="q-pl-sm"></q-icon>
+    </q-btn>
+                </div>
               </div>
-              <q-space />
-              <q-btn :label="lab.locked ? 'Locked' : 'Shutdown'" size="8px" dense class="q-px-md text-weight-bold"
-  rounded :style="{ background: (lab.locked || lab.provisioningState === 'Deleting' || lab.provisioningState === 'Deleted' || lab.provisioningState === 'Failed' ) ? '#D49F8A' : '#7BFF90' }"
-  :disable="!canShutdown(lab)"
-  @click="shutdown(lab)">
-  <q-icon name="lock" size="14px" class="q-pl-sm"></q-icon>
-</q-btn>
-            </div>
-          </div>
-        </q-card-section>
-      </q-card-section>
-    </q-card>
+            </q-card-section>
+          </q-card-section>
+        </q-card>
+      </div>
+      
+</div>
+<div class="row col-12">
+  <div class="col-4">
   </div>
+  <div class="col-4"><a href="https://gurukul.finvedic.com/dojo/" target="_blank" class="styled-link">Gurukul Dojo</a></div>
+  <div class="col-4"></div>
 </div>
         </div>
       </fin-portlet-item>
@@ -369,5 +376,26 @@ selectVersion(os) {
     .User_heading{
   color:#5479F7;
   margin-left:4%;
+}
+.styled-link {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100% !important;
+            padding: 10px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+        }
+.styled-link:hover {
+            transform: translateY(3px);
+            box-shadow: 0 8px 20px rgba(0, 86, 179, 0.5);
+}
+.styled-link:active {
+            transform: translateY(1px);
+            box-shadow: 0 4px 4px rgba(0, 61, 128, 0.3);
 }
 </style>
