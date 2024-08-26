@@ -304,9 +304,7 @@ export default {
     // console.log("User Type:", this.userType);
     // console.log("User Specialization:", this.user.specialization);
     // Check if uploadDocumentPath is null and redirect to /profile if needed
-    if (this.userType !== 'Admin' && this.userType !== 'Guest' && !this.user.specialization) {
-    this.$router.push('/profile');
-}
+
 },
 
  watch: {
@@ -463,17 +461,28 @@ showMsg(message, type) {
     if (response.data.success) {
       const user = response.data.data;
       this.profile = {
-        name: user.name,
-        email: user.email,
-        phoneNumber: user.phoneNumber,
-        role: this.user.roles ? this.user.roles[0] : [],
-        owner: user.owner,
+          name: user.name,
+          dob:user.dob,
+          graduationDegree: user.graduationDegree,
+          qualificationYear: user.qualificationYear,
+          specialization:user.specialization,
+          gender:user.gender,
+          email: user.email,
+          phoneNumber: user.phoneNumber,
+          role: this.user.roles ? this.user.roles[0] : [],
+          //owner: user.owner,
       };
+
+    if (this.userType === 'student'&& Object.values(this.profile).some(value => value === null || value === undefined)) {
+            this.$router.push('/profile');
+     }
+
+     //console.log(this.profile)
 
       const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
       const removeImagePath = baseUrl + 'fs/download/';
 
-      // Check if uploadDocumentPath is not null or undefined
+      //Check if uploadDocumentPath is not null or undefined
       if (user.uploadDocumentPath) {
         const filename = user.uploadDocumentPath.replace(removeImagePath, '');
 

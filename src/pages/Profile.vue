@@ -22,11 +22,11 @@
             </label>
             <br><br>
             <input id="fileInput" name="file" type="file" class="hidden-input" ref="file" @change="onChange" accept=".jpg,.png">
-            <p>Layout</p>
+            <!-- <p>Layout</p>
             <div class="flex flex-center">
               <q-avatar size="50px" class="bg-grey cursor-pointer" @click="editProfile.profileBg = ''"></q-avatar>
               <q-avatar square size="50px" class="bg-grey q-mx-sm cursor-pointer" @click="editProfile.profileBg = 'square'"></q-avatar>
-            </div>
+            </div> -->
           </div>
         </div>
         <div class="col-md-1"></div>
@@ -116,7 +116,6 @@
                         :disable="disableEdit" 
                         :rules="[
                           val => val && val.trim().length > 0 || 'Highest Qualification is required',
-                          val => /^[a-zA-Z\s]+$/.test(val) || 'Highest Qualification must contain only letters and spaces'
                         ]"
                       />
                   <div class="errorMsgBox">
@@ -377,39 +376,46 @@ export default {
         });
       }
     },
-//     updateProfile() {
-//   var user = this.user;
-//   this.uploadFile(this.profile.file) // Call uploadFile to get file path
-//     .then(filePath => {
-//       var request = {
-//         user,
-//         name: this.profile.name,
-//         email: this.profile.email,
-//         gender: this.profile.gender.value,
-//         dob: this.profile.dob,
-//         graduationDegree: this.profile.graduationDegree,
-//         qualificationYear: this.profile.qualificationYear,
-//         specialization: this.profile.specialization,
-//         uploadDocumentPath: filePath, // Use the file path here
-//         phoneNumber: this.profile.phoneNumber,
-//         photoPath: this.imageUrl,
-//         password: this.user.password,
-//       };
 
-//       return this.$api.put(`api/users/${this.user.id}`, request);
-//     })
-//     .then(response => {
-//       if (response.data.success) {
-//         this.cancelEdit();
-//       } else {
-//         this.showMsg(response.data.message, 'negative');
-//       }
-//     })
-//     .catch(error => {
-//       this.loading = false;
-//       this.showMsg(error.response?.data.message || error.message, 'negative');
-//     });
-// },
+    updateProfile() {
+  const genderValue = typeof this.profile.gender === 'object' ? this.profile.gender.value : this.profile.gender;
+  var user = this.user;
+
+  // If there's no new file, retain the existing photoPath
+  const filePathPromise = this.profile.file ? this.uploadFile(this.profile.file) : Promise.resolve(this.profile.uploadDocumentPath);
+
+  filePathPromise
+    .then(filePath => {
+      var request = {
+        user,
+        name: this.profile.name,
+        email: this.profile.email,
+        gender: genderValue,
+        dob: this.profile.dob,
+        graduationDegree: this.profile.graduationDegree,
+        qualificationYear: this.profile.qualificationYear,
+        specialization: this.profile.specialization,
+        uploadDocumentPath: filePath,
+        phoneNumber: this.profile.phoneNumber,
+        photoPath: this.imageUrl || filePath, // Ensure photoPath is set correctly
+        password: this.user.password,
+      };
+
+      return this.$api.put(`api/users/${this.user.id}`, request);
+    })
+    .then(response => {
+      if (response.data.success) {
+        this.cancelEdit();
+        window.location.reload();
+      } else {
+        this.showMsg(response.data.message, 'negative');
+      }
+    })
+    .catch(error => {
+      this.loading = false;
+      this.showMsg(error.response?.data.message || error.message, 'negative');
+    });
+  },
     onChange() {
       this.profile.file = this.$refs.file.files.length ? this.$refs.file.files[0] : '';
       if (typeof this.profile.file === 'object') {
@@ -448,113 +454,117 @@ export default {
     },
 
     async uploadFile(file) {
-    this.loading = true;
-    try {
-      // Check if the file type is JPG or PNG
-      const allowedTypes = ['image/jpeg', 'image/png'];
-      if (!allowedTypes.includes(file.type)) {
-        throw new Error('Only JPG and PNG files are allowed.');
+    if(file){
+      this.loading = true;
+      try {
+        // Check if the file type is JPG or PNG
+        const allowedTypes = ['image/jpeg', 'image/png'];
+        if (!allowedTypes.includes(file.type)) {
+          throw new Error('Only JPG and PNG files are allowed.');
+        }
+
+        // Proceed with uploading the file if validation passes
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+        const getFileUrl = baseUrl + 'fs/upload-file';
+
+        const response = await fetch(getFileUrl, {
+          method: 'POST',
+          body: formData
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || 'File upload failed');
+        }
+
+        console.log(data)
+
+        const filePath = data.uri;
+        console.log('File uploaded:', filePath);
+        return filePath; // Return the file path
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        throw error;
+      } finally {
+        this.loading = false; // Ensure loading is set to false after completion
       }
-
-      // Proceed with uploading the file if validation passes
-      const formData = new FormData();
-      formData.append('file', file);
-
-      const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-      const getFileUrl = baseUrl + 'fs/upload-file';
-
-      const response = await fetch(getFileUrl, {
-        method: 'POST',
-        body: formData
-      });
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'File upload failed');
-      }
-
-      const filePath = data.uri;
-      console.log('File uploaded:', filePath);
-      return filePath; // Return the file path
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      throw error;
-    } finally {
-      this.loading = false; // Ensure loading is set to false after completion
     }
   },
 
 
   // Method to update profile
-  updateProfile() {
-    this.loading = true;
-    if (this.profile.file) { // Check if there is a new file to upload
-      // Call uploadFile to get file path
-      this.uploadFile(this.profile.file)
-        .then(filePath => {
-          // Construct request with updated file path
-          var request = {
-            user: this.user,
-            name: this.profile.name,
-            email: this.profile.email,
-            gender: this.profile.gender.value,
-            dob: this.profile.dob,
-            graduationDegree: this.profile.graduationDegree,
-            qualificationYear: this.profile.qualificationYear,
-            specialization: this.profile.specialization,
-            uploadDocumentPath: filePath, // Use the file path here
-            phoneNumber: this.profile.phoneNumber,
-            // photoPath: this.imageUrl,
-            password: this.user.password,
-          };
+  // updateProfile() {
+  //   this.loading = true;
+  //   if (this.profile.file) { // Check if there is a new file to upload
+  //     // Call uploadFile to get file path
+  //     this.uploadFile(this.profile.file)
+  //       .then(filePath => {
+  //         // Construct request with updated file path
+  //         var request = {
+  //           user: this.user,
+  //           name: this.profile.name,
+  //           email: this.profile.email,
+  //           gender: this.profile.gender.value,
+  //           dob: this.profile.dob,
+  //           graduationDegree: this.profile.graduationDegree,
+  //           qualificationYear: this.profile.qualificationYear,
+  //           specialization: this.profile.specialization,
+  //           uploadDocumentPath: filePath, // Use the file path here
+  //           phoneNumber: this.profile.phoneNumber,
+  //           // photoPath: this.imageUrl,
+  //           password: this.user.password,
+  //         };
 
-          // Make PUT request to update user profile
-          return this.$api.put(`api/users/${this.user.id}`, request);
-        })
-        .then(response => {
-          if (response.data.success) {
-            this.getUserData(); 
-            this.cancelEdit();
-          } else {
-            this.showMsg(response.data.message, 'negative');
-          }
-        })
-        .catch(error => {
-          this.loading = false;
-          this.showMsg(error.response?.data.message || error.message, 'negative');
-        });
-    } else {
-      // If no new file, update profile without uploading file
-      var request = {
-        user: this.user,
-        name: this.profile.name,
-        email: this.profile.email,
-        gender: this.profile.gender.value,
-        dob: this.profile.dob,
-        graduationDegree: this.profile.graduationDegree,
-        qualificationYear: this.profile.qualificationYear,
-        specialization: this.profile.specialization,
-        uploadDocumentPath: this.profile.uploadDocumentPath, // Use existing file path
-        phoneNumber: this.profile.phoneNumber,
-        photoPath: this.imageUrl,
-        password: this.user.password,
-      };
+  //         // Make PUT request to update user profile
+  //         return this.$api.put(`api/users/${this.user.id}`, request);
+  //       })
+  //       .then(response => {
+  //         if (response.data.success) {
+  //           this.getUserData(); 
+  //           this.cancelEdit();
+  //         } else {
+  //           this.showMsg(response.data.message, 'negative');
+  //         }
+  //       })
+  //       .catch(error => {
+  //         this.loading = false;
+  //         this.showMsg(error.response?.data.message || error.message, 'negative');
+  //       });
+  //   } else {
+  //     // If no new file, update profile without uploading file
+  //     var request = {
+  //       user: this.user,
+  //       name: this.profile.name,
+  //       email: this.profile.email,
+  //       gender: this.profile.gender.value,
+  //       dob: this.profile.dob,
+  //       graduationDegree: this.profile.graduationDegree,
+  //       qualificationYear: this.profile.qualificationYear,
+  //       specialization: this.profile.specialization,
+  //       uploadDocumentPath: this.profile.uploadDocumentPath, // Use existing file path
+  //       phoneNumber: this.profile.phoneNumber,
+  //       photoPath: this.imageUrl,
+  //       password: this.user.password,
+  //     };
 
-      // Make PUT request to update user profile
-      this.$api.put(`api/users/${this.user.id}`, request)
-        .then(response => {
-          if (response.data.success) {
-            this.cancelEdit();
-          } else {
-            this.showMsg(response.data.message, 'negative');
-          }
-        })
-        .catch(error => {
-          this.loading = false;
-          this.showMsg(error.response?.data.message || error.message, 'negative');
-        });
-    }
-  },
+  //     // Make PUT request to update user profile
+  //     this.$api.put(`api/users/${this.user.id}`, request)
+  //       .then(response => {
+  //         if (response.data.success) {
+  //           this.cancelEdit();
+  //         } else {
+  //           this.showMsg(response.data.message, 'negative');
+  //         }
+  //       })
+  //       .catch(error => {
+  //         this.loading = false;
+  //         this.showMsg(error.response?.data.message || error.message, 'negative');
+  //       });
+  //   }
+  // },
   cancelEdit() {
       this.disableEdit = true; // Assuming this disables the edit mode
     },
@@ -603,11 +613,8 @@ export default {
   return degree && /^[a-zA-Z\s.,'-]+$/.test(degree);
 },
 isValidYear(year) {
-  const currentYear = new Date().getFullYear();
   const yearNumber = parseInt(year, 10);
-
-  // Check if year is a valid number and at least 18 years before the current year
-  return !isNaN(yearNumber) && yearNumber <= (currentYear - 18);
+  return yearNumber;
 },
     isValidSpecialization(specialization)
     {
