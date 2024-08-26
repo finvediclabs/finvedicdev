@@ -71,6 +71,21 @@
                           <q-item-label>Delete</q-item-label>
                         </q-item-section>
                       </q-item>
+                      <q-item clickable v-close-popup @click="deleteEnrollmentItem(item)" v-if="allowEnrollmentDelete">
+                        <q-item-section>
+                          <q-item-label>Delete Enroll</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                      <q-item clickable v-close-popup @click="deleteBatchItem(item)" v-if="allowBatchDelete">
+                        <q-item-section>
+                          <q-item-label>Delete Batch</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                       <q-item clickable v-close-popup @click="deleteTopicItem(item)" v-if="allowTopicDelete">
+                        <q-item-section>
+                          <q-item-label>Delete Topic</q-item-label>
+                        </q-item-section>
+                      </q-item>
                     </q-list>
                   </div>
                 </div>
@@ -130,7 +145,21 @@ export default {
     allowCourseDelete:{
       type: Boolean,
       default: false,
+    },
+    allowEnrollmentDelete:{
+      type: Boolean,
+      default: false,
+    },
+    allowBatchDelete:{
+      type: Boolean,
+      default: false,
+    },
+    allowTopicDelete:{
+      type: Boolean,
+      default: false,
     }
+
+
   },
   data() {
     return {
@@ -201,6 +230,90 @@ export default {
         },
       }).onOk(() => {
         this.$api.delete(this.deleteUrl + '/' + item.courseid).then(response => {
+          if (response.data.success) {
+            this.showMsg(response.data.message, 'positive');
+            this.$emit('reCall');
+          } else {
+            this.showMsg(response?.data.message, 'negative');
+           
+          }
+        }).catch(error => {
+          this.showMsg(error.response?.data.message || error.message, 'negative');
+        });
+      });
+    },
+    deleteTopicItem(item) {
+      this.$q.dialog({
+        title: 'Confirm',
+        message: `Are You sure want to delete ${item.topicName}`,
+        persistent: true,
+        cancel: {
+          label: 'No',
+          color: 'black',
+          flat: true
+        },
+        ok: {
+          label: 'Yes',
+          color: 'red',
+        },
+      }).onOk(() => {
+        this.$api.delete(this.deleteUrl + '/' + item.courseId + "/topic/" + item.topicId).then(response => {
+          if (response.data.success) {
+            this.showMsg(response.data.message, 'positive');
+            this.$emit('reCall');
+          } else {
+            this.showMsg(response?.data.message, 'negative');
+           
+          }
+        }).catch(error => {
+          this.showMsg(error.response?.data.message || error.message, 'negative');
+        });
+      });
+    },
+    deleteEnrollmentItem(item) {
+      this.$q.dialog({
+        title: 'Confirm',
+        message: `Are You sure want to delete ${item.username}`,
+        persistent: true,
+        cancel: {
+          label: 'No',
+          color: 'black',
+          flat: true
+        },
+        ok: {
+          label: 'Yes',
+          color: 'red',
+        },
+      }).onOk(() => {
+        this.$api.delete(this.deleteUrl + '/student/' + item.studentId).then(response => {
+          if (response.data.success) {
+            this.showMsg(response.data.message, 'positive');
+            this.$emit('reCall');
+          } else {
+            this.showMsg(response?.data.message, 'negative');
+           
+          }
+        }).catch(error => {
+          this.showMsg(error.response?.data.message || error.message, 'negative');
+        });
+      });
+    },
+    deleteBatchItem(item) {
+      this.$q.dialog({
+        title: 'Confirm',
+        message: `Are You sure want to delete ${item.cycleDesc}`,
+        persistent: true,
+        cancel: {
+          label: 'No',
+          color: 'black',
+          flat: true
+        },
+        ok: {
+          label: 'Yes',
+          color: 'red',
+        },
+      }).onOk(() => {
+        this.$api.delete(this.deleteUrl + '/' + item.cycleid).then(response => {
           if (response.data.success) {
             this.showMsg(response.data.message, 'positive');
             this.$emit('reCall');

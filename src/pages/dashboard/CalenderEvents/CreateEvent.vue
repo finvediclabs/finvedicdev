@@ -92,7 +92,9 @@
             <div class="col-12 q-px-sm q-pt-xl justify-end row">
               <q-space />
               <q-btn class="shadow-5 q-px-md rounded-borders sub-btn q-px-xl text-white" label="Update" no-caps
-                @click="validateForm" />
+                @click="validateForm" :disable="submitLoading">
+                <q-spinner-ios size="xs" class="q-ml-sm" v-if="submitLoading" />
+              </q-btn>
             </div>
           </div>
         </div>
@@ -160,6 +162,7 @@ export default {
       link: '',
       errors: {},
       editedEvent: {},
+      submitLoading: false,
       filteredTopic: '',
       selectedRadio: '', // To store the selected radio option
       additionalInput: '' // Example additional input
@@ -234,6 +237,7 @@ export default {
       }
     },
     async createEvent() {
+      this.submitLoading = true;
   // Prepare the request payload
   const request = {
     accountId: null,
@@ -260,12 +264,14 @@ export default {
   try {
     // Make the API request to create the event
     let response = await this.$api.post(urls.getEvents, request);
+    this.submitLoading = false;
     if (response.data.success) {
       this.showMsg(response.data?.message || 'Event Created Successfully', 'positive');
     } else {
       this.showMsg(response.data?.message, 'negative');
     }
   } catch (error) {
+    this.submitLoading = false;
     var message = error.response?.data.message || error.response?.data.message || 'Something went wrong!';
     this.showMsg(message || error.message, 'negative');
   }
