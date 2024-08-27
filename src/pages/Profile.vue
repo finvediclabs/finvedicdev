@@ -599,16 +599,13 @@ export default {
       return !!date;
     },
     isValidAge(date) {
-      const today = new Date();
-      const birthDate = new Date(date);
-      const age = today.getFullYear() - birthDate.getFullYear();
-      const monthDifference = today.getMonth() - birthDate.getMonth();
-      const dayDifference = today.getDate() - birthDate.getDate();
-      if (monthDifference < 0 || (monthDifference === 0 && dayDifference < 0)) {
-        age--;
-      }
-      return age >= 18 && age <= 70;
-    },
+  const today = new Date();
+  const birthYear = new Date(date).getFullYear();
+  const currentYear = today.getFullYear();
+
+  const age = currentYear - birthYear;
+  return age >= 18 && age <= 70;
+},
     isValidDegree(degree) {
   return degree && /^[a-zA-Z\s.,'-]+$/.test(degree);
 },

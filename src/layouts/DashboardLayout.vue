@@ -305,6 +305,10 @@ export default {
     // console.log("User Specialization:", this.user.specialization);
     // Check if uploadDocumentPath is null and redirect to /profile if needed
 
+//     if (this.userType !== 'Admin' && this.userType !== 'Guest' && !this.user.specialization) {
+//     this.$router.push('/profile');
+// }
+
 },
 
  watch: {
@@ -472,10 +476,10 @@ showMsg(message, type) {
           role: this.user.roles ? this.user.roles[0] : [],
           //owner: user.owner,
       };
-
-    if (this.userType === 'student'&& Object.values(this.profile).some(value => value === null || value === undefined)) {
-            this.$router.push('/profile');
-     }
+console.log(this.profile);
+   if (this.userType === 'Student'&& Object.values(this.profile).some(value => value === null || value === undefined)) {
+           this.$router.push('/profile');
+    }
 
      //console.log(this.profile)
 
