@@ -176,7 +176,8 @@
     <q-page-container >
       <q-page >
         <router-view style="background-color: rgba(255, 255, 255, 0); " v-if="token" />
-        <chatbot />
+        <chatbot/>
+        <chatbox/>
       </q-page>
     </q-page-container>
   </q-layout>
@@ -188,12 +189,13 @@ import { useSessionStore } from "src/stores/session";
 import { setToken } from "src/boot/axios"
 import { useProfileStore } from "src/stores/profile";
 import profileImg from "src/assets/profile.png";
-import ColorHash from 'color-hash'
-var colorHash = new ColorHash();
+
 import Chatbot from "src/layouts/ChatBot.vue";
+import Chatbox from "src/layouts/ChatBox.vue";
 export default {
   components: {
-    Chatbot
+    Chatbot,
+    Chatbox
   },
   name: 'dashboard-layout',
   setup() {
