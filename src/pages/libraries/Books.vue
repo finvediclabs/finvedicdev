@@ -297,6 +297,8 @@ export default {
 
 getChaptersData() {
   this.chaptersLoader = true;
+  this.chapters = [];
+  this.allSlides=[];
   const formData = new FormData();
   formData.append('bookId', this.selectedSlide?.id); // Add bookId to form data
   const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
@@ -346,6 +348,7 @@ getChaptersData() {
         });
 
         this.getDummyChapters(this.chaptersData);
+        this.slide = 0;
       } else {
         this.showMsg(response.data?.message, 'negative');
       }

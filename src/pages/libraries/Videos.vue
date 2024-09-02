@@ -511,6 +511,8 @@ export default {
     },
     getChaptersData() {
       this.chaptersLoader = true;
+      this.chapters = [];
+      this.allSlides=[];
       const formData = new FormData();
       formData.append("videoId", this.selectedSlide?.id);
 
@@ -569,8 +571,9 @@ export default {
             });
 
             this.getDummyChapters(this.chapters);
+            this.slide = 0;
           } else {
-            this.showMsg(response.data?.message, "negative");
+            // this.showMsg(response.data?.message, "negative");
           }
         })
         .catch((error) => {
