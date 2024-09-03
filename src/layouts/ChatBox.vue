@@ -61,10 +61,11 @@
                   d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5"
                 />
               </svg>
+
             </button>
-            <input id="fileInput"  name="file" type="file" class="hidden-input" ref="file" @change="onFileChange" accept=".jpg,.png">
+            <input id="fileInput"  name="file" type="file" class="hidden-input" ref="file" @change="onFileChange" accept=".jpg,.png" hidden>
             <button for="fileInput" class="upload-doc" @click="triggerFileInput">
-             <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" stroke="#fff"  width="24" height="24" viewBox="0 0 24 24"><path d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm6 13h-5v5h-2v-5h-5v-2h5v-5h2v5h5v2z"/></svg>
+              <q-icon name="add_circle" />
             </button>
     </div>
 
@@ -98,7 +99,7 @@ import { useSessionStore } from "src/stores/session";
 import { useProfileStore } from "src/stores/profile";
 import { Client } from '@stomp/stompjs';
 import axios from 'axios';
-
+import '@quasar/extras/material-icons/material-icons.css';
 
 export default {
   setup() {
@@ -603,8 +604,7 @@ sendMessage() {
     var index = Math.abs(hash % colors.length);
     return colors[index];
 },
-  },
-    startDragging(event) {
+startDragging(event) {
       this.isDragging = true;
       const chatbot = this.$refs.toggle_button;
       const boundingBox = chatbot.getBoundingClientRect();
@@ -626,6 +626,7 @@ sendMessage() {
       document.removeEventListener("mousemove", this.drag);
       document.removeEventListener("mouseup", this.stopDragging);
     },
+  },
   };
 </script>
 <style>
