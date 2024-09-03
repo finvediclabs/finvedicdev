@@ -38,6 +38,8 @@ export default {
       header: [
         { label: 'S.No', key: 'index', align: 'center' },
         { label: 'Cover', key: 'imageDownload', align: 'start', type: 'image' },
+        { label: 'Category Id', key: 'categoryId', align: 'start', width: '150px' },
+        { label: 'Display Order', key: 'displayOrder', align: 'start', width: '150px' },
         { label: 'Title', key: 'heading', align: 'start', width: '150px' },
         { label: 'Description', key: 'description', align: 'start', width: '250px' },
       ],
@@ -110,6 +112,7 @@ export default {
         cover: '',
         coverOld: '' ,
         categoryId: val.categoryId,
+        displayOrder:val.displayOrder,
         subCategoryId: val.subCategory
       };
       // console.log('Original Cover Path:', val.videoCoverPath);

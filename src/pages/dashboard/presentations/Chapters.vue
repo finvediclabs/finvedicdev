@@ -37,6 +37,7 @@ export default {
         { label: 'S.No', key: 'index', align: 'center' },
         { label: 'Cover', key: 'imageDownload', align: 'start', type: 'image' },
         { label: 'Title', key: 'chapterTitle', align: 'start', width: '150px' },
+        { label: 'Display Order', key: 'displayOrder', align: 'start', width: '150px' },
         { label: 'Description', key: 'description', align: 'start', width: '250px' },
       ],
       chaptersList: [],
@@ -123,6 +124,7 @@ export default {
         id: val.id,
         cover: '',
         coverOld: '' ,
+        displayOrder:val.displayOrder,
         file: val.presentationFilePath,
       };
           

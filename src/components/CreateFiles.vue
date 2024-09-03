@@ -71,6 +71,8 @@
               </div>
             </div>
 
+
+
             <div class="q-mx-auto" style="width: 200px;max-height: 300px;" v-if="chapter">
               <label class="text-weight-bolder">File </label>
               <div v-if="filePath" class="shadow-3 dropzone-container">
@@ -83,6 +85,15 @@
                 <span v-if="!files.length">{{ errors.file }}</span>
               </div>
             </div>
+
+            <div class="container_center">
+  <fin-portlet-item class="q-my-md" style="width: 50%;">
+    <q-input v-model="displayOrder" borderless type="number" label="Display Order" class="shadow-3 fin-br-8 q-px-sm bg-grey-2" />
+    <div class="errorMsgBox" style="height: 20px;font-size: 14px;">
+      <span v-if="!displayOrder && displayOrder !== 0">{{ errors.displayOrder }}</span>
+    </div>
+  </fin-portlet-item>
+</div>
 
           </div>
           <div class="col-12 col-lg-11 q-py-xl q-px-xl text-right">
@@ -144,6 +155,7 @@ export default {
       requiredCategory: true,
       parentKey: '',
       coverKey: '',
+      displayOrder: null,
       fileKey: '',
       files: [],
       filePath: '',
@@ -177,6 +189,7 @@ export default {
       this.filePath = item.file;
       this.selectedCategory.id = item.categoryId;
       this.selectedSubCategory.id = item.subCategoryId;
+      this.displayOrder = item.displayOrder ?? null;
     }
   },
   
@@ -195,6 +208,7 @@ export default {
       var request = {
         accountId: this.profile?.id,
         description: this.description,
+        displayOrder: this.displayOrder
       };
 
       request[this.coverKey] = this.coverPath;
@@ -213,6 +227,7 @@ export default {
 
       return request;
     },
+    
     validatePostData() {
       var errorsCount = 0;
       if (this.requiredCategory) {
@@ -230,6 +245,9 @@ export default {
 
       if (this.coverRequired) {
         (this.cover.length || this.coverPath) ? '' : errorsCount += 1;
+      }
+      if (this.displayOrder === null || isNaN(this.displayOrder) || this.displayOrder < 0) {
+        errorsCount += 1;
       }
       if (this.chapter) {
         (this.files.length || this.filePath) ? '' : errorsCount += 1;
@@ -262,6 +280,7 @@ export default {
 
     uploadImg() {
       if (!this.loading) {
+        
         this.loading = true;
         let formData = new FormData();
         formData.append('file', this.cover[0]);
@@ -297,6 +316,9 @@ export default {
       })
     },
     onSubmit() {
+      const requestData = this.getRequest();
+      console.log("Request Data before submitting:", requestData);
+
       this.$api.post(this.queryParams.url, this.getRequest()).then(response => {
         this.loading = false;
         if (response.data.success) {
@@ -313,6 +335,8 @@ export default {
     },
 
     updateData() {
+      const requestData = this.getRequest();
+      console.log("Request Data before updating:", requestData);
       this.$api.put(this.queryParams.url, this.getRequest()).then(response => {
         this.loading = false;
         if (response.data.success) {
@@ -364,5 +388,11 @@ export default {
   border-radius: 5px;
   border: 1px solid #a2a2a2;
   background-color: #a2a2a2;
+}
+.container_center {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  /* align-items: center; Center vertically (optional) */
+  height: 100%; 
 }
 </style>
