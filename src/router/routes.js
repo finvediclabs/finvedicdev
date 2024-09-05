@@ -95,6 +95,7 @@ const routes = [
         component: () => import('pages/dashboard/books/Books.vue'),
         meta: { item: 'books' }
       },
+      
       {
         path: 'books/chapter/:id',
         component: () => import('pages/dashboard/books/Chapters.vue'),
@@ -200,7 +201,20 @@ const routes = [
   //     }
   //   ]
   // },
-
+  
+  {
+    path: '/channel',
+    meta: { title: 'Channel', module: 'chaneel' },
+    component: () => import('layouts/DashboardLayout.vue'),
+    children: [
+      
+      {
+        path: '',
+        component: () => import('pages/dashboard/channel/ChatBox.vue'),
+        meta: { item: '' }
+      }
+    ]
+  },
   {
     path: '/help',
     meta: { title: 'Help', module: 'help' },

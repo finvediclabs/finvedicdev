@@ -1,99 +1,84 @@
 <template>
-  <div class="chatbot" :class="{ open: isOpen, maximized: isMaximized }">
-    <!-- Title bar -->
-    <div class="title-bar">
-      <div class="title">Chatbot</div>
-      <div class="buttons">
-        <button @click="minimizeChatbot">-</button>
-        <button @click="toggleMaximize">{{ maximizeIcon }}</button>
-        <button @click="closeChatbot">x</button>
-      </div>
+      <div class="header">
+      <div class="channelbtn active" @click="switchTab('channel')">Chat Channel</div>
+      <div class="mediabtn" @click="switchTab('media')">Media Channel</div>
     </div>
-    <div class="welcome-message" ref="welcomeMessage">
-      FinChat
-    </div>
+                   <!-- Image container (hidden by default) -->
+                   <div id="imageView" class="hidden">
+                      <span id="closeButton" class="close-btn" @click="hideImageView">&times;</span>
+                      <img id="viewImage" src="" alt="Full Size Image">
+                    </div>
+  <div class="container">
+          <div class="channelbox active">
+            <div id="chat-page">
+              <div class="chat-container-wrapper">
+                <div ref="scrollContainer" class="chat-container" v-scroll-bottom>
+                  <div>
+                    <div ref="connectingElement">Connecting...</div>
+                    <ul id="messageArea">
 
-    <div id="chat-page">
-    <div class="chat-container-wrapper">
-      <div ref="scrollContainer" class="chat-container" v-scroll-bottom>
-        <div>
-          <div ref="connectingElement">Connecting...</div>
-              <!-- Image container (hidden by default) -->
-          <div id="imageView" class="hidden">
-            <span id="closeButton" class="close-btn" @click="hideImageView">&times;</span>
-            <img id="viewImage" src="" alt="Full Size Image">
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Input field for user to type messages -->
+            <div class="input-container">
+                    <input
+                      type="text"
+                      v-model="newMessage"
+                      @keyup.enter="sendMessage"
+                      placeholder="Message"
+                      class="input-field"
+                      id="message"
+                      required
+                    />
+                    <button @click="sendMessage" class="send-button">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="icon icon-tabler icon-tabler-send"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        fill="none"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M10 14l11 -11" />
+                        <path
+                          d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5"
+                        />
+                      </svg>
+
+                    </button>
+                    <input id="fileInput"  name="file" type="file" class="hidden-input" ref="file" @change="onFileChange" accept=".jpg,.png" hidden>
+                    <button for="fileInput" class="upload-doc" @click="triggerFileInput">
+                      <q-icon name="add_circle" />
+                    </button>
+            </div>
+
           </div>
-          <ul id="messageArea">
 
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
+          <div class="mediabox">
+            <div id="chat-page">
+              <div class="chat-container-wrapper">
+                <div ref="scrollContainer" class="media-container" v-scroll-bottom>
+                  <div>
+                    <ul id="mediaArea">
 
-    <!-- Input field for user to type messages -->
-    <div class="input-container">
-            <input
-              type="text"
-              v-model="newMessage"
-              @keyup.enter="sendMessage"
-              placeholder="Message"
-              class="input-field"
-              id="message"
-              required
-            />
-            <button @click="sendMessage" class="send-button">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="icon icon-tabler icon-tabler-send"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M10 14l11 -11" />
-                <path
-                  d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5"
-                />
-              </svg>
-
-            </button>
-            <input id="fileInput"  name="file" type="file" class="hidden-input" ref="file" @change="onFileChange" accept=".jpg,.png" hidden>
-            <button for="fileInput" class="upload-doc" @click="triggerFileInput">
-              <q-icon name="add_circle" />
-            </button>
-    </div>
-
-
-    <!-- Button to toggle chatbot visibility -->
-    <button
-      class="toggle-button"
-      @click="toggleChatbox"
-      ref="toggle_button"
-      @mousedown="startDragging"
-    >
-      <template v-if="isOpen">
-        <q-img :src="ChatBoximg" alt="Monk Icon" style="background-color: red;" />
-      </template>
-      <template v-else>
-        <q-img
-          class="toggle-button-img"
-          :src="ChatBoximg"
-          alt="Person Icon"
-          style="transform: scaleX(-1);"
-        />
-      </template>
-    </button>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
   </div>
 </template>
 
 <script>
-import ChatBoximg from "../assets/ChatBox.webp";
 import { storeToRefs } from "pinia";
 import { useSessionStore } from "src/stores/session";
 import { useProfileStore } from "src/stores/profile";
@@ -102,6 +87,7 @@ import axios from 'axios';
 import '@quasar/extras/material-icons/material-icons.css';
 
 export default {
+  name: 'ContainerComponent',
   setup() {
     const session = useSessionStore();
     const { token, userType } = storeToRefs(session);
@@ -120,7 +106,6 @@ export default {
       uploadedFile: null,
       filePreviewUrl: "",
       isOpen: false,
-      ChatBoximg: ChatBoximg,
       newMessage: "",
       maximizeIcon: "□",
       messages: [],
@@ -140,6 +125,21 @@ export default {
     this.getAllMessages();
   },
   methods: {
+    switchTab(tab) {
+      // Remove 'active' class from both tabs
+      document.querySelector('.channelbtn').classList.remove('active');
+      document.querySelector('.mediabtn').classList.remove('active');
+      
+      // Hide both content areas
+      document.querySelector('.channelbox').classList.remove('active');
+      document.querySelector('.mediabox').classList.remove('active');
+      
+      // Add 'active' class to the selected tab
+      document.querySelector(`.${tab}btn`).classList.add('active');
+      
+      // Show the corresponding content area
+      document.querySelector(`.${tab}box`).classList.add('active');
+    },
     triggerFileInput() {
       this.$refs.file.click();
     },
@@ -189,6 +189,7 @@ export default {
       if (response.data&& Array.isArray(response.data)) {
         this.messages = response.data;
         this.displayMessages();
+        this.displayMedia();
       }
       else{
         console.log("No Messages")
@@ -207,6 +208,69 @@ showImageView(url) {
 hideImageView() {
   const imageView = document.getElementById('imageView');
   imageView.classList.add('hidden');
+},
+displayMedia(){
+  this.messages.forEach(receivedMessage => {
+        if (receivedMessage.message.includes("fs/download")) {
+          console.log(receivedMessage)
+          const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+          const getImagesUrl = baseUrl + 'fs/download';
+          const removeImagePath = baseUrl + 'fs/download/';
+          const imagePathWithoutPrefix = receivedMessage.message.replace(removeImagePath, '');
+          
+          const formData = new FormData();
+          formData.append('filename', imagePathWithoutPrefix);
+          formData.append('sender',receivedMessage.username)
+
+          axios.post(getImagesUrl, formData, { responseType: 'blob' })
+              .then(downloadResponse => {
+                  // Handle download success, e.g., open or save the downloaded file
+                  const blob = new Blob([downloadResponse.data]);
+                  const url = window.URL.createObjectURL(blob);
+
+                  // Create a new list item for the image message
+                  var mediaArea = document.querySelector('#mediaArea');
+                  var messageElement = document.createElement('li');
+                  messageElement.classList.add('chat-message');
+
+                  var avatarElement = document.createElement('i');
+                  var avatarText = document.createTextNode(receivedMessage.username[0]);
+                  avatarElement.appendChild(avatarText);
+                  avatarElement.style['background-color'] = this.getAvatarColor(receivedMessage.username);
+
+                  messageElement.appendChild(avatarElement);
+
+                  var usernameElement = document.createElement('div');
+                  usernameElement.style.fontWeight="bold"
+                  var usernameText = document.createTextNode(receivedMessage.username);
+                  usernameElement.appendChild(usernameText);
+                  messageElement.appendChild(usernameElement);
+
+                  // Create the image element
+                  var mediaElement = document.createElement('img');
+                  mediaElement.src = url; // Set the source of the image to the blob URL
+                  mediaElement.alt = 'Downloaded Image';
+                  mediaElement.style.maxWidth = '200px'; // Adjust the image size as needed
+                  mediaElement.style.borderRadius = '5px'; 
+                  mediaElement.addEventListener('click', () => {
+                    this.showImageView(url);
+                  });
+
+                  messageElement.appendChild(mediaElement);
+
+                  mediaArea.appendChild(messageElement);
+                  mediaArea.scrollTop = mediaArea.scrollHeight;
+
+                  formData.append('filename', "");
+              })
+              .then(() => {
+                  console.log('Post request successful');
+              })
+              .catch(error => {
+                  console.error('Error in post request:', error);
+                });
+      }
+    })
 },
   displayMessages() {
     if(Array.isArray(this.messages)){
@@ -240,7 +304,8 @@ hideImageView() {
 
                   messageElement.appendChild(avatarElement);
 
-                  var usernameElement = document.createElement('span');
+                  var usernameElement = document.createElement('div');
+                  usernameElement.style.fontWeight="bold"
                   var usernameText = document.createTextNode(receivedMessage.username);
                   usernameElement.appendChild(usernameText);
                   messageElement.appendChild(usernameElement);
@@ -250,7 +315,7 @@ hideImageView() {
                   imageElement.src = url; // Set the source of the image to the blob URL
                   imageElement.alt = 'Downloaded Image';
                   imageElement.style.maxWidth = '200px'; // Adjust the image size as needed
-                  imageElement.style.borderRadius = '5px'; // Optional styling
+                  imageElement.style.borderRadius = '5px'; 
                   imageElement.addEventListener('click', () => {
                     this.showImageView(url);
                   });
@@ -269,8 +334,9 @@ hideImageView() {
                   console.error('Error in post request:', error);
                 });
       }
-      else{
+      else if(!receivedMessage.message.includes("fs/download")){
 
+      console.log(receivedMessage)
       var messageArea = document.querySelector('#messageArea');
       var messageElement = document.createElement('li');
       messageElement.classList.add('chat-message');
@@ -366,6 +432,7 @@ hideImageView() {
       });
 
       if (this.isWebSocketOpen) {
+        console.log("Web Socket is open to communicate")
         this.stompClient.publish({destination: '/app/chat.register', body: joinMessage});
         this.$refs.connectingElement.classList.add("hidden");
       }
@@ -407,7 +474,8 @@ hideImageView() {
 
                 messageElement.appendChild(avatarElement);
 
-                var usernameElement = document.createElement('span');
+                var usernameElement = document.createElement('div');
+                usernameElement.style.fontWeight="bold";
                 var usernameText = document.createTextNode(receivedMessage.sender);
                 usernameElement.appendChild(usernameText);
                 messageElement.appendChild(usernameElement);
@@ -426,6 +494,7 @@ hideImageView() {
 
                 messageArea.appendChild(messageElement);
                 messageArea.scrollTop = messageArea.scrollHeight;
+
 
                 formData.append('filename', "");
             })
@@ -604,33 +673,10 @@ sendMessage() {
     var index = Math.abs(hash % colors.length);
     return colors[index];
 },
-startDragging(event) {
-      this.isDragging = true;
-      const chatbot = this.$refs.toggle_button;
-      const boundingBox = chatbot.getBoundingClientRect();
-      this.xOffset = event.clientX - boundingBox.left;
-      this.yOffset = event.clientY - boundingBox.top;
-
-      document.addEventListener("mousemove", this.drag);
-      document.addEventListener("mouseup", this.stopDragging);
-    },
-    drag(event) {
-      if (!this.isDragging) return;
-
-      const chatbot = this.$refs.toggle_button;
-      chatbot.style.left = `${event.clientX - this.xOffset}px`;
-      chatbot.style.top = `${event.clientY - this.yOffset}px`;
-    },
-    stopDragging() {
-      this.isDragging = false;
-      document.removeEventListener("mousemove", this.drag);
-      document.removeEventListener("mouseup", this.stopDragging);
-    },
-  },
+  }
   };
 </script>
 <style>
-
 .emoji-container {
   position: absolute;
   bottom: 10px; 
@@ -640,6 +686,16 @@ startDragging(event) {
   padding: 5px;
   border-radius: 5px;
   display: none; 
+}
+/* Style for the close button */
+.close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 2rem;
+  color: white;
+  cursor: pointer;
+  user-select: none;
 }
 
 /* Style for each emoji button */
@@ -662,10 +718,10 @@ startDragging(event) {
 /* Style for the hidden view container */
 #imageView {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 20%;
+  left: 20%;
+  width: 50%;
+  height: 50%;
   background: rgba(0, 0, 0, 0.8);
   display: flex;
   justify-content: center;
@@ -678,21 +734,10 @@ startDragging(event) {
   display: none;
 }
 
-/* Style for the close button */
-.close-btn {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  font-size: 2rem;
-  color: white;
-  cursor: pointer;
-  user-select: none;
-}
-
 /* Style for the image inside the view */
 #viewImage {
-  max-width: 90%;
-  max-height: 90%;
+  max-width: 50%;
+  max-height: 50%;
 }
 
 #chat-page .chat-message span {
@@ -754,10 +799,72 @@ startDragging(event) {
 #chat-page .chat-message p {
     color: #43464b;
 }
-</style>
- <style scoped>
 
- .message-container {
+</style>
+<style scoped>
+/* Header Styles */
+.header {
+  display: flex;
+  justify-content: space-between;
+  background-color: white;
+  padding-top: 40px;
+  padding-left: 40px;
+  color: #7289da;
+  width: 130vh;
+  flex-direction: row;
+}
+
+.header .channelbtn,
+.header .mediabtn {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.header .channelbtn.active,
+.header .mediabtn.active {
+  background-color: #7289da; /* Active tab color */
+  color: white;
+  border-radius: 20px;
+}
+
+.header .channelbtn:hover,
+.header .mediabtn:hover {
+  background-color: #8899d8; /* Hover color */
+  color: white;
+  border-radius: 20px;
+}
+
+/* Channelbox and Mediabox Styles */
+.channelbox,
+.mediabox {
+  flex-grow: 1;
+  display: none;
+}
+
+.channelbox.active,
+.mediabox.active {
+  display: block;
+}
+
+.container {
+  width: 130vh;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  background-color: #f9f9f9;
+  display: flex;
+  justify-content: space-between;
+  margin: 40px;
+  height: 68vh; 
+  flex-direction: column;
+}
+
+.message-container {
   display: flex;
   align-items: center;
   margin-bottom: 10px; /* Adjust margin as needed */
@@ -803,69 +910,27 @@ startDragging(event) {
    margin-left: 8px;
  }
  
- .buttons button:hover {
-   opacity: 0.8;
- }
- .chatbot {
-   position: fixed;
-   bottom: 0px;
-   right: 0px;
-   z-index: 9999;
- }
- .chatbot.open.maximized {
-   width: 100%;
-   height: 100%;
-   bottom: 0;
-   right: 0;
- }
- .chatbot.open.maximized .chat-container{
-   min-width: 100vw;
-   min-height: 84vh;
-   /* border: 2px solid black; */
-   /* max-height: 90vh; */
- }
-
- .chatbot.open .title-bar{
-   display: flex;
-   
-   padding: 2px 4px;
- }
- .chatbot.open .toggle-button{
-   display: none;
- }
  .chat-container {
-   background-color: #fff;
-   border: 2px solid #5479f7;;
-   display: none;
-   max-height: 400px;
+   background-color:transparent;
+   border-radius: 20px;
+   max-height: 420px;
    visibility: visible;
    height: 500px; /* Limit height to enable scrolling */
    overflow-y: auto; /* Enable vertical scrolling */
-   width: 300px; /* Fixed width */
+   width: 950px;/* Fixed width */
    position: relative; /* Establish positioning context */
  }
- 
- .chatbot.open .chat-container {
-   display: block;
+
+ .media-container {
+   background-color:transparent;
+   border-radius: 20px;
+   max-height: 470px;
+   visibility: visible;
+   height: 500px; /* Limit height to enable scrolling */
+   overflow-y: auto; /* Enable vertical scrolling */
+   width: 950px;/* Fixed width */
+   position: relative; /* Establish positioning context */
  }
- .chatbot.open .monk-image{
-   display: block;
- }
- .chatbot.open  .welcome-message{
-  display: block;
- }
- .chatbot.open .input-container{
-  display: flex;
- }
- .welcome-message {
-  font-size: 14px;
-  text-align: center;
-  font-weight: 600;
-  background-color: #96aeff;
-  color: #ffff;
-  padding: 2%;
-  display: none;
-}
 
  .messages {
    margin-bottom: 10px;
@@ -877,126 +942,22 @@ startDragging(event) {
   align-items: center;
   margin-bottom: 10px;
 }
-.user-icon img {
-  width: 30px; /* Adjust size as needed */
-  height: 30px; /* Adjust size as needed */
-  border-radius: 50%;
-  margin-right: 10px;
-}
-
 .text {
   flex: 1;
    /* Adjust as needed */
 }
 
-.monk-icon img {
-  width: 30px; /* Adjust size as needed */
-  height: 30px; /* Adjust size as needed */
-  border-radius: 50%;
-  margin-left: 10px;
-}
-
-/* Adjustments for maximized screen */
-.chatbot.open.maximized .text {
-  max-width: calc(100% - 150px); /* Adjust as needed based on the width of user icon and monk icon */
-}
-
  
- .toggle-button {
-   position: fixed;
-   bottom: 20px;
-   right: 100px; 
-   width: 80px;
-   height: 70px;
-   background-color: transparent;
-   border: none;
-   cursor: pointer;
-   z-index: 9999999;
-}
- 
- .toggle-button-img {
-   width: 100%;
-   height: 100%;
-   border-radius: 50%;
- }
- 
- .toggle-button:focus {
-   outline: none;
- }
- .chatbot.open.maximized  .input-container{
-    min-height: 6vh;
-    max-height: 6vh;
-   min-width: 100vw;
-   margin: 0px 0px;
-   display: flex;
-   position: fixed;
-   bottom: 0;
-   /* margin-left: 1.1%; */
-   
-   
- }
- .chatbot.open.maximized .input-field{
-  
-   border-radius: 0px;
-  
-
- }
-
- .chatbot.open.maximized .welcome-message{
-  font-size: 32px;
-  padding: 1%;
- }
- 
- .chatbot.open.maximized .chat-container-wrapper {
-   /* Space for scrollbar */
-   overflow: hidden; /* Hide overflow */
- }
- 
- .chatbot.open.maximized .chat-container::-webkit-scrollbar {
-   width: 8px; /* Width of the scrollbar */
-   height: 8px; /* Height of the scrollbar */
- }
- 
- /* Track */
- .chatbot.open.maximized .chat-container::-webkit-scrollbar-track {
-   background: #f1f1f1; /* Color of the track */
-   border-radius: 20px; /* Rounded corners */
- }
-
- 
- 
- /* Handle */
- .chatbot.open.maximized .chat-container::-webkit-scrollbar-thumb {
-   background: #7f9af3; /* Color of the handle */
-   border-radius: 20px; /* Rounded corners */
- }
- 
- /* Handle on hover */
- .chatbot.open.maximized .chat-container::-webkit-scrollbar-thumb:hover {
-   background: #5479F7; /* Darker handle color on hover */
- }
- 
-
- .chatbot.open.maximized .send-button{
-  border-radius: 0px;
-
- }
- .chatbot.open.maximized .monk-image{
-   display: none;
- }
  .input-container {
-  
-   width: 300px;
-   bottom: 0; /* Align to the bottom */
-   margin: 0px 0px; /* Add margin for better spacing */
-   display: none; /* Use flexbox for layout */
-   border-bottom-left-radius: 20px;
-   border-bottom-right-radius: 20px;
+  display: flex;
+  align-items: center;
+   width: 920px;
+   bottom: 0; 
  }
  
  .input-field {
-   flex: 1; /* Take remaining space */
-   border: 2px solid #5479F7;
+   flex: 1;
+   border-radius: 20px;
    outline: none;
    height: 40px;
    width: 300px;
@@ -1006,7 +967,9 @@ startDragging(event) {
  .send-button {
    width: 40px; /* Adjust button width */
    height: 40px;
+   margin: 10px;
    background-color: #5479F7;
+   border-radius: 50%;
    border: none;
    color: white;
    cursor: pointer;
@@ -1014,9 +977,16 @@ startDragging(event) {
    justify-content: center; /* Center icon horizontally */
    align-items: center; /* Center icon vertically */
  }
+.send-button:hover{
+  opacity: 0.8;
+ }
+ .upload-doc:hover{
+  opacity: 0.8;
+ }
  .upload-doc {
    width: 40px; /* Adjust button width */
    height: 40px;
+   border-radius: 50%;
    background-color: #1d3892;
    border: none;
    color: white;
@@ -1068,5 +1038,5 @@ startDragging(event) {
  
  /* Other styles remain unchanged */
  
- </style>
- 
+
+</style>

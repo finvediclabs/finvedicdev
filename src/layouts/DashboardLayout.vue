@@ -189,13 +189,12 @@ import { useSessionStore } from "src/stores/session";
 import { setToken } from "src/boot/axios"
 import { useProfileStore } from "src/stores/profile";
 import profileImg from "src/assets/profile.png";
-
 import Chatbot from "src/layouts/ChatBot.vue";
-import Chatbox from "src/layouts/ChatBox.vue";
+//import Chatbox from "../pages/dashboard/channel/ChatBox.vue";
 export default {
   components: {
     Chatbot,
-    Chatbox
+    //Chatbox
   },
   name: 'dashboard-layout',
   setup() {
@@ -242,6 +241,11 @@ export default {
       //      icon: 'summarize', label: 'Reports', value: 'reports', 
          
       //  },
+      {
+           icon: 'chat', label: 'Channel', value: 'channel', 
+         
+       },
+      
         {
            icon: 'help', label: 'Help', value: 'help', 
          
@@ -256,7 +260,7 @@ export default {
       defaultPath: "/library/books",
       guestAccess: [ "library"],
       userAccess: [ "labs", "library"],
-      allAccess:["watch-video","read-pdf","watch-ppt","profile","help"]
+      allAccess:["watch-video","read-pdf","watch-ppt","channel","profile","help"]
     }
   },
   computed: {
@@ -478,7 +482,7 @@ showMsg(message, type) {
           role: this.user.roles ? this.user.roles[0] : [],
           //owner: user.owner,
       };
-console.log(this.profile);
+//console.log(this.profile);
    if (this.userType === 'Student'&& Object.values(this.profile).some(value => value === null || value === undefined)) {
            this.$router.push('/profile');
     }
