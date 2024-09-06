@@ -5,14 +5,14 @@
     </div>
                    <!-- Image container (hidden by default) -->
                    <div id="imageView" class="hidden">
-                      <span id="closeButton" class="close-btn" @click="hideImageView">&times;</span>
                       <img id="viewImage" src="" alt="Full Size Image">
+                      <div id="closeButton" class="close-btn" @click="hideImageView">&times;</div>
                     </div>
   <div class="container">
           <div class="channelbox active">
             <div id="chat-page">
               <div class="chat-container-wrapper">
-                <div ref="scrollContainer" class="chat-container" v-scroll-bottom>
+                <div ref="chatscrollContainer" class="chat-container" v-scroll-bottom>
                   <div>
                     <div ref="connectingElement">Connecting...</div>
                     <ul id="messageArea">
@@ -65,7 +65,7 @@
           <div class="mediabox">
             <div id="chat-page">
               <div class="chat-container-wrapper">
-                <div ref="scrollContainer" class="media-container" v-scroll-bottom>
+                <div ref="mediascrollContainer" class="media-container" v-scroll-bottom>
                   <div>
                     <ul id="mediaArea">
 
@@ -153,9 +153,6 @@ export default {
         this.newMessage =file.name;
     }
   },
-    toggleChatbox() {
-      this.isOpen = !this.isOpen;
-    },
     getUserData() {
       this.$api.get(`api/users/${this.user.id}`).then((response) => {
         if (response.data.success) {
@@ -164,23 +161,12 @@ export default {
         }
       });
     },
-    minimizeChatbot() {
-      this.isOpen = false;
-    },
-    toggleMaximize() {
-      this.isMaximized = !this.isMaximized;
-      this.maximizeIcon = this.isMaximized ? "▢" : "□";
-      const welcomeMessage = this.$refs.welcomeMessage;
-      welcomeMessage.innerHTML = this.isMaximized ? "FinChat" : this.originalWelcomeMessage;
-      document.body.classList.toggle("no-scroll", this.isMaximized);
-    },
-    closeChatbot() {
-      this.isOpen = false;
-    },
     scrollToBottom() {
     this.$nextTick(() => {
-      const container = this.$refs.scrollContainer;
-      container.scrollTop = container.scrollHeight;
+      const chatcontainer = this.$refs.chatscrollContainer;
+      chatcontainer.scrollTop = chatcontainer.scrollHeight;
+      const mediacontainer = this.$refs.mediascrollContainer;
+      mediacontainer.scrollTop = mediacontainer.scrollHeight;
     });
 },
     async getAllMessages() {
@@ -212,7 +198,6 @@ hideImageView() {
 displayMedia(){
   this.messages.forEach(receivedMessage => {
         if (receivedMessage.message.includes("fs/download")) {
-          console.log(receivedMessage)
           const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
           const getImagesUrl = baseUrl + 'fs/download';
           const removeImagePath = baseUrl + 'fs/download/';
@@ -222,36 +207,37 @@ displayMedia(){
           formData.append('filename', imagePathWithoutPrefix);
           formData.append('sender',receivedMessage.username)
 
+         // Create a new list item for the image message
+          var mediaArea = document.querySelector('#mediaArea');
+          var messageElement = document.createElement('li');
+          messageElement.classList.add('chat-message');
+
+          var avatarElement = document.createElement('i');
+          var avatarText = document.createTextNode(receivedMessage.username[0]);
+          avatarElement.appendChild(avatarText);
+          avatarElement.style['background-color'] = this.getAvatarColor(receivedMessage.username);
+
+          messageElement.appendChild(avatarElement);
+
+          var usernameElement = document.createElement('div');
+          usernameElement.style.fontWeight="bold"
+          var usernameText = document.createTextNode(receivedMessage.username);
+          usernameElement.appendChild(usernameText);
+          messageElement.appendChild(usernameElement);
+
+           // Create the image element
+          var mediaElement = document.createElement('img');
+          mediaElement.style.maxWidth = '200px'; // Adjust the image size as needed
+          mediaElement.style.borderRadius = '5px'; 
+
           axios.post(getImagesUrl, formData, { responseType: 'blob' })
               .then(downloadResponse => {
                   // Handle download success, e.g., open or save the downloaded file
                   const blob = new Blob([downloadResponse.data]);
                   const url = window.URL.createObjectURL(blob);
 
-                  // Create a new list item for the image message
-                  var mediaArea = document.querySelector('#mediaArea');
-                  var messageElement = document.createElement('li');
-                  messageElement.classList.add('chat-message');
-
-                  var avatarElement = document.createElement('i');
-                  var avatarText = document.createTextNode(receivedMessage.username[0]);
-                  avatarElement.appendChild(avatarText);
-                  avatarElement.style['background-color'] = this.getAvatarColor(receivedMessage.username);
-
-                  messageElement.appendChild(avatarElement);
-
-                  var usernameElement = document.createElement('div');
-                  usernameElement.style.fontWeight="bold"
-                  var usernameText = document.createTextNode(receivedMessage.username);
-                  usernameElement.appendChild(usernameText);
-                  messageElement.appendChild(usernameElement);
-
-                  // Create the image element
-                  var mediaElement = document.createElement('img');
                   mediaElement.src = url; // Set the source of the image to the blob URL
                   mediaElement.alt = 'Downloaded Image';
-                  mediaElement.style.maxWidth = '200px'; // Adjust the image size as needed
-                  mediaElement.style.borderRadius = '5px'; 
                   mediaElement.addEventListener('click', () => {
                     this.showImageView(url);
                   });
@@ -272,126 +258,103 @@ displayMedia(){
       }
     })
 },
-  displayMessages() {
-    if(Array.isArray(this.messages)){
-      this.messages.forEach(receivedMessage => {
-        if (receivedMessage.message.includes("fs/download")) {
-          console.log(receivedMessage)
-          const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-          const getImagesUrl = baseUrl + 'fs/download';
-          const removeImagePath = baseUrl + 'fs/download/';
-          const imagePathWithoutPrefix = receivedMessage.message.replace(removeImagePath, '');
-          
-          const formData = new FormData();
-          formData.append('filename', imagePathWithoutPrefix);
-          formData.append('sender',receivedMessage.username)
+displayMessages() {
+  if (Array.isArray(this.messages)) {
+    this.messages.forEach(receivedMessage => {
+      const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+      const getImagesUrl = baseUrl + 'fs/download';
+      const removeImagePath = baseUrl + 'fs/download/';
 
-          axios.post(getImagesUrl, formData, { responseType: 'blob' })
-              .then(downloadResponse => {
-                  // Handle download success, e.g., open or save the downloaded file
-                  const blob = new Blob([downloadResponse.data]);
-                  const url = window.URL.createObjectURL(blob);
-
-                  // Create a new list item for the image message
-                  var messageArea = document.querySelector('#messageArea');
-                  var messageElement = document.createElement('li');
-                  messageElement.classList.add('chat-message');
-
-                  var avatarElement = document.createElement('i');
-                  var avatarText = document.createTextNode(receivedMessage.username[0]);
-                  avatarElement.appendChild(avatarText);
-                  avatarElement.style['background-color'] = this.getAvatarColor(receivedMessage.username);
-
-                  messageElement.appendChild(avatarElement);
-
-                  var usernameElement = document.createElement('div');
-                  usernameElement.style.fontWeight="bold"
-                  var usernameText = document.createTextNode(receivedMessage.username);
-                  usernameElement.appendChild(usernameText);
-                  messageElement.appendChild(usernameElement);
-
-                  // Create the image element
-                  var imageElement = document.createElement('img');
-                  imageElement.src = url; // Set the source of the image to the blob URL
-                  imageElement.alt = 'Downloaded Image';
-                  imageElement.style.maxWidth = '200px'; // Adjust the image size as needed
-                  imageElement.style.borderRadius = '5px'; 
-                  imageElement.addEventListener('click', () => {
-                    this.showImageView(url);
-                  });
-
-                  messageElement.appendChild(imageElement);
-
-                  messageArea.appendChild(messageElement);
-                  messageArea.scrollTop = messageArea.scrollHeight;
-
-                  formData.append('filename', "");
-              })
-              .then(() => {
-                  console.log('Post request successful');
-              })
-              .catch(error => {
-                  console.error('Error in post request:', error);
-                });
-      }
-      else if(!receivedMessage.message.includes("fs/download")){
-
-      console.log(receivedMessage)
-      var messageArea = document.querySelector('#messageArea');
-      var messageElement = document.createElement('li');
+      // Create a new list item for the message (whether it's text or image)
+      const messageArea = document.querySelector('#messageArea');
+      const messageElement = document.createElement('li');
       messageElement.classList.add('chat-message');
 
-      var avatarElement = document.createElement('i');
-      var avatarText = document.createTextNode(receivedMessage.username[0]);
+      const avatarElement = document.createElement('i');
+      const avatarText = document.createTextNode(receivedMessage.username[0]);
       avatarElement.appendChild(avatarText);
       avatarElement.style['background-color'] = this.getAvatarColor(receivedMessage.username);
 
       messageElement.appendChild(avatarElement);
 
-      var usernameElement = document.createElement('span');
-      var usernameText = document.createTextNode(receivedMessage.username);
+      const usernameElement = document.createElement('div');
+      const usernameText = document.createTextNode(receivedMessage.username);
       usernameElement.appendChild(usernameText);
+      usernameElement.style.fontWeight = "bold";
       messageElement.appendChild(usernameElement);
-      receivedMessage.avatarColor = this.getAvatarColor(receivedMessage.username);
 
-      var textElement = document.createElement('p');
-      var messageText = document.createTextNode(receivedMessage.message);
-      textElement.appendChild(messageText);
-      messageElement.appendChild(textElement);
+      if (receivedMessage.message.includes("fs/download")) {
+        const imagePathWithoutPrefix = receivedMessage.message.replace(removeImagePath, '');
 
-      var emojiElement = document.createElement('div');
-        var emojiText = document.createTextNode("");
+        // Create a placeholder for the image
+        const imageElement = document.createElement('img');
+        imageElement.alt = 'Loading Image...';
+        imageElement.style.maxWidth = '200px';
+        imageElement.style.borderRadius = '5px';
+        messageElement.appendChild(imageElement);
+        messageArea.appendChild(messageElement);
+        messageArea.scrollTop = messageArea.scrollHeight;
+
+        // Download the image
+        const formData = new FormData();
+        formData.append('filename', imagePathWithoutPrefix);
+        formData.append('sender', receivedMessage.username);
+
+        axios.post(getImagesUrl, formData, { responseType: 'blob' })
+          .then(downloadResponse => {
+            // Handle download success, e.g., open or save the downloaded file
+            const blob = new Blob([downloadResponse.data]);
+            const url = window.URL.createObjectURL(blob);
+
+            // Update the image element with the actual image
+            imageElement.src = url;
+            imageElement.alt = 'Downloaded Image';
+            imageElement.addEventListener('click', () => {
+              this.showImageView(url);
+            });
+          })
+          .catch(error => {
+            console.error('Error in image download:', error);
+            imageElement.alt = 'Failed to load image';
+          });
+      } else {
+        // Text message
+        const textElement = document.createElement('p');
+        const messageText = document.createTextNode(receivedMessage.message);
+        textElement.appendChild(messageText);
+        messageElement.appendChild(textElement);
+
+        // Add reactions area
+        const emojiElement = document.createElement('div');
+        const emojiText = document.createTextNode("");
         emojiElement.append(emojiText);
         emojiElement.classList.add("Reactionarea");
         messageElement.appendChild(emojiElement);
 
-            const emojiContainer = document.createElement('div');
-            emojiContainer.classList.add('emoji-container');
+        const emojiContainer = document.createElement('div');
+        emojiContainer.classList.add('emoji-container');
+        const emojis = ['👍'];
+        
+        emojis.forEach(emoji => {
+          const emojiBtn = document.createElement('span');
+          emojiBtn.classList.add('emoji-btn');
+          emojiBtn.textContent = emoji;
+          emojiContainer.appendChild(emojiBtn);
+          emojiBtn.addEventListener("click", () => {
+            emojiText.textContent = `${this.username} reacted ${emoji}`;
+            this.sendReaction(receivedMessage.username, receivedMessage.message, `${this.username} reacted ${emoji}`);
+          });
+        });
 
-            // List of emojis
-            const emojis = ['👍'];
-            
-            emojis.forEach(emoji => {
-              const emojiBtn = document.createElement('span');
-              emojiBtn.classList.add('emoji-btn');
-              emojiBtn.textContent = emoji;
-              emojiContainer.appendChild(emojiBtn);
-              emojiBtn.addEventListener("click",()=>{
-                emojiText.textContent=`${this.username} reacted ${emoji}`;
-                this.sendReaction(receivedMessage.username,receivedMessage.message,`${this.username} reacted ${emoji}`);
-              })
-            });
-
-            messageElement.appendChild(emojiContainer);
-
-      messageArea.appendChild(messageElement);
-    }
-  });
+        messageElement.appendChild(emojiContainer);
+        messageArea.appendChild(messageElement);
+        messageArea.scrollTop = messageArea.scrollHeight;
+      }
+    });
 
     this.scrollToBottom();
-
   }
-  },
+},
     connect(username) {
       if (username) {
         this.username = username;
@@ -445,89 +408,75 @@ displayMedia(){
     },
     onMessageReceived(message) {
     const receivedMessage = JSON.parse(message.body);
-    console.log(receivedMessage)
-    // Check if the message contains a download link
+    console.log(receivedMessage);
+
+    const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+    const getImagesUrl = baseUrl + 'fs/download';
+    const removeImagePath = baseUrl + 'fs/download/';
+
+    // Create a new list item for the message (whether it's text or image)
+    var messageArea = document.querySelector('#messageArea');
+    var messageElement = document.createElement('li');
+    messageElement.classList.add('chat-message');
+
+    var avatarElement = document.createElement('i');
+    var avatarText = document.createTextNode(receivedMessage.sender[0]);
+    avatarElement.appendChild(avatarText);
+    avatarElement.style['background-color'] = this.getAvatarColor(receivedMessage.sender);
+
+    messageElement.appendChild(avatarElement);
+
+    var usernameElement = document.createElement('div');
+    usernameElement.style.fontWeight = "bold";
+    var usernameText = document.createTextNode(receivedMessage.sender);
+    usernameElement.appendChild(usernameText);
+    messageElement.appendChild(usernameElement);
+
     if (receivedMessage.content && receivedMessage.content.includes("fs/download")) {
-        const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-        const getImagesUrl = baseUrl + 'fs/download';
-        const removeImagePath = baseUrl + 'fs/download/';
         const imagePathWithoutPrefix = receivedMessage.content.replace(removeImagePath, '');
-        
         const formData = new FormData();
         formData.append('filename', imagePathWithoutPrefix);
 
+        // Create a placeholder for the image
+        var imageElement = document.createElement('img');
+        imageElement.alt = 'Loading Image...';
+        imageElement.style.maxWidth = '200px';
+        imageElement.style.borderRadius = '5px';
+        messageElement.appendChild(imageElement);
+
+        // Append message before the image is downloaded
+        messageArea.appendChild(messageElement);
+        messageArea.scrollTop = messageArea.scrollHeight;
+
+        // Download the image
         axios.post(getImagesUrl, formData, { responseType: 'blob' })
             .then(downloadResponse => {
-                // Handle download success, e.g., open or save the downloaded file
                 const blob = new Blob([downloadResponse.data]);
                 const url = window.URL.createObjectURL(blob);
 
-                // Create a new list item for the image message
-                var messageArea = document.querySelector('#messageArea');
-                var messageElement = document.createElement('li');
-                messageElement.classList.add('chat-message');
-
-                var avatarElement = document.createElement('i');
-                var avatarText = document.createTextNode(receivedMessage.sender[0]);
-                avatarElement.appendChild(avatarText);
-                avatarElement.style['background-color'] = this.getAvatarColor(receivedMessage.sender);
-
-                messageElement.appendChild(avatarElement);
-
-                var usernameElement = document.createElement('div');
-                usernameElement.style.fontWeight="bold";
-                var usernameText = document.createTextNode(receivedMessage.sender);
-                usernameElement.appendChild(usernameText);
-                messageElement.appendChild(usernameElement);
-
-                // Create the image element
-                var imageElement = document.createElement('img');
-                imageElement.src = url; // Set the source of the image to the blob URL
+                // Update the image element with the actual image
+                imageElement.src = url;
                 imageElement.alt = 'Downloaded Image';
-                imageElement.style.maxWidth = '200px'; // Adjust the image size as needed
-                imageElement.style.borderRadius = '5px'; // Optional styling
                 imageElement.addEventListener('click', () => {
                     this.showImageView(url);
                 });
 
-                messageElement.appendChild(imageElement);
-
-                messageArea.appendChild(messageElement);
                 messageArea.scrollTop = messageArea.scrollHeight;
-
-
-                formData.append('filename', "");
-            })
-            .then(() => {
-                console.log('Post request successful');
             })
             .catch(error => {
-                console.error('Error in post request:', error);
+                console.error('Error in image download:', error);
                 this.showMsg(error.response?.data.message || error.message, 'negative');
             });
-    }
-    else if (receivedMessage.content && receivedMessage.reaction===null) {
-        var messageArea = document.querySelector('#messageArea');
-        var messageElement = document.createElement('li');
-        messageElement.classList.add('chat-message');
 
-        var avatarElement = document.createElement('i');
-        var avatarText = document.createTextNode(receivedMessage.sender[0]);
-        avatarElement.appendChild(avatarText);
-        avatarElement.style['background-color'] = this.getAvatarColor(receivedMessage.sender);
+        this.scrollToBottom();
+        this.getAllMessages();
+        this.displayMedia();
 
-        messageElement.appendChild(avatarElement);
-
-        var usernameElement = document.createElement('span');
-        var usernameText = document.createTextNode(receivedMessage.sender);
-        usernameElement.appendChild(usernameText);
-        messageElement.appendChild(usernameElement);
-        receivedMessage.avatarColor = this.getAvatarColor(receivedMessage.sender);
-
+    } else if (receivedMessage.content && receivedMessage.reaction === null) {
+        // Handle regular text message
         var textElement = document.createElement('p');
         var messageText = document.createTextNode(receivedMessage.content);
         textElement.appendChild(messageText);
-
         messageElement.appendChild(textElement);
 
         var emojiElement = document.createElement('div');
@@ -537,30 +486,26 @@ displayMedia(){
         messageElement.appendChild(emojiElement);
 
         const emojiContainer = document.createElement('div');
-            emojiContainer.classList.add('emoji-container');
+        emojiContainer.classList.add('emoji-container');
+        const emojis = ['👍'];
 
-            // List of emojis
-            const emojis = ['👍'];
-            
-            emojis.forEach(emoji => {
-              const emojiBtn = document.createElement('span');
-              emojiBtn.classList.add('emoji-btn');
-              emojiBtn.textContent = emoji;
-              emojiBtn.addEventListener("click",()=>{
-                emojiText.textContent=`${this.username} reacted ${emoji}`;
-                this.sendReaction(receivedMessage.sender,receivedMessage.content,`${this.username} reacted ${emoji}`);
-              })
-              emojiContainer.appendChild(emojiBtn);
+        emojis.forEach(emoji => {
+            const emojiBtn = document.createElement('span');
+            emojiBtn.classList.add('emoji-btn');
+            emojiBtn.textContent = emoji;
+            emojiBtn.addEventListener("click", () => {
+                emojiText.textContent = `${this.username} reacted ${emoji}`;
+                this.sendReaction(receivedMessage.sender, receivedMessage.content, `${this.username} reacted ${emoji}`);
             });
+            emojiContainer.appendChild(emojiBtn);
+        });
 
-            messageElement.appendChild(emojiContainer);
-
+        messageElement.appendChild(emojiContainer);
         messageArea.appendChild(messageElement);
         messageArea.scrollTop = messageArea.scrollHeight;
 
         this.scrollToBottom();
-    }
-    else if (receivedMessage.reaction != null) {
+    } else if (receivedMessage.reaction != null) {
         // Handle updating the emojiText for the reaction
         const messageElements = document.querySelectorAll('#messageArea .chat-message');
         messageElements.forEach(msgElement => {
@@ -689,13 +634,27 @@ sendMessage() {
 }
 /* Style for the close button */
 .close-btn {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  font-size: 2rem;
+  position: relative;
+  display: inline-block;
+  font-size: 1.5rem;
+  text-align: center;
+  line-height: 1.5rem; /* Aligns the "X" vertically */
+  width: 2rem; /* Adjust width for circle */
+  height: 2rem; /* Adjust height for circle */
+  border: 1px solid white;
+  border-radius: 50%;
   color: white;
   cursor: pointer;
   user-select: none;
+  padding: 2px;
+  margin: 20px;
+  background-color: transparent; /* Optional: Make background transparent */
+}
+
+
+.close-btn:hover{
+  background-color: white;
+  color: black;
 }
 
 /* Style for each emoji button */
@@ -718,13 +677,14 @@ sendMessage() {
 /* Style for the hidden view container */
 #imageView {
   position: fixed;
-  top: 20%;
-  left: 20%;
-  width: 50%;
-  height: 50%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background: rgba(0, 0, 0, 0.8);
   display: flex;
   justify-content: center;
+  flex-direction: column;
   align-items: center;
   z-index: 1000;
 }
@@ -736,8 +696,9 @@ sendMessage() {
 
 /* Style for the image inside the view */
 #viewImage {
-  max-width: 50%;
-  max-height: 50%;
+  max-width: 80%;
+  max-height: 80%;
+  margin-top: 75px;
 }
 
 #chat-page .chat-message span {
