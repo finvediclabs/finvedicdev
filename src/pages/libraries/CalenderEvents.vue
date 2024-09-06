@@ -28,12 +28,14 @@
     <q-img :src="classRoom" class="classRoomImg" v-if="!isMobile" />
   </q-card-section>
   <q-card-section class="row justify-between">
-    <div class="items-center">
+    <div class="items-center col-8">
       <q-btn :href="nextEvent ? extractLink(nextEventTitle) : lastEvent ? extractLink(lastEventTitle) : ''" target="_blank" no-caps outline rounded color="white">
         Topic: {{ nextEvent ? nextEventTopic : lastEvent ? lastEventTopic : '' }}
       </q-btn>
     </div>
+    <div class="col-4" style="display: flex;align-items: center;justify-content: center">
     <q-btn label="Connect" class="text-blue bg-white q-px-lg fin-br-8" no-caps :href="nextEvent ? extractLink(nextEventTitle) : lastEvent ? extractLink(lastEventTitle) : ''" target="_blank" />
+</div>
   </q-card-section>
 </q-card>
         
