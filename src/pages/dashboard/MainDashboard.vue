@@ -119,6 +119,14 @@ export default {
           enable: true
         },
         {
+          image: videosPng,
+          title: 'Notifications',
+          description: 'Perfect for learning how the framework works.',
+          path: 'notifications',
+          background: '#D3D3D390',
+          enable: true
+        },
+        {
           image: organizationPng,
           title: 'Website Forms Data',
           description: 'Perfect for learning how the framework works.',

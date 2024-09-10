@@ -71,6 +71,11 @@ const routes = [
         meta: { item: 'organizations' }
       },
       {
+        path: 'notifications',
+        component: () => import('pages/dashboard/Notifications/notifications.vue'),
+        meta: { item: 'notifications' }
+      },
+      {
         path: 'uploadpdfbot',
         component: () => import('pages/dashboard/ai_upload/ai_upload.vue'),
         meta: { item: 'uploadpdfbot' }

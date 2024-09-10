@@ -366,7 +366,7 @@ export default {
         link: event.link,
         topic: event.topic,
         color: 'white',
-        backgroundColor: colorHash.hex(event.title),
+       // backgroundColor: colorHash.hex(event.title),
         width: '100%',
         height: '50px'
       })).sort((a, b) => new Date(`${a.date} ${a.start}`) - new Date(`${b.date} ${b.start}`));
