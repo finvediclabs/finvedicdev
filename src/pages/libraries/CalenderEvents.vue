@@ -5,10 +5,35 @@
         <div class="col-1"></div>
         <div class="col-12 col-md-6" :class="{ 'q-mt-xl': !isMobile }">
 
-          <q-card v-if="filteredEvents.length > 0" class="my-card full-width text-white full-height" style="background: #5479F7;">
+          <q-card v-if="currentEvent" class="my-card full-width text-white full-height" style="background: #5479F7;">
+  <q-card-section class="row justify-between">
+    <div v-if="currentEvent">
+      <div>Current Class: {{ extractTitle(currentEventTitle) }}</div>
+      <br>
+      <div class="text-h5 text-weight-bolder">
+        Date: {{ currentEventDate }}<br>
+        Start: {{ currentEventStartTime }}<br>
+        End: {{ currentEventEndTime }}
+      </div>
+    </div>
+    <q-img :src="classRoom" class="classRoomImg" v-if="!isMobile" />
+  </q-card-section>
+  <q-card-section class="row justify-between">
+    <div class="items-center col-8">
+      <q-btn :href="extractLink(currentEventTitle)" target="_blank" no-caps outline rounded color="white">
+        Topic: {{ currentEventTopic }}
+      </q-btn>
+    </div>
+    <div class="col-4" style="display: flex; align-items: center; justify-content: center">
+      <q-btn label="Connect" class="text-blue bg-white q-px-lg fin-br-8" no-caps :href="extractLink(currentEventTitle)" target="_blank" />
+    </div>
+  </q-card-section>
+</q-card>
+
+<q-card v-if="nextEvent && !currentEvent" class="my-card full-width text-white full-height" style="background: #5479F7;">
   <q-card-section class="row justify-between">
     <div v-if="nextEvent">
-      <div>Next Class : {{ extractTitle(nextEventTitle) }}</div>
+      <div>Next Class: {{ extractTitle(nextEventTitle) }}</div>
       <br>
       <div class="text-h5 text-weight-bolder">
         Date: {{ nextEventDate }}<br>
@@ -16,8 +41,24 @@
         End: {{ nextEventEndTime }}
       </div>
     </div>
-    <div v-else-if="lastEvent">
-      <div>Last Class : {{ extractTitle(lastEventTitle) }}</div>
+    <q-img :src="classRoom" class="classRoomImg" v-if="!isMobile" />
+  </q-card-section>
+  <q-card-section class="row justify-between">
+    <div class="items-center col-8">
+      <q-btn :href="extractLink(nextEventTitle)" target="_blank" no-caps outline rounded color="white">
+        Topic: {{ nextEventTopic }}
+      </q-btn>
+    </div>
+    <div class="col-4" style="display: flex; align-items: center; justify-content: center">
+      <q-btn label="Connect" class="text-blue bg-white q-px-lg fin-br-8" no-caps :href="extractLink(nextEventTitle)" target="_blank" />
+    </div>
+  </q-card-section>
+</q-card>
+
+<q-card v-if="lastEvent && !currentEvent && !nextEvent" class="my-card full-width text-white full-height" style="background: #5479F7;">
+  <q-card-section class="row justify-between">
+    <div v-if="lastEvent">
+      <div>Last Class: {{ extractTitle(lastEventTitle) }}</div>
       <br>
       <div class="text-h5 text-weight-bolder">
         Date: {{ lastEventDate }}<br>
@@ -29,13 +70,13 @@
   </q-card-section>
   <q-card-section class="row justify-between">
     <div class="items-center col-8">
-      <q-btn :href="nextEvent ? extractLink(nextEventTitle) : lastEvent ? extractLink(lastEventTitle) : ''" target="_blank" no-caps outline rounded color="white">
-        Topic: {{ nextEvent ? nextEventTopic : lastEvent ? lastEventTopic : '' }}
+      <q-btn :href="extractLink(lastEventTitle)" target="_blank" no-caps outline rounded color="white">
+        Topic: {{ lastEventTopic }}
       </q-btn>
     </div>
-    <div class="col-4" style="display: flex;align-items: center;justify-content: center">
-    <q-btn label="Connect" class="text-blue bg-white q-px-lg fin-br-8" no-caps :href="nextEvent ? extractLink(nextEventTitle) : lastEvent ? extractLink(lastEventTitle) : ''" target="_blank" />
-</div>
+    <div class="col-4" style="display: flex; align-items: center; justify-content: center">
+      <q-btn label="Connect" class="text-blue bg-white q-px-lg fin-br-8" no-caps :href="extractLink(lastEventTitle)" target="_blank" />
+    </div>
   </q-card-section>
 </q-card>
         
@@ -152,7 +193,7 @@ export default {
       //}
     }
   },
-  computed: {
+ computed: {
   filteredEvents() {
     if (this.selectedBatch) {
       return this.events.filter(event => event.batch === this.selectedBatch);
@@ -183,6 +224,10 @@ export default {
     }
     return null;
   },
+  currentEvent() {
+    const now = new Date();
+    return this.filteredEvents.find(event => new Date(event.start) <= now && new Date(event.end) >= now) || null;
+  },
   nextEventTitle() {
     return this.nextEvent ? this.nextEvent.title : '';
   },
@@ -204,7 +249,6 @@ export default {
   lastEventTopic() {
     return this.lastEvent ? this.lastEvent.topic : '';
   },
-  
   lastEventDate() {
     return this.lastEvent ? this.formatDate(this.lastEvent.start) : '';
   },
@@ -214,8 +258,23 @@ export default {
   lastEventEndTime() {
     return this.lastEvent ? this.formatTime(this.lastEvent.end) : '';
   },
-
+  currentEventTitle() {
+    return this.currentEvent ? this.currentEvent.title : '';
+  },
+  currentEventTopic() {
+    return this.currentEvent ? this.currentEvent.topic : '';
+  },
+  currentEventDate() {
+    return this.currentEvent ? this.formatDate(this.currentEvent.start) : '';
+  },
+  currentEventStartTime() {
+    return this.currentEvent ? this.formatTime(this.currentEvent.start) : '';
+  },
+  currentEventEndTime() {
+    return this.currentEvent ? this.formatTime(this.currentEvent.end) : '';
+  },
 },
+
   mounted() {
    // if (this.selectedCategory) {
       this.getEventsData();
