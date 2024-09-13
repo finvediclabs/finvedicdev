@@ -33,7 +33,7 @@
                       id="message"
                       required
                     />
-                    <button @click="sendMessage" class="send-button">
+                    <button @click="sendMessage" class="send-button" title="Send Message">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         class="icon icon-tabler icon-tabler-send"
@@ -55,13 +55,13 @@
 
                     </button>
 
-                    <input id="fileInput"  name="file" type="file" class="hidden-input" ref="file" @change="onFileChange" accept=".jpg,.png" title="Add image"  hidden>
-                    <button for="fileInput" class="upload-doc" @click="triggerFileInput">
+                    <input id="fileInput"  name="file" type="file" class="hidden-input" ref="file" @change="onFileChange" accept=".jpg,.png"  hidden>
+                    <button for="fileInput" class="upload-doc" @click="triggerFileInput" title="Add image">
                       <q-icon name="add_circle" />
                     </button>
 
-                    <input id="mediaInput"  name="file" type="file" class="hidden-input" ref="media" @change="onFileChange" accept=".pdf" title="Upload File or Assignment" hidden>
-                    <button for="fileInput" class="upload-assignment" @click="triggerMediaInput">
+                    <input id="mediaInput"  name="file" type="file" class="hidden-input" ref="media" @change="onFileChange" accept=".pdf" hidden>
+                    <button for="fileInput" class="upload-assignment" @click="triggerMediaInput" title="Upload File or Assignment">
                       <q-icon name="upload_file" />
                     </button>
             </div>
@@ -535,7 +535,7 @@ displayMessages() {
             wsurl = 'wss://' + baseUrl + '/websocket';
         }
 
-        console.log(wsurl);
+        //console.log(wsurl);
 
         // Create a new instance of StompClient
         this.stompClient = new Client({
@@ -1167,22 +1167,23 @@ sendMessage() {
  .chat-container {
    background-color:transparent;
    border-radius: 20px;
-   max-height: 420px;
+   max-height: 550px;
    visibility: visible;
-   height: 500px; /* Limit height to enable scrolling */
+   height: 1000px; /* Limit height to enable scrolling */
    overflow-y: auto; /* Enable vertical scrolling */
-   width: 950px;/* Fixed width */
+   width: 100%;/* Fixed width */
    position: relative; /* Establish positioning context */
  }
 
  .media-container {
+  display: block;
    background-color:transparent;
    border-radius: 20px;
    max-height: 470px;
    visibility: visible;
    height: 500px; /* Limit height to enable scrolling */
    overflow-y: auto; /* Enable vertical scrolling */
-   width: 950px;/* Fixed width */
+   width: 100%;/* Fixed width */
    position: relative; /* Establish positioning context */
  }
 
@@ -1205,7 +1206,8 @@ sendMessage() {
  .input-container {
   display: flex;
   align-items: center;
-   width: 920px;
+  margin-top: 10px;
+   width: 100%;
    bottom: 0; 
  }
  
@@ -1240,7 +1242,7 @@ sendMessage() {
   transform: scale(1.1);
   transition: all 0.3s ease-in-out; 
 }
- .upload-assignment :hover{
+ .upload-assignment:hover{
   opacity: 0.8;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); 
   transform: scale(1.1);

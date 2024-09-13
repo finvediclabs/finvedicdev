@@ -6,6 +6,15 @@
         </fin-portlet-heading>
         <fin-portlet-item>
           <q-btn
+            label="Clear Notifications"
+            dense
+            color="negative"
+            class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder"
+            no-caps
+            @click="clearnotifications"
+          />
+
+          <q-btn
             label="Send Message"
             dense
             color="blue-15"
@@ -20,7 +29,7 @@
           :columns="header"
           :data="messagesList"
           select
-          @reCall="getMessagesData()"
+          @reCall="getMessagesData"
           allowDelete
           :delete-url="deleteUrl"
           @editFun="editDataFun"
@@ -72,8 +81,8 @@
 import { useSessionStore } from "src/stores/session";
 import { useProfileStore } from "src/stores/profile";
   import { urls } from "../Urls";
-  import CryptoJS from 'crypto-js';
   import { Client } from '@stomp/stompjs';
+
   
   export default {
     setup() {
@@ -83,12 +92,14 @@ import { useProfileStore } from "src/stores/profile";
     const profileStore = useProfileStore();
     const { user } = storeToRefs(profileStore);
 
+    
     return {
       token,
       userType,
       user,
     };
   },
+  
     name: 'messages',
     components: {
       FinTable,
@@ -122,6 +133,32 @@ import { useProfileStore } from "src/stores/profile";
       this.getMessagesData();
     },
     methods: {
+      clearnotifications() {
+      
+      let confirmed=confirm("Are you sure to clear Notifications?")
+      if(confirmed){
+        this.$api.delete('/api/clearnotifications')
+          .then(() => {
+            // Clear the notifications list on the frontend
+            this.notificationList = [];
+            this.getMessagesData();
+            this.$q.notify({
+              message: 'Notifications cleared successfully',
+              color: 'positive',
+              position: 'top-right',
+            });
+          })
+          .catch((error) => {
+            console.error('Error clearing notifications:', error);
+            this.$q.notify({
+              message: 'Failed to clear notifications',
+              color: 'negative',
+              position: 'top-right',
+            });
+          });
+      }
+    },
+
       showMsg(message, type) {
         this.$q.notify({
           message: message || "Something Went Wrong!",
@@ -137,6 +174,7 @@ import { useProfileStore } from "src/stores/profile";
         if (response.data.success) {
           const user = response.data.data;
           this.connect(user.name);
+          this.username=user.name;
         }
       });
     },
@@ -144,19 +182,20 @@ import { useProfileStore } from "src/stores/profile";
   if (!this.loading) {
     this.loading = true;
     try {
-      const response = await this.$api.get('http://localhost:8087/api/getnotifications');
+      const response = await this.$api.get('/api/getnotifications');
       this.loading = false;
 
       // Log the API response
-      console.log("API Response:", response);
+      //console.log("API Response:", response);
 
       if (response.data) {
         // Map through the response and handle potential null usernames
         this.messagesList = response.data.map((item, index) => ({
           ...item,
           index: index + 1,
-          username: item.username || "Anonymous", // Default to "Anonymous" if username is null
-          timestamp: new Date(item.timestamp).toLocaleString()
+          sender: item.username,
+          text: item.content,
+          timestamp:item.timestamp
         }));
       } else {
         this.showMsg(response.data?.message || "No data found", 'negative');
@@ -177,10 +216,19 @@ import { useProfileStore } from "src/stores/profile";
       connect(username) {
       if (username) {
         this.username = username;
+        let baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '');
+        let wsurl = null;
 
+        if (baseUrl.includes("http:")) {
+            baseUrl = baseUrl.replace('http://', '');
+            wsurl = 'ws://' + baseUrl + '/websocket';
+        } else {
+            baseUrl = baseUrl.replace('https://', '');
+            wsurl = 'wss://' + baseUrl + '/websocket';
+        }
         // Create a new instance of StompClient
         this.stompClient = new Client({
-          brokerURL: 'ws://localhost:8087/websocket',
+          brokerURL: wsurl,
           connectHeaders: {
             login: this.username,
           },
@@ -208,17 +256,18 @@ import { useProfileStore } from "src/stores/profile";
     },
       sendMessageFromDialog() {
     // Log the message content for debugging
-    console.log(this.newMessage);
+    //console.log(this.newMessage);
     const messageContent = this.newMessage.trim();
     
     if (messageContent && messageContent !== "") {
-        console.log(messageContent);
+        //console.log(messageContent);
 
         if (this.isWebSocketOpen) {
             const chatMessage = {
                 sender: this.username, // Ensure this is not null or undefined
                 content: messageContent,
-                type: "CHAT",
+                time: new Date().toLocaleDateString(),
+                type: "NOTIFY",
             };
 
             if (!this.username) {
@@ -227,11 +276,13 @@ import { useProfileStore } from "src/stores/profile";
                 return;
             }
 
-            console.log("Sending message:", chatMessage);
+            //console.log("Sending message:", chatMessage);
             try {
                 this.stompClient.publish({ destination: '/app/chat.notify', body: JSON.stringify(chatMessage) });
                 this.newMessage = ""; // Clear the message input
                 this.showMsg("Message sent successfully", 'positive');
+                this.getMessagesData();
+                this.closeDialog();
             } catch (error) {
                 this.showMsg("Message sending failed: " + error.message, 'negative');
             }
@@ -247,8 +298,8 @@ import { useProfileStore } from "src/stores/profile";
       },
       onMessageReceived(message) {
         // Handle incoming WebSocket messages
-        console.log('Message received:', message.body);
-        // Process message and update UI as needed
+        //console.log('Message received:', message.body);
+        
       },
       editDataFun(val) {
         // Handle edit functionality here
