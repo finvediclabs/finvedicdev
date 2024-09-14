@@ -404,7 +404,7 @@ export default {
   async fetchUserOptions() {
       try {
         const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-          const getUsersUrl = baseUrl + 'api/users/role/3';
+          const getUsersUrl = baseUrl + 'api/users/role/6';
         const response = await axios.get(getUsersUrl );
         console.log('Response from user options request:', response);
         if (response.status === 200) {

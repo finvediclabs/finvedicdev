@@ -1,79 +1,45 @@
 <template>
-    <div>
-      <canvas ref="canvas"></canvas>
-    </div>
-  </template>
-  
-  <script>
-  import { Chart, registerables } from 'chart.js';
-  Chart.register(...registerables);
-  
-  export default {
-    props: {
-      data: {
-        type: Array,
-        required: true
-      },
-      barColor: {
-        type: String,
-        default: 'rgba(84, 121, 247, 0.8)' // Updated background color with less transparency
-      },
-      borderColor: {
-        type: String,
-        default: 'rgba(84, 121, 247, 1)' // Default border color for bars
+  <Bar id="my-chart-id" :options="chartOptions" :data="chartData" />
+</template>
+
+<script>
+import { Bar } from 'vue-chartjs'
+import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
+
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
+
+
+import ColorHash from 'color-hash'
+var colorHash = new ColorHash();
+
+export default {
+  name: 'BarChart',
+  components: { Bar },
+  props: {
+    labels: {
+      type: Array,
+      default: () => { return []; }
+    },
+    data: {
+      type: Array,
+      default: () => { return []; }
+    },
+  },
+  computed: {
+    chartData() {
+      var request = {
+        labels: this.labels,
+        datasets: this.data.map(item=> ({ ...item, backgroundColor: colorHash.hex(item.label)}))
       }
+      return request;
     },
-    mounted() {
-      this.renderChart();
-    },
-    watch: {
-      data: {
-        handler() {
-          this.renderChart();
-        },
-        deep: true
-      }
-    },
-    methods: {
-      renderChart() {
-        if (this.chart) {
-          this.chart.destroy();
-        }
-  
-        const ctx = this.$refs.canvas.getContext('2d');
-        this.chart = new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: this.data.map(item => item.userName || 'N/A'),
-            datasets: [{
-              label: 'Active Time (minutes)',
-              data: this.data.map(item => item.totalActiveTime),
-              backgroundColor: this.barColor,
-              borderColor: this.borderColor,
-              borderWidth: 1
-            }]
-          },
-          options: {
-            scales: {
-              y: {
-                beginAtZero: true
-              }
-            }
-          }
-        });
-      }
-    },
-    data() {
-      return {
-        chart: null
+  },
+  data() {
+    return {
+      chartOptions: {
+        responsive: true
       }
     }
-  }
-  </script>
-  
-  <style scoped>
-  canvas {
-    max-width: 100%;
-  }
-  </style>
-  
+  },
+}
+</script>
