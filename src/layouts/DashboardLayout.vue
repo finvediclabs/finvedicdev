@@ -236,10 +236,10 @@ export default {
             { label: "Class Room", value: "class-room", icon: 'reduce_capacity' }
           ]
         },
-      //   {
-      //      icon: 'summarize', label: 'Reports', value: 'reports', 
+        {
+           icon: 'summarize', label: 'Reports', value: 'reports', 
          
-      //  },
+       },
         {
            icon: 'help', label: 'Help', value: 'help', 
          
@@ -249,7 +249,7 @@ export default {
       expand: {},
       userOwner:'' ,
       adminAccess: ["admin", "labs",  "library", "reports"],
-      studentsAccess: ["labs", "library"],
+      studentsAccess: ["labs", "library", "reports"],
       facultyAccess: ["admin","labs", "library", "reports"],
       defaultPath: "/library/books",
       guestAccess: [ "library"],
