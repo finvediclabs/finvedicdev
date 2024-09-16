@@ -9,7 +9,7 @@
             label="Clear Notifications"
             dense
             color="negative"
-            class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder"
+            class="q-px-md fin-br-8 text-subtitle1 text-weight-bolder q-mr-sm"
             no-caps
             @click="clearnotifications"
           />
@@ -221,10 +221,10 @@ import { useProfileStore } from "src/stores/profile";
 
         if (baseUrl.includes("http:")) {
             baseUrl = baseUrl.replace('http://', '');
-            wsurl = 'ws://' + baseUrl + '/websocket';
+            wsurl = 'ws://' + baseUrl + '/notification';
         } else {
             baseUrl = baseUrl.replace('https://', '');
-            wsurl = 'wss://' + baseUrl + '/websocket';
+            wsurl = 'wss://' + baseUrl + '/notification';
         }
         // Create a new instance of StompClient
         this.stompClient = new Client({
@@ -302,8 +302,8 @@ import { useProfileStore } from "src/stores/profile";
         
       },
       editDataFun(val) {
-        // Handle edit functionality here
-      }
+ 
+  }
     }
   };
   </script>

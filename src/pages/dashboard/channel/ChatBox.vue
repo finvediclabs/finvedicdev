@@ -186,7 +186,6 @@ export default {
       if (response.data&& Array.isArray(response.data)) {
         this.messages = response.data;
         this.displayMessages();
-        this.displayMedia();
       }
       else{
         console.log("No Messages")
@@ -206,8 +205,7 @@ hideImageView() {
   const imageView = document.getElementById('imageView');
   imageView.classList.add('hidden');
 },
-displayMedia(){
-  this.messages.forEach(receivedMessage => {
+displayMedia(receivedMessage){
           const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
           const getImagesUrl = baseUrl + 'fs/download';
           const removeImagePath = baseUrl + 'fs/download/';
@@ -345,13 +343,23 @@ displayMedia(){
         });
 
         this.scrollToBottom();
-    }
-    })
-    
+    }    
 },
 displayMessages() {
-  if (Array.isArray(this.messages)) {
+    const messageArea = document.querySelector('#messageArea');
+    const mediaArea=document.querySelector('#mediaArea')
+
+    messageArea.innerHTML = ''; // Clear the existing messages
+    mediaArea.innerHTML='';
+
     this.messages.forEach(receivedMessage => {
+        this.displaySingleMessage(receivedMessage); // Display each message individually
+        this.displayMedia(receivedMessage)
+    });
+
+    this.scrollToBottom(); // Scroll to the bottom after rendering all messages
+},
+displaySingleMessage(receivedMessage) {
       const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
       const getImagesUrl = baseUrl + 'fs/download';
       const removeImagePath = baseUrl + 'fs/download/';
@@ -515,9 +523,6 @@ displayMessages() {
         // messageElement.appendChild(emojiContainer);
         messageArea.appendChild(messageElement);
         messageArea.scrollTop = messageArea.scrollHeight;
-      }
-    });
-
     this.scrollToBottom();
   }
 },
@@ -584,184 +589,10 @@ displayMessages() {
         "Unable to connect to STOMP! Please refresh the page and try again or contact the administrator.";
       this.$refs.connectingElement.style.color = "red";
     },
-    onMessageReceived(message) {
-    const receivedMessage = JSON.parse(message.body);
-    const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-    const getImagesUrl = baseUrl + 'fs/download';
-    const removeImagePath = baseUrl + 'fs/download/';
-    const getfileUrl = baseUrl + 'ms/download';
-    const removefilePath = baseUrl + 'ms/download/';
+    onMessageReceived() {
 
-    var messageArea = document.querySelector('#messageArea');
-    var messageElement = document.createElement('li');
-    messageElement.classList.add('chat-message');
-
-    var avatarElement = document.createElement('i');
-    var avatarText = document.createTextNode(receivedMessage.sender[0]);
-    avatarElement.appendChild(avatarText);
-    avatarElement.style['background-color'] = this.getAvatarColor(receivedMessage.sender);
-    messageElement.appendChild(avatarElement);
-
-    var usernameElement = document.createElement('div');
-    usernameElement.style.fontWeight = "bold";
-    var usernameText = document.createTextNode(receivedMessage.sender);
-    usernameElement.appendChild(usernameText);
-    messageElement.appendChild(usernameElement);
-
-    // Handle image messages
-    if (receivedMessage.content && receivedMessage.content.includes("fs/download")) {
-        const imagePathWithoutPrefix = receivedMessage.content.replace(removeImagePath, '');
-        const formData = new FormData();
-        formData.append('filename', imagePathWithoutPrefix);
-
-        var imageElement = document.createElement('img');
-        imageElement.alt = 'Loading Image...';
-        imageElement.style.maxWidth = '200px';
-        imageElement.style.borderRadius = '5px';
-        messageElement.appendChild(imageElement);
-        messageArea.appendChild(messageElement);
-        messageArea.scrollTop = messageArea.scrollHeight;
-
-        axios.post(getImagesUrl, formData, { responseType: 'blob' })
-            .then(downloadResponse => {
-                const blob = new Blob([downloadResponse.data]);
-                const url = window.URL.createObjectURL(blob);
-                imageElement.src = url;
-                imageElement.alt = 'Downloaded Image';
-                imageElement.addEventListener('click', () => {
-                    this.showImageView(url);
-                });
-                messageArea.scrollTop = messageArea.scrollHeight;
-            })
-            .catch(error => {
-                console.error('Error in image download:', error);
-                this.showMsg(error.response?.data.message || error.message, 'negative');
-            });
-
-        this.scrollToBottom();
-        this.getAllMessages();
-    } 
-    // Handle file messages (only display file, do not print message content)
-    else if (receivedMessage.content && receivedMessage.content.includes("ms/download")) {
-        const filePathWithoutPrefix = receivedMessage.content.replace(removefilePath, '');
-        const formData = new FormData();
-        formData.append('filename', filePathWithoutPrefix);
-
-        var fileDiv = document.createElement('div');
-        fileDiv.classList.add('file-container');
-        fileDiv.style.display = 'flex';
-        fileDiv.style.alignItems = 'center';
-        fileDiv.style.padding = '10px';
-        fileDiv.style.border = '1px solid #ccc';
-        fileDiv.style.borderRadius = '5px';
-        fileDiv.style.margin = '10px 0';
-        fileDiv.style.cursor = 'pointer';
-
-        var fileIcon = document.createElement('i');
-        fileIcon.classList.add('fa', 'fa-file-pdf-o');
-        fileIcon.style.fontSize = '24px';
-        fileIcon.style.marginRight = '10px';
-
-        var fileNameElement = document.createElement('span');
-        fileNameElement.textContent = filePathWithoutPrefix;
-        fileNameElement.style.flexGrow = '1';
-
-        var downloadButton = document.createElement('button');
-        downloadButton.textContent = 'Download';
-        downloadButton.style.backgroundColor = '#4CAF50';
-        downloadButton.style.color = 'white';
-        downloadButton.style.border = 'none';
-        downloadButton.style.borderRadius = '3px';
-        downloadButton.style.padding = '5px 10px';
-        downloadButton.style.cursor = 'pointer';
-
-        fileDiv.appendChild(fileIcon);
-        fileDiv.appendChild(fileNameElement);
-        fileDiv.appendChild(downloadButton);
-        messageElement.appendChild(fileDiv);
-        messageArea.appendChild(messageElement);
-        messageArea.scrollTop = messageArea.scrollHeight;
-
-        fileDiv.addEventListener('click', () => {
-            axios.post(getfileUrl, formData, { responseType: 'blob' })
-                .then(downloadResponse => {
-                    const blob = new Blob([downloadResponse.data], { type: 'application/pdf' });
-                    const url = window.URL.createObjectURL(blob);
-                    window.open(url, '_blank');
-                })
-                .catch(error => {
-                    console.error('Error in file download:', error);
-                    this.showMsg(error.response?.data.message || error.message, 'negative');
-                });
-        });
-
-        downloadButton.addEventListener('click', (event) => {
-            event.stopPropagation();
-            axios.post(getfileUrl, formData, { responseType: 'blob' })
-                .then(downloadResponse => {
-                    const blob = new Blob([downloadResponse.data], { type: 'application/pdf' });
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = filePathWithoutPrefix;
-                    a.click();
-                })
-                .catch(error => {
-                    console.error('Error in file download:', error);
-                    this.showMsg(error.response?.data.message || error.message, 'negative');
-                });
-        });
-
-        this.scrollToBottom();
-        this.getAllMessages();
-    }
-    // Handle text messages
-    else if (receivedMessage.content && receivedMessage.content !== "fs/download" && receivedMessage.content !== "ms/download") {
-        var textElement = document.createElement('p');
-        var messageText = document.createTextNode(receivedMessage.content);
-        textElement.appendChild(messageText);
-        messageElement.appendChild(textElement);
-
-        var emojiElement = document.createElement('div');
-        var emojiText = document.createTextNode("");
-        emojiElement.append(emojiText);
-        emojiElement.classList.add("Reactionarea");
-        messageElement.appendChild(emojiElement);
-
-        // const emojiContainer = document.createElement('div');
-        // emojiContainer.classList.add('emoji-container');
-        // const emojis = ['👍'];
-
-        // emojis.forEach(emoji => {
-        //     const emojiBtn = document.createElement('span');
-        //     emojiBtn.classList.add('emoji-btn');
-        //     emojiBtn.textContent = emoji;
-        //     emojiBtn.addEventListener("click", () => {
-        //         emojiText.textContent = `${this.username} reacted ${emoji}`;
-        //         this.sendReaction(receivedMessage.sender, receivedMessage.content, `${this.username} reacted ${emoji}`);
-        //     });
-        //     emojiContainer.appendChild(emojiBtn);
-        // });
-
-        // messageElement.appendChild(emojiContainer);
-        messageArea.appendChild(messageElement);
-        messageArea.scrollTop = messageArea.scrollHeight;
-
-        this.scrollToBottom();
-    } 
-    // Handle reactions
-    // else if (receivedMessage.reaction != null) {
-    //     const messageElements = document.querySelectorAll('#messageArea .chat-message');
-    //     messageElements.forEach(msgElement => {
-    //         const textElement = msgElement.querySelector('p');
-    //         if (textElement && textElement.textContent === receivedMessage.content) {
-    //             const emojiElement = msgElement.querySelector('.Reactionarea');
-    //             if (emojiElement) {
-    //                 emojiElement.textContent = receivedMessage.reaction;
-    //             }
-    //         }
-    //     });
-    // }
+    this.getAllMessages()
+    this.scrollToBottom();
 },
 
     async uploadFile(file) {
@@ -1176,12 +1007,11 @@ sendMessage() {
  }
 
  .media-container {
-  display: block;
    background-color:transparent;
    border-radius: 20px;
-   max-height: 470px;
+   max-height: 600px;
    visibility: visible;
-   height: 500px; /* Limit height to enable scrolling */
+   height: 1000px; /* Limit height to enable scrolling */
    overflow-y: auto; /* Enable vertical scrolling */
    width: 100%;/* Fixed width */
    position: relative; /* Establish positioning context */

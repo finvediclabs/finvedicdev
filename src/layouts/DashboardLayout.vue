@@ -113,18 +113,25 @@
 
               <!-- Notification List -->
               <div v-if="notificationList.length" class="notification-item">
-                <div v-for="notification in notificationList" :key="notification.id" class="q-px-md">
-                  <div class="full-width row items-center">
-                    {{ notification.sender }}
+                <div v-for="notification in notificationList" :key="notification.id" class="notification-container q-px-md q-my-sm">
+                  <div class="notification-header full-width row items-center q-pb-sm">
+                    <div class="notification-sender text-weight-medium text-primary">
+                      {{ notification.sendername }}
+                    </div>
                     <q-space />
+                    <div class="notification-time text-caption text-grey-7">
+                      {{ notification.timestamp }}
+                    </div>
                   </div>
-                  <div class="fill-width text-center items-center row justify-center text-body1 text-weight-bolder q-py-lg"></div>
-                  <div class="full-width bg-finvedic row q-px-sm q-py-xs fin-br-8 text-white cursor-pointer">
-                    <div class="text-center">{{ notification.message }}</div>
-                    <div class="text-center">Time: {{ notification.timestamp }}</div>
+
+                  <div class="notification-body full-width bg-grey-5 row q-px-sm q-py-md fin-br-8 text-black cursor-pointer">
+                    <div class="text-center text-body1 text-weight-bolder">
+                      {{ notification.message }}
+                    </div>
                   </div>
                 </div>
               </div>
+
             </div>
           </q-menu>
         </q-btn>
@@ -378,7 +385,7 @@ export default {
     if (response.data && Array.isArray(response.data)) {
       this.notificationList = response.data.map((notification) => ({
         ...notification,
-        sender: notification.sender, // Modify based on your actual data structure
+        sendername: notification.username,
         message: notification.content,
         timestamp: notification.timestamp,
       }));
