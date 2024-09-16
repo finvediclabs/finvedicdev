@@ -41,6 +41,7 @@ export default {
   },
   computed: {
     chartData() {
+      
       var request = {
         labels: this.labels,
         datasets: this.data.map(item => (

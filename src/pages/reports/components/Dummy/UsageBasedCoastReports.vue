@@ -17,10 +17,13 @@
       <div class="chart-half doughnut-container">
         <DoughnutChart2 :data="filteredVMs" />
       </div>
-
-      <!-- Right: Bar Chart for Daily VM Usage -->
       <div class="chart-half bar-chart-container">
-        <BarChart :labels="dailyUsageLabels" :data="dailyUsageData" />
+        <div class="navigation-buttons">
+          <q-btn @click="previousWeek">←</q-btn>
+          <q-btn @click="nextWeek">→</q-btn>
+        </div>
+        <BarChart :data="chartData" />
+       
       </div>
     </div>
 
@@ -65,17 +68,14 @@ export default {
       groupedVMs: [],
       filteredVMs: [],
       selectedUser: '',
-      dailyUsageLabels: [],
-      dailyUsageData: []
+      chartData: { labels: [], datasets: [] }, // Initialize chartData
+      startDate: new Date(),
     };
   },
   setup() {
     const profileStore = useProfileStore();
     const session = useSessionStore();
     const { userType, userId } = storeToRefs(session);
-
-     const email = profileStore.user.email;
-     console.log("email", email);
     return {
       userType,
       userId,
@@ -84,12 +84,13 @@ export default {
   },
   computed: {
     isStudent() {
-      // Check if the logged-in user is a student
       return this.userType === 'Student';
     }
   },
   mounted() {
+
     this.fetchVMs();
+        this.setSelectedUser();
   },
   methods: {
     async fetchVMs() {
@@ -100,16 +101,20 @@ export default {
         this.vms = response.data.data; // Adjust according to the data structure
 
         if (this.isStudent) {
-          // Filter data for student users (display only their VMs)
           this.vms = this.vms.filter(vm => vm.userId === this.userId);
+          
         }
 
         this.groupVMsByUser();
         this.filterVMsByUser(); // Update filtered data based on initial conditions
-        this.calculateDailyUsage();
       } catch (error) {
         console.error('Error fetching VM data:', error);
       }
+    },
+    setSelectedUser() {
+        this.selectedUser = this.profileStore.user.email;
+        this.filterVMsByUser(); // Ensure that data is filtered for the selected user
+      
     },
     groupVMsByUser() {
       const grouped = {};
@@ -129,37 +134,81 @@ export default {
 
       this.groupedVMs = Object.values(grouped);
     },
-    filterVMsByUser() {
-  if (this.isStudent) {
-    // For students, filter VMs based on user email
-    const userEmail = this.profileStore.user.email;
-    this.filteredVMs = this.groupedVMs.filter(vm => vm.userName === userEmail);
-  } else {
-    if (this.selectedUser) {
-      this.filteredVMs = this.groupedVMs.filter(vm => vm.userName === this.selectedUser);
-    } else {
-      this.filteredVMs = this.groupedVMs;
-    }
-  }
-    },
-    calculateDailyUsage() {
-      // Group VM data by day
-      const usageByDate = {};
-
-      this.vms.forEach(vm => {
-        const date = new Date(vm.date).toLocaleDateString(); // Convert to a readable date format
-        if (!usageByDate[date]) {
-          usageByDate[date] = {
-            label: date,
-            data: 0
-          };
+    async filterVMsByUser() {
+      if (this.isStudent) {
+        const userEmail = this.profileStore.user.email;
+        this.filteredVMs = this.groupedVMs.filter(vm => vm.userName === userEmail);
+        this.chartData = this.getChartDataForUser(userEmail); // Update chart data
+      } else {
+        if (this.selectedUser) {
+          this.filteredVMs = this.groupedVMs.filter(vm => vm.userName === this.selectedUser);
+          this.chartData = this.getChartDataForUser(this.selectedUser); // Update chart data
+        } else {
+          this.filteredVMs = this.groupedVMs;
+          this.chartData = this.getChartDataForUser(); // Optionally, update for all users if needed
         }
-        usageByDate[date].data += vm.activeTime; // Summing up the active time for each day
+      }
+    },
+    getChartDataForUser(userName) {
+      const userVMs = this.vms.filter(vm => vm.userName === userName);
+      const result = {};
+
+      userVMs.forEach(vm => {
+        const createdDate = new Date(vm.createdDate);
+        if (createdDate >= this.startDate && createdDate < this.getNextWeekStart()) {
+          const dateKey = createdDate.toISOString().split('T')[0]; // YYYY-MM-DD
+
+          if (!result[dateKey]) {
+            result[dateKey] = {
+              totalActiveTime: 0,
+              vms: []
+            };
+          }
+
+          const activeTime = vm.activeTime || 0;
+          result[dateKey].totalActiveTime += activeTime;
+          result[dateKey].vms.push(vm);
+        }
       });
 
-      // Prepare the labels and data for the bar chart
-      this.dailyUsageLabels = Object.keys(usageByDate);
-      this.dailyUsageData = Object.values(usageByDate);
+      return this.formatChartData(result);
+    },
+    formatChartData(result) {
+      const data = [];
+      const labels = [];
+
+      for (let i = 0; i < 7; i++) {
+        const date = new Date(this.startDate);
+        date.setDate(date.getDate() + i);
+        const dateStr = date.toISOString().split('T')[0];
+
+        labels.push(dateStr);
+        data.push(result[dateStr]?.totalActiveTime || 0);
+      }
+
+      return {
+        labels,
+        datasets: [
+          {
+            label: 'Active Time',
+            data,
+            backgroundColor: '#5479F7', // Customize color
+          }
+        ]
+      };
+    },
+    previousWeek() {
+      this.startDate.setDate(this.startDate.getDate() - 7);
+      this.filterVMsByUser();
+    },
+    nextWeek() {
+      this.startDate.setDate(this.startDate.getDate() + 7);
+      this.filterVMsByUser();
+    },
+    getNextWeekStart() {
+      const nextWeekStart = new Date(this.startDate);
+      nextWeekStart.setDate(this.startDate.getDate() + 7);
+      return nextWeekStart;
     }
   }
 }
@@ -180,7 +229,7 @@ export default {
 .charts-container {
   display: flex;
   justify-content: space-between;
-  height: 60%; /* Increased height for charts */
+  height: 60%;
   margin-bottom: 20px;
 }
 
@@ -189,12 +238,31 @@ export default {
 }
 
 .doughnut-container {
-  width: 60%; /* Increase width for doughnut chart */
-  height: 80%; /* Increase height for doughnut chart */
+  width: 60%;
+  height: 80%;
 }
 
 .bar-chart-container {
-  width: 100%; /* Adjust width for bar chart to balance the layout */
+  width: 100%;
+  position: relative; /* Added for positioning navigation buttons */
+}
+
+.navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #5479F7;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #4059d0;
 }
 
 .table-container {
