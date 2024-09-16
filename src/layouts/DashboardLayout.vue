@@ -69,39 +69,66 @@
         </q-input>
 
 
-        <q-btn icon="notifications_active" round class="bg-white2 text-white q-mx-lg" :size="isMobile ? 'sm' : 'md'">
-          <q-menu class="fin-br-8 q-py-md shadow-0" min-width="120px"
-            style="width:230px;background: transparent!important;" :offset="[-0, 10]" transition-show="flip-right"
-            transition-hide="rotate">
+        <q-btn 
+          icon="notifications_active" 
+          round 
+          class="bg-white2 text-white q-mx-lg" 
+          :size="isMobile ? 'sm' : 'md'"
+        >
+          <!-- Badge showing the number of notifications -->
+          <div v-if="notificationList.length" class="notification-badge">
+            {{ notificationList.length }}
+          </div>
 
-            <div style="background-color: #EAEAEA;opacity:0.99" class="q-py-md shadow-2 fin-br-8">
+          <q-menu 
+            class="fin-br-8 q-py-md shadow-0" 
+            min-width="120px"
+            style="width:230px;background: transparent!important;" 
+            :offset="[-0, 10]" 
+            transition-show="flip-right"
+            transition-hide="rotate"
+          >
+            <div style="background-color: #EAEAEA; opacity: 0.99" class="q-py-md shadow-2 fin-br-8">
+              <!-- Arrow icon pointing up -->
               <div class="q-pa-sm absolute-top-right arrow" style="margin-top: -19px">
                 <q-icon name="arrow_drop_up" size="xl" style="color: #EAEAEA"></q-icon>
               </div>
-              <div class="q-px-md" v-if="nextOrLastEvent">
-  <div class="full-width row items-center">
-    {{ isNextEvent ? "Next Class" : "Last Class" }}
-    <q-space />
-    <q-icon name="calendar_month" size="20px" />
-  </div>
-  <div class="fill-width text-center items-center row justify-center text-body1 text-weight-bolder q-py-lg" style="align-items: center;">
-    <div>{{ nextOrLastEvent.date.split('-')[1] }}</div>
-    <!-- <div class="text-h5 q-px-md text-weight-bolder">{{ nextOrLastEvent.date.split('-')[2] }}</div> -->
-    <div>{{ nextOrLastEvent.date.split('-')[0] }}</div>
-  </div>
-  <div class="full-width bg-finvedic row q-px-sm q-py-xs fin-br-8 text-white cursor-pointer">
-    <a :href="nextOrLastEvent.link" target="_blank" style="text-decoration: none;">
-  <div class="full-width bg-finvedic q-px-sm q-py-xs fin-br-8 text-white cursor-pointer">
-    <div class="text-center">{{ nextOrLastEvent.topic }}</div>
-    <div class="text-center" >Time: {{ nextOrLastEvent.start }}</div>
-  </div>
-</a>
-  </div>
-</div>
 
+              <!-- Next or Last Event Section -->
+              <div class="q-px-md" v-if="nextOrLastEvent">
+                <div class="full-width row items-center">
+                  {{ isNextEvent ? 'Next Class' : 'Last Class' }}
+                  <q-space />
+                  <q-icon name="calendar_month" size="20px" />
+                </div>
+                <div class="fill-width text-center items-center row justify-center text-body1 text-weight-bolder q-py-lg">
+                  <div>{{ nextOrLastEvent.date.split('-')[1] }}</div>
+                  <div>{{ nextOrLastEvent.date.split('-')[0] }}</div>
+                </div>
+                <a :href="nextOrLastEvent.link" target="_blank" class="full-width bg-finvedic row q-px-sm q-py-xs fin-br-8 text-white cursor-pointer" style="text-decoration: none;">
+                  <div class="text-center">{{ nextOrLastEvent.topic }}</div>
+                  <div class="text-center">Time: {{ nextOrLastEvent.start }}</div>
+                </a>
+              </div>
+
+              <!-- Notification List -->
+              <div v-if="notificationList.length" class="notification-item">
+                <div v-for="notification in notificationList" :key="notification.id" class="q-px-md">
+                  <div class="full-width row items-center">
+                    {{ notification.sender }}
+                    <q-space />
+                  </div>
+                  <div class="fill-width text-center items-center row justify-center text-body1 text-weight-bolder q-py-lg"></div>
+                  <div class="full-width bg-finvedic row q-px-sm q-py-xs fin-br-8 text-white cursor-pointer">
+                    <div class="text-center">{{ notification.message }}</div>
+                    <div class="text-center">Time: {{ notification.timestamp }}</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </q-menu>
         </q-btn>
+
 
         <q-avatar class="shadow-4" :size="isMobile ? '40px' : '50px'">
           <q-img :src="imageUrl || profileImg" class="profileImg cursor-pointer rounded full-width full-height" />
@@ -176,7 +203,7 @@
     <q-page-container >
       <q-page >
         <router-view style="background-color: rgba(255, 255, 255, 0); " v-if="token" />
-        <chatbot />
+        <chatbot/>
       </q-page>
     </q-page-container>
   </q-layout>
@@ -188,12 +215,11 @@ import { useSessionStore } from "src/stores/session";
 import { setToken } from "src/boot/axios"
 import { useProfileStore } from "src/stores/profile";
 import profileImg from "src/assets/profile.png";
-import ColorHash from 'color-hash'
-var colorHash = new ColorHash();
 import Chatbot from "src/layouts/ChatBot.vue";
+
 export default {
   components: {
-    Chatbot
+    Chatbot,
   },
   name: 'dashboard-layout',
   setup() {
@@ -225,6 +251,8 @@ export default {
       drawerLeft: window.innerWidth < 600 ? false : true,
       isMobile: window.innerWidth > 600 ? false : true,
       miniState: false,
+      notificationList:[],
+      notificationInterval: null,
       modulesList: [
         { icon: 'person', label: 'Administration', value: 'admin' },
         { icon: 'groups', label: 'Labs', value: 'labs' },
@@ -240,6 +268,11 @@ export default {
            icon: 'summarize', label: 'Reports', value: 'reports', 
          
        },
+      {
+           icon: 'chat', label: 'Channel', value: 'channel', 
+         
+       },
+      
         {
            icon: 'help', label: 'Help', value: 'help', 
          
@@ -254,7 +287,7 @@ export default {
       defaultPath: "/library/books",
       guestAccess: [ "library"],
       userAccess: [ "labs", "library"],
-      allAccess:["watch-video","read-pdf","watch-ppt","profile","help"]
+      allAccess:["watch-video","read-pdf","watch-ppt","channel","profile","help"]
     }
   },
   computed: {
@@ -282,7 +315,13 @@ export default {
       default: true
     }
   },
+  
   mounted() {
+    // Start polling when the component is mounted
+    this.notificationInterval = setInterval(() => {
+      this.getNotifications();
+    }, 5000); // Fetch notifications every 5 seconds
+
     if (!this.token) {  
         this.$router.push('/');
     }
@@ -294,6 +333,7 @@ export default {
     }
     this.getUserData();
     this. getEventsDataNotification();
+    this.getNotifications();
     this.selectedModule = {
         module: this.$route.meta.module,
         item: this.$route.meta.item
@@ -308,8 +348,8 @@ export default {
 //     if (this.userType !== 'Admin' && this.userType !== 'Guest' && !this.user.specialization) {
 //     this.$router.push('/profile');
 // }
-
-},
+      
+    },
 
  watch: {
   token(newVal, oldVal) {
@@ -325,8 +365,28 @@ export default {
     this.updateBackgroundStyle();
     this.checkAccess();
   }
+  
 },
   methods: {
+    async getNotifications() {
+  try {
+    const response = await this.$api.get('/api/getnotifications');
+    
+    // Log the response data to debug
+    //console.log(response.data);
+    
+    if (response.data && Array.isArray(response.data)) {
+      this.notificationList = response.data.map((notification) => ({
+        ...notification,
+        sender: notification.sender, // Modify based on your actual data structure
+        message: notification.content,
+        timestamp: notification.timestamp,
+      }));
+    }
+  } catch (error) {
+    console.error("Error fetching notifications:", error);
+  }
+},
     checkAccess() {
        let path = this.$route.path;
        let access = this.userAccess.filter(value => path.startsWith("/"+value));
@@ -360,7 +420,7 @@ export default {
         link: event.link,
         topic: event.topic,
         color: 'white',
-        backgroundColor: colorHash.hex(event.title),
+       // backgroundColor: colorHash.hex(event.title),
         width: '100%',
         height: '50px'
       })).sort((a, b) => new Date(`${a.date} ${a.start}`) - new Date(`${b.date} ${b.start}`));
@@ -476,7 +536,7 @@ showMsg(message, type) {
           role: this.user.roles ? this.user.roles[0] : [],
           //owner: user.owner,
       };
-console.log(this.profile);
+//console.log(this.profile);
    if (this.userType === 'Student'&& Object.values(this.profile).some(value => value === null || value === undefined)) {
            this.$router.push('/profile');
     }
@@ -686,6 +746,19 @@ console.log(this.profile);
 .q-item__section--avatar {
   min-width: inherit !important;
 }
+
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 0px 6px;
+  font-size: 12px;
+}
+
+
 @media only screen and (max-width:576px){
   .logo{
     display: none !important;

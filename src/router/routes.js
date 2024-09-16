@@ -71,6 +71,11 @@ const routes = [
         meta: { item: 'organizations' }
       },
       {
+        path: 'notifications',
+        component: () => import('pages/dashboard/Notifications/notifications.vue'),
+        meta: { item: 'notifications' }
+      },
+      {
         path: 'uploadpdfbot',
         component: () => import('pages/dashboard/ai_upload/ai_upload.vue'),
         meta: { item: 'uploadpdfbot' }
@@ -95,6 +100,7 @@ const routes = [
         component: () => import('pages/dashboard/books/Books.vue'),
         meta: { item: 'books' }
       },
+      
       {
         path: 'books/chapter/:id',
         component: () => import('pages/dashboard/books/Chapters.vue'),
@@ -192,10 +198,23 @@ const routes = [
     meta: { title: 'Reports', module: 'reports' },
     component: () => import('layouts/DashboardLayout.vue'),
     children: [
-      
       {
         path: '',
         component: () => import('pages/reports/Index.vue'),
+        meta: { item: '' }
+      }
+    ]
+  },
+  
+  {
+    path: '/channel',
+    meta: { title: 'Channel', module: 'chaneel' },
+    component: () => import('layouts/DashboardLayout.vue'),
+    children: [
+      
+      {
+        path: '',
+        component: () => import('pages/dashboard/channel/ChatBox.vue'),
         meta: { item: '' }
       }
     ]
