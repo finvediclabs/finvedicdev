@@ -51,7 +51,7 @@ export default {
                   label += ': ';
                 }
                 if (context.parsed.y !== null) {
-                  label += context.parsed.y + ' minutes';
+                  label += context.parsed.y + ' hours';
                 }
                 return label;
               }
@@ -74,7 +74,7 @@ export default {
             beginAtZero: true,
             title: {
               display: true,
-              text: 'Active Time (minutes)',
+              text: 'Active Time (hours)',
             },
           },
         },

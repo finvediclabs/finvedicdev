@@ -41,7 +41,7 @@
           <tr v-for="vm in filteredVMs" :key="vm.userName + '-' + vm.names.join('-')">
             <td>{{ vm.userName || 'N/A' }}</td>
             <td>{{ vm.names.join(', ') }}</td>
-            <td>{{ vm.totalActiveTime }} minutes</td>
+            <td>{{ formatTime(vm.totalActiveTime2) }}</td>
           </tr>
         </tbody>
       </table>
@@ -125,11 +125,13 @@ export default {
           grouped[userName] = {
             userName,
             names: [],
-            totalActiveTime: 0
+            totalActiveTime: 0,
+            totalActiveTime2: 0
           };
         }
         grouped[userName].names.push(vm.name);
-        grouped[userName].totalActiveTime += vm.activeTime;
+        grouped[userName].totalActiveTime2 += vm.activeTime;
+        grouped[userName].totalActiveTime += vm.activeTime/60;
       });
 
       this.groupedVMs = Object.values(grouped);
@@ -173,6 +175,12 @@ export default {
 
       return this.formatChartData(result);
     },
+    formatTime(totalMinutes) {
+    const hours = Math.floor(totalMinutes / 60); // Get the whole number of hours
+    const minutes = totalMinutes % 60;           // Get the remaining minutes
+    return `${hours} hours ${minutes} minutes`;
+  },
+  
     formatChartData(result) {
       const data = [];
       const labels = [];
@@ -183,7 +191,7 @@ export default {
         const dateStr = date.toISOString().split('T')[0];
 
         labels.push(dateStr);
-        data.push(result[dateStr]?.totalActiveTime || 0);
+        data.push(result[dateStr]?.totalActiveTime/60 || 0);
       }
 
       return {

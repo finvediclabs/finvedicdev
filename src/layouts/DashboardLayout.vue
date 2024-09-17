@@ -288,13 +288,13 @@ export default {
       ],
       expand: {},
       userOwner:'' ,
-      adminAccess: ["admin", "labs",  "library", "reports"],
+      adminAccess: ["admin", "labs",  "library", "reports","channel"],
       studentsAccess: ["labs", "library", "reports"],
       facultyAccess: ["admin","labs", "library", "reports"],
       defaultPath: "/library/books",
       guestAccess: [ "library"],
       userAccess: [ "labs", "library"],
-      allAccess:["watch-video","read-pdf","watch-ppt","channel","profile","help"]
+      allAccess:["watch-video","read-pdf","watch-ppt","profile","help"]
     }
   },
   computed: {
@@ -518,6 +518,9 @@ showMsg(message, type) {
         this.backgroundStyle = 'Users_BackgroundStyle';
       }
       else if (this.$route.path === '/admin/studentRegister') {
+        this.backgroundStyle = 'Users_BackgroundStyle'; // Apply the background style class
+      } 
+      else if (this.$route.path === '/reports') {
         this.backgroundStyle = 'Users_BackgroundStyle'; // Apply the background style class
       } 
       else if(this.$route.path === '/help'){

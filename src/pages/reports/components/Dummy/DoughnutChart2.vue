@@ -22,7 +22,7 @@
     },
     computed: {
       chartData() {
-        const totalMinutes = 200 * 60; // Total time is 5 hours in minutes (5 * 60 = 300 minutes)
+        const totalMinutes = 200; // Total time is 5 hours in minutes (5 * 60 = 300 minutes)
   
         // If a specific user is selected, use that user's data
         const userActiveTime = this.data[0] ? this.data[0].totalActiveTime : 0;
@@ -37,7 +37,7 @@
             {
               label: 'Time Distribution',
               data: dataValues,
-              backgroundColor: [colorHash.hex(labels[0]), '#DDDDDD'],
+              backgroundColor: [colorHash.hex(labels[0]), '#FFFFFF'],
               borderColor: [colorHash.hex(labels[0]), '#CCCCCC'],
               borderWidth: 1
             }

@@ -8,7 +8,7 @@
                       <img id="viewImage" src="" alt="Full Size Image">
                       <div id="closeButton" class="close-btn" @click="hideImageView">&times;</div>
                     </div>
-  <div class="container">
+  <div class="container" style="height: 100vh;">
           <div class="channelbox active">
             <div id="chat-page">
               <div class="chat-container-wrapper">
@@ -65,7 +65,6 @@
                       <q-icon name="upload_file" />
                     </button>
             </div>
-
           </div>
 
           <div class="mediabox">
@@ -80,7 +79,10 @@
                 </div>
               </div>
             </div>
+            
           </div>
+          
+
   </div>
 </template>
 
@@ -997,10 +999,10 @@ sendMessage() {
  
  .chat-container {
    background-color:transparent;
+   /* border:2px solid black; */
    border-radius: 20px;
-   max-height: 550px;
    visibility: visible;
-   height: 1000px; /* Limit height to enable scrolling */
+   height: 80vh; 
    overflow-y: auto; /* Enable vertical scrolling */
    width: 100%;/* Fixed width */
    position: relative; /* Establish positioning context */
@@ -1009,9 +1011,9 @@ sendMessage() {
  .media-container {
    background-color:transparent;
    border-radius: 20px;
-   max-height: 600px;
+   height: 90vh; 
    visibility: visible;
-   height: 1000px; /* Limit height to enable scrolling */
+    /* Limit height to enable scrolling */
    overflow-y: auto; /* Enable vertical scrolling */
    width: 100%;/* Fixed width */
    position: relative; /* Establish positioning context */
@@ -1034,6 +1036,7 @@ sendMessage() {
 
  
  .input-container {
+  /* border: 2px solid green; */
   display: flex;
   align-items: center;
   margin-top: 10px;
@@ -1114,6 +1117,8 @@ sendMessage() {
  }
 
  .chat-container-wrapper {
+  /* height:100vh; */
+  /* border:2px solid gray; */
    /* Space for scrollbar */
    overflow: hidden; /* Hide overflow */
  }
