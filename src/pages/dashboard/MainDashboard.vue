@@ -132,6 +132,7 @@ export default {
           description: 'Perfect for learning how the framework works.',
           path: 'notifications',
           background: '#D3D3D390',
+          enable: true
         },
         {
           image: organizationPng,
