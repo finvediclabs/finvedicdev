@@ -268,7 +268,8 @@ export default {
             { label: "Books", value: 'books', icon: 'menu_book' },
             { label: "Videos", value: "videos", icon: 'switch_video' },
             { label: "Presentations", value: "presentations", icon: 'newspaper' },
-            { label: "Class Room", value: "class-room", icon: 'reduce_capacity' }
+            { label: "Class Room", value: "class-room", icon: 'reduce_capacity' },
+            { label: "Assignment", value: "assignment", icon: 'assignment' },
           ]
         },
         {
@@ -475,6 +476,10 @@ showMsg(message, type) {
       else if (this.$route.path === '/library/videos') {
         this.backgroundStyle = 'booksBackgroundStyle'; // Apply the background style class
       } 
+      else if (this.$route.path === '/library/assignment') {
+        this.backgroundStyle = 'Users_BackgroundStyle'; // Apply the background style class
+      } 
+    
       else if (this.$route.path === '/library/presentations') {
         this.backgroundStyle = 'booksBackgroundStyle'; // Apply the background style class
       } 
@@ -486,6 +491,9 @@ showMsg(message, type) {
       } 
       
       else if (this.$route.path === '/admin/users') {
+        this.backgroundStyle = 'Users_BackgroundStyle'; // Apply the background style class
+      } 
+      else if (this.$route.path === '/admin/assignments') {
         this.backgroundStyle = 'Users_BackgroundStyle'; // Apply the background style class
       } 
       

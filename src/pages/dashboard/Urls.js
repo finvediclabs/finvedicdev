@@ -1,5 +1,8 @@
 export const urls = {
   usersUrl: 'api/users',
+  studentAssignmentsUrl: 'api/student-assignments',
+  assignmentsUrl: 'api/assignments',
+  batchAssignmentUrl: 'api/batch-assignments',
   rolesUrl: 'api/roles',
   booksDataUrl: 'api/books',
   getRolesUrl: 'api/roles',

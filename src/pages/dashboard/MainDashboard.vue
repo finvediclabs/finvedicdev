@@ -119,13 +119,15 @@ export default {
           enable: true
         },
         {
-          image: videosPng,
-          title: 'Notifications',
+
+          image: vmSetupPng,
+          title: 'Assignments',
           description: 'Perfect for learning how the framework works.',
-          path: 'notifications',
-          background: '#D3D3D390',
+          path: 'assignments',
+          background: '#FFCE70',
           enable: true
         },
+        
         {
           image: organizationPng,
           title: 'Website Forms Data',
