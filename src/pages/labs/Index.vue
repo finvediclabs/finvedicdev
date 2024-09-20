@@ -2,7 +2,12 @@
   <q-page>
     <fin-portlet style="background-color: transparent;">
       <fin-portlet-header>
+        <div class="row col-12">
         <fin-portlet-heading><span class="User_heading" >Labs</span></fin-portlet-heading>
+        <div class="col-3">
+        <a href="https://gurukul.finvedic.com/dojo/" target="_blank" class="styled-link">Finvedic Dojo</a>
+      </div>
+      </div>
       </fin-portlet-header>
       <fin-portlet-item>
         <q-form @submit="onSubmit" ref="form" class="q-pa-md">
@@ -92,12 +97,6 @@
         </q-card>
       </div>
       
-</div>
-<div class="row col-12">
-  <div class="col-4">
-  </div>
-  <div class="col-4"><a href="https://gurukul.finvedic.com/dojo/" target="_blank" class="styled-link">Finvedic Dojo</a></div>
-  <div class="col-4"></div>
 </div>
         </div>
       </fin-portlet-item>
@@ -388,6 +387,8 @@ selectVersion(os) {
             font-size: 18px;
             font-weight: bold;
             text-decoration: none;
+            background-color: #5479F7;
+            color: white;
             border-radius: 10px;
             transition: background-color 0.3s ease, transform 0.3s ease;
             box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);

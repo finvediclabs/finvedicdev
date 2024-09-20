@@ -20,8 +20,8 @@
   </div>
   <div class="container">
     <!-- Conditionally render student.vue component -->
-    <student v-if="selectedCategory === 'Student'" />
-    <Faculty v-if="selectedCategory === 'Faculty'" />
+    <!-- <student v-if="selectedCategory === 'Student'" />
+    <Faculty v-if="selectedCategory === 'Faculty'" /> -->
     <Cloud v-if="selectedCategory === 'Cloud'" />
   </div>
 </template>
@@ -41,8 +41,9 @@ export default {
   },
   data() {
     return {
-      selectedCategory: 'Student',// Assuming you have this in your data
-    categories: ['Student', 'Faculty', 'Cloud']
+      selectedCategory: 'Cloud',// Assuming you have this in your data
+    // categories: ['Student', 'Faculty', 'Cloud']
+    categories: ['Cloud']
     };
   },
   methods: {
