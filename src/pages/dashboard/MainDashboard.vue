@@ -119,6 +119,14 @@ export default {
           enable: true
         },
         {
+          image: vmSetupPng,
+          title: 'Assignments',
+          description: 'Perfect for learning how the framework works.',
+          path: 'assignments',
+          background: '#FFCE70',
+          enable: true
+        },
+        {
           image: organizationPng,
           title: 'Website Forms Data',
           description: 'Perfect for learning how the framework works.',

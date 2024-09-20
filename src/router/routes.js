@@ -56,6 +56,11 @@ const routes = [
         meta: { item: 'users' }
       },
       {
+        path: 'assignments',
+        component: () => import('pages/dashboard/assignments/Assignments.vue'),
+        meta: { item: 'users' }
+      },
+      {
         path: 'roles',
         component: () => import('pages/dashboard/Roles.vue'),
         permissions:[
@@ -134,7 +139,8 @@ const routes = [
         path: 'class-room/create',
         component: () => import('pages/dashboard/CalenderEvents/CreateEvent.vue'),
         meta: { items: 'createvent' }
-      }, {
+      }, 
+      {
         path: 'class-room/enrollments/:cycleid',
         component: () => import('pages/dashboard/CalenderEvents/Enr.vue'),
         meta: { item: 'enrollments' }
@@ -184,7 +190,17 @@ const routes = [
         path: 'class-room',
         component: () => import('pages/libraries/CalenderEvents.vue'),
         meta: { item: 'class-room' }
-      }
+      },
+      {
+        path: 'assignment',
+        component: () => import('pages/libraries/Assignments.vue'),
+        meta: { item: 'assignment' }
+      },
+      {
+        path: 'assignments/submit',
+        component: () => import('pages/libraries/SubmitAssignments.vue'),
+        meta: { items: 'submit' }
+      }, 
     ]
   },
   // {
