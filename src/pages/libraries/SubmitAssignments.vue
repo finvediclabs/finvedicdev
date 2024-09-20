@@ -70,7 +70,7 @@
         <!-- Add q-select for isVerified -->
         
       </div>
-      <template v-if="fileType === 'unknown'">
+      <template v-if="fileType === 'png'">
         <q-img :src="dialogFileUrl" class="custom-img" />
       </template>
       <template v-else-if="fileType === 'pdf'">
@@ -97,8 +97,8 @@
         />
     <q-card-actions class="q-dialog-actions">
       
-      <q-btn label="Submit" color="primary" @click="submitAssignmentData" />
-      <q-btn label="Download" color="secondary" @click="downloadFile" v-if="fileType" />
+      <q-btn label="Verification Done" color="primary" @click="submitAssignmentData" />
+      <q-btn label="Download File" color="secondary" @click="downloadFile" v-if="fileType" />
     </q-card-actions>
   </q-card>
 </q-dialog>
@@ -111,7 +111,6 @@ import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 import axios from 'axios';
-import * as pdfjsLib from 'pdfjs-dist';
 import VuePdfApp from "vue3-pdf-app";
 import "vue3-pdf-app/dist/icons/main.css";
 
@@ -214,6 +213,11 @@ export default {
           fileType = 'png'; // PNG file extension
         } else if (fileName.endsWith('.pdf')) {
           fileType = 'pdf'; // PDF file extension
+        }else if (fileName.endsWith('.jpg')) {
+          fileType = 'png'; // PDF file extension
+        }
+        else if (fileName.endsWith('.jpeg')) {
+          fileType = 'png'; // PDF file extension
         }
 
         return {
@@ -321,53 +325,38 @@ async handleSelectChange(value) {
     },
     
     async downloadFile() {
-      try {
-        // Fetch the file from the URL
-        const response = await fetch(this.dialogFileUrl);
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-
-        // Convert the response to a Blob
-        const blob = await response.blob();
-
-        // Read the first few bytes of the Blob to determine the file type
-        const arrayBuffer = await blob.arrayBuffer();
-        const byteArray = new Uint8Array(arrayBuffer);
-
-        // Check the file signature to determine the file type
-        let fileType = 'unknown';
-        if (byteArray[0] === 0x89 && byteArray[1] === 0x50 && byteArray[2] === 0x4E && byteArray[3] === 0x47) {
-          fileType = 'png'; // PNG file signature
-        } else if (byteArray[0] === 0x25 && byteArray[1] === 0x50 && byteArray[2] === 0x44 && byteArray[3] === 0x46) {
-          fileType = 'pdf'; // PDF file signature
-        }
-
-        // Create a URL for the Blob
-        const url = URL.createObjectURL(blob);
-
-        // Create a temporary link element
-        const link = document.createElement('a');
-        link.href = url;
-
-        // Set the filename and extension based on file type
-        const fileExtension = fileType === 'pdf' ? 'pdf' : 'png';
-        const filename = `file.${fileExtension}`;
-
-        // Set the filename and ensure it ends with the correct extension
-        link.download = filename;
-
-        // Append the link to the body and trigger a click
-        document.body.appendChild(link);
-        link.click();
-
-        // Clean up by removing the link and revoking the object URL
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-      } catch (error) {
-        console.error('Error downloading file:', error);
-      }
+  try {
+    // Fetch the file from the URL
+    const response = await fetch(this.dialogFileUrl);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
     }
+
+    // Convert the response to a Blob
+    const blob = await response.blob();
+
+    // Create a URL for the Blob
+    const url = URL.createObjectURL(blob);
+
+    // Create a temporary link element
+    const link = document.createElement('a');
+    link.href = url;
+
+    // Set a default filename (you can customize this)
+    const filename = this.dialogFileUrl.split('/').pop(); // Extract filename from URL
+    link.download = filename;
+
+    // Append the link to the body and trigger a click
+    document.body.appendChild(link);
+    link.click();
+
+    // Clean up by removing the link and revoking the object URL
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Error downloading file:', error);
+  }
+}
   },
   mounted() {
     this.getStudentAssignmentsData();

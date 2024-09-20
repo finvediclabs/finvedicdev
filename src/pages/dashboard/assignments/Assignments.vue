@@ -9,8 +9,8 @@
       </fin-portlet-item>
     </fin-portlet>
   </div>
-<div class="col-12 w-100 row">
-  <div class="row col-6 w-100">
+<div class="row" >
+  <div class="col-6">
     <fin-portlet style="background-color:transparent;margin-bottom:0px;max-height:100vh;">
       <fin-portlet-header>
         <fin-portlet-heading :loading="loading"><span class="User_heading" >Assignments</span></fin-portlet-heading>
@@ -25,7 +25,7 @@
       </fin-portlet-item>
     </fin-portlet>
   </div>
-  <div class="row col-6 w-100">
+  <div class="col-6">
 
     <fin-portlet style="background-color:transparent;margin-bottom:0px;max-height:100vh;">
       <fin-portlet-header>
@@ -223,11 +223,8 @@ headerStudent: [
 ],
 batchHeader: [
   { label: 'S.No', key: 'index', align: 'center' },
-  { label: 'Batch ID', key: 'batchId', align: 'start' },
   { label: 'Batch Name', key: 'batchName', align: 'start' },
-  { label: 'Assignment ID', key: 'assignmentId', align: 'start' },
   { label: 'Assignment Title', key: 'assignmentTitle', align: 'start' },
-  { label: 'Due Date', key: 'dueDate', align: 'center' },
   { label: 'Max Marks', key: 'maxMarks', align: 'center' },
   // { label: 'File', key: 'file', align: 'center' },
 ],

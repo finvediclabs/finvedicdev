@@ -194,6 +194,7 @@
       </vue-pdf-app>
     </div>
   </template>
+  <template v-else>File Preview Not Available</template>
 </div>
 
         </div>
