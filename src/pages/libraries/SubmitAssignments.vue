@@ -85,6 +85,15 @@
     </vue-pdf-app>
           </div>
 </template>
+ <!-- Java and Python File Preview -->
+ <template v-else-if="['java', 'py'].includes(fileType)">
+    <pre v-if="dialogFileContent">
+      <code class="language-{{ fileType }}">
+        {{ dialogFileContent }}
+      </code>
+    </pre>
+  </template>
+
       <template v-else>
         <div>No preview available for this file type</div>
       </template>
@@ -188,37 +197,33 @@ export default {
     async getStudentAssignmentsData() {
   this.loading = true;
   try {
-    // Construct the URL with the search parameter if searchQuery is present
     const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
     let url = baseUrl + 'api/student-assignments';
-        if (this.assignmentSearch) {
-          url += `?assignmentId=${this.assignmentSearch.value}`;
-          console.log("url:",url)
-        }
+    if (this.assignmentSearch) {
+      url += `?assignmentId=${this.assignmentSearch.value}`;
+      console.log("url:", url);
+    }
 
     const response = await axios.get(url);
     if (response.data.success) {
       const assignmentsWithBlobs = await Promise.all(response.data.message.map(async (assignment, index) => {
         const fileName = assignment.submittedFile;
-        const cleanFileName = fileName
+        const cleanFileName = fileName;
 
-        // Create FormData and send POST request
-        
-        // Convert response to blob
-      
-        const blobUrl = cleanFileName;
         let fileType = 'unknown';
 
-        if (fileName.endsWith('.png')) {
-          fileType = 'png'; // PNG file extension
+        // Determine the file type based on the extension
+        if (fileName.endsWith('.png') || fileName.endsWith('.jpg') || fileName.endsWith('.jpeg')) {
+          fileType = 'png';
         } else if (fileName.endsWith('.pdf')) {
-          fileType = 'pdf'; // PDF file extension
-        }else if (fileName.endsWith('.jpg')) {
-          fileType = 'png'; // PDF file extension
+          fileType = 'pdf';
+        } else if (fileName.endsWith('.java')) {
+          fileType = 'java';
+        } else if (fileName.endsWith('.py')) {
+          fileType = 'py';
         }
-        else if (fileName.endsWith('.jpeg')) {
-          fileType = 'png'; // PDF file extension
-        }
+
+        const blobUrl = cleanFileName;
 
         return {
           index: index + 1,
@@ -232,8 +237,8 @@ export default {
           studentName: assignment.studentName,
           submittedFile: assignment.submittedFile,
           isVerified: assignment.isVerified,
-          blobUrl: blobUrl, // Add the blob URL here
-          fileType: fileType // Add the file type here
+          blobUrl: blobUrl, // Blob URL
+          fileType: fileType // File Type (png, pdf, java, py)
         };
       }));
 
@@ -320,9 +325,18 @@ async handleSelectChange(value) {
       if (fileType === 'pdf') {
         this.chapterFilePath = blobUrl;
         
-      }
+      }else if (['java', 'py'].includes(fileType)) {
+    // Fetch content for .java or .py files
+    const response = await fetch(blobUrl);
+    this.dialogFileContent = await response.text();
+  }
       this.assignmentData.isVerified = assignment.isVerified;
     },
+    highlightCode() {
+    this.$nextTick(() => {
+      Prism.highlightAll();
+    });
+  },
     
     async downloadFile() {
   try {
@@ -358,6 +372,12 @@ async handleSelectChange(value) {
   }
 }
   },
+  watch: {
+  dialogFileContent() {
+    this.highlightCode();
+  }
+},
+  
   mounted() {
     this.getStudentAssignmentsData();
     this.pdfPath = this.dialogFileUrl;
@@ -367,8 +387,8 @@ async handleSelectChange(value) {
 
 <style scoped>
 .custom-dialog .q-card {
-  width: 80vw;
-  height: 80vh;
+  width: 100vw;
+  height: 100vh;
   margin: 0;
   border-radius: 0;
 }
@@ -460,5 +480,12 @@ button:hover {
   display: table;
   width: 100%;
   table-layout: fixed;
+}
+pre {
+  background-color: #f5f5f5;
+  padding: 15px;
+  border-radius: 5px;
+  overflow-x: auto;
+  white-space: pre-wrap; /* Wrap long lines */
 }
 </style>

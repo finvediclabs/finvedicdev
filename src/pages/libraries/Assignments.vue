@@ -194,6 +194,16 @@
       </vue-pdf-app>
     </div>
   </template>
+
+  <template v-else-if="dialogFileUrl2 && ['java', 'py'].includes(dialogFileUrl2.split('.').pop().toLowerCase())">
+      <pre v-if="dialogFileContent">
+        <code class="language-{{ dialogFileType }}">
+          {{ dialogFileContent }}
+        </code>
+      </pre>
+    </template>
+
+  
   <template v-else>File Preview Not Available</template>
 </div>
 
@@ -213,12 +223,13 @@
     @dragover.prevent
     @drop="handleDrop"
   >
-    <span>Drag & Drop Image, PDF, or DOC Here</span>
+    <span>Drag & Drop Image, PDF, .Java or .py files Here</span>
     <input
   type="file"
   ref="fileInput"
   @change="handleFileSelect"
-  accept="image/*,.pdf,.doc,.docx"
+ 
+  accept="image/*,.pdf,.java,.py"
   style="position: absolute; top: 50%; transform: translateY(-50%); opacity: 0; width: 100%; height: 100%; cursor: pointer;"
 />
   </div>
@@ -245,6 +256,7 @@
         :src="filePreviewUrl"
         style="width: 100%; height: 500px;"
       ></iframe>
+      
       <!-- Display message for other types -->
       <div v-else>
         <span>File preview not available for this file type.</span>
@@ -274,6 +286,10 @@ import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 import { useProfileStore } from "src/stores/profile";
 import SubmittedAssignment from "./SubmitAssignments.vue";
+import Prism from 'prismjs';
+import 'prismjs/components/prism-python'; // Load syntax highlighting for Python
+import 'prismjs/components/prism-java';   // Load syntax highlighting for Java
+import 'prismjs/themes/prism.css'; 
 import VuePdfApp from "vue3-pdf-app";
 import "vue3-pdf-app/dist/icons/main.css";
 export default {
@@ -325,9 +341,16 @@ export default {
       showDragAndDrop: true,
       EditisNotCLicked: true, 
       dialogFileUrl: '' ,
-      dialogFileUrl2: ''
+      dialogFileUrl2: '',
+      dialogFileContent: '', // The file content for Java and Python files
+      dialogFileType: '', // The file type ('java' or 'py')
       // URL for the image blob
     };
+  },
+  watch: {
+    dialogFileContent() {
+      this.highlightCode();
+    }
   },
   components: {
     FinPortlet,
@@ -365,6 +388,11 @@ export default {
       this.userEmail = profileStore.user.email;
       this.fetchEnrollments(this.userId); // Fetch enrollments based on user ID
     },
+    highlightCode() {
+      this.$nextTick(() => {
+        Prism.highlightAll(); // Highlight the code using PrismJS
+      });
+    },
     onSubmit() {
   if ( this.selectedAssignmentId) {
     console.log("StudentAssignmentId",this.selectedAssignmentId)
@@ -373,6 +401,7 @@ export default {
   } else {
     // Otherwise, call the handleSubmit method for new submission
     this.handleSubmit();
+    this.fetchBatchAssignments();
   }
 },
 closeDialog() {
@@ -462,30 +491,35 @@ closeDialog() {
     if (result.success) {
       this.studentAssignments = result.data;
       this.showDragAndDrop = this.studentAssignments.length === 0;
+      
       const fetchFiles = this.studentAssignments.map(async (assignment) => {
         console.log("submitFile:", assignment.submittedFile);
         const fileName = assignment.submittedFile;
 
-        const fileType = fileName.split('.').pop().toLowerCase();
-        const fileType2 = fileName.split('.').pop().toLowerCase(); // Get the file extension
+        const fileType = fileName.split('.').pop().toLowerCase(); // Get the file extension
         const isImage = ['jpg', 'jpeg', 'png', 'gif'].includes(fileType); // Check if it's an image
-        const isPdf = fileType2 === 'pdf'; // Check if it's a PDF
+        const isPdf = fileType === 'pdf'; // Check if it's a PDF
+        const isJava = fileType === 'java'; // Check if it's a .java file
+        const isPython = fileType === 'py'; // Check if it's a .py file
+
         this.dialogFileUrl2 = fileName;
+
         if (isImage) {
-          // Update the file URL only if it's an image
           console.log("File type:", fileType, "Is image:", isImage);
         } else if (isPdf) {
-
-          this.chapterFilePath =fileName;
-          console.log("file",blobUrl);
-          
+          this.chapterFilePath = fileName;
+          console.log("File type:", fileType, "Is PDF:", isPdf);
+        } else if (isJava || isPython) {
+          // Fetch the file content for Java or Python files
+          const fileResponse = await fetch(`${fileName}`);
+          this.dialogFileContent = await fileResponse.text(); // Store the file content
+          this.dialogFileType = fileType; // Set the file type for syntax highlighting
         } else {
-          console.log("File type:", fileType, "Is image:", isImage, "Is PDF:", isPdf);
+          console.log("Unsupported file type:", fileType);
         }
       });
 
       await Promise.all(fetchFiles);
-
       this.showDragAndDrop = this.studentAssignments.length === 0;
     } else {
       console.error('Failed to fetch student assignments:', result.message);
@@ -501,6 +535,7 @@ closeDialog() {
   const file = event.target.files[0];
   if (file) {
     this.fileType = file.type;
+    console.log("fileType:", this.fileType);
     this.filePreviewUrl = URL.createObjectURL(file);
     this.fileName = file.name;
     this.selectedFile = file; // Store the selected file
@@ -626,6 +661,7 @@ async handleSubmit() {
 
     if (response.ok) {
       console.log('Assignment submitted successfully');
+      this.fetchBatchAssignments();
       // Optionally, you can reset the dialog and clear the file preview
       this.dialogVisible = false;
       this.filePreviewUrl = '';
@@ -778,6 +814,14 @@ async handleSubmit() {
   height: 8vw;
 }
   
+  
+pre {
+  background-color: #f5f5f5;
+  padding: 15px;
+  border-radius: 5px;
+  overflow-x: auto;
+  white-space: pre-wrap; /* Wrap long lines */
+}
 .User_heading {
   color: #5479F7;
   margin-left: 4%;
