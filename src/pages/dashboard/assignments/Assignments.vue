@@ -1,6 +1,6 @@
 <template>
-  <div class="row col-12">
-    <fin-portlet style="background-color:transparent;margin-bottom:0px;max-height:100vh;width: 80%;">
+  <div class="row">
+    <fin-portlet style="background-color:transparent;margin-bottom:0px;max-height:100vh;width: 100vw;">
       <fin-portlet-header>
         <fin-portlet-heading :loading="loading" backArrow><span class="User_heading" >Student Assignments</span></fin-portlet-heading>
       </fin-portlet-header>
