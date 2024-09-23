@@ -443,7 +443,7 @@ async uploadFile(file) {
           this.assignments = response.data.data.map((assignment,index) => ({
             index:index+1,
             label: assignment.title, // Display name in the select dropdown
-            value: assignment.id,
+            id: assignment.id,
             desc:assignment.description, 
             maxMarks: assignment.maxMarks,
             files:assignment.files,
@@ -590,7 +590,7 @@ getBatchAssignmentsData() {
   const newBatchAssignment = {
     batchId: selectedBatchDetails.value,
     batchName: selectedBatchDetails.label,
-    assignmentId: this.selectedAssignmentId.value,
+    assignmentId: this.selectedAssignmentId.id,
     assignmentTitle: selectedAssignmentDetails.label,
     assignmentDesc: selectedAssignmentDetails.desc,
     dueDate: this.selectedDueDate,
