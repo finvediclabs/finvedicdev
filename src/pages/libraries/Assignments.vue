@@ -137,26 +137,37 @@
             </div>
 
             <!-- Conditionally render button if not verified -->
-            <div class="row items-center" >
-  <div v-if="assignment.isVerified === 'N'" class="col-auto">
+      <div class="q-row items-center no-wrap">
+  <!-- Conditional message and Edit button -->
+  <div v-if="assignment.isVerified === 'N'" class="q-col-auto row items-center">
     <div>Your assignment is not yet verified</div>
     <q-btn 
       label="Edit" 
       color="primary" 
       @click="handleSupport(assignment.id)" 
-      style="margin-left: 10px;margin-top: 20px;" 
+      class="q-ml-sm" 
     />
-    
   </div>
 
-  <div class="col-auto">
-    <q-btn 
-      label="Download File" 
-      color="green" 
-      @click="downloadFileAsPdf" 
-      style="margin-left: 10px;margin-top: 32px;" 
-    />
-  </div>
+  <div class="q-row items-center no-wrap q-gutter-sm" style="margin-top: 10px">
+  <!-- Download File button -->
+  <q-btn 
+    label="Download File" 
+    color="green" 
+    @click="downloadFileAsPdf" 
+    class="q-ml-sm" 
+  />
+
+  <!-- View in New Tab button -->
+  <q-btn 
+    v-if="dialogFileUrl2"
+    label="View in New Tab" 
+    icon="open_in_new" 
+    color="primary" 
+    @click="openInNewTab(dialogFileUrl2)" 
+    class="q-ml-sm" 
+  />
+</div>
 </div>
 
 <div v-if="EditisNotCLicked">
@@ -205,6 +216,7 @@
 
   
   <template v-else>File Preview Not Available</template>
+  
 </div>
 
         </div>
@@ -402,7 +414,9 @@ export default {
     // Otherwise, call the handleSubmit method for new submission
     this.handleSubmit();
     this.fetchBatchAssignments();
+    
   }
+  window.location.reload();
 },
 closeDialog() {
     this.dialogVisible = false;
@@ -561,6 +575,9 @@ closeDialog() {
       throw error; // Rethrow the error to handle it in the main method
     }
 },
+openInNewTab(url) {
+      window.open(url, '_blank');
+    },
 async updateSubmit() {
   try {
     const studentAssignmentId = this.selectedAssignmentId // Ensure the studentAssignmentId is available

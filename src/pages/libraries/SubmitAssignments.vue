@@ -97,6 +97,10 @@
       <template v-else>
         <div>No preview available for this file type</div>
       </template>
+
+      <div v-if="dialogFileUrl" class="q-mt-md">
+  <q-btn label="View in New Tab" icon="open_in_new" color="primary" @click="openInNewTab(dialogFileUrl)" />
+</div>
     </q-card-section>
     <q-select
           v-model="assignmentData.isVerified"
@@ -321,7 +325,7 @@ async handleSelectChange(value) {
       this.fileType = fileType;
       this.dialogVisible = true;
       this.assignmentData = assignment;
-      
+      console.log("file:",blobUrl);
       if (fileType === 'pdf') {
         this.chapterFilePath = blobUrl;
         
@@ -337,7 +341,9 @@ async handleSelectChange(value) {
       Prism.highlightAll();
     });
   },
-    
+  openInNewTab(url) {
+      window.open(url, '_blank');
+    },
     async downloadFile() {
   try {
     // Fetch the file from the URL
