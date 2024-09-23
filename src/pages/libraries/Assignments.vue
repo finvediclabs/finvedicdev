@@ -26,7 +26,8 @@
                   class="assignment-button"
                 >
                   <img src="../../assets/folder.png" alt="Folder Icon" class="assignment-icon" />
-                  <div class="assignment-name">My Batch</div>
+                  <div v-if="isEligible" class="assignment-name">Batch:{{ enrollment.cycleid }}</div>
+                  <div v-else class="assignment-name">My Batch</div>
                 </button>
               </div>
             </fin-portlet-item>
