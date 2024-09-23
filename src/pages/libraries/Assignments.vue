@@ -13,7 +13,7 @@
         <fin-portlet style="background-color:transparent;margin-bottom:0px;max-height:100vh;">
           <fin-portlet-header>
             <fin-portlet-heading :loading="loading">
-              <span class="User_heading">My Assignments</span>
+              <span class="User_heading">My Assignment</span>
             </fin-portlet-heading>
           </fin-portlet-header>
           <fin-portlet style="background-color:transparent;">
@@ -40,7 +40,7 @@
               <q-btn @click="showEnrollments" style="box-shadow: none !important;--q-btn-shadow: none !important;">
                 <q-icon name="arrow_back" style="font-weight: bold; color: #5479F7;" class="cursor-pointer" />
               </q-btn>
-              <span class="User_heading">Batch Assignments</span>
+              <span class="User_heading">Activity List</span>
             </fin-portlet-heading>
           </fin-portlet-header>
           <fin-portlet style="background-color:transparent;">
@@ -54,7 +54,7 @@
                   @click="openDialog(batch.file, batch.assignmentDesc, batch.assignmentId, batch.assignmentTitle, batch.batchName, batch.batchId, userId, userEmail)"
                 >
                   <img src="../../assets/folder.png" alt="Folder Icon" class="assignment-icon" />
-                  <div class="assignment-name">{{ batch.assignmentTitle }}</div>
+                  <div class="assignment-name">Activity: {{ batch.assignmentTitle }}</div>
               </q-btn>
               </div>
             </fin-portlet-item>
@@ -81,11 +81,11 @@
     <div style="padding: 10px;">
       <fin-portlet-header>
       <fin-portlet-heading :loading="loading">
-        <span class="User_heading">Assignment:{{ dialogAssignmentTitle }}</span>
+        <span class="User_heading">Instructions</span>
       </fin-portlet-heading>
     </fin-portlet-header>
       <!-- Display the assignment description -->
-      <span><strong>Assignment Description:</strong> {{ dialogAssignmentDesc }}</span>
+      <span><strong>Assignment Title:</strong> {{ dialogAssignmentTitle }}</span>
     </div>
   </div>
 
@@ -108,9 +108,9 @@
 
       <div v-if="studentAssignments.length > 0">
   <fin-portlet style="background-color:transparent;margin-bottom:0px;max-height:100vh;width: 100%;">
-    <fin-portlet-header style="width: 30vw;">
+    <fin-portlet-header style="width: 50vw;">
       <fin-portlet-heading :loading="loading">
-        <span class="User_heading text-center" >Submit Assignment</span>
+        <span class="User_heading text-center" >Submitted Assignment</span>
       </fin-portlet-heading>
     </fin-portlet-header>
     <fin-portlet style="background-color:transparent;">
@@ -225,7 +225,11 @@
     </fin-portlet>
   </fin-portlet>
 </div>
-
+<fin-portlet-header style="width: 50vw;">
+      <fin-portlet-heading :loading="loading" class="text-center">
+        <span class="User_heading" >Submit Your Assignment</span>
+      </fin-portlet-heading>
+    </fin-portlet-header>
       <div v-if="showDragAndDrop"
       style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;position: relative;"
       >
