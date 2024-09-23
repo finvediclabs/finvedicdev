@@ -54,7 +54,7 @@
                   @click="openDialog(batch.file, batch.assignmentDesc, batch.assignmentId, batch.assignmentTitle, batch.batchName, batch.batchId, userId, userEmail)"
                 >
                   <img src="../../assets/folder.png" alt="Folder Icon" class="assignment-icon" />
-                  <div class="assignment-name">Activity: {{ batch.assignmentTitle }}</div>
+                  <div class="assignment-name">Activity: {{ batch.index }}</div>
               </q-btn>
               </div>
             </fin-portlet-item>
@@ -225,14 +225,15 @@
     </fin-portlet>
   </fin-portlet>
 </div>
-<fin-portlet-header style="width: 50vw;">
+
+      <div v-if="showDragAndDrop"
+      style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;position: relative;"
+      >
+      <fin-portlet-header style="width: 50vw;">
       <fin-portlet-heading :loading="loading" class="text-center">
         <span class="User_heading" >Submit Your Assignment</span>
       </fin-portlet-heading>
     </fin-portlet-header>
-      <div v-if="showDragAndDrop"
-      style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;position: relative;"
-      >
   <div 
     v-if="!filePreviewUrl"
     style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px dashed #aaa; padding: 20px; box-sizing: border-box; position: relative;"
@@ -268,7 +269,7 @@
       />
       <!-- Display PDF preview -->
       <iframe
-        v-else-if="fileType === 'application/pdf'"
+        v-else-if="fileType === 'application/pdf' || fileType === 'text/x-java-source' || fileType === 'text/x-python'  || fileType === 'text/plain' || fileType === 'application/octet-stream'"
         :src="filePreviewUrl"
         style="width: 100%; height: 500px;"
       ></iframe>
@@ -485,7 +486,10 @@ closeDialog() {
     const response = await fetch(url);
       const data = await response.json();
       console.log('Fetched batch assignments for cycleId:', cycleId, data.data); // Debugging output
-      this.batchAssignments2 = data.data; // Store fetched batch assignments
+      this.batchAssignments2 = data.data.map((assignment, index) => ({
+      ...assignment,
+      index: index + 1 // Add index starting from 1
+    })); // Store fetched batch assignments
     } catch (error) {
       console.error('Error fetching batch assignments by cycleId:', error);
     } finally {
