@@ -64,9 +64,9 @@
         <span><strong>Assignment Id:</strong> {{ assignmentData.assignmentId }}</span><br> -->
         <span><strong>Assignment Title:</strong> {{ assignmentData.assignmentTitle }}</span><br>
         <!-- <span><strong>Batch Id:</strong> {{ assignmentData.batchId }}</span><br> -->
-        <span><strong>Batch Title:</strong> {{ assignmentData.batchTitle }}</span><br>
-        <span><strong>Due Date:</strong> {{ assignmentData.createdDate }}</span><br>
-        <span><strong>Student Name:</strong> {{ assignmentData.studentName }}</span><br>
+        <span><strong>Batch Name:</strong> {{ assignmentData.batchTitle }}</span><br>
+        <!-- <span><strong>Due Date:</strong> {{ assignmentData.createdDate }}</span><br> -->
+        <span><strong>Student:</strong> {{ assignmentData.studentName }}</span><br>
         <!-- Add q-select for isVerified -->
         
       </div>
