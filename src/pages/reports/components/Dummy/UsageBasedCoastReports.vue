@@ -28,23 +28,56 @@
     </div>
 
     <!-- Bottom: Table -->
-    <div class="table-container">
+    <div class="table-container" style="margin-top: 7%;">
       <table class="vm-table">
-        <thead>
-          <tr>
-            <th>Username</th>
-            <th>VM Name</th>
-            <th>Active Time</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="vm in filteredVMs" :key="vm.userName + '-' + vm.names.join('-')">
-            <td>{{ vm.userName || 'N/A' }}</td>
-            <td>{{ vm.names.join(', ') }}</td>
-            <td>{{ formatTime(vm.totalActiveTime2) }}</td>
-          </tr>
-        </tbody>
-      </table>
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>VM Name</th>
+        <th>Active Time For All VMs</th>
+        <th>Remainig Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="vm in filteredVMs" :key="vm.userName + '-' + vm.names.join('-')">
+        <td>{{ vm.userName || 'N/A' }}</td>
+        <td>{{ vm.names.join(', ') }}</td>
+        <td>{{ formatTime(vm.totalActiveTime2) }}</td>
+        <td>{{ formatTime(calculateRemainingTime(vm.totalActiveTime2)) }}</td> <!-- Remaining Time -->
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Second Table (Filtered VMs only from the first table) -->
+  <table class="vm-table" style="margin-top: 3%;">
+    <thead>
+      <tr>
+        <th>Serial Number</th>
+        <th>VM Name</th>
+        <th>Created Date</th>
+        <th>Started Time</th>
+        <th>End Time</th>
+        <th>Active Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="(vm, index) in filteredSecondTableVMs" :key="vm.name + '-' + index">
+        <td>{{ index + 1 }}</td>
+        <td>{{ vm.name }}</td>
+        <!-- Use formatDate to display just the date -->
+        <td>{{ formatDate(vm.createdDate) }}</td>
+        <!-- Use formatTimeFromDateTime to display just the time -->
+        <td>{{ formatTimeFromDateTime(vm.createdDate) }}</td>
+        <!-- End Time: show time from deletedDate -->
+        <td>{{ formatTimeFromDateTime(vm.deletedDate) || 'N/A' }}</td>
+        <!-- Active Time: format the total active time in hours and minutes -->
+        <td>{{ formatTime(vm.activeTime || 0) }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+
     </div>
   </div>
 </template>
@@ -85,7 +118,14 @@ export default {
   computed: {
     isStudent() {
       return this.userType === 'Student';
-    }
+    },
+    filteredSecondTableVMs() {
+    // Get the names of the VMs from the first table
+    const firstTableVMNames = this.filteredVMs.flatMap(vm => vm.names);
+    
+    // Filter the `vms` array to include only the VMs present in the first table
+    return this.vms.filter(vm => firstTableVMNames.includes(vm.name));
+  }
   },
   mounted() {
 
@@ -111,6 +151,7 @@ export default {
         console.error('Error fetching VM data:', error);
       }
     },
+
     setSelectedUser() {
         this.selectedUser = this.profileStore.user.email;
         this.filterVMsByUser(); // Ensure that data is filtered for the selected user
@@ -205,6 +246,28 @@ export default {
         ]
       };
     },
+        calculateRemainingTime(activeTime) {
+        const totalTime = 18000; // Total time is 5 hours (18000 seconds)
+        const remainingTime = totalTime - activeTime;
+        return remainingTime > 0 ? remainingTime : 0; // Ensure no negative time
+        },
+        formatDate(dateString) {
+        if (!dateString) return 'N/A';
+        return dateString.split('T')[0]; // Get date part
+      },
+
+      // Extracts the time part (after the "T")
+      formatTimeFromDateTime(dateString) {
+        if (!dateString) return 'N/A';
+        return dateString.split('T')[1].split('.')[0]; // Get time part, remove milliseconds
+      },
+
+      // Format active time (already implemented)
+      formatTime(totalMinutes) {
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+        return `${hours} hours ${minutes} minutes`;
+      },
     previousWeek() {
       this.startDate.setDate(this.startDate.getDate() - 7);
       this.filterVMsByUser();
