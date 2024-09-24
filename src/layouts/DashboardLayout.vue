@@ -671,10 +671,10 @@ showMsg(message, type) {
  
 }
 .Assignment_BackgroundStyle {
-  background-image: #ffff;
+  background-image: url('/src/assets/ai_set_bg.jpg');
   background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
+  background-size: 100% 100%;
+  margin-top:3%;
 }
 
 .Lib_CL_Room_BackgroundStyle{

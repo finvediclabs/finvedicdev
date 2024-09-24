@@ -46,7 +46,7 @@
           </fin-portlet-header>
           <fin-portlet style="background-color:transparent;">
             <fin-portlet-item>
-              <div class="assignment-container">
+              <div class="assignment-container" style="max-height: 400px; overflow-y: auto;">
                 
                 <q-btn
                   v-for="batch in batchAssignments2"
@@ -864,5 +864,23 @@ pre {
   cursor: pointer;
   font-size: 18px;
   margin-bottom: 10px;
+}
+.assignment-container::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+}
+
+.assignment-container::-webkit-scrollbar-thumb {
+  background-color: #5479F7; /* Blue color for the scrollbar handle */
+  border-radius: 10px; /* Rounded corners */
+}
+
+.assignment-container::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* Light background for the scrollbar track */
+}
+
+/* Custom scrollbar for Firefox */
+.assignment-container {
+  scrollbar-color: #5479F7 #f1f1f1; /* Scrollbar handle and track colors */
+  scrollbar-width: thin; /* Makes the scrollbar thinner */
 }
 </style>
