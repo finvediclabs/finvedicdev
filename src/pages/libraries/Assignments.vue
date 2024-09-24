@@ -422,7 +422,6 @@ export default {
     this.fetchBatchAssignments();
     
   }
-  window.location.reload();
 },
 closeDialog() {
     this.dialogVisible = false;
