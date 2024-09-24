@@ -584,7 +584,7 @@ getBatchAssignmentsData() {
     return;
   }
 
-  const selectedAssignmentDetails = this.assignments.find(assignment => assignment.value === this.selectedAssignmentId.value);
+  const selectedAssignmentDetails = this.assignments.find(assignment => assignment.id === this.selectedAssignmentId.id);
   const selectedBatchDetails = this.batches.find(batch => batch.value === this.selectedBatchId.value);
 
   const newBatchAssignment = {
