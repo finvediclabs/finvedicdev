@@ -817,7 +817,7 @@ async handleSubmit() {
 .assignment-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px; /* Space between buttons */
+  gap: 6px; /* Space between buttons */
 }
 .q-btn::before {
   box-shadow: none !important;
