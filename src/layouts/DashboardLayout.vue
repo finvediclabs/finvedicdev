@@ -477,7 +477,7 @@ showMsg(message, type) {
         this.backgroundStyle = 'booksBackgroundStyle'; // Apply the background style class
       } 
       else if (this.$route.path === '/library/assignment') {
-        this.backgroundStyle = 'Users_BackgroundStyle'; // Apply the background style class
+        this.backgroundStyle = 'Assignment_BackgroundStyle'; // Apply the background style class
       } 
     
       else if (this.$route.path === '/library/presentations') {
@@ -670,6 +670,13 @@ showMsg(message, type) {
   background-size: 100vw 70vh;
  
 }
+.Assignment_BackgroundStyle {
+  background-image: #ffff;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
 .Lib_CL_Room_BackgroundStyle{
   background-image: url('/src/assets/BG_New.png');
   background-repeat: no-repeat;
