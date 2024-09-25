@@ -540,11 +540,11 @@ displaySingleMessage(receivedMessage) {
             wsurl = 'wss://' + baseUrl + '/websocket';
         }
 
-        //console.log(wsurl);
+        console.log(wsurl);
 
         // Create a new instance of StompClient
         this.stompClient = new Client({
-          brokerURL: wsurl,
+          brokerURL: wsurl.trim(),
           connectHeaders: {
             login: this.username,
           },

@@ -276,7 +276,10 @@ export default {
          
       //  },
       {
-           icon: 'chat', label: 'Channel', value: 'channel', 
+           icon: 'chat', label: 'Channel', value: 'channel', menu:[
+            { label: "Dev Channel", value: 'dev', icon: 'menu' },
+            { label: "Private", value: "private", icon: 'chat' },
+           ]
          
        },
       
