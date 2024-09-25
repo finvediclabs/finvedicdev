@@ -567,21 +567,30 @@ closeDialog() {
   }
 },
     
-    async uploadFile(file) {
+async uploadFile(file) {
   const formData = new FormData();
-  formData.append('file', file);
+  const profileStore = useProfileStore();
+  const username = profileStore.user.username; 
+  console.log("username:",username)
+  // Construct the new filename using the username and original file name
+  const modifiedFilename = `${username}_${file.name}`;
+
+  // Append the file to formData with the modified filename
+  formData.append('file', file, modifiedFilename);
 
   try {
     const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
     const uploadFileUrl = baseUrl + 'fs/assignments/upload-file';
-      const response = await this.$api.post(uploadFileUrl, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      return response.data.uri; // Assuming the URI is returned in `data.uri`
-    } catch (error) {
-      this.showMsg(error.response?.data.message || error.message, 'negative');
-      throw error; // Rethrow the error to handle it in the main method
-    }
+
+    const response = await this.$api.post(uploadFileUrl, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+
+    return response.data.uri; // Assuming the URI is returned in `data.uri`
+  } catch (error) {
+    this.showMsg(error.response?.data.message || error.message, 'negative');
+    throw error; // Rethrow the error to handle it in the main method
+  }
 },
 openInNewTab(url) {
       window.open(url, '_blank');
