@@ -93,10 +93,22 @@
   <!-- Second row: Image -->
   <div style="width: 100%; display: flex; align-items: center; justify-content: center;">
     <q-img 
-      v-if="dialogFileUrl" 
+      v-if="dialogFileUrl.split('.').pop().toLowerCase() === 'jpg' || 
+             dialogFileUrl.split('.').pop().toLowerCase() === 'jpeg' || 
+             dialogFileUrl.split('.').pop().toLowerCase() === 'png' || 
+             dialogFileUrl.split('.').pop().toLowerCase() === 'gif' || 
+             dialogFileUrl.split('.').pop().toLowerCase() === 'bmp' || 
+             dialogFileUrl.split('.').pop().toLowerCase() === 'webp'" 
       :src="dialogFileUrl" 
       alt="File" 
       style="max-width: 100%; max-height: 100%; object-fit: contain;" 
+    />
+    
+    <PDFViewer
+    v-else-if="dialogFileUrl.split('.').pop().toLowerCase() === 'pdf'" 
+      :source="dialogFileUrl"
+      style="height: calc(60vh - 70px)" 
+    :controls="['rotate', 'zoom', 'catalog', 'switchPage']"
     />
   </div>
 </q-card-section>
@@ -309,6 +321,7 @@ import 'prismjs/components/prism-python'; // Load syntax highlighting for Python
 import 'prismjs/components/prism-java';   // Load syntax highlighting for Java
 import 'prismjs/themes/prism.css'; 
 import VuePdfApp from "vue3-pdf-app";
+import PDFViewer from 'pdf-viewer-vue';
 import "vue3-pdf-app/dist/icons/main.css";
 export default {
   data() {
@@ -376,6 +389,7 @@ export default {
     SubmittedAssignment,
     FinPortletHeading,
     VuePdfApp,
+    PDFViewer,
     FinPortletItem
   },
   computed: {
@@ -860,7 +874,7 @@ pre {
   color: #5479F7;
   margin-left: 4%;
 }
-  
+
 .assignment-name {
   margin-top: 5px;
   font-size: 14px; /* Adjust text size */
