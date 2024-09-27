@@ -133,16 +133,15 @@
               :rules="[val => val && val.length > 0 || 'Max Marks are required']" />
           </div>
           
-          <!-- Files Input -->
           <div class="col-12 q-px-sm q-py-xs">
-            <q-uploader
-              ref="educationCertificateUploader"
-              label="Upload Question"
-              accept=".jpg,.png"
-              style="width: 100%;"
-              @uploaded="onFileUploaded"
-            />
-          </div>
+  <q-uploader
+    ref="educationCertificateUploader"
+    label="Upload Question"
+    accept=".jpg,.png,.pdf"
+    style="width: 100%;"
+    @uploaded="onFileUploaded"
+  />
+</div>
           
           <!-- Course Input -->
           <div class="col-12 q-px-sm q-py-xs">
