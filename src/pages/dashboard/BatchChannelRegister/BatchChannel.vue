@@ -76,6 +76,28 @@
         </fin-portlet-heading>
         <fin-portlet-item>
           <div class="row q-col-gutter-md">
+
+            <div class="q-gutter-md flex justify-between"> <!-- Use flexbox for alignment -->
+            <q-btn 
+                label="Clear Batch Chat" 
+                dense 
+                color="negative" 
+                class="q-px-md text-subtitle1 text-weight-bolder" 
+                no-caps 
+                :disabled="!batchNumber"
+                @click="clearbatchchat()" 
+            />
+
+            <q-btn 
+                label="Clear Public Chat" 
+                dense 
+                color="negative" 
+                class="q-px-md text-subtitle1 text-weight-bolder" 
+                no-caps
+                @click="clearpublicchat()" 
+            />
+          </div>
+          
             <q-select
             v-model="selectedBatchChat"
             label="Select Batch Number"
@@ -108,7 +130,7 @@
               <div ref="chatscrollContainer" class="chat-container" v-scroll-bottom>
                 <div>
                   <div ref="connectingElement">Connecting...</div>
-                  <ul id="messageArea">
+                  <ul id="messageArea" v-if="batchNumber">
 
                   </ul>
                 </div>
@@ -419,12 +441,62 @@ async getBatchData() {
       this.loading = false; // Stop loading indicator
     }
   },
-
+  clearpublicchat(){
+    let confirmed=confirm("Are you sure to clear Public Channel Chat ?")
+    if(confirmed){
+      this.$api.delete(`api/clearpublicchat`, {
+        })
+        .then(response => {
+          if (response.status === 200) {
+            this.showMsg(`Public Channel Chat Cleared`,'positive')
+          } else {
+            this.showMsg('Failed to clear the chat!','negative')
+          }
+        })
+        .catch(error => {
+          console.error('Error clearing chat:', error);
+        });
+    }
+  },
 
 
 
   ///////////////////////////CHat Channel///////////////////////////////
-
+  deleteMessage(messageId,messageElement){
+    this.$api.delete(`api/deletePrivateMessage/${messageId}`)
+    .then(response => {
+        if (response.status===200) {
+            this.showMsg(`Message deleted successfully`,'positive');
+            messageElement.remove();
+        } else {
+            this.showMsg('Failed to delete message','negative');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+  },
+  clearbatchchat(){
+    if(this.batchNumber!==null)
+    {
+      let confirmed=confirm(`Are you sure to clear Batch ${this.batchNumber} Chat ?`)
+      if(confirmed){
+        this.$api.delete(`api/clearbatchchat/${this.batchNumber}`, {
+        })
+        .then(response => {
+          if (response.status === 200) {
+            this.showMsg(`Batch ${this.batchNumber} Chat Cleared`,'positive')
+            this.getAllMessages();
+          } else {
+            this.showMsg('Failed to clear the chat!','negative')
+          }
+        })
+        .catch(error => {
+          console.error('Error clearing chat:', error);
+        });
+      }
+    }
+  },
   async getUserData() {
     await this.$api.get(`api/users/${this.user.id}`).then((response) => {
       if (response.data.success) {
@@ -475,21 +547,23 @@ async getBatchData() {
   });
 },
   async getAllMessages() {
-  try {
-    const response = await this.$api.get(`api/private/messages/${this.batchNumber}`);
-    if (response.data&& Array.isArray(response.data)) {
-    
-      //console.log(response.data);
+    if(this.batchNumber!==null){
+      try {
+        const response = await this.$api.get(`api/private/messages/${this.batchNumber}`);
+        if (response.data&& Array.isArray(response.data)) {
+        
+          //console.log(response.data);
 
-      this.messages = response.data;
-      this.displayMessages();
+          this.messages = response.data;
+          this.displayMessages();
+        }
+        else{
+          console.log("No Messages")
+        }
+      } catch (error) {
+        console.error('Error fetching messages:', error);
+      }     
     }
-    else{
-      console.log("No Messages")
-    }
-  } catch (error) {
-    console.error('Error fetching messages:', error);
-  }
 },
 showImageView(url) {
 const imageView = document.getElementById('imageView');
@@ -657,16 +731,12 @@ displayMessages() {
   this.scrollToBottom(); // Scroll to the bottom after rendering all messages
 },
 displaySingleMessage(receivedMessage) {
-
-    //console.log(receivedMessage)
-
     const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
     const getImagesUrl = baseUrl + 'fs/download';
     const removeImagePath = baseUrl + 'fs/download/';
     const getfileUrl = baseUrl + 'ms/download';
     const removefilePath = baseUrl + 'ms/download/';
 
-    // Create a new list item for the message (whether it's text or image)
     const messageArea = document.querySelector('#messageArea');
     const messageElement = document.createElement('li');
     messageElement.classList.add('chat-message');
@@ -684,147 +754,144 @@ displaySingleMessage(receivedMessage) {
     usernameElement.style.fontWeight = "bold";
     messageElement.appendChild(usernameElement);
 
+    // Add Delete Message area
+    const emojiElement = document.createElement('div');
+    emojiElement.classList.add("Reactionarea");
+    messageElement.appendChild(emojiElement);
+
+    const emojiContainer = document.createElement('div');
+    emojiContainer.classList.add('emoji-container');
+
+    // Create the delete button before adding the event listener
+    const emojiBtn = document.createElement('span');
+    emojiBtn.classList.add('emoji-btn');
+    emojiBtn.innerHTML = "<span class='material-icons' style='color:red'>delete</span>";
+    emojiContainer.appendChild(emojiBtn);
+
+    // Add event listener for the delete button
+    emojiBtn.addEventListener('click', () => {
+        this.deleteMessage(receivedMessage.id,messageElement);
+    });
+
+    // Check if the received message content is an image
     if (receivedMessage.content.includes("fs/download")) {
-      const imagePathWithoutPrefix = receivedMessage.content.replace(removeImagePath, '');
+        const imagePathWithoutPrefix = receivedMessage.content.replace(removeImagePath, '');
+        
+        // Create a placeholder for the image
+        const imageElement = document.createElement('img');
+        imageElement.alt = 'Loading Image...';
+        imageElement.style.maxWidth = '200px';
+        imageElement.style.borderRadius = '5px';
+        messageElement.appendChild(imageElement);
+        messageElement.appendChild(emojiContainer)
+        messageArea.appendChild(messageElement);
+        messageArea.scrollTop = messageArea.scrollHeight;
 
-      // Create a placeholder for the image
-      const imageElement = document.createElement('img');
-      imageElement.alt = 'Loading Image...';
-      imageElement.style.maxWidth = '200px';
-      imageElement.style.borderRadius = '5px';
-      messageElement.appendChild(imageElement);
-      messageArea.appendChild(messageElement);
-      messageArea.scrollTop = messageArea.scrollHeight;
+        // Download the image
+        const formData = new FormData();
+        formData.append('filename', imagePathWithoutPrefix);
+        formData.append('sender', receivedMessage.sender);
 
-      // Download the image
-      const formData = new FormData();
-      formData.append('filename', imagePathWithoutPrefix);
-      formData.append('sender', receivedMessage.sender);
-
-      axios.post(getImagesUrl, formData, { responseType: 'blob' })
-        .then(downloadResponse => {
-          // Handle download success, e.g., open or save the downloaded file
-          const blob = new Blob([downloadResponse.data]);
-          const url = window.URL.createObjectURL(blob);
-
-          // Update the image element with the actual image
-          imageElement.src = url;
-          imageElement.alt = 'Downloaded Image';
-          imageElement.addEventListener('click', () => {
-            this.showImageView(url);
-          });
-        })
-        .catch(error => {
-          console.error('Error in image download:', error);
-          imageElement.alt = 'Failed to load image';
-        });
+        axios.post(getImagesUrl, formData, { responseType: 'blob' })
+            .then(downloadResponse => {
+                const blob = new Blob([downloadResponse.data]);
+                const url = window.URL.createObjectURL(blob);
+                imageElement.src = url;
+                imageElement.alt = 'Downloaded Image';
+                imageElement.addEventListener('click', () => {
+                    this.showImageView(url);
+                });
+            })
+            .catch(error => {
+                console.error('Error in image download:', error);
+                imageElement.alt = 'Failed to load image';
+            });
     } 
     else if (receivedMessage.content.includes("ms/download")) {
-      const filePathWithoutPrefix = receivedMessage.content.replace(removefilePath, '');
-      const formData = new FormData();
-      formData.append('filename', filePathWithoutPrefix);
+        const filePathWithoutPrefix = receivedMessage.content.replace(removefilePath, '');
+        const formData = new FormData();
+        formData.append('filename', filePathWithoutPrefix);
 
-      var fileDiv = document.createElement('div');
-      fileDiv.classList.add('file-container');
-      fileDiv.style.display = 'flex';
-      fileDiv.style.alignItems = 'center';
-      fileDiv.style.padding = '10px';
-      fileDiv.style.border = '1px solid #ccc';
-      fileDiv.style.borderRadius = '5px';
-      fileDiv.style.margin = '10px 0';
-      fileDiv.style.cursor = 'pointer';
+        // Create file download UI
+        var fileDiv = document.createElement('div');
+        fileDiv.classList.add('file-container');
+        fileDiv.style.display = 'flex';
+        fileDiv.style.alignItems = 'center';
+        fileDiv.style.padding = '10px';
+        fileDiv.style.border = '1px solid #ccc';
+        fileDiv.style.borderRadius = '5px';
+        fileDiv.style.margin = '10px 0';
+        fileDiv.style.cursor = 'pointer';
+        fileDiv.style.width='95%';
 
-      var fileIcon = document.createElement('i');
-      fileIcon.classList.add('fa', 'fa-file-pdf-o');
-      fileIcon.style.fontSize = '24px';
-      fileIcon.style.marginRight = '10px';
+        var fileIcon = document.createElement('i');
+        fileIcon.classList.add('fa', 'fa-file-pdf-o');
+        fileIcon.style.fontSize = '24px';
+        fileIcon.style.marginRight = '10px';
 
-      var fileNameElement = document.createElement('span');
-      fileNameElement.textContent = filePathWithoutPrefix;
-      fileNameElement.style.flexGrow = '1';
+        var fileNameElement = document.createElement('span');
+        fileNameElement.textContent = filePathWithoutPrefix;
+        fileNameElement.style.flexGrow = '1';
 
-      var downloadButton = document.createElement('button');
-      downloadButton.textContent = 'Download';
-      downloadButton.style.backgroundColor = '#4CAF50';
-      downloadButton.style.color = 'white';
-      downloadButton.style.border = 'none';
-      downloadButton.style.borderRadius = '3px';
-      downloadButton.style.padding = '5px 10px';
-      downloadButton.style.cursor = 'pointer';
+        var downloadButton = document.createElement('button');
+        downloadButton.textContent = 'Download';
+        downloadButton.style.backgroundColor = '#4CAF50';
+        downloadButton.style.color = 'white';
+        downloadButton.style.border = 'none';
+        downloadButton.style.borderRadius = '3px';
+        downloadButton.style.padding = '5px 10px';
+        downloadButton.style.cursor = 'pointer';
 
-      fileDiv.appendChild(fileIcon);
-      fileDiv.appendChild(fileNameElement);
-      fileDiv.appendChild(downloadButton);
-      messageElement.appendChild(fileDiv);
-      messageArea.appendChild(messageElement);
-      messageArea.scrollTop = messageArea.scrollHeight;
+        fileDiv.appendChild(fileIcon);
+        fileDiv.appendChild(fileNameElement);
+        fileDiv.appendChild(downloadButton);
+        fileDiv.appendChild(emojiContainer);
+        messageElement.appendChild(fileDiv);
+        messageArea.appendChild(messageElement);
+        messageArea.scrollTop = messageArea.scrollHeight;
 
-      fileDiv.addEventListener('click', () => {
-          axios.post(getfileUrl, formData, { responseType: 'blob' })
-              .then(downloadResponse => {
-                  const blob = new Blob([downloadResponse.data], { type: 'application/pdf' });
-                  const url = window.URL.createObjectURL(blob);
-                  window.open(url, '_blank');
-              })
-              .catch(error => {
-                  console.error('Error in file download:', error);
-                  this.showMsg(error.response?.data.message || error.message, 'negative');
-              });
-      });
+        fileDiv.addEventListener('click', () => {
+            axios.post(getfileUrl, formData, { responseType: 'blob' })
+                .then(downloadResponse => {
+                    const blob = new Blob([downloadResponse.data], { type: 'application/pdf' });
+                    const url = window.URL.createObjectURL(blob);
+                    window.open(url, '_blank');
+                })
+                .catch(error => {
+                    console.error('Error in file download:', error);
+                    this.showMsg(error.response?.data.message || error.message, 'negative');
+                });
+        });
 
-      downloadButton.addEventListener('click', (event) => {
-          event.stopPropagation();
-          axios.post(getfileUrl, formData, { responseType: 'blob' })
-              .then(downloadResponse => {
-                  const blob = new Blob([downloadResponse.data], { type: 'application/pdf' });
-                  const url = window.URL.createObjectURL(blob);
-                  const a = document.createElement('a');
-                  a.href = url;
-                  a.download = filePathWithoutPrefix;
-                  a.click();
-              })
-              .catch(error => {
-                  console.error('Error in file download:', error);
-                  this.showMsg(error.response?.data.message || error.message, 'negative');
-              });
-      });
+        downloadButton.addEventListener('click', (event) => {
+            event.stopPropagation();
+            axios.post(getfileUrl, formData, { responseType: 'blob' })
+                .then(downloadResponse => {
+                    const blob = new Blob([downloadResponse.data], { type: 'application/pdf' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filePathWithoutPrefix;
+                    a.click();
+                })
+                .catch(error => {
+                    console.error('Error in file download:', error);
+                    this.showMsg(error.response?.data.message || error.message, 'negative');
+                });
+        });
 
-      this.scrollToBottom();
-  }
-  else {
-      // Text message
-      const textElement = document.createElement('p');
-      const messageText = document.createTextNode(receivedMessage.content);
-      textElement.appendChild(messageText);
-      messageElement.appendChild(textElement);
-
-      // Add reactions area
-      const emojiElement = document.createElement('div');
-      const emojiText = document.createTextNode("");
-      emojiElement.append(emojiText);
-      emojiElement.classList.add("Reactionarea");
-      messageElement.appendChild(emojiElement);
-
-      // const emojiContainer = document.createElement('div');
-      // emojiContainer.classList.add('emoji-container');
-      // const emojis = ['👍'];
-      
-      // emojis.forEach(emoji => {
-      //   const emojiBtn = document.createElement('span');
-      //   emojiBtn.classList.add('emoji-btn');
-      //   emojiBtn.textContent = emoji;
-      //   emojiContainer.appendChild(emojiBtn);
-      //   emojiBtn.addEventListener("click", () => {
-      //     emojiText.textContent = `${this.username} reacted ${emoji}`;
-      //     this.sendReaction(receivedMessage.username, receivedMessage.message, `${this.username} reacted ${emoji}`);
-      //   });
-      // });
-
-      // messageElement.appendChild(emojiContainer);
-      messageArea.appendChild(messageElement);
-      messageArea.scrollTop = messageArea.scrollHeight;
-  this.scrollToBottom();
-}
+        this.scrollToBottom();
+    } else {
+        // Handle text messages
+        const textElement = document.createElement('p');
+        const messageText = document.createTextNode(receivedMessage.content);
+        textElement.appendChild(messageText);
+        messageElement.appendChild(textElement);
+        messageElement.appendChild(emojiContainer);
+        messageArea.appendChild(messageElement);
+        messageArea.scrollTop = messageArea.scrollHeight;
+        this.scrollToBottom();
+    }
 },
 connect(username) {
   if (username) {
@@ -999,7 +1066,7 @@ else if(this.uploadedFile&&(this.newMessage.endsWith(".pdf"))){
 }
 else{
 const messageContent = this.newMessage.trim();
-if (messageContent && messageContent!=="") {
+if (messageContent && messageContent!=="" && this.batchNumber!==null) {
   console.log(messageContent);
     if (this.isWebSocketOpen) {
       const chatMessage = {

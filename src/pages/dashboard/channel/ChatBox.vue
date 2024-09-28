@@ -286,6 +286,7 @@ displayMedia(receivedMessage){
         fileDiv.style.borderRadius = '5px';
         fileDiv.style.margin = '10px 0';
         fileDiv.style.cursor = 'pointer';
+        
 
         var fileIcon = document.createElement('i');
         fileIcon.classList.add('fa', 'fa-file-pdf-o');
@@ -384,6 +385,21 @@ displaySingleMessage(receivedMessage) {
       usernameElement.style.fontWeight = "bold";
       messageElement.appendChild(usernameElement);
 
+
+      if (receivedMessage.username.trim() === this.username.trim()) {
+          const emojiContainer = document.createElement('div');
+          emojiContainer.classList.add('emoji-container');
+        
+          const emojiBtn = document.createElement('span');
+          emojiBtn.classList.add('emoji-btn');
+          emojiBtn.innerHTML = "<span class='material-icons' style='color:red'>delete</span>";
+          emojiContainer.appendChild(emojiBtn);
+          emojiBtn.addEventListener("click", () => {
+            this.deleteMessage(receivedMessage.id,messageElement)
+          });
+          messageElement.appendChild(emojiContainer);
+        }
+
       if (receivedMessage.message.includes("fs/download")) {
         const imagePathWithoutPrefix = receivedMessage.message.replace(removeImagePath, '');
 
@@ -433,6 +449,7 @@ displaySingleMessage(receivedMessage) {
         fileDiv.style.borderRadius = '5px';
         fileDiv.style.margin = '10px 0';
         fileDiv.style.cursor = 'pointer';
+        fileDiv.style.width='95%'
 
         var fileIcon = document.createElement('i');
         fileIcon.classList.add('fa', 'fa-file-pdf-o');
@@ -497,30 +514,6 @@ displaySingleMessage(receivedMessage) {
         const messageText = document.createTextNode(receivedMessage.message);
         textElement.appendChild(messageText);
         messageElement.appendChild(textElement);
-
-        // Add reactions area
-        const emojiElement = document.createElement('div');
-        const emojiText = document.createTextNode("");
-        emojiElement.append(emojiText);
-        emojiElement.classList.add("Reactionarea");
-        messageElement.appendChild(emojiElement);
-
-        // const emojiContainer = document.createElement('div');
-        // emojiContainer.classList.add('emoji-container');
-        // const emojis = ['👍'];
-        
-        // emojis.forEach(emoji => {
-        //   const emojiBtn = document.createElement('span');
-        //   emojiBtn.classList.add('emoji-btn');
-        //   emojiBtn.textContent = emoji;
-        //   emojiContainer.appendChild(emojiBtn);
-        //   emojiBtn.addEventListener("click", () => {
-        //     emojiText.textContent = `${this.username} reacted ${emoji}`;
-        //     this.sendReaction(receivedMessage.username, receivedMessage.message, `${this.username} reacted ${emoji}`);
-        //   });
-        // });
-
-        // messageElement.appendChild(emojiContainer);
         messageArea.appendChild(messageElement);
         messageArea.scrollTop = messageArea.scrollHeight;
     this.scrollToBottom();
@@ -703,6 +696,20 @@ displaySingleMessage(receivedMessage) {
     this.stompClient.publish({ destination: '/app/chat.react', body: JSON.stringify(reactionMessage) });
   }
 },
+deleteMessage(messageId,messageElement){
+    this.$api.delete(`api/deletePublicMessage/${messageId}`)
+    .then(response => {
+        if (response.status===200) {
+            this.showMsg(`Message deleted successfully`,'positive');
+            messageElement.remove();
+        } else {
+            this.showMsg('Failed to delete message','negative');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+  },
 sendMessage() {
   console.log(this.newMessage)
   if(this.uploadedFile&&(this.newMessage.endsWith(".jpg")||this.newMessage.endsWith(".png"))){
@@ -742,6 +749,16 @@ sendMessage() {
     var index = Math.abs(hash % colors.length);
     return colors[index];
 },
+showMsg(message, type) {
+        this.$q.notify({
+          message: message || "Something Went Wrong!",
+          type: type,
+          position: 'top-right',
+          actions: [
+            { icon: 'close', color: 'white', handler: () => { } }
+          ]
+        });
+      },
   }
   };
 </script>

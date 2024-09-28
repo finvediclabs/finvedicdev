@@ -414,6 +414,20 @@ displaySingleMessage(receivedMessage) {
     usernameElement.style.fontWeight = "bold";
     messageElement.appendChild(usernameElement);
 
+    if (receivedMessage.sender.trim() === this.username.trim()) {
+          const emojiContainer = document.createElement('div');
+          emojiContainer.classList.add('emoji-container');
+        
+          const emojiBtn = document.createElement('span');
+          emojiBtn.classList.add('emoji-btn');
+          emojiBtn.innerHTML = "<span class='material-icons' style='color:red'>delete</span>";
+          emojiContainer.appendChild(emojiBtn);
+          emojiBtn.addEventListener("click", () => {
+            this.deleteMessage(receivedMessage.id,messageElement)
+          });
+          messageElement.appendChild(emojiContainer);
+        }
+
     if (receivedMessage.content.includes("fs/download")) {
       const imagePathWithoutPrefix = receivedMessage.content.replace(removeImagePath, '');
 
@@ -463,6 +477,7 @@ displaySingleMessage(receivedMessage) {
       fileDiv.style.borderRadius = '5px';
       fileDiv.style.margin = '10px 0';
       fileDiv.style.cursor = 'pointer';
+      fileDiv.style.width='95%';
 
       var fileIcon = document.createElement('i');
       fileIcon.classList.add('fa', 'fa-file-pdf-o');
@@ -527,30 +542,6 @@ displaySingleMessage(receivedMessage) {
       const messageText = document.createTextNode(receivedMessage.content);
       textElement.appendChild(messageText);
       messageElement.appendChild(textElement);
-
-      // Add reactions area
-      const emojiElement = document.createElement('div');
-      const emojiText = document.createTextNode("");
-      emojiElement.append(emojiText);
-      emojiElement.classList.add("Reactionarea");
-      messageElement.appendChild(emojiElement);
-
-      // const emojiContainer = document.createElement('div');
-      // emojiContainer.classList.add('emoji-container');
-      // const emojis = ['👍'];
-      
-      // emojis.forEach(emoji => {
-      //   const emojiBtn = document.createElement('span');
-      //   emojiBtn.classList.add('emoji-btn');
-      //   emojiBtn.textContent = emoji;
-      //   emojiContainer.appendChild(emojiBtn);
-      //   emojiBtn.addEventListener("click", () => {
-      //     emojiText.textContent = `${this.username} reacted ${emoji}`;
-      //     this.sendReaction(receivedMessage.username, receivedMessage.message, `${this.username} reacted ${emoji}`);
-      //   });
-      // });
-
-      // messageElement.appendChild(emojiContainer);
       messageArea.appendChild(messageElement);
       messageArea.scrollTop = messageArea.scrollHeight;
   this.scrollToBottom();
@@ -614,6 +605,28 @@ onConnected() {
     this.$refs.connectingElement.classList.add("hidden");
   }
 },
+deleteMessage(messageId,messageElement){
+    this.$api.delete(`api/deletePrivateMessage/${messageId}`)
+    .then(response => {
+        if (response.status===200) {
+            this.showMsg(`Message deleted successfully`,'positive');
+            messageElement.remove();
+            const deleteMessagePayload = {
+                action: 'DELETE_MESSAGE',
+                messageId: messageId
+            };
+            this.stompClient.publish({
+                destination: '/app/chat.private.send',
+                body: JSON.stringify(deleteMessagePayload)
+            });
+        } else {
+            this.showMsg('Failed to delete message','negative');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+  },
 onMessageReceived() {
   // Handle message reception
   console.log("message received")
@@ -760,7 +773,17 @@ if (messageContent && messageContent!=="") {
   var index = Math.abs(hash % colors.length);
   return colors[index];
 },
-}
+showMsg(message, type) {
+        this.$q.notify({
+          message: message || "Something Went Wrong!",
+          type: type,
+          position: 'top-right',
+          actions: [
+            { icon: 'close', color: 'white', handler: () => { } }
+          ]
+        });
+      },
+  }
 };
 </script>
 <style>
