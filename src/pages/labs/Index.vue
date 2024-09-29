@@ -3,10 +3,10 @@
     <fin-portlet style="background-color: transparent;">
       <fin-portlet-header>
         <div class="row col-12">
-        <fin-portlet-heading><span class="User_heading" >Labs</span></fin-portlet-heading>
-        <div class="col-3">
-        <a href="https://gurukul.finvedic.com/dojo/" target="_blank" class="styled-link">Finvedic Dojo</a>
-      </div>
+          <fin-portlet-heading><span class="User_heading" >Labs</span></fin-portlet-heading>
+          <div class="col-3">
+          <a href="https://gurukul.finvedic.com/dojo/" target="_blank" class="styled-link">Finvedic Dojo</a>
+          </div>
       </div>
       </fin-portlet-header>
       <fin-portlet-item>
@@ -377,7 +377,7 @@ selectVersion(os) {
     .User_heading{
   color:#5479F7;
   margin-left:4%;
-}
+  }
 .styled-link {
             display: flex;
             justify-content: center;

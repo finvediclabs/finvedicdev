@@ -96,6 +96,11 @@ const routes = [
         meta: { item: 'studentRegster' }
       },
       {
+        path: 'BatchRegister',
+        component: () => import('pages/dashboard/BatchChannelRegister/BatchChannel.vue'),
+        meta: { item: 'BatchRegister' }
+      },
+      {
         path: 'vm-setup',
         component: () => import('pages/dashboard/VmSetup.vue'),
         meta: { item: 'vm-setup' }
@@ -224,13 +229,18 @@ const routes = [
   
   {
     path: '/channel',
-    meta: { title: 'Channel', module: 'chaneel' },
+    meta: { title: 'Channel', module: 'channel' },
     component: () => import('layouts/DashboardLayout.vue'),
     children: [
       
       {
-        path: '',
+        path: 'dev',
         component: () => import('pages/dashboard/channel/ChatBox.vue'),
+        meta: { item: '' }
+      },
+      {
+        path: 'private',
+        component: () => import('pages/dashboard/channel/BatchChat.vue'),
         meta: { item: '' }
       }
     ]

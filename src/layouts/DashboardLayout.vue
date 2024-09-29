@@ -260,6 +260,7 @@ export default {
       miniState: false,
       notificationList:[],
       notificationInterval: null,
+      batchNumber:null,
       modulesList: [
         { icon: 'person', label: 'Administration', value: 'admin' },
         { icon: 'groups', label: 'Labs', value: 'labs' },
@@ -277,7 +278,10 @@ export default {
          
        },
       {
-           icon: 'chat', label: 'Channel', value: 'channel', 
+           icon: 'chat', label: 'Channel', value: 'channel', menu:[
+            { label: "Vedic Hive", value: 'dev', icon: 'menu' },
+            { label: "My Batch", value: "private", icon: 'chat' },
+           ]
          
        },
       

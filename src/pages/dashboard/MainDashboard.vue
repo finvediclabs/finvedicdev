@@ -144,6 +144,14 @@ export default {
           background: '#b9e59b',
           enable: true
         },
+        {
+          image: usersPng,
+          title: 'Channels',
+          description: 'Perfect for learning how the framework works.',
+          path: 'BatchRegister',
+          background: '#FFBD80',
+          enable: true
+        },
       ]
     }
   }
