@@ -107,10 +107,11 @@
       </div>
     </fin-portlet-header>
     <fin-portlet-header>
-    <div class="row full-width">
+    <div class="row full-width"  v-if="isEligible">
       <div class="col-1"></div>
     <div class="col-12 col-md-6 q-pa-md">
       <q-select
+     
         v-model="selectedBatch"
         :options="batchOptions"
         label="Select a Batch"
@@ -120,7 +121,21 @@
 style="border-radius: 10px"
       />
     </div>
-  </div>
+    </div>
+    <div v-else class="row full-width">
+      <div class="col-1"></div>
+    <div class="col-12 col-md-6 q-pa-md">
+      <q-select
+        v-model="selectedBatch2"
+        :options="batchOptions2"
+        label="Select a Batch"
+        emit-value
+        map-options
+        class="bg-white custom-select"
+style="border-radius: 10px"
+      />
+    </div>
+    </div>
 </fin-portlet-header>
     <fin-portlet-item>
       <fin-calender isReadOnly :events="filteredEvents" :template="template" :view="isMobile ? 'day' : 'week'" />
@@ -133,6 +148,8 @@ import FinPortletHeader from 'src/components/Portlets/FinPortletHeader.vue';
 import FinPortletHeading from 'src/components/Portlets/FinPortletHeading.vue';
 import FinPortletItem from 'src/components/Portlets/FinPortletItem.vue';
 import FinCalender from "src/components/FinCalender.vue";
+import { useProfileStore } from "src/stores/profile";
+import axios from 'axios';
 import classRoom from "src/assets/classRoom.png"
 import classCardImg from "src/assets/classCard.png";
 import { storeToRefs } from "pinia";
@@ -142,6 +159,7 @@ var colorHash = new ColorHash();
 import { urls } from "./Urls"
 export default {
   setup() {
+   
     const categoryStore = useCategoryStore();
     const { categories, subCategories, selectedCategory, selectedSubCategory } = storeToRefs(categoryStore);
     const { selectCategory, selectSubCategory } = categoryStore;
@@ -177,8 +195,10 @@ export default {
       },
       events: [],
       batches: [], // Store raw batch names if needed
-    batchOptions: [], // Options for q-select
+    batchOptions: [],
+    batchOptions2: [], // Options for q-select
     selectedBatch: null,
+    selectedBatch2: null,
     }
   },
   watch: {
@@ -194,9 +214,19 @@ export default {
     }
   },
  computed: {
+  isEligible() {
+    const profileStore = useProfileStore();
+    const roles = profileStore.user.roles.map(role => role.name);
+    // Check if the user is admin or faculty
+    return roles.includes('Admin') || roles.includes('Faculty');
+  },
   filteredEvents() {
+
     if (this.selectedBatch) {
       return this.events.filter(event => event.batch === this.selectedBatch);
+    }
+    if (this.selectedBatch2) {
+      return this.events.filter(event => event.batch === this.selectedBatch2);
     }
     return this.events;
   },
@@ -278,15 +308,74 @@ export default {
   mounted() {
    // if (this.selectedCategory) {
       this.getEventsData();
+      this.fetchEnrollments();
     //}
   },
   methods: {
+    async fetchEnrollments() {
+  const profileStore = useProfileStore(); 
+  const profileId = profileStore.user.id; 
+  this.batchOptions2 = []; // Initialize batchOptions array
+
+  try {
+    const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+    const url = `${baseUrl}api/enrollments/student/${profileId}`;
+
+    const response = await axios.get(url);
+    console.log('Enrollment Data:', response.data); // Log the fetched enrollment data
+
+    // Fetch cycle details for each enrollment's cycleid
+    const cycleFetchPromises = response.data.data.map(async (enrollment) => {
+      const cycleId = enrollment.cycleid;
+      try {
+        const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+    const url2 = `${baseUrl}api/cycles/${cycleId}`;
+        const cycleResponse = await axios.get(url2);
+        console.log('Cycle Data for Cycle ID', cycleId, ':', cycleResponse.data);
+
+        // Extract cycleDesc from the response and push it to batchOptions
+        if (cycleResponse.data && cycleResponse.data.data) {
+          const cycleDesc = cycleResponse.data.data.cycleDesc;
+          this.batchOptions2.push({
+            label: cycleDesc,
+            value: cycleDesc
+          });
+        } else {
+          console.error('No cycle data found in response for Cycle ID', cycleId);
+        }
+
+      } catch (cycleError) {
+        console.error('Error fetching cycle data for Cycle ID', cycleId, ':', cycleError);
+      }
+    });
+    await Promise.all(cycleFetchPromises);
+
+// Set the first option as the selectedBatch by default
+if (this.batchOptions2.length > 0) {
+  this.selectedBatch2 = this.batchOptions2[0].value;
+} else {
+  this.selectedBatch2 = null; // In case there are no batch options
+}
+
+
+    // Wait for all cycle fetch requests to complete
+    await Promise.all(cycleFetchPromises);
+    
+    // Log batchOptions to verify
+    console.log('Batch Options:', this.batchOptions);
+
+  } catch (error) {
+    console.error('Error fetching enrollment data:', error);
+    // Handle error (show notification, etc.)
+  }
+},
     extractTitle(title) {
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = title;
     const anchorElement = tempDiv.querySelector('a');
     return anchorElement ? anchorElement.textContent : '';
   },
+
   extractLink(title) {
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = title;
@@ -379,11 +468,11 @@ export default {
           }, {});
 
           // Extract unique batches and transform into options
+         
           this.batchOptions = Object.keys(batchGroups).map(batch => ({
             label: batch,
             value: batch
           }));
-
           // Flatten the grouped events and map them for the calendar
           this.events = Object.values(batchGroups).flat();
         } else {
