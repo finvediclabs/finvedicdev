@@ -174,8 +174,7 @@
           option-value="cycleid"
           option-label="cycleDesc"
           @input="logSelectedOption"
-          readonly
-        />
+          />
 
         <div class="row justify-center">
           <div class="col-12 q-px-sm q-py-xs text-right q-pt-lg">
@@ -641,7 +640,7 @@ export default {
     bibilography: courseVal.bibilography,
     courseDesc: courseVal.courseDesc,
     teachers: courseVal.teachers,
-    batches: courseVal.batches||null
+    batches: courseVal.batches
   };
 
   // Open the edit course dialog
@@ -657,7 +656,7 @@ submitEditCourseForm() {
     bibilography: this.courseData.bibilography,
     courseDesc: this.courseData.courseDesc,
     teachers: this.courseData.teachers,
-    batches: this.courseData.batches
+    batches: [this.courseData.batches]
   };
 
   const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
