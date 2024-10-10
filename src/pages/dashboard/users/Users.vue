@@ -332,9 +332,10 @@ export default {
       formData.append("organization", this.organization); // Append organization
 
       this.submitLoading = true;
-
+      const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+      const url = `${baseUrl}api/users/xl`;
       // Axios POST request
-      this.$axios.post("http://localhost:8087/api/users/xl", formData, {
+      this.$axios.post(url, formData, {
         headers: {
           "Content-Type": "multipart/form-data"
         }
