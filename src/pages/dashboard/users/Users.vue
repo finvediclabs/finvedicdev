@@ -9,6 +9,7 @@
 <q-btn @click="createUser()" >
   <q-img :src="usersIcon" alt="User Icon" style="width: 32px; height: 32px;" />
 </q-btn>
+<q-btn @click="openUploadExcelDialog()" label="Upload Excel" icon="upload" color="primary" flat />
       </fin-portlet-item>
     </fin-portlet-header>
     <fin-portlet-item class="table-scroll">
@@ -16,7 +17,53 @@
         @editFun="editDataFun" :loading="loading" />
     </fin-portlet-item>
   </fin-portlet>
-
+  <q-dialog v-model="uploadExcelDialog">
+  <fin-portlet style="min-width: 400px; max-width: 600px;">
+    <fin-portlet-header bordered>
+      <fin-portlet-heading small>Upload Excel</fin-portlet-heading>
+    </fin-portlet-header>
+    <fin-portlet-item class="w-100">
+      <q-form @submit="uploadExcelFile" class="formContent">
+        <div class="row justify-center">
+          <div class="col-12 col-md-12 q-px-sm q-py-xs">
+            <!-- Replacing q-input with q-uploader -->
+            <q-uploader
+              accept=".xls,.xlsx"
+              label="Upload Excel File"
+              @added="handleFileUpload"
+              :auto-upload="false"
+              no-thumbnails
+              style="width:100%"
+            />
+          </div>
+          <div class="col-12 col-md-6 q-px-sm q-py-xs">
+            <q-input
+              v-model="batchLimit"
+              type="number"
+              label="Batch Limit"
+              outlined
+              required
+            />
+          </div>
+          <div class="col-12 col-md-6 q-px-sm q-py-xs">
+            <q-input
+              v-model="organization"
+              label="Organization"
+              outlined
+              required
+            />
+          </div>
+          <div class="col-12 col-md-6 q-px-sm q-py-xs text-right q-pt-lg">
+            <q-btn label="Close" v-close-popup type="reset" color="primary" flat class="q-mr-sm" no-caps />
+            <q-btn label="Upload" type="submit" color="primary" :disable="submitLoading" no-caps>
+              <q-spinner-ios size="xs" class="q-ml-sm" v-if="submitLoading" />
+            </q-btn>
+          </div>
+        </div>
+      </q-form>
+    </fin-portlet-item>
+  </fin-portlet>
+</q-dialog>
   <q-dialog v-model="createUserDialog">
     <fin-portlet style="min-width: 400px;max-width: 600px;">
       <fin-portlet-header bordered>
@@ -109,6 +156,10 @@ export default {
       roleSearch: '',
       roleOptions: [],
       roles_new: [],
+      uploadExcelDialog: false,  // Add this for tracking the Excel dialog
+      batchLimit: null, // Initialize batchLimit
+      organization: "",
+      excelFile: null, 
       programSearch: '',
       loading: true,
       createUserDialog: false,
@@ -118,6 +169,7 @@ export default {
         { label: 'S.No', key: 'index', align: 'center' },
         { label: 'Name', key: 'name', align: 'start' },
         { label: 'Email Address', key: 'email', align: 'center' },
+        { label: 'Organization', key: 'organization', align: 'center' },
         { label: 'Role', key: 'role', align: 'center' },
         { label: 'Date Added', key: 'createdAt', align: 'center' },
         { label: 'Is Active', key: 'isActive', align: 'center' },
@@ -175,6 +227,19 @@ export default {
         ]
       });
     },
+    openUploadExcelDialog() {
+      this.uploadExcelDialog = true;
+    },
+    // Handle file selection
+    handleFileUpload(files) {
+      if (files.length > 0) {
+        this.excelFile = files[0];  // Assign the first file to excelFile
+        console.log('Selected file:', this.excelFile);
+      } else {
+        console.log('No file selected');
+      }
+    },
+    // Method to submit the form and upload the Excel file
     getRoles() {
       this.loading = true;
       this.$api.get(urls.rolesUrl).then(response => {
@@ -248,6 +313,46 @@ export default {
     createUser() {
       this.user = {};
       this.createUserDialog = true;
+    },
+    uploadExcelFile() {
+      if (!this.excelFile) {
+        this.showMsg("Please select an Excel file!", "negative");
+        return;
+      }
+      
+      // Check for required fields
+      if (!this.batchLimit || !this.organization) {
+        this.showMsg("Please enter both Batch Limit and Organization!", "negative");
+        return;
+      }
+
+      let formData = new FormData();
+      formData.append("file", this.excelFile);
+      formData.append("batchLimit", this.batchLimit); // Append batchLimit
+      formData.append("organization", this.organization); // Append organization
+
+      this.submitLoading = true;
+
+      // Axios POST request
+      this.$axios.post("http://localhost:8087/api/users/xl", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      })
+      .then(response => {
+        this.submitLoading = false;
+        if (response.data.success) {
+          this.showMsg("Excel file uploaded successfully", "positive");
+          this.uploadExcelDialog = false;  // Close the dialog after success
+          this.getUsersData();  // Refresh the user data if necessary
+        } else {
+          this.showMsg(response.data.message, "negative");
+        }
+      })
+      .catch(error => {
+        this.submitLoading = false;
+        this.showMsg(error.response?.data.message || error.message, "negative");
+      });
     },
     showMsg(message, type) {
       this.$q.notify({
