@@ -57,7 +57,7 @@
   <!-- Quasar Dialog for viewing files -->
   <q-dialog v-model="dialogVisible" class="custom-dialog">
   <q-card class="q-pa-md custom-card">
-    <q-btn flat icon="close" class="close-btn" @click="dialogVisible = false" />
+    <q-btn flat icon="close" class="close-btn"   @click="closeDialog" />
     <q-card-section class="q-dialog-content">
       <div>
         <!-- <span><strong>Student Assignment Id:</strong> {{ assignmentData.id }}</span><br>
@@ -99,7 +99,19 @@
       </template>
 
       <div v-if="dialogFileUrl" class="q-mt-md">
-  <q-btn label="View in New Tab" icon="open_in_new" color="primary" @click="openInNewTab(dialogFileUrl)" />
+  <div class="row q-gutter-sm">
+    <q-btn label="View in New Tab" icon="open_in_new" color="primary" @click="openInNewTab(dialogFileUrl)" />
+    <q-btn
+    v-if="!assignmentData.evaluation"
+        label="Evaluate"
+        icon="assignment_turned_in"
+        color="green"
+        @click="evaluateFileUrl"
+      /></div>
+      
+      <p v-if="assignmentData.evaluation">Rating: {{ assignmentData.evaluation }}</p>
+      
+  <p v-if="evaluationResult">Rating: {{ evaluationResult }}</p>
 </div>
     </q-card-section>
     <q-select
@@ -140,6 +152,7 @@ export default {
       pdfPath: '',
       chapterFilePath: '', 
       numPages: 0,
+       evaluationResult: "",
       theme: 'light',
       config: {
         sidebar: {
@@ -241,6 +254,7 @@ export default {
           studentName: assignment.studentName,
           submittedFile: assignment.submittedFile,
           isVerified: assignment.isVerified,
+          evaluation:assignment.evaluation,
           blobUrl: blobUrl, // Blob URL
           fileType: fileType // File Type (png, pdf, java, py)
         };
@@ -256,6 +270,24 @@ export default {
     this.loading = false;
   }
 },
+ evaluateFileUrl() {
+  const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+    const postEvaluateUrl = baseUrl + 'api/evaluator/evaluate-url';
+      axios
+        .post("http://localhost:8087/api/evaluator/evaluate-url", this.dialogFileUrl, {
+          headers: {
+            "Content-Type": "text/plain",
+          },
+        })
+        .then((response) => {
+          this.evaluationResult = response.data.evaluation;
+          console.log("rating",response.data.evaluation);
+        })
+        .catch((error) => {
+          console.error(error);
+          this.evaluationResult = "Error evaluating the file.";
+        });
+    },
 async handleSelectChange(value) {
     this.assignmentSearch = value;
     console.log('Selected assignment ID:', value); // Log the selected assignment ID
@@ -285,6 +317,7 @@ async handleSelectChange(value) {
       const submitAssignmentUrl = `${baseUrl}api/student-assignments/${this.assignmentData.id}`;
       // Construct the URL with the assignment ID
       const currentDate = Date.now(); 
+      const evaluationString = this.evaluationResult || '';
       // Prepare the JSON data to be sent
       const data = {
         // id: this.assignmentData.id,
@@ -296,7 +329,9 @@ async handleSelectChange(value) {
         studentName: this.assignmentData.studentName,
         submittedFile: this.assignmentData.submittedFile,
         createdDate: currentDate,
-        isVerified: this.assignmentData.isVerified.value
+        isVerified: this.assignmentData.isVerified.value,
+
+        evaluation: this.evaluationResult || '',
       };
 
       // Make the PUT request
@@ -311,6 +346,7 @@ async handleSelectChange(value) {
         console.log('Assignment data updated successfully:', response.data.message);
         // Optionally, you might want to close the dialog or refresh the data
         this.dialogVisible = false;
+        this.evaluationResult = "";
         await this.getStudentAssignmentsData(); // Refresh data if needed
       } else {
         console.error('Failed to update assignment data:', response.data.message);
@@ -319,6 +355,10 @@ async handleSelectChange(value) {
       console.error('Error updating assignment data:', error);
     }
   },
+  closeDialog() {
+      this.dialogVisible = false;
+      this.evaluationResult = ""; // Clear the evaluation result when closing
+    },
   async openDialog(blobUrl, fileType, assignment) {
       console.log('Opening dialog with assignment data:', assignment);
       this.dialogFileUrl = blobUrl;
