@@ -4,15 +4,38 @@
       <fin-portlet-header>
         <div class="row col-12">
           <fin-portlet-heading><span class="User_heading" >Labs</span></fin-portlet-heading>
-          <div class="col-3">
-          <a href="https://gurukul.finvedic.com/dojo/" target="_blank" class="styled-link">Finvedic Dojo</a>
-          </div>
+         
       </div>
       </fin-portlet-header>
       <fin-portlet-item>
+
+
+<div class="row col-12" style="width: 100%">
+  <div class="col-1"></div>
+  <div class="col-3">
+    <div class="image-btn-container1">
+      <a href="https://gurukul.finvedic.com/dojo/" target="_blank">
+  <q-btn class="image-btn1">
+    <q-img :src="Dojo" alt="Windows" style="width: 100%; height: 100%;" />
+  </q-btn>
+</a>
+
+          
+    </div>
+   
+    <div class="col-3" style="margin-top: 24%;">
+          <a href="https://gurukul.finvedic.com/dojo/" target="_blank" class="styled-link">FinVedic Dojo</a>
+          </div>
+  </div>
+  <div class="col-1">
+  <div class="outer1">
+            <div class="inner1"></div>
+            </div>
+          </div>
+        <div class="col-6">
         <q-form @submit="onSubmit" ref="form" class="q-pa-md">
     <div class="row">
-      <div class="col-12 col-md-5 q-pa-sm" style="margin-left: auto; margin-right: auto;">
+      <div class="col-12 col-md-12 q-pa-sm" style="margin-left: auto; margin-right: auto;">
         <p style="text-align: center; font-size: 24px; font-weight: 600; color: #5479F7;">
           Select The Operating System
         </p>
@@ -55,6 +78,9 @@
         :disabled="!formIsValid" />
     </div>
   </q-form>
+</div>
+<div class="col-1"></div>
+</div>
       </fin-portlet-item>
 
       <fin-portlet-item >
@@ -117,6 +143,7 @@ import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 import labImg from "src/assets/lab.png";
+import Dojo from "src/assets/Dojo.png";
 import { urls } from "./Urls";
 import { TouchSwipe } from "quasar";
 
@@ -136,6 +163,7 @@ export default {
       loader:loader,
       labsData: [],
       labImg: windows,
+      Dojo: Dojo,
     }
   },
   mounted() {
@@ -331,10 +359,20 @@ selectVersion(os) {
   display: flex;
   justify-content: center;
 }
+.image-btn-container1 {
+  display: flex;
+  justify-content: center;
+  margin-top: 18%;
+}
 
 .image-btn {
   width: 180px;
   height: 180px;
+  margin: 0 10px; /* Adjust as needed */
+}
+.image-btn1 {
+  width: 220px;
+  height: 220px;
   margin: 0 10px; /* Adjust as needed */
 }
 .outer {
@@ -345,6 +383,22 @@ selectVersion(os) {
   overflow: hidden;
 }
 .inner {
+  position: absolute;
+  width:100%;
+  height: 40%;
+  background: #5479F7;
+  top: 30%;
+  box-shadow: 0px 0px 30px 20px #5479F7;
+}
+
+.outer1 {
+  width: 1px;
+  height: 340px;
+  margin: auto;
+  position: relative;
+  overflow: hidden;
+}
+.inner1 {
   position: absolute;
   width:100%;
   height: 40%;
@@ -382,9 +436,12 @@ selectVersion(os) {
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 100% !important;
-            padding: 10px 20px;
-            font-size: 18px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 60% !important;
+            
+            padding: 8px 14px;
+            font-size: 16px;
             font-weight: bold;
             text-decoration: none;
             background-color: #5479F7;
