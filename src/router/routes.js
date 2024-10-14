@@ -161,6 +161,11 @@ const routes = [
         component: () => import('pages/dashboard/CalenderEvents/Top.vue'),
         meta: { item: 'class-room' }
       },
+      {
+        path: 'profiles',
+        component: () => import('src/pages/dashboard/profiles/profiles.vue'),
+        meta: { item: 'profiles' }
+      },
     ],
   },
 

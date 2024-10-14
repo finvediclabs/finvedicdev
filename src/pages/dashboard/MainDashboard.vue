@@ -152,6 +152,14 @@ export default {
           background: '#FFBD80',
           enable: true
         },
+        {
+          image: rolesPng,
+          title: 'profiles',
+          description: 'Perfect for learning how the framework works.',
+          path: 'profiles',
+          background: '#CCB4FF',
+          enable: true
+        },
       ]
     }
   }

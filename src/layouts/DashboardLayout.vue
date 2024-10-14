@@ -219,7 +219,8 @@
 <script>
 import { storeToRefs } from "pinia";
 import { useSessionStore } from "src/stores/session";
-import { setToken } from "src/boot/axios"
+import { setToken } from "src/boot/axios";
+import axios from "axios";
 import { useProfileStore } from "src/stores/profile";
 import profileImg from "src/assets/profile.png";
 import Chatbot from "src/layouts/ChatBot.vue";
@@ -236,7 +237,6 @@ export default {
     const { setUserType, setSessionToken } = session;
     const profileStore = useProfileStore();
     const { user } = storeToRefs(profileStore);
-    // console.log("Upload Document Path", user.value.uploadDocumentPath);
   
     return {
       token,
@@ -244,7 +244,6 @@ export default {
       setUserType,
       setSessionToken,
       user
-    
     }
   },
   data() {
@@ -258,7 +257,7 @@ export default {
       drawerLeft: window.innerWidth < 600 ? false : true,
       isMobile: window.innerWidth > 600 ? false : true,
       miniState: false,
-      notificationList:[],
+      notificationList: [],
       notificationInterval: null,
       batchNumber:null,
       modulesList: [
@@ -285,40 +284,40 @@ export default {
          
        },
       
+
         {
            icon: 'help', label: 'Help', value: 'help', 
-         
-       }
-    
+        }
       ],
       expand: {},
-      userOwner:'' ,
-      adminAccess: ["admin", "labs",  "library", "reports","channel"],
-      studentsAccess: ["labs", "library", "reports","channel"],
-      facultyAccess: ["admin","labs", "library", "reports","channel"],
+      userOwner: '',
+      Admin: ["admin"],
+      Student: [],
+      Faculty: [],
+      Guest: [ "library"],
       defaultPath: "/library/books",
-      guestAccess: [ "library"],
-      userAccess: [ "labs", "library"],
-      allAccess:["watch-video","read-pdf","watch-ppt","profile","help"]
+      userAccess: [],
+      allAccess: ["watch-video", "read-pdf", "watch-ppt", "profile", "help"],
+      profiles: [], // Store fetched profiles here
+      roles: [] // Store fetched roles here
     }
   },
   computed: {
     widthSVG() { return window.innerWidth > 600 ? 197 : 150 },
     modules() {
       var userAccess = [];
-      if(this.userType == 'Admin') {
-        userAccess = this.adminAccess;
-      } else if(this.userType == 'Faculty' ) {
-        userAccess = this.facultyAccess;
-      } else if(this.userType == 'Guest' ) {
-        userAccess = this.guestAccess;
+      if (this.userType == 'Admin') {
+        userAccess = this.Admin;
+      } else if (this.userType == 'Faculty') {
+        userAccess = this.Faculty;
+      } else if (this.userType == 'Guest') {
+        userAccess = this.Guest;
       } else {
-        userAccess = this.studentsAccess;
+        userAccess = this.Student;
       }
       this.userAccess = userAccess;
       this.userAccess.push(...this.allAccess);
-      return this.modulesList.filter(mode => userAccess.includes(mode.value) );
-      //return  this.modulesList ;
+      return this.modulesList.filter(mode => userAccess.includes(mode.value));
     }
   },
   props: {
@@ -335,7 +334,7 @@ export default {
     }, 5000); // Fetch notifications every 5 seconds
 
     if (!this.token) {  
-        this.$router.push('/');
+      this.$router.push('/');
     }
 
     if (this.userType === 'Guest') {
@@ -343,135 +342,190 @@ export default {
     } else {
       document.body.classList.remove('guest');
     }
+
     this.getUserData();
-    this. getEventsDataNotification();
+    this.getEventsDataNotification();
     this.getNotifications();
     this.selectedModule = {
-        module: this.$route.meta.module,
-        item: this.$route.meta.item
+      module: this.$route.meta.module,
+      item: this.$route.meta.item
     };
     this.updateBackgroundStyle();
     this.knowModuleFunction();
     this.checkAccess();
-    // console.log("User Type:", this.userType);
-    // console.log("User Specialization:", this.user.specialization);
-    // Check if uploadDocumentPath is null and redirect to /profile if needed
-
-//     if (this.userType !== 'Admin' && this.userType !== 'Guest' && !this.user.specialization) {
-//     this.$router.push('/profile');
-// }
-      
-    },
-
- watch: {
-  token(newVal, oldVal) {
-    if (!newVal) {
-      this.$router.push('/');
-    }
-
-  },
-  user() {
-    this.getUserData();
-  },
-  $route(to, from) {
-    this.updateBackgroundStyle();
-    this.checkAccess();
-  }
-  
-},
-  methods: {
-    async getNotifications() {
-  try {
-    const response = await this.$api.get('/api/getnotifications');
     
-    // Log the response data to debug
-    //console.log(response.data);
-    
-    if (response.data && Array.isArray(response.data)) {
-      this.notificationList = response.data.map((notification) => ({
-        ...notification,
-        sendername: notification.username,
-        message: notification.content,
-        timestamp: notification.timestamp,
-      }));
-    }
-  } catch (error) {
-    console.error("Error fetching notifications:", error);
-  }
-},
-    checkAccess() {
-       let path = this.$route.path;
-       let access = this.userAccess.filter(value => path.startsWith("/"+value));
-       if( access && access.length == 0) {
-          this.$router.push({path:this.defaultPath});
-       }
-       
-    },
-    getEventsDataNotification() {
-  var request = {
-    categoryId: this.selectedCategory?.id,
-    subCategoryId: this.selectedSubCategory?.id
-  };
-  this.loading = true;
-  const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-  const getEvents = baseUrl + 'api/calendarEvents';
+    // Fetch profiles and roles to set access paths
+    this.fetchProfiles();
+  },
 
-  this.$api.get(getEvents, {
-    params: request
-  }).then(response => {
-    this.loading = false;
-    if (response.data.success) {
-      let events = response.data.data;
-
-      // Map and sort events by date and start time
-      events = events.map(event => ({
-        title: event.title,
-        date: event.date,
-        start: event.start,
-        end: event.end,
-        link: event.link,
-        topic: event.topic,
-        color: 'white',
-       // backgroundColor: colorHash.hex(event.title),
-        width: '100%',
-        height: '50px'
-      })).sort((a, b) => new Date(`${a.date} ${a.start}`) - new Date(`${b.date} ${b.start}`));
-
-      const now = new Date();
-      let nextEvent = null;
-      let lastEvent = null;
-
-      // Find the next event
-      nextEvent = events.find(event => new Date(`${event.date} ${event.start}`) > now);
-
-      // Find the most recent past event if no next event is found
-      if (!nextEvent) {
-        lastEvent = events.reverse().find(event => new Date(`${event.date} ${event.start}`) <= now);
+  watch: {
+    token(newVal) {
+      if (!newVal) {
+        this.$router.push('/');
       }
-
-      this.events = events;
-      this.nextOrLastEvent = nextEvent || lastEvent;
-      this.isNextEvent = !!nextEvent; // true if next event, false if last event
-      // console.log("events:", this.events);
-      // console.log("nextOrLastEvent:", this.nextOrLastEvent);
-    } else {
-      this.showMsg(response.data?.message, 'negative');
+    },
+    user() {
+      this.getUserData();
+    },
+    $route(to, from) {
+      this.updateBackgroundStyle();
+      this.checkAccess();
     }
-  }).catch(error => {
-    this.loading = false;
-    this.showMsg(error.response?.data.message || error.message, 'negative');
+  },
+  methods: {
+    async fetchProfiles() {
+      try {
+        const response = await axios.get('http://localhost:8087/userprofiles');
+        this.profiles = response.data;
+        console.log("response:",response);
+        this.fetchUserRoles();
+      } catch (error) {
+        console.error("Error fetching user profiles:", error);
+      }
+    },
+    async fetchUserRoles() {
+      try {
+        const response = await axios.get('http://localhost:8087/api/roles');
+        this.roles = response.data.data;
+        console.log("response:",this.roles)
+        this.setAccessPaths();
+      } catch (error) {
+        console.error("Error fetching user roles:", error);
+      }
+    },
+    setAccessPaths() {
+  this.profiles.forEach(profile => {
+    if (profile.active) { // Check if the profile is active
+      console.log("Processing Profile:", profile.profileName); // Debugging log
+
+      const activeRoles = profile.roles; // Array of roles for the profile
+      activeRoles.forEach(role => {
+        console.log("Processing Role:", role.name); // Debugging log
+        
+        // Check the role and push to corresponding access array
+        switch (role.name) {
+          case "Admin":
+            this.Admin.push(profile.profileName);
+            console.log("profile:",profile.profileName);
+            break;
+          case "Student":
+            this.Student.push(profile.profileName);
+            console.log("profile:",profile.profileName);
+            break;
+          case "Faculty":
+            this.Faculty.push(profile.profileName);
+            console.log("profile:",profile.profileName);
+            break;
+          case "Guest":
+            this.Guest.push(profile.profileName);
+            console.log("profile:",profile.profileName);
+            break;
+          case "userAccess":
+            this.userAccess.push(profile.profileName);
+            console.log("profile:",profile.profileName);
+            break;
+          default:
+            console.warn(`Unknown role: ${role.name}`); // Log unknown roles
+            break;
+        }
+      });
+    }
+  });
+
+  // Log the populated access paths for verification
+  console.log("Access Paths:", {
+    Admin: this.Admin,
+    Student: this.Student,
+    Faculty: this.Faculty,
+    Guest: this.Guest,
+    userAccess: this.userAccess,
   });
 },
-showMsg(message, type) {
+    async getNotifications() {
+      try {
+        const response = await this.$api.get('/api/getnotifications');
+        if (response.data && Array.isArray(response.data)) {
+          this.notificationList = response.data.map((notification) => ({
+            ...notification,
+            sendername: notification.username,
+            message: notification.content,
+            timestamp: notification.timestamp,
+          }));
+        }
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      }
+    },
+    checkAccess() {
+      let path = this.$route.path;
+      let access = this.userAccess.filter(value => path.startsWith("/" + value));
+      if (access && access.length == 0) {
+        this.$router.push({ path: this.defaultPath });
+      }
+    },
+    getEventsDataNotification() {
+      var request = {
+        categoryId: this.selectedCategory?.id,
+        subCategoryId: this.selectedSubCategory?.id
+      };
+      this.loading = true;
+      const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+      const getEvents = baseUrl + 'api/calendarEvents';
+
+      this.$api.get(getEvents, {
+        params: request
+      }).then(response => {
+        this.loading = false;
+        if (response.data.success) {
+          let events = response.data.data;
+
+          // Map and sort events by date and start time
+          events = events.map(event => ({
+            title: event.title,
+            date: event.date,
+            start: event.start,
+            end: event.end,
+            link: event.link,
+            topic: event.topic,
+            color: 'white',
+            width: '100%',
+            height: '50px'
+          })).sort((a, b) => new Date(`${a.date} ${a.start}`) - new Date(`${b.date} ${b.start}`));
+
+          const now = new Date();
+          let nextEvent = null;
+          let lastEvent = null;
+
+          // Find the next event
+          nextEvent = events.find(event => new Date(`${event.date} ${event.start}`) > now);
+
+          // Find the most recent past event if no next event is found
+          if (!nextEvent) {
+            lastEvent = events.reverse().find(event => new Date(`${event.date} ${event.start}`) <= now);
+          }
+
+          this.events = events;
+          this.nextOrLastEvent = nextEvent || lastEvent;
+          this.isNextEvent = !!nextEvent; // true if next event, false if last event
+        } else {
+          this.showMsg(response.data?.message, 'negative');
+        }
+      }).catch(error => {
+        this.loading = false;
+        this.showMsg(error.response?.data.message || error.message, 'negative');
+      });
+    },
+    showMsg(message, type) {
       this.$q.notify({
         message: message || "Something Went Wrong!",
         type: type,
         position: 'top-right',
         actions: [
-          { icon: 'close', color: 'white', handler: () => { } }
+          { icon: 'close', color: 'white', handler: () => {} }
         ]
       });
     },
+ 
     updateBackgroundStyle() {
       // Check if the current route is '/library/books'
       if (this.$route.path === '/library/books') {

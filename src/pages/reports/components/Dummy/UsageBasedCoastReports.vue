@@ -23,60 +23,65 @@
           <q-btn @click="nextWeek">→</q-btn>
         </div>
         <BarChart :data="chartData" />
-       
       </div>
     </div>
 
     <!-- Bottom: Table -->
     <div class="table-container" style="margin-top: 7%;">
+      <!-- First Table with Pagination -->
       <table class="vm-table">
-    <thead>
-      <tr>
-        <th>Username</th>
-        <th>VM Name</th>
-        <th>Active Time For All VMs</th>
-        <th>Remainig Time</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="vm in filteredVMs" :key="vm.userName + '-' + vm.names.join('-')">
-        <td>{{ vm.userName || 'N/A' }}</td>
-        <td>{{ vm.names.join(', ') }}</td>
-        <td>{{ formatTime(vm.totalActiveTime2) }}</td>
-        <td>{{ formatTime(calculateRemainingTime(vm.totalActiveTime2)) }}</td> <!-- Remaining Time -->
-      </tr>
-    </tbody>
-  </table>
-
-  <!-- Second Table (Filtered VMs only from the first table) -->
-  <table class="vm-table" style="margin-top: 3%;">
-    <thead>
-      <tr>
-        <th>Serial Number</th>
-        <th>VM Name</th>
-        <th>Created Date</th>
-        <th>Started Time</th>
-        <th>End Time</th>
-        <th>Active Time</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="(vm, index) in filteredSecondTableVMs" :key="vm.name + '-' + index">
-        <td>{{ index + 1 }}</td>
-        <td>{{ vm.name }}</td>
-        <!-- Use formatDate to display just the date -->
-        <td>{{ formatDate(vm.createdDate) }}</td>
-        <!-- Use formatTimeFromDateTime to display just the time -->
-        <td>{{ formatTimeFromDateTime(vm.createdDate) }}</td>
-        <!-- End Time: show time from deletedDate -->
-        <td>{{ formatTimeFromDateTime(vm.deletedDate) || 'N/A' }}</td>
-        <!-- Active Time: format the total active time in hours and minutes -->
-        <td>{{ formatTime(vm.activeTime || 0) }}</td>
-      </tr>
-    </tbody>
-  </table>
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>VM Name</th>
+            <th>Active Time For All VMs</th>
+            <th>Remaining Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="vm in paginatedFirstTableVMs" :key="vm.userName + '-' + vm.names.join('-')">
+            <td>{{ vm.userName || 'N/A' }}</td>
+            <td>{{ vm.names.join(', ') }}</td>
+            <td>{{ formatTime(vm.totalActiveTime2) }}</td>
+            <td>{{ formatTime(calculateRemainingTime(vm.totalActiveTime2)) }}</td> <!-- Remaining Time -->
+          </tr>
+        </tbody>
+      </table>
+      <div v-if="!selectedUser" class="pagination">
+            <button @click="prevPageFirstTable" :disabled="currentPageFirstTable === 1">Previous</button>
+            <span>Page {{ currentPageFirstTable }}</span>
+            <button @click="nextPageFirstTable" :disabled="currentPageFirstTable >= totalPagesFirstTable">Next</button>
+      </div>
 
 
+      <!-- Second Table with Pagination -->
+      <table class="vm-table" style="margin-top: 3%;">
+        <thead>
+          <tr>
+            <th>Serial Number</th>
+            <th>VM Name</th>
+            <th>Created Date</th>
+            <th>Started Time</th>
+            <th>End Time</th>
+            <th>Active Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(vm, index) in paginatedSecondTableVMs" :key="vm.name + '-' + index">
+            <td>{{ (index + 1) + (currentPageSecondTable - 1) * rowsPerPage }}</td>
+            <td>{{ vm.name }}</td>
+            <td>{{ formatDate(vm.createdDate) }}</td>
+            <td>{{ formatTimeFromDateTime(vm.createdDate) }}</td>
+            <td>{{ formatTimeFromDateTime(vm.deletedDate) || 'N/A' }}</td>
+            <td>{{ formatTime(vm.activeTime || 0) }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div v-if="filteredSecondTableVMs.length > rowsPerPage" class="pagination">
+            <button @click="prevPageSecondTable" :disabled="currentPageSecondTable === 1">Previous</button>
+            <span>Page {{ currentPageSecondTable }}</span>
+            <button @click="nextPageSecondTable" :disabled="currentPageSecondTable >= totalPagesSecondTable">Next</button>
+        </div>
 
     </div>
   </div>
@@ -101,8 +106,11 @@ export default {
       groupedVMs: [],
       filteredVMs: [],
       selectedUser: '',
-      chartData: { labels: [], datasets: [] }, // Initialize chartData
+      chartData: { labels: [], datasets: [] },
       startDate: new Date(),
+      currentPageFirstTable: 1,
+      currentPageSecondTable: 1,
+      rowsPerPage: 5, // Number of rows to display per page
     };
   },
   setup() {
@@ -125,7 +133,26 @@ export default {
     
     // Filter the `vms` array to include only the VMs present in the first table
     return this.vms.filter(vm => firstTableVMNames.includes(vm.name));
-  }
+  },
+  paginatedFirstTableVMs() {
+      const start = (this.currentPageFirstTable - 1) * this.rowsPerPage;
+      const end = this.currentPageFirstTable * this.rowsPerPage;
+      return this.filteredVMs.slice(start, end);
+    },
+    // Paginated data for the second table
+    paginatedSecondTableVMs() {
+      const start = (this.currentPageSecondTable - 1) * this.rowsPerPage;
+      const end = this.currentPageSecondTable * this.rowsPerPage;
+      return this.filteredSecondTableVMs.slice(start, end);
+    },
+    // Calculate total pages for the first table
+    totalPagesFirstTable() {
+      return Math.ceil(this.filteredVMs.length / this.rowsPerPage);
+    },
+    // Calculate total pages for the second table
+    totalPagesSecondTable() {
+      return Math.ceil(this.filteredSecondTableVMs.length / this.rowsPerPage);
+    }
   },
   mounted() {
 
@@ -133,6 +160,7 @@ export default {
         this.setSelectedUser();
   },
   methods: {
+    
     async fetchVMs() {
       try {
         const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
@@ -280,6 +308,26 @@ export default {
       const nextWeekStart = new Date(this.startDate);
       nextWeekStart.setDate(this.startDate.getDate() + 7);
       return nextWeekStart;
+    },
+    nextPageFirstTable() {
+      if (this.currentPageFirstTable < this.totalPagesFirstTable) {
+        this.currentPageFirstTable++;
+      }
+    },
+    prevPageFirstTable() {
+      if (this.currentPageFirstTable > 1) {
+        this.currentPageFirstTable--;
+      }
+    },
+    nextPageSecondTable() {
+      if (this.currentPageSecondTable < this.totalPagesSecondTable) {
+        this.currentPageSecondTable++;
+      }
+    },
+    prevPageSecondTable() {
+      if (this.currentPageSecondTable > 1) {
+        this.currentPageSecondTable--;
+      }
     }
   }
 }
