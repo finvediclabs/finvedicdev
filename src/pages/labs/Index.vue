@@ -15,7 +15,7 @@
   <div class="col-3">
     <div class="image-btn-container1">
       <a href="https://gurukul.finvedic.com/dojo/" target="_blank">
-  <q-btn class="image-btn1">
+  <q-btn class="image-btn">
     <q-img :src="Dojo" alt="Windows" style="width: 100%; height: 100%;" />
   </q-btn>
 </a>
@@ -23,7 +23,8 @@
           
     </div>
    
-    <div class="col-3" style="margin-top: 24%;">
+    <div class="col-3" style="padding-top: 6px;">
+      <br><br><br><br>
           <a href="https://gurukul.finvedic.com/dojo/" target="_blank" class="styled-link">FinVedic Dojo</a>
           </div>
   </div>
@@ -362,7 +363,9 @@ selectVersion(os) {
 .image-btn-container1 {
   display: flex;
   justify-content: center;
-  margin-top: 18%;
+  align-items: center;
+  /* border: 2px solid red; */
+  margin-top: 28%;
 }
 
 .image-btn {
@@ -450,12 +453,12 @@ selectVersion(os) {
             transition: background-color 0.3s ease, transform 0.3s ease;
             box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
         }
-.styled-link:hover {
+/* .styled-link:hover {
             transform: translateY(3px);
             box-shadow: 0 8px 20px rgba(0, 86, 179, 0.5);
 }
 .styled-link:active {
             transform: translateY(1px);
             box-shadow: 0 4px 4px rgba(0, 61, 128, 0.3);
-}
+} */
 </style>
