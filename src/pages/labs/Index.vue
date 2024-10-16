@@ -13,6 +13,13 @@
 <div class="row col-12" style="width: 100%">
   <div class="col-1"></div>
   <div class="col-3">
+    <div class="q-pa-md">
+    <div class="row">
+      
+      <div class="col-12 col-md-12 q-pa-sm" style="margin-left: auto; margin-right: auto;">
+        <p style="text-align: center; font-size: 24px; font-weight: 600; color: #5479F7;visibility: hidden;">
+          FinVedic Dojo
+        </p>
     <div class="image-btn-container1">
       <a href="https://gurukul.finvedic.com/dojo/" target="_blank">
   <q-btn class="image-btn">
@@ -22,11 +29,27 @@
 
           
     </div>
+    
+  </div>
+</div>
+ <!--  -->
+ <div style="display: flex;align-items: center;justify-content: center;flex-direction: column;">
+  <div style="text-align: center; padding-top: 20px;">
+  <p v-if="selectedOS" style="color: green;visibility: hidden;">You selected: {{ selectedOS }} OS</p>
+  <p v-else style="color: red;visibility: hidden;">You didn't select operating system</p>
+</div>
    
-    <div class="col-3" style="padding-top: 6px;">
-      <br><br><br><br>
-          <a href="https://gurukul.finvedic.com/dojo/" target="_blank" class="styled-link">FinVedic Dojo</a>
-          </div>
+<div class="row justify-center q-pa-md">
+      <q-btn
+      color="primary" no-caps class="sub-btn q-ml-sm fin-br-8" style="min-width:150px" label="FinVedic Dojo" 
+      href="https://gurukul.finvedic.com/dojo/"
+      target="_blank"
+         />
+    </div>
+  </div>
+    <!--  -->
+
+  </div>
   </div>
   <div class="col-1">
   <div class="outer1">
@@ -69,6 +92,7 @@
         </div>
       </div>
     </div>
+    <div style="display: flex;align-items: center;justify-content: center;flex-direction: column;">
     <div style="text-align: center; padding-top: 20px;">
   <p v-if="selectedOS" style="color: green;">You selected: {{ selectedOS }} OS</p>
   <p v-else style="color: red;">You didn't select operating system</p>
@@ -78,6 +102,7 @@
       color="primary" no-caps class="sub-btn q-ml-sm fin-br-8" style="min-width:150px" label="Requeste For VM" type="submit"
         :disabled="!formIsValid" />
     </div>
+  </div>
   </q-form>
 </div>
 <div class="col-1"></div>
@@ -359,13 +384,14 @@ selectVersion(os) {
 .image-btn-container {
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 .image-btn-container1 {
   display: flex;
   justify-content: center;
   align-items: center;
   /* border: 2px solid red; */
-  margin-top: 28%;
+  /* margin-top: 28%; */
 }
 
 .image-btn {
