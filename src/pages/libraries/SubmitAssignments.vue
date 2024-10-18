@@ -111,7 +111,16 @@
       
       <p v-if="assignmentData.evaluation">Rating: {{ assignmentData.evaluation }}</p>
       
-  <p v-if="evaluationResult">Rating: {{ evaluationResult }}</p>
+      <div v-if="evaluationResult" class="evaluationResult">
+        <p v-if="evaluationResult.accuracy !== 'N/A'"><span class="bold-text">Accuracy: </span> {{ evaluationResult.accuracy }}</p>
+        <p v-if="evaluationResult.mean_absolute_error !== 'N/A'"><span class="bold-text">Mean Absolute Error:</span> {{ evaluationResult.mean_absolute_error }}</p>
+        <p v-if="evaluationResult.mean_squared_error !== 'N/A'"><span class="bold-text">Mean Squared Error:</span> {{ evaluationResult.mean_squared_error }}</p>
+        <p v-if="evaluationResult.evaluation_feedback !== 'N/A'"><span class="bold-text">Feedback: </span>{{ evaluationResult.evaluation_feedback }}</p>
+        <p v-if="evaluationResult.space_complexity !== 'N/A'"><span class="bold-text">Space Complexity: </span>{{ evaluationResult.space_complexity }}</p>
+        <p v-if="evaluationResult.time_complexity !== 'N/A'"><span class="bold-text">Time Complexity: </span>{{ evaluationResult.time_complexity }}</p>
+        <p v-if="evaluationResult.rating_of_the_code !== 'N/A'"><span class="bold-text">Rating of the code: </span>{{ evaluationResult.rating_of_the_code }}</p>
+      </div>
+
 </div>
     </q-card-section>
     <q-select
@@ -241,7 +250,7 @@ export default {
         }
 
         const blobUrl = cleanFileName;
-
+        
         return {
           index: index + 1,
           id: assignment.id,
@@ -272,16 +281,20 @@ export default {
 },
  evaluateFileUrl() {
   const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-    const postEvaluateUrl = baseUrl + 'api/evaluator/evaluate-url';
+    const postEvaluateUrl = baseUrl + 'api/evaluator/evaluate-urls';
+    const payload = [this.dialogFileUrl];
+    const question= this.assignmentData.assignmentTitle;
+
       axios
-        .post("http://localhost:8087/api/evaluator/evaluate-url", this.dialogFileUrl, {
+        .post(`${postEvaluateUrl}?question=${encodeURIComponent(question)}`,payload, {
           headers: {
-            "Content-Type": "text/plain",
+            "Content-Type": "application/json",
           },
         })
         .then((response) => {
-          this.evaluationResult = response.data.evaluation;
-          console.log("rating",response.data.evaluation);
+         // console.log(response.data)
+          this.evaluationResult = response.data.response;
+          console.log("rating",response.data.response);
         })
         .catch((error) => {
           console.error(error);
@@ -516,6 +529,9 @@ button:hover {
   color: #5479F7;
   margin-left: 4%;
 }
+.evaluationResult{
+  padding-top: 30px;
+}
 .search-container {
   margin-left: auto;
 }
@@ -534,4 +550,7 @@ pre {
   overflow-x: auto;
   white-space: pre-wrap; /* Wrap long lines */
 }
+.bold-text {
+    font-weight: bold;
+  }
 </style>
