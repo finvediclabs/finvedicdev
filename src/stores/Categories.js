@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
-import axios from 'axios'
+import axios from 'axios';
+import { useSessionStore } from "src/stores/session"; // Import the session store
 
 const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
 
@@ -12,7 +13,14 @@ export const useCategoryStore = defineStore('categories', {
   }),
   actions: {
     fetchCategories() {
-      axios.get(baseUrl + 'api/chapterCategoriess').then(response => {
+      const sessionStore = useSessionStore(); // Get the session store
+      const token = sessionStore.token; // Retrieve the token
+
+      const headers = {
+        Authorization: `Bearer ${token}`, // Attach the token in the request headers
+      };
+
+      axios.get(baseUrl + 'api/chapterCategoriess', { headers }).then(response => {
         const categories = response.data.map(category => {
           if (category.categoryCode === "INTR_TO_BANK") {
             category.categoryName = "Fintech And Financial Services Landscape";
@@ -21,10 +29,17 @@ export const useCategoryStore = defineStore('categories', {
         });
         this.categories = categories;
         this.fetchSubCategories();
-      })
+      });
     },
     fetchSubCategories() {
-      axios.get(baseUrl + 'api/chapterSubCategoriess').then(response => {
+      const sessionStore = useSessionStore(); // Get the session store
+      const token = sessionStore.token; // Retrieve the token
+
+      const headers = {
+        Authorization: `Bearer ${token}`, // Attach the token in the request headers
+      };
+
+      axios.get(baseUrl + 'api/chapterSubCategoriess', { headers }).then(response => {
         this.subCategories = Object.groupBy(response.data, product => {
           return product.categoryCode;
         });
@@ -35,7 +50,7 @@ export const useCategoryStore = defineStore('categories', {
         } else {
           this.selectedCategory = this.categories[0];
         }
-      })
+      });
     },
     selectCategory(category) {
       this.selectedCategory = category;

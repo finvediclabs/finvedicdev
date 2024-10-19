@@ -344,7 +344,7 @@ selectVersion(os) {
         // Send POST request
         const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
         const requestVMsUrl = baseUrl + 'api/request-vms';
-        const response = await axios.post(requestVMsUrl, requestData);
+        const response = await this.$api.post(requestVMsUrl, requestData);
 
         // Handle success response
         const successMessage = response.data.message;

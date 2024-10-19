@@ -12,6 +12,8 @@
 import CryptoJS from 'crypto-js';
 import Axios from 'axios'; // Import Axios for HTTP requests
 
+import { setToken } from "src/boot/axios";
+
 import VuePdfApp from "vue3-pdf-app";
 import "vue3-pdf-app/dist/icons/main.css";
 
@@ -75,7 +77,7 @@ export default {
       const formData = new FormData();
       formData.append('filename', filePathWithoutPrefix); // Use the modified filePathWithoutPrefix
 
-      const response = await Axios.post(getPdfUrl, formData, { responseType: 'blob' });
+      const response = await this.$api.post(getPdfUrl, formData, { responseType: 'blob' });
 
       if (response.status === 200) {
         const blob = new Blob([response.data]);

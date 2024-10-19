@@ -292,6 +292,8 @@ import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import axios from 'axios';
+
+import { setToken } from "src/boot/axios";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 import { urls } from "../Urls"
 import CryptoJS from 'crypto-js'
@@ -404,7 +406,7 @@ export default {
       try {
         const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
           const getUsersUrl = baseUrl + 'api/users/role/3';
-        const response = await axios.get(getUsersUrl );
+        const response = await this.$api.get(getUsersUrl );
         console.log('Response from user options request:', response);
         if (response.status === 200) {
       this.userOptions = response.data.data.map(user => {
@@ -471,7 +473,7 @@ export default {
   const updateBatchUrl = `${baseUrl}api/cycles/${this.batchData.batchId}`; // Adjust URL if necessary
 
   // Example Axios PUT request to update batch
-  axios.put(updateBatchUrl, batchData)
+  this.$api.put(updateBatchUrl, batchData)
     .then(response => {
       this.submitBatchLoading = false;
       if (response.status === 200) {
@@ -517,7 +519,7 @@ export default {
   const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
           const getCyclesUrl = baseUrl + 'api/cycles';
   // Example Axios POST request to add batch
-  axios.post(getCyclesUrl, batchData)
+  this.$api.post(getCyclesUrl, batchData)
     .then(response => {
       this.submitBatchLoading = false;
       if (response.status === 201) {
@@ -579,7 +581,7 @@ export default {
   console.log("Get Course URL:", getCourseUrl);
 
   // Example Axios POST request to add course
-  axios.post(getCourseUrl, courseData)
+  this.$api.post(getCourseUrl, courseData)
     .then(response => {
       console.log("Response:", response);
       this.submitLoading = false;
@@ -663,7 +665,7 @@ submitEditCourseForm() {
   const updateCourseUrl = `${baseUrl}api/courss/${this.courseData.courseId}`; // Adjust URL if necessary
 
   // Example Axios PUT request to update the course
-  axios.put(updateCourseUrl, updatedCourseData)
+  this.$api.put(updateCourseUrl, updatedCourseData)
     .then(response => {
       this.submitLoading = false;
       if (response.status === 200) {

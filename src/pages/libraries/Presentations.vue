@@ -323,7 +323,7 @@ import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
-import axios from "axios";
+import { setToken } from "src/boot/axios";
 import { Carousel3d, Slide } from "src/components/carousel-3d";
 import { urls } from "./Urls";
 import { storeToRefs } from "pinia";
@@ -434,6 +434,7 @@ export default {
     getPresentations() {
       this.loading = true;
       this.allSlides =[];
+      
       let request = {
         params: {
           categoryId: this.selectedCategory.id,
@@ -450,6 +451,7 @@ export default {
         .get(urls.getPresentationsUrl, request)
         .then((response) => {
           this.loading = false;
+          this.selectedSlide=[];
           // console.log('Data from getPresentationsUrl:', response.data);
           if (response.data.success) {
             this.presentations = response.data.data.map((item, index) => ({
@@ -471,7 +473,7 @@ export default {
                 const formData = new FormData();
                 formData.append("filename", videoCoverPathWithoutPrefix);
 
-                axios
+                this.$api
                   .post(getImagesUrl, formData, { responseType: "blob" })
                   .then((downloadResponse) => {
                     // Handle download success, e.g., open or save the downloaded file
@@ -514,8 +516,7 @@ export default {
         (process.env.VUE_APP_CORE_URL || "").replace(/\/$/g, "") + "/";
       const getChaptersUrl =
         baseUrl + "api/presentationChapters/findPresentationChapter";
-      axios
-        .post(getChaptersUrl, formData)
+        this.$api.post(getChaptersUrl, formData)
         .then((response) => {
           this.chaptersLoader = false;
           if (response.data.success) {
@@ -549,8 +550,8 @@ export default {
                 const formData = new FormData();
                 formData.append("filename", imagePathWithoutPrefix);
 
-                axios
-                  .post(getImagesUrl, formData, { responseType: "blob" })
+                this.$api.post
+                  (getImagesUrl, formData, { responseType: "blob" })
                   .then((downloadResponse) => {
                     const blob = new Blob([downloadResponse.data]);
                     const url = window.URL.createObjectURL(blob);

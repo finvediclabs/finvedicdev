@@ -70,11 +70,11 @@ const routes = [
           
          }
       },
-      {
-        path: 'organizations',
-        component: () => import('pages/dashboard/organizations/Organizations.vue'),
-        meta: { item: 'organizations' }
-      },
+      // {
+      //   path: 'organizations',
+      //   component: () => import('pages/dashboard/organizations/Organizations.vue'),
+      //   meta: { item: 'organizations' }
+      // },
       {
         path: 'notifications',
         component: () => import('pages/dashboard/Notifications/notifications.vue'),
