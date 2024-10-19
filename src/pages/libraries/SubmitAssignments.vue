@@ -344,7 +344,7 @@ async handleSelectChange(value) {
         createdDate: currentDate,
         isVerified: this.assignmentData.isVerified.value,
 
-        evaluation: this.evaluationResult || '',
+        evaluation: JSON.stringify(this.evaluationResult.evaluation_feedback)|| '',
       };
 
       // Make the PUT request
