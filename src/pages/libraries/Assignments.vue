@@ -316,6 +316,7 @@ import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 import { useProfileStore } from "src/stores/profile";
 import SubmittedAssignment from "./SubmitAssignments.vue";
+
 import Prism from 'prismjs';
 import 'prismjs/components/prism-python'; // Load syntax highlighting for Python
 import 'prismjs/components/prism-java';   // Load syntax highlighting for Java
