@@ -416,24 +416,16 @@ export default {
     evaluateFileUrl() {
       const baseUrl =
         (process.env.VUE_APP_CORE_URL || "").replace(/\/$/g, "") + "/";
-      const postEvaluateUrl = baseUrl + "api/evaluator/evaluate-urls";
-      const payload = [this.dialogFileUrl];
-      const question = this.assignmentData.assignmentTitle;
+      const postEvaluateUrl = baseUrl + "api/evaluator/evaluatecode";
+
+      const assignmentID = this.assignmentData.assignmentId;
 
       axios
-        .post(
-          `${postEvaluateUrl}?question=${encodeURIComponent(question)}`,
-          payload,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        )
+        .post(`${postEvaluateUrl}?assignment-id=${encodeURIComponent(assignmentID)}`)
         .then((response) => {
           // console.log(response.data)
           this.evaluationResult = response.data.response;
-          console.log("rating", response.data.response);
+         // console.log("rating", response.data.response);
         })
         .catch((error) => {
           console.error(error);
