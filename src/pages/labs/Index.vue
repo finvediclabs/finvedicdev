@@ -160,6 +160,7 @@
 import { useProfileStore } from "src/stores/profile";
 import { useSessionStore } from "src/stores/session";
 import { setToken } from "src/boot/axios";
+
 import loader from "../../assets/loader.gif";
 import windows from "../../assets/Windows.png";
 import linuxOs from "../../assets/LinuxOS.png";
@@ -235,9 +236,37 @@ export default {
   },
   methods: {
     download(vmname) {
-      const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-      window.location.href = baseUrl + "download/" + vmname;
-    },
+  const sessionStore = useSessionStore(); // Access session store
+  const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+  const downloadUrl = `${baseUrl}download/${vmname}`;
+
+  // Fetch the RDP file with authorization
+  fetch(downloadUrl, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${sessionStore.token}` // Include the token from session store
+    }
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.blob(); // Convert response to Blob
+  })
+  .then(blob => {
+    const url = URL.createObjectURL(blob); // Create a URL for the blob
+    const a = document.createElement('a'); // Create an anchor element
+    a.href = url; // Set the href to the blob URL
+    a.download = `${vmname}.rdp`; // Set the file name for download with .rdp extension
+    document.body.appendChild(a); // Append anchor to body
+    a.click(); // Programmatically click the anchor to trigger download
+    a.remove(); // Clean up by removing the anchor
+    URL.revokeObjectURL(url); // Free up memory
+  })
+  .catch(error => {
+    console.error('There was a problem with the fetch operation:', error.message);
+  });
+},
     async shutdown(lab) {
   const profileStore = useProfileStore();
   const profileUsername = profileStore.user.username;
