@@ -100,6 +100,8 @@ import windows from "../../assets/Windows.png";
 import linuxOs from "../../assets/LinuxOS.png";
 
 import axios from "axios";
+
+import { setToken } from "src/boot/axios";
 import { urls } from "./Urls";
 export default {
   components: {
@@ -231,7 +233,7 @@ export default {
       const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
       const requestVMsUrl = baseUrl + 'api/request-vms';
       
-      axios.get(requestVMsUrl)
+      this.$api.get(requestVMsUrl)
         .then(response => {
           if (Array.isArray(response.data.data)) {
             // Filter usernames where status is "requested"

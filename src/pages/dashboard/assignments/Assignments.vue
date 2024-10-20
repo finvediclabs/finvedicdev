@@ -179,6 +179,8 @@
   import { urls } from "src/pages/dashboard/Urls";
   import { useSessionStore } from "src/stores/session";
   import axios from 'axios';
+  
+import { setToken } from "src/boot/axios";
   import moment from "moment"
   import { useProfileStore } from "src/stores/profile";
   import { storeToRefs } from "pinia";
@@ -308,7 +310,7 @@ batchHeader: [
   try {
     const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
     const getCourss = baseUrl + 'api/courss';
-    const response = await axios.get(getCourss);
+    const response = await this.$api.get(getCourss);
     const courses = response.data.data; // Access the 'data' property of the response
 
     console.log('API Response Data:', courses); // Log the raw data received from the API

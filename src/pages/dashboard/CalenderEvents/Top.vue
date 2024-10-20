@@ -91,6 +91,8 @@
   import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
   import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
   import axios from 'axios';
+  
+import { setToken } from "src/boot/axios";
   import { urls } from "../Urls"
   import CryptoJS from 'crypto-js'
   export default {
@@ -194,7 +196,7 @@
     const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
     const updateTopicUrl = `${baseUrl}api/topics/${this.courseid}/topic/${this.topicData.topicId}`;
     console.log('Update Topic URL:', updateTopicUrl);
-    const response = await axios.put(updateTopicUrl, updatedTopicData);
+    const response = await this.$api.put(updateTopicUrl, updatedTopicData);
 
 
     if (response.status === 200) {
@@ -226,7 +228,7 @@
         const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
           const getTopicsUrl = baseUrl + 'api/topics';
         // Example Axios POST request to add topic
-        const response = await axios.post(getTopicsUrl, topicData);
+        const response = await this.$api.post(getTopicsUrl, topicData);
 
         if (response.status === 200) {
           // Topic created successfully

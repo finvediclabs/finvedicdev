@@ -118,6 +118,7 @@ import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 import { Carousel3d, Slide } from "src/components/carousel-3d";
 import axios from 'axios';
+import { setToken } from "src/boot/axios";
 import { urls } from "./Urls"
 import { storeToRefs } from "pinia";
 import moment from "moment"
@@ -261,7 +262,7 @@ export default {
           const formData = new FormData();
           formData.append('filename', imagePathWithoutPrefix);
           
-          axios.post(getImagesUrl, formData, { responseType: 'blob' })
+          this.$api.post(getImagesUrl, formData, { responseType: 'blob' })
             .then(downloadResponse => {
               // Handle download success, e.g., open or save the downloaded file
               const blob = new Blob([downloadResponse.data]);
@@ -303,7 +304,7 @@ getChaptersData() {
   formData.append('bookId', this.selectedSlide?.id); // Add bookId to form data
   const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
           const getChapters = baseUrl + 'api/bookChapters/getBookChaptersByBookId';
-  axios.post(getChapters, formData)
+          this.$api.post(getChapters, formData)
     .then(response => {
       this.chaptersLoader = false;
       if (response.data.success) {
@@ -334,7 +335,7 @@ getChaptersData() {
           
             formData.append('filename', imagePathWithoutPrefix);
             
-            axios.post(getImagesUrl, formData, { responseType: 'blob' })
+            this.$api.post(getImagesUrl, formData, { responseType: 'blob' })
               .then(downloadResponse => {
                 const blob = new Blob([downloadResponse.data]);
                 const url = window.URL.createObjectURL(blob);

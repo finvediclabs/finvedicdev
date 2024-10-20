@@ -317,7 +317,7 @@ import { Carousel3d, Slide } from "src/components/carousel-3d";
 import { urls } from "./Urls";
 import { storeToRefs } from "pinia";
 import { useCategoryStore } from "src/stores/Categories";
-import axios from "axios";
+import { setToken } from "src/boot/axios";
 import DummyBook from "src/assets/dummyBook.jpg";
 import DummyBook_2 from "src/assets/video_pre.gif";
 import moment from "moment";
@@ -476,7 +476,7 @@ export default {
                 const formData = new FormData();
                 formData.append("filename", imagePathWithoutPrefix);
 
-                axios
+                this.$api
                   .post(getImagesUrl, formData, { responseType: "blob" })
                   .then((downloadResponse) => {
                     // Handle download success, e.g., open or save the downloaded file
@@ -550,7 +550,7 @@ export default {
 
                 formData.append("filename", imagePathWithoutPrefix);
 
-                axios
+                this.$api
                   .post(getImagesUrl, formData, { responseType: "blob" })
                   .then((downloadResponse) => {
                     const blob = new Blob([downloadResponse.data]);

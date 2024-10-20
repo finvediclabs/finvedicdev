@@ -43,7 +43,10 @@
 
 <script>
 import axios from 'axios';
+
+import { setToken } from "src/boot/axios";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
+import { useSessionStore } from "src/stores/session";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 
 export default {
@@ -63,7 +66,12 @@ export default {
     fetchEnrollments() {
       const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
       const getStudentEnroll = baseUrl + 'api/student-enrollments';
-      fetch(getStudentEnroll)
+      const sessionStore = useSessionStore(); // Get the session store
+      const token = sessionStore.token;
+      const headers = {
+        Authorization: `Bearer ${token}`, // Attach the token in the request headers
+      };
+      fetch(getStudentEnroll,{ headers })
         .then(response => response.json())
         .then(data => {
           this.enrollments = data.data;
@@ -80,7 +88,7 @@ export default {
       const formData = new FormData();
       formData.append('filename', imagePathWithoutPrefix);
 
-      axios.post(getImagesUrl, formData, { responseType: 'blob' })
+      this.$api.post(getImagesUrl, formData, { responseType: 'blob' })
         .then(downloadResponse => {
           const blob = new Blob([downloadResponse.data]);
           const url = window.URL.createObjectURL(blob);

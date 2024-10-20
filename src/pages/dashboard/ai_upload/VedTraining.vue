@@ -59,6 +59,7 @@
 
 <script>
 import axios from 'axios';
+import { setToken } from "src/boot/axios";
  import Character_Ved from "../../../assets/Character_Ved.png";
 
 export default {
@@ -95,7 +96,9 @@ export default {
       formData.append("source", "website");
 
       try {
-        const response = await axios.post("https://fnbackendprod.finvedic.in/api/bot", formData, {
+        const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+        const Url = baseUrl + 'api/bot';
+        const response = await this.$api.post(Url, formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }

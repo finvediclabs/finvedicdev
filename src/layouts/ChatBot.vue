@@ -85,6 +85,7 @@
  import code from "../assets/copy.png"
  import monk from "../assets/monk.png"
  import monk_half from "../assets/monk_half.png"
+ import { useSessionStore } from "src/stores/session";
  export default {
    data() {
      return {
@@ -150,12 +151,17 @@
 
     // Send the message to the API
     const formData = new FormData();
-    const baseUrl = "https://fnbackendprod.finvedic.in/";
+    const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+    const sessionStore = useSessionStore(); // Get the session store
+    const token = sessionStore.token;
     const chatBotUrl = baseUrl + 'api/bot/query';
     formData.append('query', message); // Append the query parameter
     formData.append('source', 'PORTAL'); // Append the source parameter
     fetch(chatBotUrl, {
       method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`, // Include the token for authentication
+    },
       body: formData // Send form data
     })
     .then(response => {
