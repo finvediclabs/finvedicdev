@@ -369,6 +369,8 @@
   
   <script>
   import axios from 'axios';
+  
+import { setToken } from "src/boot/axios";
   import FinPortlet from "src/components/Portlets/FinPortlet.vue";
   import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
   import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
@@ -453,7 +455,7 @@
         try {
           const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
           const registeredStudentsURL = baseUrl + 'api/registered-students';
-          const response = await axios.get(registeredStudentsURL);
+          const response = await this.$api.get(registeredStudentsURL);
           if (response.data.success) {
             this.students = response.data.data;
           }
@@ -473,7 +475,7 @@
             const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
 const registeredStudentsURL = baseUrl + 'api/registered-students';
 
-const response = await axios.get(`${registeredStudentsURL}/${row.id}`);
+const response = await this.$api.get(`${registeredStudentsURL}/${row.id}`);
 
             if (response.data.success) {
               this.selectedStudent = response.data.data;
@@ -491,7 +493,7 @@ const response = await axios.get(`${registeredStudentsURL}/${row.id}`);
   const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
   const registeredStudentsURL = baseUrl + 'api/registered-students';
 
-  const response = await this.$axios.post(
+  const response = await this.this.$api.post(
     `${registeredStudentsURL}/${this.selectedStudent.id}/payments`,
     this.newPayment
   );
@@ -515,7 +517,7 @@ const response = await axios.get(`${registeredStudentsURL}/${row.id}`);
   const cyclesURL = baseUrl + 'api/cycles';
 
 
-    const response = await axios.get(cyclesURL);
+    const response = await this.$api.get(cyclesURL);
     const cycles = response.data.data; // Adjust based on actual API response
 
     // Transform the data
@@ -604,7 +606,7 @@ const response = await axios.get(`${registeredStudentsURL}/${row.id}`);
       const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
   const registeredStudentsURL = baseUrl + 'api/registered-students';
 
-      const response = await axios.post(registeredStudentsURL, studentData);
+      const response = await this.$api.post(registeredStudentsURL, studentData);
 
       // Log the response data
       console.log('Enroll response:', response.data);
@@ -649,7 +651,7 @@ async deleteStudent(id) {
           const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
   const registeredStudentsURL = baseUrl + 'api/registered-students';
 
-          const response = await axios.delete(`${registeredStudentsURL}/${id}`);
+          const response = await this.$api.delete(`${registeredStudentsURL}/${id}`);
           if (response.data.success) {
             // Remove student from local array
             this.students = this.students.filter(student => student.id !== id);
@@ -670,7 +672,7 @@ async deleteStudent(id) {
       const formData = new FormData();
       formData.append('filename', imagePathWithoutPrefix);
 
-      axios.post(getImagesUrl, formData, { responseType: 'blob' })
+      this.$api.post(getImagesUrl, formData, { responseType: 'blob' })
         .then(downloadResponse => {
           const blob = new Blob([downloadResponse.data]);
           const url = window.URL.createObjectURL(blob);
@@ -794,7 +796,7 @@ async deleteStudent(id) {
       console.log('Enrolling student with data:', studentData);
       const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
       const registeredStudentsURL = baseUrl + 'api/registered-students';
-      const response = await axios.post(registeredStudentsURL, studentData);
+      const response = await this.$api.post(registeredStudentsURL, studentData);
 
       // Log the response data
       console.log('Enroll response:', response.data);

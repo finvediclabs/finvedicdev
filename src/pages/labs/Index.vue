@@ -4,15 +4,62 @@
       <fin-portlet-header>
         <div class="row col-12">
           <fin-portlet-heading><span class="User_heading" >Labs</span></fin-portlet-heading>
-          <div class="col-3">
-          <a href="https://gurukul.finvedic.com/dojo/" target="_blank" class="styled-link">Finvedic Dojo</a>
-          </div>
+         
       </div>
       </fin-portlet-header>
       <fin-portlet-item>
+
+
+<div class="row col-12" style="width: 100%">
+  <div class="col-1"></div>
+  <div class="col-3">
+    <div class="q-pa-md">
+    <div class="row">
+      
+      <div class="col-12 col-md-12 q-pa-sm" style="margin-left: auto; margin-right: auto;">
+        <p style="text-align: center; font-size: 24px; font-weight: 600; color: #5479F7;visibility: hidden;">
+          FinVedic Dojo
+        </p>
+    <div class="image-btn-container1">
+      <a href="https://gurukul.finvedic.com/dojo/" target="_blank">
+  <q-btn class="image-btn">
+    <q-img :src="Dojo" alt="Windows" style="width: 100%; height: 100%;" />
+  </q-btn>
+</a>
+
+          
+    </div>
+    
+  </div>
+</div>
+ <!--  -->
+ <div style="display: flex;align-items: center;justify-content: center;flex-direction: column;">
+  <div style="text-align: center; padding-top: 20px;">
+  <p v-if="selectedOS" style="color: green;visibility: hidden;">You selected: {{ selectedOS }} OS</p>
+  <p v-else style="color: red;visibility: hidden;">You didn't select operating system</p>
+</div>
+   
+<div class="row justify-center q-pa-md">
+      <q-btn
+      color="primary" no-caps class="sub-btn q-ml-sm fin-br-8" style="min-width:150px" label="FinVedic Dojo" 
+      href="https://gurukul.finvedic.com/dojo/"
+      target="_blank"
+         />
+    </div>
+  </div>
+    <!--  -->
+
+  </div>
+  </div>
+  <div class="col-1">
+  <div class="outer1">
+            <div class="inner1"></div>
+            </div>
+          </div>
+        <div class="col-6">
         <q-form @submit="onSubmit" ref="form" class="q-pa-md">
     <div class="row">
-      <div class="col-12 col-md-5 q-pa-sm" style="margin-left: auto; margin-right: auto;">
+      <div class="col-12 col-md-12 q-pa-sm" style="margin-left: auto; margin-right: auto;">
         <p style="text-align: center; font-size: 24px; font-weight: 600; color: #5479F7;">
           Select The Operating System
         </p>
@@ -45,6 +92,7 @@
         </div>
       </div>
     </div>
+    <div style="display: flex;align-items: center;justify-content: center;flex-direction: column;">
     <div style="text-align: center; padding-top: 20px;">
   <p v-if="selectedOS" style="color: green;">You selected: {{ selectedOS }} OS</p>
   <p v-else style="color: red;">You didn't select operating system</p>
@@ -54,7 +102,11 @@
       color="primary" no-caps class="sub-btn q-ml-sm fin-br-8" style="min-width:150px" label="Requeste For VM" type="submit"
         :disabled="!formIsValid" />
     </div>
+  </div>
   </q-form>
+</div>
+<div class="col-1"></div>
+</div>
       </fin-portlet-item>
 
       <fin-portlet-item >
@@ -108,6 +160,7 @@
 import { useProfileStore } from "src/stores/profile";
 import { useSessionStore } from "src/stores/session";
 import { setToken } from "src/boot/axios";
+
 import loader from "../../assets/loader.gif";
 import windows from "../../assets/Windows.png";
 import linuxOs from "../../assets/LinuxOS.png";
@@ -117,6 +170,7 @@ import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 import labImg from "src/assets/lab.png";
+import Dojo from "src/assets/Dojo.png";
 import { urls } from "./Urls";
 import { TouchSwipe } from "quasar";
 
@@ -136,6 +190,7 @@ export default {
       loader:loader,
       labsData: [],
       labImg: windows,
+      Dojo: Dojo,
     }
   },
   mounted() {
@@ -181,9 +236,37 @@ export default {
   },
   methods: {
     download(vmname) {
-      const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-      window.location.href = baseUrl + "download/" + vmname;
-    },
+  const sessionStore = useSessionStore(); // Access session store
+  const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+  const downloadUrl = `${baseUrl}download/${vmname}`;
+
+  // Fetch the RDP file with authorization
+  fetch(downloadUrl, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${sessionStore.token}` // Include the token from session store
+    }
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.blob(); // Convert response to Blob
+  })
+  .then(blob => {
+    const url = URL.createObjectURL(blob); // Create a URL for the blob
+    const a = document.createElement('a'); // Create an anchor element
+    a.href = url; // Set the href to the blob URL
+    a.download = `${vmname}.rdp`; // Set the file name for download with .rdp extension
+    document.body.appendChild(a); // Append anchor to body
+    a.click(); // Programmatically click the anchor to trigger download
+    a.remove(); // Clean up by removing the anchor
+    URL.revokeObjectURL(url); // Free up memory
+  })
+  .catch(error => {
+    console.error('There was a problem with the fetch operation:', error.message);
+  });
+},
     async shutdown(lab) {
   const profileStore = useProfileStore();
   const profileUsername = profileStore.user.username;
@@ -290,7 +373,7 @@ selectVersion(os) {
         // Send POST request
         const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
         const requestVMsUrl = baseUrl + 'api/request-vms';
-        const response = await axios.post(requestVMsUrl, requestData);
+        const response = await this.$api.post(requestVMsUrl, requestData);
 
         // Handle success response
         const successMessage = response.data.message;
@@ -330,11 +413,24 @@ selectVersion(os) {
 .image-btn-container {
   display: flex;
   justify-content: center;
+  align-items: center;
+}
+.image-btn-container1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* border: 2px solid red; */
+  /* margin-top: 28%; */
 }
 
 .image-btn {
   width: 180px;
   height: 180px;
+  margin: 0 10px; /* Adjust as needed */
+}
+.image-btn1 {
+  width: 220px;
+  height: 220px;
   margin: 0 10px; /* Adjust as needed */
 }
 .outer {
@@ -345,6 +441,22 @@ selectVersion(os) {
   overflow: hidden;
 }
 .inner {
+  position: absolute;
+  width:100%;
+  height: 40%;
+  background: #5479F7;
+  top: 30%;
+  box-shadow: 0px 0px 30px 20px #5479F7;
+}
+
+.outer1 {
+  width: 1px;
+  height: 340px;
+  margin: auto;
+  position: relative;
+  overflow: hidden;
+}
+.inner1 {
   position: absolute;
   width:100%;
   height: 40%;
@@ -382,9 +494,12 @@ selectVersion(os) {
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 100% !important;
-            padding: 10px 20px;
-            font-size: 18px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 60% !important;
+            
+            padding: 8px 14px;
+            font-size: 16px;
             font-weight: bold;
             text-decoration: none;
             background-color: #5479F7;
@@ -393,12 +508,12 @@ selectVersion(os) {
             transition: background-color 0.3s ease, transform 0.3s ease;
             box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
         }
-.styled-link:hover {
+/* .styled-link:hover {
             transform: translateY(3px);
             box-shadow: 0 8px 20px rgba(0, 86, 179, 0.5);
 }
 .styled-link:active {
             transform: translateY(1px);
             box-shadow: 0 4px 4px rgba(0, 61, 128, 0.3);
-}
+} */
 </style>

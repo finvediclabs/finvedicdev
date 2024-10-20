@@ -316,13 +316,15 @@ import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 import { useProfileStore } from "src/stores/profile";
 import SubmittedAssignment from "./SubmitAssignments.vue";
-
+import { useSessionStore } from "src/stores/session";
 import Prism from 'prismjs';
 import 'prismjs/components/prism-python'; // Load syntax highlighting for Python
 import 'prismjs/components/prism-java';   // Load syntax highlighting for Java
 import 'prismjs/themes/prism.css'; 
 import VuePdfApp from "vue3-pdf-app";
 import PDFViewer from 'pdf-viewer-vue';
+
+import { setToken } from "src/boot/axios";
 import "vue3-pdf-app/dist/icons/main.css";
 export default {
   data() {
@@ -491,44 +493,47 @@ closeDialog() {
     console.error('Error downloading file:', error);
   }
 },
-    async fetchBatchAssignmentsByCycleId(cycleId) {
-    this.loading = true;
-    try {
-      
-      const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+async fetchBatchAssignmentsByCycleId(cycleId) {
+  this.loading = true; // Start loading state
+  try {
+    const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
     const url = `${baseUrl}api/batch-assignments/batch/${cycleId}`;
 
-    const response = await fetch(url);
-      const data = await response.json();
-      console.log('Fetched batch assignments for cycleId:', cycleId, data.data); // Debugging output
-      this.batchAssignments2 = data.data.map((assignment, index) => ({
+    // Use this.$api to make the request
+    const response = await this.$api.get(url);
+    
+    // Log the fetched batch assignments for debugging
+    console.log('Fetched batch assignments for cycleId:', cycleId, response.data.data); // Debugging output
+    this.batchAssignments2 = response.data.data.map((assignment, index) => ({
       ...assignment,
       index: index + 1 // Add index starting from 1
     })); // Store fetched batch assignments
-    } catch (error) {
-      console.error('Error fetching batch assignments by cycleId:', error);
-    } finally {
-      this.loading = false;
-    }
-  },
+  } catch (error) {
+    console.error('Error fetching batch assignments by cycleId:', error);
+  } finally {
+    this.loading = false; // End loading state
+  }
+},
   async fetchStudentAssignments(userId, assignmentId) {
-  this.loading = true;
+  this.loading = true; // Start loading state
   try {
     const profileStore = useProfileStore();
     this.userId = profileStore.user.id; 
-    const userId = this.userId;
-    const assignmentId = this.dialogAssignmentId;
+    const userId = this.userId; // Get the user ID from profile store
+    const assignmentId = this.dialogAssignmentId; // Get the assignment ID from dialog
 
     console.log(userId, assignmentId);
     const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
     const url = `${baseUrl}api/student-assignments?studentId=${userId}&assignmentId=${assignmentId}`;
-    const response = await fetch(url);
-    const result = await response.json();
-    
+
+    // Use this.$api to make the request
+    const response = await this.$api.get(url);
+    const result = response.data; // Get data from the response
+
     if (result.success) {
       this.studentAssignments = result.data;
       this.showDragAndDrop = this.studentAssignments.length === 0;
-      
+
       const fetchFiles = this.studentAssignments.map(async (assignment) => {
         console.log("submitFile:", assignment.submittedFile);
         const fileName = assignment.submittedFile;
@@ -548,8 +553,8 @@ closeDialog() {
           console.log("File type:", fileType, "Is PDF:", isPdf);
         } else if (isJava || isPython) {
           // Fetch the file content for Java or Python files
-          const fileResponse = await fetch(`${fileName}`);
-          this.dialogFileContent = await fileResponse.text(); // Store the file content
+          const fileResponse = await this.$api.get(fileName); // Use this.$api to fetch file content
+          this.dialogFileContent = await fileResponse.data; // Store the file content
           this.dialogFileType = fileType; // Set the file type for syntax highlighting
         } else {
           console.log("Unsupported file type:", fileType);
@@ -564,7 +569,7 @@ closeDialog() {
   } catch (error) {
     console.error('Error fetching student assignments:', error);
   } finally {
-    this.loading = false;
+    this.loading = false; // End loading state
   }
 },
 
@@ -643,12 +648,14 @@ async updateSubmit() {
     // Define the API URL for updating the student assignment
     const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
     const url = `${baseUrl}api/student-assignments/${studentAssignmentId}`;
-
+    const sessionStore = useSessionStore(); // Get the session store
+    const token = sessionStore.token;
     // Send the PUT request to update the existing student assignment
     const response = await fetch(url, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`, // Attach the token in the request headers
       },
       body: jsonData, // Send the JSON data as the request body
     });
@@ -765,37 +772,42 @@ async handleSubmit() {
     this.fetchBatchAssignmentsByCycleId(cycleId); // Fetch batch assignments based on enrollment's cycleId
   },
 
-    async fetchEnrollments(userId) {
-    this.loading = true;
-    try {
-      const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+  async fetchEnrollments(userId) {
+  this.loading = true; // Start loading state
+  try {
+    const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
     const url = `${baseUrl}api/enrollments/student/${userId}`;
 
-      const response = await fetch(url);
-      const data = await response.json();
-      console.log('Fetched enrollments:', data.data); // Log the fetched enrollments
-      this.enrollments = data.data; // Store the enrollments in the state
-    } catch (error) {
-      console.error('Error fetching enrollments:', error);
-    } finally {
-      this.loading = false;
-    }
-  },
-    async fetchAssignments() {
-      this.loading = true;
-      try {
-        const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-        const getAssignmentsUrl = baseUrl + 'api/assignments';
-        const response = await fetch(getAssignmentsUrl);
-        const data = await response.json();
-        console.log('Fetched assignments:', data.data); // Debugging output
-        this.assignmentes = data.data; // Access the `data` array from the response
-      } catch (error) {
-        console.error('Error fetching assignments:', error);
-      } finally {
-        this.loading = false;
-      }
-    },
+    // Use this.$api to make the request
+    const response = await this.$api.get(url);
+
+    // Assuming the response is in the same format as before
+    console.log('Fetched enrollments:', response.data.data); // Log the fetched enrollments
+    this.enrollments = response.data.data; // Store the enrollments in the state
+  } catch (error) {
+    console.error('Error fetching enrollments:', error);
+  } finally {
+    this.loading = false; // End loading state
+  }
+},
+async fetchAssignments() {
+  this.loading = true; // Start loading state
+  try {
+    const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+    const getAssignmentsUrl = baseUrl + 'api/assignments';
+
+    // Use this.$api to make the request
+    const response = await this.$api.get(getAssignmentsUrl);
+
+    // Log the fetched assignments for debugging
+    console.log('Fetched assignments:', response.data.data); // Debugging output
+    this.assignments = response.data.data; // Access the `data` array from the response
+  } catch (error) {
+    console.error('Error fetching assignments:', error);
+  } finally {
+    this.loading = false; // End loading state
+  }
+},
     async fetchBatchAssignments(assignmentId) {
       this.loading = true;
       try {

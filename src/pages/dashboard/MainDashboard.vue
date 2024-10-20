@@ -77,6 +77,14 @@ export default {
           background: '#1E90FF90',
           enable: true
         },
+        // {
+        //   image: organizationPng,
+        //   title: 'Organizations',
+        //   description: 'Perfect for learning how the framework works.',
+        //   path: 'organizations',
+        //   background: '#1E90FF90',
+        //   enable: true
+        // },
         
         {
           image: vmSetupPng,

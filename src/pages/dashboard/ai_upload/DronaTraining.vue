@@ -59,6 +59,7 @@
   
   <script>
   import axios from 'axios';
+  import { setToken } from "src/boot/axios";
  import Character_Drona from "../../../assets/Character_Drona.png";
   
   
@@ -98,7 +99,9 @@
         formData.append("source", "portal");
   
         try {
-          const response = await axios.post("https://fnbackendprod.finvedic.com/api/bot", formData, {
+          const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+        const Url = baseUrl + 'api/bot';
+          const response = await  this.$api.post(Url, formData, {
             headers: {
               'Content-Type': 'multipart/form-data'
             }

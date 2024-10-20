@@ -169,80 +169,24 @@
           <div>No preview available for this file type</div>
         </template>
 
-        <div v-if="dialogFileUrl" class="q-mt-md">
-          <div class="row q-gutter-sm">
-            <q-btn
-              label="View in New Tab"
-              icon="open_in_new"
-              color="primary"
-              @click="openInNewTab(dialogFileUrl)"
-            />
-            <q-btn
-              v-if="!assignmentData.evaluation"
-              label="Evaluate"
-              icon="assignment_turned_in"
-              color="green"
-              @click="evaluateFileUrl"
-            />
-          </div>
-
-          <p v-if="assignmentData.evaluation">
-            Rating: {{ assignmentData.evaluation }}
-          </p>
-
-          <div v-if="evaluationResult" class="evaluationResult">
-            <p v-if="evaluationResult.accuracy !== 'N/A'">
-              <span class="bold-text">Accuracy: </span>
-              {{ evaluationResult.accuracy }}
-            </p>
-            <p v-if="evaluationResult.mean_absolute_error !== 'N/A'">
-              <span class="bold-text">Mean Absolute Error:</span>
-              {{ evaluationResult.mean_absolute_error }}
-            </p>
-            <p v-if="evaluationResult.mean_squared_error !== 'N/A'">
-              <span class="bold-text">Mean Squared Error:</span>
-              {{ evaluationResult.mean_squared_error }}
-            </p>
-            <p v-if="evaluationResult.evaluation_feedback !== 'N/A'">
-              <span class="bold-text">Feedback: </span
-              >{{ evaluationResult.evaluation_feedback }}
-            </p>
-            <p v-if="evaluationResult.space_complexity !== 'N/A'">
-              <span class="bold-text">Space Complexity: </span
-              >{{ evaluationResult.space_complexity }}
-            </p>
-            <p v-if="evaluationResult.time_complexity !== 'N/A'">
-              <span class="bold-text">Time Complexity: </span
-              >{{ evaluationResult.time_complexity }}
-            </p>
-            <p v-if="evaluationResult.rating_of_the_code !== 'N/A'">
-              <span class="bold-text">Rating of the code: </span
-              >{{ evaluationResult.rating_of_the_code }}
-            </p>
-          </div>
-        </div>
-      </q-card-section>
-      <q-select
-        v-model="assignmentData.isVerified"
-        :options="verificationOptions"
-        label="Verification Status"
-        class="q-mt-md"
-      />
-      <q-card-actions class="q-dialog-actions">
-        <q-btn
-          label="Verification Done"
-          color="primary"
-          @click="submitAssignmentData"
+      <div v-if="dialogFileUrl" class="q-mt-md">
+  <q-btn label="View in New Tab" icon="open_in_new" color="primary" @click="openInNewTab(dialogFileUrl)" />
+</div>
+    </q-card-section>
+    <q-select
+          v-model="assignmentData.isVerified"
+          :options="verificationOptions"
+          label="Verification Status"
+          class="q-mt-md"
         />
-        <q-btn
-          label="Download File"
-          color="secondary"
-          @click="downloadFile"
-          v-if="fileType"
-        />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
+    <q-card-actions class="q-dialog-actions">
+      
+      <q-btn label="Verification Done" color="primary" @click="submitAssignmentData" />
+      <q-btn label="Download File" color="secondary" @click="downloadFile" v-if="fileType" />
+    </q-card-actions>
+  </q-card>
+</q-dialog>
+
 </template>
 
 <script>
@@ -353,12 +297,11 @@ export default {
           console.log("url:", url);
         }
 
-        const response = await axios.get(url);
-        if (response.data.success) {
-          const assignmentsWithBlobs = await Promise.all(
-            response.data.message.map(async (assignment, index) => {
-              const fileName = assignment.submittedFile;
-              const cleanFileName = fileName;
+    const response = await axios.get(url);
+    if (response.data.success) {
+      const assignmentsWithBlobs = await Promise.all(response.data.message.map(async (assignment, index) => {
+        const fileName = assignment.submittedFile;
+        const cleanFileName = fileName;
 
               let fileType = "unknown";
 
@@ -474,70 +417,37 @@ export default {
           };
         }));
 
-        // Cache the processed assignments for the batch
-        this.assignments = {
-          ...this.assignments,
-          [batchId]: assignmentsWithDetails
-        };
-
-      } else {
-        console.error('Failed to fetch assignments:', data.message);
-        this.assignments = {
-          ...this.assignments,
-          [batchId]: [] // Set empty array in case of failure
-        };
-      }
-    } catch (error) {
-      console.error('Error fetching assignments:', error);
-      this.assignments = {
-        ...this.assignments,
-        [batchId]: [] // Handle error case
-      };
-    } finally {
-      this.loading = false; // Stop loading
-    }
-  }
-
-  // Return the processed assignments for the batch (either fetched or cached)
-  return this.assignments[batchId] || [];
-},
-    async handleSelectChange(selectedBatch) {
-    if (selectedBatch) {
-      try {
-        const response = await fetch(`http://localhost:8087/api/cycles/${selectedBatch.value}`);
-        const url = `http://localhost:8087/api/cycles/${selectedBatch.value}`;
-        console.log("url",url);
-        const data = await response.json();
-
-        if (data.success) {
-          // Update filteredBatches to only include the selected batch
-          this.filteredBatches = [data.data]; // Assuming data.data contains the specific batch details
-        } else {
-          console.error('Failed to fetch batch:', data.message);
-          this.filteredBatches = []; // Clear if there's an error
-        }
-      } catch (error) {
-        console.error('Error fetching batch:', error);
-        this.filteredBatches = []; // Clear on error
-      }
+      this.assignmentsList = assignmentsWithBlobs;
     } else {
-      this.filteredBatches = this.batches; // Show all if no batch is selected
+      console.error('Failed to fetch student assignments:', response.data.message);
     }
+  } catch (error) {
+    console.error('Error fetching student assignments data:', error);
+  } finally {
+    this.loading = false;
+  }
+},
+async handleSelectChange(value) {
+    this.assignmentSearch = value;
+    console.log('Selected assignment ID:', value); // Log the selected assignment ID
+    const selectedOption = this.assignmentOptions.find(option => option.value === value);
+    console.log('Selected assignment option:', selectedOption); // Log the full selected option
+    await this.getStudentAssignmentsData(); // Fetch data based on selected assignment
   },
-    async fetchBatches() {
+    async fetchAssignments() {
       try {
-        const response = await fetch('http://localhost:8087/api/cycles');
-        const data = await response.json();
-        if (data.success) {
-          this.batches = data.data;  // Store fetched batches
-          this.filteredBatches = data.data; // Initially show all batches
-        } else {
-          console.error('Failed to fetch batches:', data.message);
-          this.filteredBatches = []; // Clear on error
-        }
+        const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+        const getAssignmentsUrl = baseUrl + 'api/assignments';
+        const response = await fetch(getAssignmentsUrl);
+        const jsonData = await response.json();
+        this.assignmentOptions = jsonData.data.map(assignment => ({
+          label: assignment.title, // The text displayed in the select
+          value: assignment.id, // The value bound to the selection
+        }));
       } catch (error) {
-        console.error('Error fetching batches:', error);
-        this.filteredBatches = []; // Clear on error
+        console.error('Error fetching assignments:', error);
+      } finally {
+        this.masterLoading = false;
       }
     },
     async submitAssignmentData() {
@@ -566,60 +476,50 @@ export default {
             JSON.stringify(this.evaluationResult.evaluation_feedback) || "",
         };
 
-        // Make the PUT request
-        const response = await axios.put(submitAssignmentUrl, data, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        // Check for successful response
-        if (response.data.success) {
-          console.log(
-            "Assignment data updated successfully:",
-            response.data.message
-          );
-          // Optionally, you might want to close the dialog or refresh the data
-          this.dialogVisible = false;
-          this.evaluationResult = "";
-          await this.getStudentAssignmentsData(); // Refresh data if needed
-        } else {
-          console.error(
-            "Failed to update assignment data:",
-            response.data.message
-          );
+      // Make the PUT request
+      const response = await axios.put(submitAssignmentUrl, data, {
+        headers: {
+          'Content-Type': 'application/json'
         }
-      } catch (error) {
-        console.error("Error updating assignment data:", error);
+      });
+
+      // Check for successful response
+      if (response.data.success) {
+        console.log('Assignment data updated successfully:', response.data.message);
+        // Optionally, you might want to close the dialog or refresh the data
+        this.dialogVisible = false;
+        await this.getStudentAssignmentsData(); // Refresh data if needed
+      } else {
+        console.error('Failed to update assignment data:', response.data.message);
       }
-    },
-    closeDialog() {
-      this.dialogVisible = false;
-      this.evaluationResult = ""; // Clear the evaluation result when closing
-    },
-    async openDialog(blobUrl, fileType, assignment) {
-      console.log("Opening dialog with assignment data:", assignment);
+    } catch (error) {
+      console.error('Error updating assignment data:', error);
+    }
+  },
+  async openDialog(blobUrl, fileType, assignment) {
+      console.log('Opening dialog with assignment data:', assignment);
       this.dialogFileUrl = blobUrl;
       this.fileType = fileType;
       this.dialogVisible = true;
       this.assignmentData = assignment;
-      console.log("file:", blobUrl);
-      if (fileType === "pdf") {
+      console.log("file:",blobUrl);
+      if (fileType === 'pdf') {
         this.chapterFilePath = blobUrl;
-      } else if (["java", "py"].includes(fileType)) {
-        // Fetch content for .java or .py files
-        const response = await fetch(blobUrl);
-        this.dialogFileContent = await response.text();
-      }
+        
+      }else if (['java', 'py'].includes(fileType)) {
+    // Fetch content for .java or .py files
+    const response = await fetch(blobUrl);
+    this.dialogFileContent = await response.text();
+  }
       this.assignmentData.isVerified = assignment.isVerified;
     },
     highlightCode() {
-      this.$nextTick(() => {
-        Prism.highlightAll();
-      });
-    },
-    openInNewTab(url) {
-      window.open(url, "_blank");
+    this.$nextTick(() => {
+      Prism.highlightAll();
+    });
+  },
+  openInNewTab(url) {
+      window.open(url, '_blank');
     },
     async downloadFile() {
       try {

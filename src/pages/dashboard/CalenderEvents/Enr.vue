@@ -52,6 +52,8 @@
 <script>
 import FinTable from "src/components/FinTable.vue";
 import axios from 'axios';
+
+import { setToken } from "src/boot/axios";
 import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
@@ -135,7 +137,7 @@ export default {
         const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
         const getCyclesUrl = `${baseUrl}api/cycles/${this.cycleId}`;
         
-        const response = await axios.get(getCyclesUrl);
+        const response = await this.$api.get(getCyclesUrl);
         if (response.status === 200) {
           this.cycleData = response.data.data; // Assuming the API returns the cycle data in `data`
           this.cycleDesc = this.cycleData.cycleDesc; // Store cycle description
@@ -151,7 +153,7 @@ export default {
       try {
         const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
           const getUsersUrl = baseUrl + 'api/users';
-        const response = await axios.get(getUsersUrl );
+        const response = await this.$api.get(getUsersUrl );
         // console.log('Response from user options request:', response);
         if (response.status === 200) {
       this.userOptions = response.data.data.map(user => {
@@ -250,7 +252,7 @@ export default {
     // Example Axios POST request to add enrollment
     const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
     const getEnrollmentsUrl = baseUrl + 'api/enrollments';
-    const response = await axios.post(getEnrollmentsUrl, enrollmentData);
+    const response = await this.$api.post(getEnrollmentsUrl, enrollmentData);
 
     if (response.status === 201) {
       // Enrollment created successfully

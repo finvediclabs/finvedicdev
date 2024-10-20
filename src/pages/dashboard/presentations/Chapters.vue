@@ -16,6 +16,8 @@
 <script>
 import FinTable from "src/components/FinTable.vue";
 import axios from 'axios';
+
+import { setToken } from "src/boot/axios";
 import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
@@ -98,7 +100,7 @@ export default {
 
             // Send form data to http://localhost:8083/fs/download
             
-            const downloadResponse = await axios.post(getImagesUrl, formData, {
+            const downloadResponse = await this.$api.post(getImagesUrl, formData, {
               responseType: 'blob' // Set response type to blob
             });
 
@@ -148,7 +150,7 @@ async function fetchCoverBlob(presentationCoverPath) {
 
     // Send POST request with FormData
     const postpresentationCoverPath = baseUrl + 'fs/download';
-    const response = await axios.post(postpresentationCoverPath, formData, {
+    const response = await this.$api.post(postpresentationCoverPath, formData, {
       headers: {
         'Content-Type': 'multipart/form-data' // Ensure the correct content type is set
       },

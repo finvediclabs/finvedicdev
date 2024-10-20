@@ -149,7 +149,9 @@ import FinPortletHeading from 'src/components/Portlets/FinPortletHeading.vue';
 import FinPortletItem from 'src/components/Portlets/FinPortletItem.vue';
 import FinCalender from "src/components/FinCalender.vue";
 import { useProfileStore } from "src/stores/profile";
-import axios from 'axios';
+// import axios from 'axios';
+
+import { setToken } from "src/boot/axios";
 import classRoom from "src/assets/classRoom.png"
 import classCardImg from "src/assets/classCard.png";
 import { storeToRefs } from "pinia";
@@ -321,7 +323,7 @@ export default {
     const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
     const url = `${baseUrl}api/enrollments/student/${profileId}`;
 
-    const response = await axios.get(url);
+    const response = await this.$api.get(url);
     console.log('Enrollment Data:', response.data); // Log the fetched enrollment data
 
     // Fetch cycle details for each enrollment's cycleid
@@ -330,7 +332,7 @@ export default {
       try {
         const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
     const url2 = `${baseUrl}api/cycles/${cycleId}`;
-        const cycleResponse = await axios.get(url2);
+        const cycleResponse = await this.$api.get(url2);
         console.log('Cycle Data for Cycle ID', cycleId, ':', cycleResponse.data);
 
         // Extract cycleDesc from the response and push it to batchOptions
