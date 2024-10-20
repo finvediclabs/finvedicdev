@@ -84,6 +84,8 @@
 
 <script>
 import axios from 'axios';
+
+import { setToken } from "src/boot/axios";
 import DoughnutChart2 from './DoughnutChart2.vue';
 import BarChart from 'src/pages/reports/components/BarChart.vue';
 import { storeToRefs } from 'pinia';
@@ -137,7 +139,7 @@ export default {
       try {
         const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
         const labsURL = baseUrl + 'api/labVms/deleted';
-        const response = await axios.get(labsURL);
+        const response = await this.$api.get(labsURL);
         this.vms = response.data.data; // Adjust according to the data structure
 
         if (this.isStudent) {

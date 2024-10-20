@@ -99,7 +99,7 @@
       </template>
 
       <div v-if="dialogFileUrl" class="q-mt-md">
-  <q-btn label="View in New Tab" icon="open_in_new" color="primary" @click="openInNewTab(dialogFileUrl)" />
+  <!-- <q-btn label="View in New Tab" icon="open_in_new" color="primary" @click="openInNewTab(dialogFileUrl)" /> -->
 </div>
     </q-card-section>
     <q-select
@@ -208,7 +208,7 @@ export default {
       console.log("url:", url);
     }
 
-    const response = await axios.get(url);
+    const response = await this.$api.get(url);
     if (response.data.success) {
       const assignmentsWithBlobs = await Promise.all(response.data.message.map(async (assignment, index) => {
         const fileName = assignment.submittedFile;
@@ -263,22 +263,25 @@ async handleSelectChange(value) {
     console.log('Selected assignment option:', selectedOption); // Log the full selected option
     await this.getStudentAssignmentsData(); // Fetch data based on selected assignment
   },
-    async fetchAssignments() {
-      try {
-        const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-        const getAssignmentsUrl = baseUrl + 'api/assignments';
-        const response = await fetch(getAssignmentsUrl);
-        const jsonData = await response.json();
-        this.assignmentOptions = jsonData.data.map(assignment => ({
-          label: assignment.title, // The text displayed in the select
-          value: assignment.id, // The value bound to the selection
-        }));
-      } catch (error) {
-        console.error('Error fetching assignments:', error);
-      } finally {
-        this.masterLoading = false;
-      }
-    },
+  async fetchAssignments() {
+  try {
+    const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+    const getAssignmentsUrl = baseUrl + 'api/assignments';
+    
+    // Make the API call using this.$api
+    const response = await this.$api.get(getAssignmentsUrl);
+    
+    // Assuming response.data contains your data structure
+    this.assignmentOptions = response.data.data.map(assignment => ({
+      label: assignment.title, // The text displayed in the select
+      value: assignment.id, // The value bound to the selection
+    }));
+  } catch (error) {
+    console.error('Error fetching assignments:', error);
+  } finally {
+    this.masterLoading = false;
+  }
+},
     async submitAssignmentData() {
     try {
       const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
@@ -300,7 +303,7 @@ async handleSelectChange(value) {
       };
 
       // Make the PUT request
-      const response = await axios.put(submitAssignmentUrl, data, {
+      const response = await this.$api.put(submitAssignmentUrl, data, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -320,30 +323,38 @@ async handleSelectChange(value) {
     }
   },
   async openDialog(blobUrl, fileType, assignment) {
-      console.log('Opening dialog with assignment data:', assignment);
-      this.dialogFileUrl = blobUrl;
-      this.fileType = fileType;
-      this.dialogVisible = true;
-      this.assignmentData = assignment;
-      console.log("file:",blobUrl);
-      if (fileType === 'pdf') {
-        this.chapterFilePath = blobUrl;
-        
-      }else if (['java', 'py'].includes(fileType)) {
-    // Fetch content for .java or .py files
-    const response = await fetch(blobUrl);
-    this.dialogFileContent = await response.text();
+  console.log('Opening dialog with assignment data:', assignment);
+  this.dialogFileUrl = blobUrl;
+  this.fileType = fileType;
+  this.dialogVisible = true;
+  this.assignmentData = assignment;
+  console.log("file:", blobUrl);
+
+  if (fileType === 'pdf') {
+    this.chapterFilePath = blobUrl;
+
+  } else if (['java', 'py'].includes(fileType)) {
+    // Fetch content for .java or .py files using this.$api
+    try {
+      const response = await this.$api.get(blobUrl, {
+        headers: {
+          // The token is automatically included by the axios instance if set in your store
+        }
+      });
+
+      this.dialogFileContent = response.data; // Assuming the content comes directly in response.data
+    } catch (error) {
+      console.error('Error fetching file content:', error);
+      // Handle error appropriately
+    }
   }
-      this.assignmentData.isVerified = assignment.isVerified;
-    },
-    highlightCode() {
-    this.$nextTick(() => {
-      Prism.highlightAll();
-    });
-  },
-  openInNewTab(url) {
-      window.open(url, '_blank');
-    },
+
+  this.assignmentData.isVerified = assignment.isVerified;
+},
+
+  // openInNewTab(url) {
+  //     window.open(url, '_blank');
+  //   },
     async downloadFile() {
   try {
     // Fetch the file from the URL

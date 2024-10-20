@@ -85,6 +85,8 @@ import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import axios from 'axios';
+
+import { setToken } from "src/boot/axios";
 import { urls } from "../Urls";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
 import StudentEnroll from "./studentEnroll.vue";
@@ -155,7 +157,7 @@ export default {
         const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
         const getMastersUrl = baseUrl + 'api/forms/master-class';
 
-        axios.get(getMastersUrl)
+        this.$api.get(getMastersUrl)
           .then(response => {
             this.masterLoading = false;
 
@@ -179,7 +181,7 @@ export default {
         const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
         const getContactUrl = baseUrl + 'api/forms/contact-us';
 
-        axios.get(getContactUrl)
+        this.$api.get(getContactUrl)
           .then(response => {
             this.contactLoading = false;
 
@@ -203,7 +205,7 @@ export default {
         const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
         const getInquiryUrl = baseUrl + 'api/forms/inquiry';
 
-        axios.get(getInquiryUrl)
+        this.$api.get(getInquiryUrl)
           .then(response => {
             this.inquiryLoading = false;
 
@@ -227,7 +229,7 @@ export default {
         const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
         const getEnrollUrl = baseUrl + 'api/web-enrolls';
 
-        axios.get(getEnrollUrl)
+        this.$api.get(getEnrollUrl)
           .then(response => {
             this.enrollLoading = false;
 

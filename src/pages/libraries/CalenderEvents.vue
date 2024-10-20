@@ -323,7 +323,7 @@ export default {
     const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
     const url = `${baseUrl}api/enrollments/student/${profileId}`;
 
-    const response = await this.$api.post.get(url);
+    const response = await this.$api.get(url);
     console.log('Enrollment Data:', response.data); // Log the fetched enrollment data
 
     // Fetch cycle details for each enrollment's cycleid
@@ -332,7 +332,7 @@ export default {
       try {
         const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
     const url2 = `${baseUrl}api/cycles/${cycleId}`;
-        const cycleResponse = await this.$api.post.get(url2);
+        const cycleResponse = await this.$api.get(url2);
         console.log('Cycle Data for Cycle ID', cycleId, ':', cycleResponse.data);
 
         // Extract cycleDesc from the response and push it to batchOptions
