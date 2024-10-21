@@ -335,7 +335,7 @@ export default {
       const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
       const url = `${baseUrl}api/users/xl`;
       // Axios POST request
-      this.$axios.post(url, formData, {
+      this.$api.post(url, formData, {
         headers: {
           "Content-Type": "multipart/form-data"
         }

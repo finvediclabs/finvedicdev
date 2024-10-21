@@ -181,7 +181,7 @@ methods: {
     try {
         const response = await this.$api.get('/api/getBatchData'); 
         
-        console.log(response.data)
+        // console.log(response.data)
         if (response.data) {
           this.matchingUser = response.data.find(item => item.name === this.username);
           this.batchNumber = this.matchingUser.batch;
@@ -191,7 +191,7 @@ methods: {
             this.showMsg(response.data?.message || "Failed to fetch batch data", 'negative');
         }
     } catch (error) {
-        console.log(error.response?.data.message || error.message, 'negative');
+        // console.log(error.response?.data.message || error.message, 'negative');
     } finally {
         this.loading = false; // Stop loading indicator
     }
@@ -215,7 +215,7 @@ methods: {
       this.displayMessages();
     }
     else{
-      console.log("No Messages")
+      // console.log("No Messages")
     }
   } catch (error) {
     console.error('Error fetching messages:', error);
