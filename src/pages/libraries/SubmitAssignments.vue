@@ -1,45 +1,91 @@
 <template>
-<fin-portlet-header>
+  <fin-portlet-header>
     <fin-portlet-heading :loading="masterLoading">
       <span class="User_heading">Student Assignments</span>
     </fin-portlet-heading>
     <fin-portlet-item class="search-container">
       <q-select
-        v-model="assignmentSearch"
-        :options="assignmentOptions"
-        option-label="label"
-        option-value="value"
-        label="Assignments"
-        outlined
-        dense
-        clearable
-        class="fin-input"
-        @update:model-value="handleSelectChange"
-      />
+      v-model="batchSearch"
+      :options="batchOptions"
+      option-label="label"
+      option-value="value"
+      label="Batches"
+      outlined
+      dense
+      clearable
+      class="fin-input"
+      @update:model-value="handleSelectChange"
+    />
     </fin-portlet-item>
   </fin-portlet-header>
-  <fin-portlet style="background-color:transparent;margin-bottom:0px;max-height:100vh;">
+  <fin-portlet
+    style="background-color: transparent; margin-bottom: 0px; max-height: 100vh"
+  >
     <fin-portlet-item class="table-scroll">
-      <div class="fin-table shadow-6 fin-br-8">
-      <table style="width: 100%; border-collapse: collapse;" class="table full-width rounded-borders">
-        <thead>
-          <tr>
-            <th>S.No</th>
-            <th >Assignment Title</th>
-            <th >Batch Title</th>
+      <div class="q-pa-md">
+    <q-table
+      flat
+      bordered
+      :rows="filteredBatches"
+      :columns="columns"
+      row-key="cycleid"
+    >
+      <template v-slot:header="props">
+        <q-tr :props="props">
+          <q-th auto-width />
+          <q-th
+            v-for="col in props.cols"
+            :key="col.name"
+            :props="props"
+            style="text-align: left; width: 600px;" 
+          >
+            {{ col.label }}
+          </q-th>
+          <q-th auto-width /> <!-- For spacing after the columns -->
+        </q-tr>
+      </template>
+      <template v-slot:body="props">
+        <q-tr :props="props">
+          <q-td v-for="col in props.cols" :key="col.name" :props="props">
+            {{ props.row[col.field] }}
+          </q-td>
+          <q-td auto-width class="text-right">
+            <q-btn
+              size="sm"
+              color="accent"
+              round
+              dense
+              @click="() => { props.expand = !props.expand; fetchAssignments(props.row.cycleid); }"
+              :icon="props.expand ? 'remove' : 'add'"
+            />
+          </q-td>
+        </q-tr>
+        <q-tr v-show="props.expand" :props="props">
+          <q-td colspan="100%">
+            <div class="text-left">
+              <table class="nested-table">
+                <thead>
+                  <tr>
+                    <th>Assignment Title</th>
+            <th>Batch Title</th>
             <th>is Verified</th>
             <th>Student Name</th>
             <th>File</th>
-          </tr>
-        </thead>
-        <tbody class="text-center">
-          <tr v-for="(assignment, index) in assignmentsList" :key="assignment.assignmentId">
-            <td >{{ index + 1 }}</td>
-            <td>{{ assignment.assignmentTitle }}</td>
-            <td >{{ assignment.batchTitle }}</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- <tr v-if="loading">
+                    <td colspan="3">Loading assignments...</td>
+                  </tr> -->
+                  <tr v-if="!assignments[props.row.cycleid]?.length && !loading">
+                    <td colspan="3">No assignments available.</td>
+                  </tr>
+                  <tr v-else v-for="assignment in assignments[props.row.cycleid]" :key="assignment.assignmentId">
+                    <td>{{ assignment.assignmentTitle }}</td>
+            <td>{{ assignment.batchTitle }}</td>
             <td>{{ assignment.isVerified }}</td>
-            <td >{{ assignment.studentName }}</td>
-            <td >
+            <td>{{ assignment.studentName }}</td>
+            <td>
               <template v-if="assignment.blobUrl">
                 <button @click="openDialog(assignment.blobUrl, assignment.fileType, assignment)">View</button>
               </template>
@@ -47,59 +93,84 @@
                 <a :href="assignment.submittedFile" download>Download</a>
               </template>
             </td>
-          </tr>
-        </tbody>
-      </table>
-      </div>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </q-td>
+        </q-tr>
+      </template>
+    </q-table>
+
+    <p v-if="!filteredBatches.length">No batches found.</p>
+  </div>
     </fin-portlet-item>
   </fin-portlet>
 
   <!-- Quasar Dialog for viewing files -->
   <q-dialog v-model="dialogVisible" class="custom-dialog">
-  <q-card class="q-pa-md custom-card">
-    <q-btn flat icon="close" class="close-btn" @click="dialogVisible = false" />
-    <q-card-section class="q-dialog-content">
-      <div>
-        <!-- <span><strong>Student Assignment Id:</strong> {{ assignmentData.id }}</span><br>
+    <q-card class="q-pa-md custom-card">
+      <q-btn flat icon="close" class="close-btn" @click="closeDialog" />
+      <q-card-section class="q-dialog-content">
+        <div>
+          <!-- <span><strong>Student Assignment Id:</strong> {{ assignmentData.id }}</span><br>
         <span><strong>Assignment Id:</strong> {{ assignmentData.assignmentId }}</span><br> -->
-        <span><strong>Assignment Title:</strong> {{ assignmentData.assignmentTitle }}</span><br>
-        <!-- <span><strong>Batch Id:</strong> {{ assignmentData.batchId }}</span><br> -->
-        <span><strong>Batch Name:</strong> {{ assignmentData.batchTitle }}</span><br>
-        <!-- <span><strong>Due Date:</strong> {{ assignmentData.createdDate }}</span><br> -->
-        <span><strong>Student:</strong> {{ assignmentData.studentName }}</span><br>
-        <!-- Add q-select for isVerified -->
-        
-      </div>
-      <template v-if="fileType === 'png'">
-        <q-img :src="dialogFileUrl" class="custom-img" />
-      </template>
-      <template v-else-if="fileType === 'pdf'">
-        <div v-if="fileType === 'pdf'">
-            <vue-pdf-app style="height: calc(60vh - 70px)" :pdf="chapterFilePath" :title="true" :theme="theme" class="q-pt-sm pdf"
-            page-scale="20" :config="config">
-            <template #toolbar-right-prepend>
-      <div style="min-height:30px" class="flex flex-center">
-        <q-icon name="contrast" @click="toggleTheme" size="sm" color="white" class="q-ma-md cursor-pointer"></q-icon>
-      </div>
-    </template>
-    </vue-pdf-app>
+          <span
+            ><strong>Assignment Title:</strong>
+            {{ assignmentData.assignmentTitle }}</span
+          ><br />
+          <!-- <span><strong>Batch Id:</strong> {{ assignmentData.batchId }}</span><br> -->
+          <span
+            ><strong>Batch Name:</strong> {{ assignmentData.batchTitle }}</span
+          ><br />
+          <!-- <span><strong>Due Date:</strong> {{ assignmentData.createdDate }}</span><br> -->
+          <span><strong>Student:</strong> {{ assignmentData.studentName }}</span
+          ><br />
+          <!-- Add q-select for isVerified -->
+        </div>
+        <template v-if="fileType === 'png'">
+          <q-img :src="dialogFileUrl" class="custom-img" />
+        </template>
+        <template v-else-if="fileType === 'pdf'">
+          <div v-if="fileType === 'pdf'">
+            <vue-pdf-app
+              style="height: calc(60vh - 70px)"
+              :pdf="chapterFilePath"
+              :title="true"
+              :theme="theme"
+              class="q-pt-sm pdf"
+              page-scale="20"
+              :config="config"
+            >
+              <template #toolbar-right-prepend>
+                <div style="min-height: 30px" class="flex flex-center">
+                  <q-icon
+                    name="contrast"
+                    @click="toggleTheme"
+                    size="sm"
+                    color="white"
+                    class="q-ma-md cursor-pointer"
+                  ></q-icon>
+                </div>
+              </template>
+            </vue-pdf-app>
           </div>
-</template>
- <!-- Java and Python File Preview -->
- <template v-else-if="['java', 'py'].includes(fileType)">
-    <pre v-if="dialogFileContent">
+        </template>
+        <!-- Java and Python File Preview -->
+        <template v-else-if="['java', 'py'].includes(fileType)">
+          <pre v-if="dialogFileContent">
       <code class="language-{{ fileType }}">
         {{ dialogFileContent }}
       </code>
     </pre>
-  </template>
+        </template>
 
-      <template v-else>
-        <div>No preview available for this file type</div>
-      </template>
+        <template v-else>
+          <div>No preview available for this file type</div>
+        </template>
 
       <div v-if="dialogFileUrl" class="q-mt-md">
-  <!-- <q-btn label="View in New Tab" icon="open_in_new" color="primary" @click="openInNewTab(dialogFileUrl)" /> -->
+  <q-btn label="View in New Tab" icon="open_in_new" color="primary" @click="openInNewTab(dialogFileUrl)" />
 </div>
     </q-card-section>
     <q-select
@@ -123,7 +194,7 @@ import FinPortlet from "src/components/Portlets/FinPortlet.vue";
 import FinPortletHeader from "src/components/Portlets/FinPortletHeader.vue";
 import FinPortletHeading from "src/components/Portlets/FinPortletHeading.vue";
 import FinPortletItem from "src/components/Portlets/FinPortletItem.vue";
-import axios from 'axios';
+import axios from "axios";
 import VuePdfApp from "vue3-pdf-app";
 import "vue3-pdf-app/dist/icons/main.css";
 
@@ -137,15 +208,25 @@ export default {
   },
   data() {
     return {
-      pdfPath: '',
-      chapterFilePath: '', 
+      pdfPath: "",
+      batches: [],               // All batches from API
+      filteredBatches: [],       // Batches to display based on selection
+      batchSearch: null,         // Selected batch for filtering
+      assignments: {},           // Assignments for the selected batch
+      loading: false,            // Loading state for assignments
+      columns: [                 // Table column definitions
+        { name: 'cycleid', label: 'Batch ID', field: 'cycleid' },
+        { name: 'cycleDesc', label: 'Description', field: 'cycleDesc' },
+      ],
+      chapterFilePath: "",
       numPages: 0,
-      theme: 'light',
+      evaluationResult: "",
+      theme: "light",
       config: {
         sidebar: {
           viewThumbnail: true,
           viewOutline: false,
-          viewAttachments: false
+          viewAttachments: false,
         },
         toolbar: {
           toolbarViewerRight: {
@@ -153,8 +234,8 @@ export default {
             openFile: false,
             print: false,
             download: false,
-            viewBookmark: false
-          }
+            viewBookmark: false,
+          },
         },
         secondaryToolbar: {
           presentationMode: true,
@@ -162,89 +243,179 @@ export default {
           secondaryPrint: false,
           secondaryDownload: false,
           secondaryViewBookmark: false,
-          
         },
       },
       assignmentsList: [],
       loading: false,
       dialogVisible: false,
-      dialogFileUrl: '',
-      assignmentSearch: '',
+      dialogFileUrl: "",
+      assignmentSearch: "",
       pdf: null,
       assignmentOptions: [], // This will hold the data for q-select
       masterLoading: false, // Assuming you have a loading state
-      fileType: '' ,// To store the file type ('image', 'pdf', etc.)
+      fileType: "", // To store the file type ('image', 'pdf', etc.)
       currentPage: 1,
       numPages: 0,
       assignmentData: {
-        id: '',
-      assignmentId: '',
-      currentPage: 1,
-      numPages: 0,
-      assignmentTitle: '',
-      batchId: '',
-      batchTitle: '',
-      createdDate: '',
-      studentName: '',
-      isVerified: ''
-      } ,
+        id: "",
+        assignmentId: "",
+        currentPage: 1,
+        numPages: 0,
+        assignmentTitle: "",
+        batchId: "",
+        batchTitle: "",
+        createdDate: "",
+        studentName: "",
+        isVerified: "",
+      },
       verificationOptions: [
-        { label: 'Y', value: 'Y' },
-        { label: 'N', value: 'N' }
-      ]
+        { label: "Y", value: "Y" },
+        { label: "N", value: "N" },
+      ],
     };
   },
   created() {
-    this.fetchAssignments();
+    this.fetchBatches();
+  },
+  computed: {
+    batchOptions() {
+      return this.batches.map(batch => ({
+        label: batch.cycleDesc,
+        value: batch.cycleid,  // Use cycleid for fetching details
+      }));
+    },
   },
   methods: {
     async getStudentAssignmentsData() {
-  this.loading = true;
-  try {
-    const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-    let url = baseUrl + 'api/student-assignments';
-    if (this.assignmentSearch) {
-      url += `?assignmentId=${this.assignmentSearch.value}`;
-      console.log("url:", url);
-    }
+      this.loading = true;
+      try {
+        const baseUrl =
+          (process.env.VUE_APP_CORE_URL || "").replace(/\/$/g, "") + "/";
+        let url = baseUrl + "api/student-assignments";
+        if (this.assignmentSearch) {
+          url += `?assignmentId=${this.assignmentSearch.value}`;
+          console.log("url:", url);
+        }
 
-    const response = await this.$api.get(url);
+    const response = await axios.get(url);
     if (response.data.success) {
       const assignmentsWithBlobs = await Promise.all(response.data.message.map(async (assignment, index) => {
         const fileName = assignment.submittedFile;
         const cleanFileName = fileName;
 
-        let fileType = 'unknown';
+              let fileType = "unknown";
 
-        // Determine the file type based on the extension
-        if (fileName.endsWith('.png') || fileName.endsWith('.jpg') || fileName.endsWith('.jpeg')) {
-          fileType = 'png';
-        } else if (fileName.endsWith('.pdf')) {
-          fileType = 'pdf';
-        } else if (fileName.endsWith('.java')) {
-          fileType = 'java';
-        } else if (fileName.endsWith('.py')) {
-          fileType = 'py';
+              // Determine the file type based on the extension
+              if (
+                fileName.endsWith(".png") ||
+                fileName.endsWith(".jpg") ||
+                fileName.endsWith(".jpeg")
+              ) {
+                fileType = "png";
+              } else if (fileName.endsWith(".pdf")) {
+                fileType = "pdf";
+              } else if (fileName.endsWith(".java")) {
+                fileType = "java";
+              } else if (fileName.endsWith(".py")) {
+                fileType = "py";
+              }
+
+              const blobUrl = cleanFileName;
+
+              return {
+                index: index + 1,
+                id: assignment.id,
+                assignmentId: assignment.assignmentId,
+                batchId: assignment.batchId,
+                assignmentTitle: assignment.assignmentTitle,
+                batchTitle: assignment.batchTitle,
+                createdDate: new Date(
+                  assignment.createdDate
+                ).toLocaleDateString(),
+                studentId: assignment.studentId,
+                studentName: assignment.studentName,
+                submittedFile: assignment.submittedFile,
+                isVerified: assignment.isVerified,
+                evaluation: assignment.evaluation,
+                blobUrl: blobUrl, // Blob URL
+                fileType: fileType, // File Type (png, pdf, java, py)
+              };
+            })
+          );
+
+          this.assignmentsList = assignmentsWithBlobs;
+        } else {
+          console.error(
+            "Failed to fetch student assignments:",
+            response.data.message
+          );
         }
+      } catch (error) {
+        console.error("Error fetching student assignments data:", error);
+      } finally {
+        this.loading = false;
+      }
+    },
+    evaluateFileUrl() {
+      const baseUrl =
+        (process.env.VUE_APP_CORE_URL || "").replace(/\/$/g, "") + "/";
+      const postEvaluateUrl = baseUrl + "api/evaluator/evaluatecode";
 
-        const blobUrl = cleanFileName;
+      const assignmentID = this.assignmentData.assignmentId;
 
-        return {
-          index: index + 1,
-          id: assignment.id,
-          assignmentId: assignment.assignmentId,
-          batchId: assignment.batchId,
-          assignmentTitle: assignment.assignmentTitle,
-          batchTitle: assignment.batchTitle,
-          createdDate: new Date(assignment.createdDate).toLocaleDateString(),
-          studentId: assignment.studentId,
-          studentName: assignment.studentName,
-          submittedFile: assignment.submittedFile,
-          isVerified: assignment.isVerified,
-          blobUrl: blobUrl, // Blob URL
-          fileType: fileType // File Type (png, pdf, java, py)
-        };
-      }));
+      axios
+        .post(`${postEvaluateUrl}?assignment-id=${encodeURIComponent(assignmentID)}`)
+        .then((response) => {
+          // console.log(response.data)
+          this.evaluationResult = response.data.response;
+         // console.log("rating", response.data.response);
+        })
+        .catch((error) => {
+          console.error(error);
+          this.evaluationResult = "Error evaluating the file.";
+        });
+    },
+    async fetchAssignments(batchId) {
+  this.loading = true; // Start loading assignments
+
+  if (!this.assignments[batchId]) { // Fetch only if not already fetched
+    try {
+      const response = await fetch(`http://localhost:8087/api/student-assignments?batchId=${batchId}`);
+      const data = await response.json();
+
+      if (data.success) {
+        // Process the assignments and add details such as fileType
+        const assignmentsWithDetails = await Promise.all(data.data.map(async (assignment, index) => {
+          const fileName = assignment.submittedFile;
+          let fileType = 'unknown';
+
+          // Determine file type based on the extension
+          if (fileName.endsWith('.png') || fileName.endsWith('.jpg') || fileName.endsWith('.jpeg')) {
+            fileType = 'png';
+          } else if (fileName.endsWith('.pdf')) {
+            fileType = 'pdf';
+          } else if (fileName.endsWith('.java')) {
+            fileType = 'java';
+          } else if (fileName.endsWith('.py')) {
+            fileType = 'py';
+          }
+
+          return {
+            index: index + 1,
+            id: assignment.id,
+            assignmentId: assignment.assignmentId,
+            batchId: assignment.batchId,
+            assignmentTitle: assignment.assignmentTitle,
+            batchTitle: assignment.batchTitle,
+            createdDate: new Date(assignment.createdDate).toLocaleDateString(),
+            studentId: assignment.studentId,
+            studentName: assignment.studentName,
+            submittedFile: assignment.submittedFile,
+            isVerified: assignment.isVerified,
+            blobUrl: assignment.submittedFile, // Assuming this is the URL to the file
+            fileType: fileType
+          };
+        }));
 
       this.assignmentsList = assignmentsWithBlobs;
     } else {
@@ -263,47 +434,50 @@ async handleSelectChange(value) {
     console.log('Selected assignment option:', selectedOption); // Log the full selected option
     await this.getStudentAssignmentsData(); // Fetch data based on selected assignment
   },
-  async fetchAssignments() {
-  try {
-    const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-    const getAssignmentsUrl = baseUrl + 'api/assignments';
-    
-    // Make the API call using this.$api
-    const response = await this.$api.get(getAssignmentsUrl);
-    
-    // Assuming response.data contains your data structure
-    this.assignmentOptions = response.data.data.map(assignment => ({
-      label: assignment.title, // The text displayed in the select
-      value: assignment.id, // The value bound to the selection
-    }));
-  } catch (error) {
-    console.error('Error fetching assignments:', error);
-  } finally {
-    this.masterLoading = false;
-  }
-},
+    async fetchAssignments() {
+      try {
+        const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
+        const getAssignmentsUrl = baseUrl + 'api/assignments';
+        const response = await fetch(getAssignmentsUrl);
+        const jsonData = await response.json();
+        this.assignmentOptions = jsonData.data.map(assignment => ({
+          label: assignment.title, // The text displayed in the select
+          value: assignment.id, // The value bound to the selection
+        }));
+      } catch (error) {
+        console.error('Error fetching assignments:', error);
+      } finally {
+        this.masterLoading = false;
+      }
+    },
     async submitAssignmentData() {
-    try {
-      const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-      const submitAssignmentUrl = `${baseUrl}api/student-assignments/${this.assignmentData.id}`;
-      // Construct the URL with the assignment ID
-      const currentDate = Date.now(); 
-      // Prepare the JSON data to be sent
-      const data = {
-        // id: this.assignmentData.id,
-        assignmentId: this.assignmentData.assignmentId,
-        assignmentTitle: this.assignmentData.assignmentTitle,
-        batchId: this.assignmentData.batchId,
-        batchTitle: this.assignmentData.batchTitle,
-        studentId: this.assignmentData.studentId,
-        studentName: this.assignmentData.studentName,
-        submittedFile: this.assignmentData.submittedFile,
-        createdDate: currentDate,
-        isVerified: this.assignmentData.isVerified.value
-      };
+      try {
+        const baseUrl =
+          (process.env.VUE_APP_CORE_URL || "").replace(/\/$/g, "") + "/";
+        const submitAssignmentUrl = `${baseUrl}api/student-assignments/${this.assignmentData.id}`;
+        // Construct the URL with the assignment ID
+        const currentDate = Date.now();
+        const evaluationString = this.evaluationResult || "";
+        // Prepare the JSON data to be sent
+        const data = {
+          // id: this.assignmentData.id,
+          assignmentId: this.assignmentData.assignmentId,
+          assignmentTitle: this.assignmentData.assignmentTitle,
+          batchId: this.assignmentData.batchId,
+          batchTitle: this.assignmentData.batchTitle,
+          studentId: this.assignmentData.studentId,
+          studentName: this.assignmentData.studentName,
+          submittedFile: this.assignmentData.submittedFile,
+          createdDate: currentDate,
+          isVerified: this.assignmentData.isVerified.value,
+          blobUrl: assignment.submittedFile,
+
+          evaluation:
+            JSON.stringify(this.evaluationResult.evaluation_feedback) || "",
+        };
 
       // Make the PUT request
-      const response = await this.$api.put(submitAssignmentUrl, data, {
+      const response = await axios.put(submitAssignmentUrl, data, {
         headers: {
           'Content-Type': 'application/json'
         }
@@ -323,82 +497,74 @@ async handleSelectChange(value) {
     }
   },
   async openDialog(blobUrl, fileType, assignment) {
-  console.log('Opening dialog with assignment data:', assignment);
-  this.dialogFileUrl = blobUrl;
-  this.fileType = fileType;
-  this.dialogVisible = true;
-  this.assignmentData = assignment;
-  console.log("file:", blobUrl);
-
-  if (fileType === 'pdf') {
-    this.chapterFilePath = blobUrl;
-
-  } else if (['java', 'py'].includes(fileType)) {
-    // Fetch content for .java or .py files using this.$api
-    try {
-      const response = await this.$api.get(blobUrl, {
-        headers: {
-          // The token is automatically included by the axios instance if set in your store
-        }
-      });
-
-      this.dialogFileContent = response.data; // Assuming the content comes directly in response.data
-    } catch (error) {
-      console.error('Error fetching file content:', error);
-      // Handle error appropriately
-    }
+      console.log('Opening dialog with assignment data:', assignment);
+      this.dialogFileUrl = blobUrl;
+      this.fileType = fileType;
+      this.dialogVisible = true;
+      this.assignmentData = assignment;
+      console.log("file:",blobUrl);
+      if (fileType === 'pdf') {
+        this.chapterFilePath = blobUrl;
+        
+      }else if (['java', 'py'].includes(fileType)) {
+    // Fetch content for .java or .py files
+    const response = await fetch(blobUrl);
+    this.dialogFileContent = await response.text();
   }
-
-  this.assignmentData.isVerified = assignment.isVerified;
-},
-
-  // openInNewTab(url) {
-  //     window.open(url, '_blank');
-  //   },
+      this.assignmentData.isVerified = assignment.isVerified;
+    },
+    highlightCode() {
+    this.$nextTick(() => {
+      Prism.highlightAll();
+    });
+  },
+  openInNewTab(url) {
+      window.open(url, '_blank');
+    },
     async downloadFile() {
-  try {
-    // Fetch the file from the URL
-    const response = await fetch(this.dialogFileUrl);
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
+      try {
+        // Fetch the file from the URL
+        const response = await fetch(this.dialogFileUrl);
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
 
-    // Convert the response to a Blob
-    const blob = await response.blob();
+        // Convert the response to a Blob
+        const blob = await response.blob();
 
-    // Create a URL for the Blob
-    const url = URL.createObjectURL(blob);
+        // Create a URL for the Blob
+        const url = URL.createObjectURL(blob);
 
-    // Create a temporary link element
-    const link = document.createElement('a');
-    link.href = url;
+        // Create a temporary link element
+        const link = document.createElement("a");
+        link.href = url;
 
-    // Set a default filename (you can customize this)
-    const filename = this.dialogFileUrl.split('/').pop(); // Extract filename from URL
-    link.download = filename;
+        // Set a default filename (you can customize this)
+        const filename = this.dialogFileUrl.split("/").pop(); // Extract filename from URL
+        link.download = filename;
 
-    // Append the link to the body and trigger a click
-    document.body.appendChild(link);
-    link.click();
+        // Append the link to the body and trigger a click
+        document.body.appendChild(link);
+        link.click();
 
-    // Clean up by removing the link and revoking the object URL
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  } catch (error) {
-    console.error('Error downloading file:', error);
-  }
-}
+        // Clean up by removing the link and revoking the object URL
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error("Error downloading file:", error);
+      }
+    },
   },
   watch: {
-  dialogFileContent() {
-    this.highlightCode();
-  }
-},
-  
+    dialogFileContent() {
+      this.highlightCode();
+    },
+  },
+
   mounted() {
     this.getStudentAssignmentsData();
     this.pdfPath = this.dialogFileUrl;
-  }
+  },
 };
 </script>
 
@@ -442,31 +608,29 @@ async handleSelectChange(value) {
 .table th,
 .table td {
   border: none;
-  
 }
 
 .table th {
-  background-color: #5479F7 !important;
+  background-color: #5479f7 !important;
   color: #ffffff;
 }
 
 .table tbody tr:nth-child(even) {
-  background-color: #E7F0FF;
-  
+  background-color: #e7f0ff;
 }
 .fin-table {
   min-height: 400px;
   max-height: 400px;
   overflow-y: auto;
-  background-color: #FFFF;
+  background-color: #ffff;
   border-radius: 10px;
   width: 96%;
   margin-left: 2%;
-  margin-right: 2%
+  margin-right: 2%;
 }
 
 button {
-  background-color: #5479F7;
+  background-color: #5479f7;
   color: #ffffff;
   border: none;
   padding: 8px 12px;
@@ -475,7 +639,7 @@ button {
 }
 
 button:hover {
-  background-color: #34549E;
+  background-color: #34549e;
 }
 
 .table-body {
@@ -484,8 +648,11 @@ button:hover {
   overflow-y: auto;
 }
 .User_heading {
-  color: #5479F7;
+  color: #5479f7;
   margin-left: 4%;
+}
+.evaluationResult {
+  padding-top: 30px;
 }
 .search-container {
   margin-left: auto;
@@ -493,7 +660,8 @@ button:hover {
 .search-input {
   width: 300px;
 }
-.table thead, .table tbody tr {
+.table thead,
+.table tbody tr {
   display: table;
   width: 100%;
   table-layout: fixed;
@@ -504,5 +672,17 @@ pre {
   border-radius: 5px;
   overflow-x: auto;
   white-space: pre-wrap; /* Wrap long lines */
+}
+.bold-text {
+  font-weight: bold;
+}
+.nested-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.nested-table th,
+.nested-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
 }
 </style>
