@@ -76,10 +76,10 @@
               <q-input outlined v-model="user.name" label="Name *" lazy-rules
                 :rules="[val => val && val.length > 0 || 'Name Is required']" />
             </div>
-            <div class="col-12 col-md-12 q-px-sm q-py-xs">
+            <!-- <div class="col-12 col-md-12 q-px-sm q-py-xs">
               <q-input outlined v-model="user.password" label="Password *" lazy-rules
                 :rules="[val => val && val.length > 0 || 'Name Is required']" />
-            </div>
+            </div> -->
             <!-- <div class="col-12 col-md-6 q-px-sm q-py-xs">
               <q-input outlined v-model="user.lName" label="Last Name *" lazy-rules
                 :rules="[val => val && val.length > 0 || 'Last Name Is required']" />
