@@ -76,6 +76,10 @@
               <q-input outlined v-model="user.name" label="Name *" lazy-rules
                 :rules="[val => val && val.length > 0 || 'Name Is required']" />
             </div>
+            <div class="col-12 col-md-12 q-px-sm q-py-xs">
+              <q-input outlined v-model="user.password" label="Password *" lazy-rules
+                :rules="[val => val && val.length > 0 || 'Name Is required']" />
+            </div>
             <!-- <div class="col-12 col-md-6 q-px-sm q-py-xs">
               <q-input outlined v-model="user.lName" label="Last Name *" lazy-rules
                 :rules="[val => val && val.length > 0 || 'Last Name Is required']" />
@@ -97,6 +101,14 @@
               <q-select outlined v-model="user.role" :options="rolesList"  option-label="name" lazy-rules
                 />
             </div>
+            <div class="col-12 q-px-sm q-py-xs">
+            <q-input outlined v-model="user.startDateTime" type="datetime-local" label="Start Date & Time *" lazy-rules
+              :rules="[val => val && val.length > 0 || 'Start Date & Time Is required']" />
+          </div>
+          <div class="col-12 q-px-sm q-py-xs">
+            <q-input outlined v-model="user.endDateTime" type="datetime-local" label="End Date & Time *" lazy-rules
+              :rules="[val => val && val.length > 0 || 'End Date & Time Is required']" />
+          </div>
             <div class="col-12 col-md-6 q-px-sm q-py-xs text-center q-pt-lg"></div>
             <div class="col-12 col-md-6 q-px-sm q-py-xs text-right q-pt-lg">
               <q-btn label="Close" v-close-popup type="reset" color="primary" flat class="q-mr-sm" no-caps />
@@ -170,6 +182,7 @@ export default {
         { label: 'Name', key: 'name', align: 'start' },
         { label: 'Email Address', key: 'email', align: 'center' },
         { label: 'Organization', key: 'organization', align: 'center' },
+        { label: 'End Date', key: 'endDateTime', align: 'center' },
         { label: 'Role', key: 'role', align: 'center' },
         { label: 'Date Added', key: 'createdAt', align: 'center' },
         { label: 'Is Active', key: 'isActive', align: 'center' },
@@ -187,6 +200,8 @@ export default {
         id: '',
         password: '',
         role: [],
+         startDateTime: '',
+      endDateTime: ''
       }
     }
   },
@@ -313,6 +328,7 @@ export default {
     createUser() {
       this.user = {};
       this.createUserDialog = true;
+      
     },
     uploadExcelFile() {
       if (!this.excelFile) {
@@ -375,58 +391,65 @@ export default {
       }
     },
     createNewUser() {
-      this.submitLoading = true;
-      let request = {
-        accountId: this.profile?.id,
-        name: this.user.name,
-        email: this.user.mail,
-        phoneNumber: this.user.Number,
-        owner: this.user.owner,
-        isActive: this.user.isActive,
-        //password: "Welcome@123",
-        role: [this.user.role],
-      };
-      this.$api.post(urls.usersUrl, request).then(response => {
-        this.submitLoading = false;
-        if (response.data.success) {
-          this.showMsg(response.data?.message || 'new User created', 'positive');
-          this.getUsersData();
-          this.closeCreateUserDialog();
-        } else {
-          this.showMsg(response.data?.message, 'negative');
-        }
-      }).catch(error => {
-        this.submitLoading = false;
-        this.showMsg(error.response?.data.message || error.message, 'negative');
-      })
-    },
-    updateUser() {
-      this.submitLoading = true;
-      let request = {
-        accountId: this.profile?.id,
-        name: this.user.name,
-        email: this.user.mail,
-        phoneNumber: this.user.Number,
-        isActive:this.user.isActive,
-        owner: this.user.owner,
-        id: this.user.id,
-        password: this.user.password,
-        role: [this.user.role],
-      };
-      this.$api.put(`${urls.usersUrl}/${this.user.id}`, request).then(response => {
-        this.submitLoading = false;
-        if (response.data.success) {
-          this.showMsg(response.data?.message, 'positive');
-          this.getUsersData();
-          this.closeCreateUserDialog();
-        } else {
-          this.showMsg(response.data?.message, 'negative');
-        }
-      }).catch(error => {
-        this.submitLoading = false;
-        this.showMsg(error.response?.data.message || error.message, 'negative');
-      })
-    },
+  this.submitLoading = true;
+  let request = {
+    accountId: this.profile?.id,
+    name: this.user.name,
+    email: this.user.mail,
+    phoneNumber: this.user.Number,
+    owner: this.user.owner,
+    isActive: this.user.isActive,
+    startDateTime: this.user.startDateTime,  // New field
+    endDateTime: this.user.endDateTime,      // New field
+    role: [this.user.role],
+  };
+  
+  this.$api.post(urls.usersUrl, request).then(response => {
+    this.submitLoading = false;
+    if (response.data.success) {
+      this.showMsg(response.data?.message || 'New User created', 'positive');
+      this.getUsersData();
+      this.closeCreateUserDialog();
+    } else {
+      this.showMsg(response.data?.message, 'negative');
+    }
+  }).catch(error => {
+    this.submitLoading = false;
+    this.showMsg(error.response?.data.message || error.message, 'negative');
+  });
+},
+
+updateUser() {
+  this.submitLoading = true;
+  let request = {
+    accountId: this.profile?.id,
+    name: this.user.name,
+    email: this.user.mail,
+    phoneNumber: this.user.Number,
+    isActive: this.user.isActive,
+    owner: this.user.owner,
+    id: this.user.id,
+    password: this.user.password,
+    startDateTime: this.user.startDateTime,  // New field
+    endDateTime: this.user.endDateTime,      // New field
+    role: [this.user.role],
+  };
+  
+  this.$api.put(`${urls.usersUrl}/${this.user.id}`, request).then(response => {
+    this.submitLoading = false;
+    if (response.data.success) {
+      this.showMsg(response.data?.message, 'positive');
+      this.getUsersData();
+      this.closeCreateUserDialog();
+    } else {
+      this.showMsg(response.data?.message, 'negative');
+    }
+  }).catch(error => {
+    this.submitLoading = false;
+    this.showMsg(error.response?.data.message || error.message, 'negative');
+  });
+},
+
     closeCreateUserDialog() {
       this.createUserDialog = false;
       this.$refs.form.reset();
@@ -440,10 +463,24 @@ export default {
         owner: val.owner,
         id: val.id,
         isActive: val.isActive,
+        startDateTime: this.formatDate(val.startDateTime),  // Format the start date
+        endDateTime: this.formatDate(val.endDateTime),        // New field
         password: val.password
       };
+      console.log(this.user);
+      console.log(val.startDateTime);
       this.createUserDialog = true;
-    }
+    },
+    formatDate(dateArray) {
+  if (!Array.isArray(dateArray) || dateArray.length < 5) return ''; // Check if it's a valid array
+  const year = dateArray[0];
+  const month = String(dateArray[1]).padStart(2, '0'); // Ensure two-digit month
+  const day = String(dateArray[2]).padStart(2, '0'); // Ensure two-digit day
+  const hours = String(dateArray[3]).padStart(2, '0'); // Ensure two-digit hour
+  const minutes = String(dateArray[4]).padStart(2, '0'); // Ensure two-digit minutes
+
+  return `${year}-${month}-${day}T${hours}:${minutes}`; // Return formatted date string
+}
   }
 }
 </script>
