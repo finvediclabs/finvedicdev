@@ -286,7 +286,7 @@ export default {
   try {
     const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
     const getDeleteVMUrl = baseUrl + 'deletevm/';
-    const response = await fetch(getDeleteVMUrl + lab.name);
+    const response = await this.$api.get(getDeleteVMUrl + lab.name);
     // console.log('success');
     lab.locked = true;
     this.saveLockedStates(); // Save locked states to local storage
