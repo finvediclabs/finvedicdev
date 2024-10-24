@@ -707,10 +707,13 @@ async handleSubmit() {
     // POST request to submit the assignment
     const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
     const studentAssignmentUrl = baseUrl + 'api/student-assignments';
+    const sessionStore = useSessionStore(); // Get the session store
+    const token = sessionStore.token;
     const response = await fetch(studentAssignmentUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`, 
       },
       body: jsonData,
     });
@@ -808,22 +811,21 @@ async fetchAssignments() {
     this.loading = false; // End loading state
   }
 },
-    async fetchBatchAssignments(assignmentId) {
+async fetchBatchAssignments(assignmentId) {
       this.loading = true;
       try {
         const baseUrl = (process.env.VUE_APP_CORE_URL || '').replace(/\/$/g, '') + '/';
-    const url = `${baseUrl}api/batch-assignments/assignment/${assignmentId}`;
+        const url = `${baseUrl}api/batch-assignments/assignment/${assignmentId}`;
 
-        const response = await fetch(url);
-        const data = await response.json();
-        console.log('Fetched batch assignments:', data.data); // Debugging output
-        this.batchAssignments = data.data; // Access the `data` array from the response
+        const response = await this.$api.get(url);
+        console.log('Fetched batch assignments:', response.data.data); // Debugging output
+        this.batchAssignments = response.data.data; // Access the `data` array from the response
       } catch (error) {
         console.error('Error fetching batch assignments:', error);
       } finally {
         this.loading = false;
       }
-    },
+  },
     handleAssignmentClick(assignmentId) {
       this.selectedAssignmentId = assignmentId;
       this.fetchBatchAssignments(assignmentId);
