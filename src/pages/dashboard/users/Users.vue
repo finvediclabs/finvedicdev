@@ -182,7 +182,7 @@ export default {
         { label: 'Name', key: 'name', align: 'start' },
         { label: 'Email Address', key: 'email', align: 'center' },
         { label: 'Organization', key: 'organization', align: 'center' },
-        { label: 'End Date', key: 'endDateTime', align: 'center' },
+        { label: 'End Date', key: 'endDateTimeFormat', align: 'center' },
         { label: 'Role', key: 'role', align: 'center' },
         { label: 'Date Added', key: 'createdAt', align: 'center' },
         { label: 'Is Active', key: 'isActive', align: 'center' },
@@ -312,6 +312,9 @@ export default {
         if (response.data.success) {
           this.usersList = response.data.data.map((item, index) => ({
             ...item,
+            endDateTime: item.endDateTime,
+        // Correctly pass item.endDateTime to the formatDate method
+        endDateTimeFormat: this.formatDate(item.endDateTime),
             createdAt: moment(item.createdAt).format('YYYY-MM-DD'),
             index: index + 1,
             role: item.role.length > 0 ? item.role[0].name : 'No Role',
